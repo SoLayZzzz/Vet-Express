@@ -1,0 +1,224 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:express_vet/activities/ticket/rental_car_detail_screen.dart';
+import 'package:express_vet/activities/ticket/rental_car_info_screen.dart';
+import 'package:express_vet/api/vehicle_retal.dart';
+import 'package:express_vet/models/vehicle_rental/car_type_response.dart';
+import 'package:express_vet/utils/app_bar.dart';
+import 'package:express_vet/utils/app_colors.dart';
+
+import '../../utils/contains.dart';
+
+class RentalCarListScreen extends StatefulWidget {
+  const RentalCarListScreen({super.key});
+
+  @override
+  State<RentalCarListScreen> createState() => _RentalCarListScreenState();
+}
+
+class _RentalCarListScreenState extends State<RentalCarListScreen> {
+  late Future<CarTypeResponse> futureData;
+
+  @override
+  void initState() {
+    super.initState();
+    futureData = VehicleRental().getCarTypeList(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBarVET().appBar(context, 'car_rental1'.tr),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                'vehicle_bar'.tr,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.titleColor,
+                ),
+              ),
+              const SizedBox(height: 10),
+              ReadMoreText(
+                'vehicle readme'.tr,
+                trimMode: TrimMode.Line,
+                trimLines: 3,
+                moreStyle: const TextStyle(fontSize: 14, color: AppColors.seeMoreColor),
+                trimCollapsedText: 'see_more'.tr,
+                lessStyle: const TextStyle(fontSize: 14, color: AppColors.titleColor),
+                trimExpandedText: 'see_less'.tr,
+                style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    "ask_info".tr,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.greyColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Spacer(),
+                  InkWell(
+                    onTap: () async {
+                      var url = Uri.parse("https://t.me/vetairbusexpress");
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppColors.borderColor, width: 0.5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/icons/icon_telegram.png", height: 28),
+                          const SizedBox(width: 15),
+                          const Text(
+                            "Telegram",
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              FutureBuilder<CarTypeResponse>(
+                future: futureData,
+                builder: (context, carTypeData) {
+                  if (carTypeData.hasData) {
+                    if (carTypeData.data!.header?.statusCode == 200 &&
+                        carTypeData.data!.header?.result == true) {
+                      if (carTypeData.data!.body?.data?.isNotEmpty == true) {
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: carTypeData.data!.body?.data?.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return item(
+                              (carTypeData.data?.body?.data?[index].id).toString(),
+                              (carTypeData.data?.body?.data?[index].name).toString(),
+                              (carTypeData.data?.body?.data?[index].totalSeat).toString(),
+                              (carTypeData.data?.body?.data?[index].photo).toString(),
+                              carTypeData.data?.body?.data?[index].slidePhoto,
+                              carTypeData.data?.body?.data?[index].amenities,
+                            );
+                          },
+                        );
+                      } else {
+                        return SizedBox(
+                          height: double.infinity,
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.network('assets/images/ic_empty.png', height: 84),
+                              Text('no_data'.tr),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                  } else if (carTypeData.hasError) {
+                    return const Center(child: Text("Error"));
+                  }
+                  return const Center(
+                    child: SizedBox(
+                      height: 50.0,
+                      width: 50.0,
+                      child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Column item(
+    String id,
+    String carType,
+    String seat,
+    String image,
+    List<SlidePhoto>? slide,
+    List<Amenities>? icon,
+  ) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            RentalCarInfoScreen.busId = id;
+            RentalCarInfoScreen.carType = carType;
+            Get.to(
+              () => RentalCarDetailScreen(
+                carType: carType,
+                seat: seat,
+                image: image,
+                listSlide: slide,
+                listIcon: icon,
+              ),
+              transition: Transition.rightToLeft,
+              duration: const Duration(milliseconds: Constrains.duration),
+            );
+          },
+          child: Row(
+            children: [
+              CachedNetworkImage(
+                height: 80,
+                width: 140,
+                fit: BoxFit.cover,
+                imageUrl: image,
+                placeholder: (context, url) => placeHolder(),
+                errorWidget: (context, url, error) => placeHolder(),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(carType, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Text('$seat ${'seats'.tr}'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(),
+      ],
+    );
+  }
+
+  SizedBox placeHolder() {
+    return const SizedBox(
+      height: 80.0,
+      width: 140.0,
+      child: Image(image: AssetImage('assets/images/place_holder.png'), fit: BoxFit.cover),
+    );
+  }
+}

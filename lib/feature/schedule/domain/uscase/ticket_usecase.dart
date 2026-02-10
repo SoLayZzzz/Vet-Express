@@ -1,0 +1,3 @@
+class TicketUseCase {
+  const TicketUseCase();
+}
