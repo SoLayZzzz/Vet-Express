@@ -6,7 +6,7 @@ import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../api/notifications.dart';
 import '../../../../api/user.dart';
 import '../../../../base/state_controller.dart';
@@ -167,75 +167,64 @@ class MenuController extends StateController<MenuUiState>
   }
 
   Future<void> openVtenhApp() async {
-    try {
-      if (Platform.isIOS) {
-        const appStoreLink =
-            'itms-apps://apps.apple.com/us/app/vtenh-shop-easy/id1548621235';
+    const webUrl = 'https://www.vtenh.com/km/';
+    const androidPackageName = 'com.vtenh.app.store';
+    const iosUrlScheme = 'vtenh://';
+    final appUri = Uri.parse(iosUrlScheme);
+    final webUri = Uri.parse(webUrl);
 
-        // Try opening the VTENH app
-        final isInstalled = await LaunchApp.isAppInstalled(
-          iosUrlScheme: 'vtenh://',
+    if (Platform.isAndroid) {
+      try {
+        final installed = await LaunchApp.isAppInstalled(
+          androidPackageName: androidPackageName,
         );
-        final result = isInstalled ? 1 : 0;
 
-        if (result == 1) {
+        if (installed == true) {
           await LaunchApp.openApp(
-            iosUrlScheme: 'vtenh://', // must match VTENH app scheme
-            appStoreLink: appStoreLink,
-            openStore: false, // don't open store yet
-          );
-          return; // app opened successfully
-        }
-
-        // App not installed → open App Store
-        await LaunchApp.openApp(
-          iosUrlScheme: 'vtenh://',
-          appStoreLink: appStoreLink,
-          openStore: true,
-        );
-      } else {
-        const playStoreLink = 'market://details?id=com.vtenh.app.store';
-
-        // Try opening Android app
-        final isInstalled = await LaunchApp.isAppInstalled(
-          androidPackageName: 'com.vtenh.app.store',
-        );
-        final result = isInstalled ? 1 : 0;
-
-        if (result == 1) {
-          await LaunchApp.openApp(
-            androidPackageName: 'com.vtenh.app.store',
-            appStoreLink: playStoreLink,
+            androidPackageName: androidPackageName,
             openStore: false,
           );
-          return; // app opened successfully
+          return;
         }
-
-        // App not installed → open Play Store
-        await LaunchApp.openApp(
-          androidPackageName: 'com.vtenh.app.store',
-          appStoreLink: playStoreLink,
-          openStore: true,
-        );
-      }
-    } catch (e) {
-      log('Error launching VTENH app: $e');
-
-      // Fallback: open store if something fails
-      if (Platform.isIOS) {
-        await LaunchApp.openApp(
-          iosUrlScheme: 'vtenh://',
-          appStoreLink:
-              'itms-apps://apps.apple.com/us/app/vtenh-shop-easy/id1548621235',
-          openStore: true,
-        );
-      } else {
-        await LaunchApp.openApp(
-          androidPackageName: 'com.vtenh.app.store',
-          appStoreLink: 'market://details?id=com.vtenh.app.store',
-          openStore: true,
-        );
+      } catch (e) {
+        log('VTENH app not installed or failed to open by package: $e');
       }
     }
+
+    try {
+      final opened = await launchUrl(
+        appUri,
+        mode: LaunchMode.externalNonBrowserApplication,
+      );
+      if (opened) {
+        return;
+      }
+    } catch (e) {
+      log('VTinh app not installed or failed to open: $e');
+    }
+
+    try {
+      final openedUniversalLink = await launchUrl(
+        webUri,
+        mode: LaunchMode.externalNonBrowserApplication,
+      );
+      if (openedUniversalLink) {
+        return;
+      }
+    } catch (e) {
+      log('VTinh app failed to open by universal link: $e');
+    }
+
+    final ok = await canLaunchUrl(webUri);
+    if (ok) {
+      await launchUrl(webUri, mode: LaunchMode.inAppBrowserView);
+      return;
+    }
+
+    final context = Get.context;
+    if (context == null) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('can_not_open'.tr)));
   }
 }

@@ -3,10 +3,11 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import '../api/notifications.dart';
 import '../feature/menu/data/model/response/notification_response.dart';
+import '../feature/menu/presentation/binding/menu_binding.dart';
+import '../feature/menu/presentation/controller/menu_controller.dart' as menu;
 import '../utils/app_colors.dart';
 import '../utils/contains.dart';
 import 'logistic/goods_information_screen.dart';
-import 'menu_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -17,13 +18,16 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   late Future<NotificationResponse> futureData;
+  late final menu.MenuController _menuController;
 
   @override
   void initState() {
     super.initState();
+    MenuBinding().dependencies();
+    _menuController = Get.find<menu.MenuController>();
     futureData = Notifications().getNotification(context, 1, 100);
     Notifications().readAll(context);
-    MenuScreen.badge = 0;
+    _menuController.clearBadge();
   }
 
   @override
@@ -54,7 +58,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             onTap: () {
               Notifications().readAll(context);
               setState(() {
-                MenuScreen.badge = 0;
+                _menuController.clearBadge();
               });
             },
             child: Center(

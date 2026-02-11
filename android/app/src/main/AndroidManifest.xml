@@ -93,6 +93,7 @@
     <!-- * Url Launch Package Requirement -->
     <!-- * Provide required visibility configuration for API level 30 and above -->
     <queries>
+        <package android:name="com.vtenh.app.store" />
         <!-- * Query for ABA Mobile -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -102,6 +103,11 @@
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="wingbankuat" />
+        </intent>
+        <!-- * Query for VTENH -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="vtenh" />
         </intent>
         <!-- * Query for App Visibility -->
         <intent>

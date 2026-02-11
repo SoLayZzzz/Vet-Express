@@ -30,32 +30,40 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return Container(
       color: Colors.white,
       child: Scaffold(
-        appBar: AppBarVET().appBar(context, widget.type == 20 ? appBarTitleSurvey : appBarTitle),
+        appBar: AppBarVET().appBar(
+          context,
+          widget.type == 20 ? appBarTitleSurvey : appBarTitle,
+        ),
         body: SafeArea(
-            child: Stack(
-          children: [
-            InAppWebView(
-                initialUrlRequest: URLRequest(
-                  url: WebUri(url),
-                ),
+          child: Stack(
+            children: [
+              InAppWebView(
+                initialUrlRequest: URLRequest(url: WebUri(url)),
                 initialSettings: InAppWebViewSettings(
                   transparentBackground: true,
                 ),
-                onProgressChanged: (_, load) => setState(
-                      () => isLoading == 100 ? isLoading = true : isLoading = false,
+                onProgressChanged:
+                    (_, load) => setState(
+                      () =>
+                          isLoading == 100
+                              ? isLoading = true
+                              : isLoading = false,
                     ),
-                onReceivedServerTrustAuthRequest: (_, __) async => ServerTrustAuthResponse(
+                onReceivedServerTrustAuthRequest:
+                    (_, __) async => ServerTrustAuthResponse(
                       action: ServerTrustAuthResponseAction.PROCEED,
-                    )),
-            if (isLoading)
-              const Center(
-                child: CircularProgressIndicator(
-                  value: null,
-                  strokeWidth: 3.0,
-                ),
+                    ),
               ),
-          ],
-        )),
+              if (isLoading)
+                const Center(
+                  child: CircularProgressIndicator(
+                    value: null,
+                    strokeWidth: 3.0,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -68,6 +76,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
         break;
       case 2:
         url = 'https://www.vtenh.com/km/';
+        break;
+      case 5:
+        url = 'https://www.vtenh.com/';
         break;
       case 3:
         url = 'https://instagram.com/vireak_buntham?igshid=YmMyMTA2M2Y=';

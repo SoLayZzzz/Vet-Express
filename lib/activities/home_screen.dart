@@ -6,7 +6,7 @@ import 'logistic/location_screen.dart';
 import 'logistic/scan_qr_screen.dart';
 import 'logistic/self_service_screen.dart';
 import 'member_ship_screen.dart';
-import 'menu_screen.dart';
+import '../feature/menu/presentation/screen/menu_screen.dart';
 import 'ticket/package_history_screen.dart';
 import 'ticket/ticket_history_screen.dart';
 import 'tracking_screen.dart';
@@ -82,7 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             buildNavItem(
-              _selectedIndex == 0 ? 'assets/icons/home-active.png' : 'assets/icons/home.png',
+              _selectedIndex == 0
+                  ? 'assets/icons/home-active.png'
+                  : 'assets/icons/home.png',
               'home'.tr,
               0,
             ),
@@ -104,7 +106,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 backgroundColor: AppColors.secondaryColor,
                 elevation: 0,
-                child: Image.asset('assets/icons/icon_scan.png', width: 24, height: 24),
+                child: Image.asset(
+                  'assets/icons/icon_scan.png',
+                  width: 24,
+                  height: 24,
+                ),
               ),
             ),
             buildNavItem(
@@ -141,7 +147,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               label,
               style: TextStyle(
-                color: _selectedIndex == index ? AppColors.primaryColor : AppColors.greyColor,
+                color:
+                    _selectedIndex == index
+                        ? AppColors.primaryColor
+                        : AppColors.greyColor,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),

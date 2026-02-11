@@ -1,24 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'package:express_vet/activities/china/registration_screen.dart';
 import 'package:express_vet/activities/ev/ev_charging_screen.dart';
 import 'package:express_vet/activities/screen/vet_airway.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:express_vet/feature/menu/presentation/binding/menu_binding.dart';
+import 'package:express_vet/feature/menu/presentation/controller/menu_controller.dart'
+    as menu;
 import '../../utils/app_colors.dart';
-import '../../utils/app_pref.dart';
-import '../base/base_url.dart';
-import '../api/notifications.dart';
-import '../api/user.dart';
 import '../controller/china/china_controller.dart';
-import '../controller/connectivity_controller.dart';
-import '../feature/auth/presentation/controller/auth_controller.dart';
-import '../feature/menu/data/model/response/notification_response.dart';
 import '../utils/contains.dart';
 import 'china/warehouse_address_screen.dart';
 import 'components/profile_widget.dart';
@@ -33,109 +24,41 @@ import 'ticket/rental_car_list_screen.dart';
 import 'ticket/value_statics.dart';
 import '../routes/app_routes.dart';
 
-class MenuScreen extends StatefulWidget {
-  static int badge = 0;
-
+class MenuScreen extends GetView<menu.MenuController> {
   const MenuScreen({super.key});
 
-  @override
-  MenuScreenState createState() => MenuScreenState();
-}
-
-class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
-  String language = '';
-  static bool _initialized = false;
-  bool _isMounted = false;
-
-  /// GetX Controller
-  final ConnectivityController _connectivityController = Get.put(
-    ConnectivityController(),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    _isMounted = true;
-
-    /// Add lifecycle observer to detect app resume
-    WidgetsBinding.instance.addObserver(this);
-
-    if (!_initialized) {
-      getNotificationCount(context);
-      register();
-      final authController = Get.find<AuthController>();
-      () async {
-        try {
-          await authController.authUseCase.checkToken();
-        } catch (_) {}
-      }();
-      User().getUserMeStatic(context);
-      () async {
-        try {
-          await authController.authUseCase.checkVersion();
-        } catch (_) {}
-      }();
-      _initialized = true;
-    }
-
-    loadLanguage();
-
-    OneSignal.Notifications.addForegroundWillDisplayListener((e) {
-      log("Notification Foreground");
-    });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    /// When app resumes from background, recheck connection
-    if (state == AppLifecycleState.resumed) {
-      _connectivityController.recheckConnection();
-    }
-  }
-
-  @override
-  void dispose() {
-    _isMounted = false;
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  // Safe setState method that checks if widget is still mounted
-  void _safeSetState(VoidCallback fn) {
-    if (_isMounted) {
-      setState(fn);
-    }
+  void _ensureDependencies() {
+    MenuBinding().dependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: _buildAppBar(), body: _buildBody());
+    _ensureDependencies();
+    return Scaffold(appBar: _buildAppBar(context), body: _buildBody(context));
   }
 
   // ==================== APP BAR ====================
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0.2,
       centerTitle: false,
       backgroundColor: AppColors.primaryColor,
-      actions: _buildAppBarActions(),
-      leading: _buildAppBarLeading(),
+      actions: _buildAppBarActions(context),
+      leading: _buildAppBarLeading(context),
       leadingWidth: MediaQuery.of(context).size.width * 0.5,
     );
   }
 
-  List<Widget> _buildAppBarActions() {
+  List<Widget> _buildAppBarActions(BuildContext context) {
     return [
-      _buildLanguageButton(),
+      _buildLanguageButton(context),
       _buildContactButton(),
       _buildNotificationButton(),
       const SizedBox(width: 4),
     ];
   }
 
-  Widget _buildAppBarLeading() {
+  Widget _buildAppBarLeading(BuildContext context) {
     return Builder(
       builder: (BuildContext context) {
         return Row(
@@ -160,7 +83,7 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
   }
 
   // ==================== BODY ====================
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {},
       child: SingleChildScrollView(
@@ -169,7 +92,7 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const ProfileWidget(),
-            _buildMainServicesGrid(),
+            _buildMainServicesGrid(context),
             _buildOtherServicesSection(),
             _buildAccommodationSection(),
             _buildNewsSection(),
@@ -180,7 +103,7 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
   }
 
   // ==================== MAIN SERVICES GRID ====================
-  Widget _buildMainServicesGrid() {
+  Widget _buildMainServicesGrid(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: SizedBox(
@@ -231,7 +154,7 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
                 _buildMenuView(
                   'assets/images/ic_v_tenh.png',
                   'v_tinh'.tr,
-                  () => _launch('https://www.vtenh.com/km/'),
+                  () => controller.openVtenhApp(),
                 ),
                 // _buildMenuView(
                 //   'assets/images/ic_travel_package.png',
@@ -372,18 +295,21 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
   }
 
   // ==================== UI COMPONENTS ====================
-  Widget _buildLanguageButton() {
-    return IconButton(
-      onPressed: _showLanguageBottomSheet,
-      icon: Image.asset(
-        language == "km"
-            ? "assets/images/ic_cambodia.png"
-            : language == "en"
-            ? "assets/images/ic_english.png"
-            : "assets/images/ic_chinese.png",
-        height: 24,
-      ),
-    );
+  Widget _buildLanguageButton(BuildContext context) {
+    return Obx(() {
+      final language = controller.state.language;
+      return IconButton(
+        onPressed: () => _showLanguageBottomSheet(context),
+        icon: Image.asset(
+          language == "km"
+              ? "assets/images/ic_cambodia.png"
+              : language == "en"
+              ? "assets/images/ic_english.png"
+              : "assets/images/ic_chinese.png",
+          height: 24,
+        ),
+      );
+    });
   }
 
   Widget _buildContactButton() {
@@ -404,31 +330,34 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildNotificationButton() {
-    return MenuScreen.badge != 0
-        ? IconButton(
-          icon: Badge.count(
-            count: MenuScreen.badge.toInt(),
-            textColor: AppColors.whiteColor,
-            backgroundColor: AppColors.redColor,
-            textStyle: const TextStyle(fontSize: 14),
-            child: Image.asset(
+    return Obx(() {
+      final badge = controller.state.badge;
+      return badge != 0
+          ? IconButton(
+            icon: Badge.count(
+              count: badge.toInt(),
+              textColor: AppColors.whiteColor,
+              backgroundColor: AppColors.redColor,
+              textStyle: const TextStyle(fontSize: 14),
+              child: Image.asset(
+                "assets/images/ic_notification.png",
+                color: AppColors.whiteColor,
+                width: 24,
+                height: 24,
+              ),
+            ),
+            onPressed: _navigateToNotifications,
+          )
+          : IconButton(
+            icon: Image.asset(
               "assets/images/ic_notification.png",
               color: AppColors.whiteColor,
               width: 24,
               height: 24,
             ),
-          ),
-          onPressed: _navigateToNotifications,
-        )
-        : IconButton(
-          icon: Image.asset(
-            "assets/images/ic_notification.png",
-            color: AppColors.whiteColor,
-            width: 24,
-            height: 24,
-          ),
-          onPressed: _navigateToNotifications,
-        );
+            onPressed: _navigateToNotifications,
+          );
+    });
   }
 
   Widget _buildMenuView(String path, String title, VoidCallback onTap) {
@@ -446,13 +375,13 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
           children: [
             Image(
               image: AssetImage(path),
-              height: MediaQuery.of(context).size.width / 6.5,
+              height: MediaQuery.of(Get.context!).size.width / 6.5,
             ),
             Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width / 33,
+                fontSize: MediaQuery.of(Get.context!).size.width / 33,
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w600,
               ),
@@ -484,7 +413,7 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width / 32,
+                    fontSize: MediaQuery.of(Get.context!).size.width / 32,
                     color: AppColors.textColor,
                     fontWeight: FontWeight.w600,
                   ),
@@ -619,12 +548,12 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
       duration: const Duration(milliseconds: Constrains.duration),
     );
     if (result == 'set') {
-      _safeSetState(() {});
+      controller.getNotificationCount();
     }
   }
 
   // ==================== LANGUAGE METHODS ====================
-  void _showLanguageBottomSheet() {
+  void _showLanguageBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -691,7 +620,7 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(5.0),
             child: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
               },
               icon: const Icon(Icons.close, color: Colors.grey, size: 28),
             ),
@@ -709,7 +638,7 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
         children: [
           Container(
             height: 5,
-            width: MediaQuery.sizeOf(context).width * 0.25,
+            width: MediaQuery.sizeOf(Get.context!).width * 0.25,
             decoration: BoxDecoration(
               color: Colors.grey,
               borderRadius: BorderRadius.circular(10),
@@ -736,8 +665,8 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
   ) {
     return InkWell(
       onTap: () async {
-        Navigator.pop(context);
-        await _updateLanguage(langCode);
+        Get.back();
+        await controller.updateLanguage(langCode);
       },
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -750,55 +679,19 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
               style: const TextStyle(fontSize: 16, color: AppColors.textColor),
             ),
             const Spacer(),
-            if (language == langCode)
-              Image.asset(
+            Obx(() {
+              final language = controller.state.language;
+              if (language != langCode) return const SizedBox.shrink();
+              return Image.asset(
                 "assets/images/ic_check_mark.png",
                 width: 30,
                 height: 30,
-              ),
+              );
+            }),
           ],
         ),
       ),
     );
-  }
-
-  // ==================== UTILITY METHODS ====================
-  Future<void> _updateLanguage(String langCode) async {
-    switch (langCode) {
-      case 'km':
-        Get.updateLocale(const Locale('km', 'KH'));
-        await AppPref.setLanguage('km');
-        break;
-      case 'en':
-        Get.updateLocale(const Locale('en', 'US'));
-        await AppPref.setLanguage('en');
-        break;
-      case 'zh':
-        Get.updateLocale(const Locale('zh', 'CN'));
-        await AppPref.setLanguage('zh');
-        break;
-    }
-    _safeSetState(() {
-      language = langCode;
-    });
-  }
-
-  void loadLanguage() {
-    final languagePref = AppPref.getLanguage();
-
-    if (languagePref == Constrains.ENGLISH) {
-      _safeSetState(() {
-        language = 'en';
-      });
-    } else if (languagePref == Constrains.CHINESE) {
-      _safeSetState(() {
-        language = 'zh';
-      });
-    } else {
-      _safeSetState(() {
-        language = 'km';
-      });
-    }
   }
 
   Future<void> _launch(url) async {
@@ -809,63 +702,6 @@ class MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
       ScaffoldMessenger.of(
         Get.context!,
       ).showSnackBar(SnackBar(content: Text('can_not_open'.tr)));
-    }
-  }
-
-  Future<void> register() async {
-    String? deviceId = AppPref.getDeviceId();
-    String deviceType = Platform.isAndroid ? 'Android' : 'IOS';
-
-    log(
-      'OneSignal.User.pushSubscription.id ${OneSignal.User.pushSubscription.id}',
-    );
-
-    if ((OneSignal.User.pushSubscription.id).toString().isNotEmpty) {
-      log('Is Not Empty');
-      Notifications().notificationRegister(
-        context,
-        deviceType,
-        deviceId,
-        OneSignal.User.pushSubscription.id,
-      );
-    } else {
-      Future.delayed(const Duration(seconds: Constrains.timeout15), () {
-        log('Is Empty');
-        register();
-      });
-    }
-  }
-
-  Future<void> getNotificationCount(BuildContext context) async {
-    try {
-      final response = await http
-          .post(
-            Uri.parse('${BaseUrl.BASE_URL}notification/count-unread'),
-            headers: <String, String>{
-              "Content-type": "application/json",
-              'Authorization': AppPref.getToken() ?? '',
-            },
-          )
-          .timeout(const Duration(seconds: Constrains.timeout30));
-
-      if (response.statusCode == 200) {
-        log('This is response getNotificationCount ==>>${response.body}');
-        var data = NotificationResponse.fromJson(jsonDecode(response.body));
-
-        if (data.header?.statusCode == 200 && data.header?.result == true) {
-          _safeSetState(() {
-            MenuScreen.badge = int.parse((data.body?.message).toString());
-          });
-        }
-      } else {
-        log('Failed to load notification count: ${response.statusCode}');
-      }
-    } on TimeoutException catch (e) {
-      log('Timeout loading notification count: $e');
-    } on SocketException catch (e) {
-      log('Network error loading notification count: $e');
-    } on Exception catch (e) {
-      log('Error loading notification count: $e');
     }
   }
 }
