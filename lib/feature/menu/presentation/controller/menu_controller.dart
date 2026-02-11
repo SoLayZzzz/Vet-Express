@@ -1,28 +1,29 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
-import '../../../api/notifications.dart';
-import '../../../api/user.dart';
-import '../../../base/base_url.dart';
-import '../../../base/state_controller.dart';
-import '../../../controller/connectivity_controller.dart';
-import '../../../feature/auth/presentation/controller/auth_controller.dart';
-import '../../../models/notification/notification_response.dart';
-import '../../../utils/app_pref.dart';
-import '../../../utils/contains.dart';
-import '../presentation/uiState/menu_ui_state.dart';
+import '../../../../api/notifications.dart';
+import '../../../../api/user.dart';
+import '../../../../base/state_controller.dart';
+import '../../../../controller/connectivity_controller.dart';
+import '../../../auth/presentation/controller/auth_controller.dart';
+import '../../../../utils/app_pref.dart';
+import '../../../../utils/contains.dart';
+import '../../domain/uscase/menu_usecase.dart';
+import '../uiState/menu_ui_state.dart';
 
 class MenuController extends StateController<MenuUiState>
     with WidgetsBindingObserver {
   static bool _initialized = false;
+
+  final MenuUseCase menuUseCase;
+
+  MenuController(this.menuUseCase);
 
   late final ConnectivityController connectivityController =
       Get.isRegistered<ConnectivityController>()
@@ -124,27 +125,12 @@ class MenuController extends StateController<MenuUiState>
 
   Future<void> getNotificationCount() async {
     try {
-      final response = await http
-          .post(
-            Uri.parse('${BaseUrl.BASE_URL}notification/count-unread'),
-            headers: <String, String>{
-              'Content-type': 'application/json',
-              'Authorization': AppPref.getToken() ?? '',
-            },
-          )
-          .timeout(const Duration(seconds: Constrains.timeout30));
+      final data = await menuUseCase.fetchNotificationCount();
 
-      if (response.statusCode == 200) {
-        log('This is response getNotificationCount ==>>${response.body}');
-        final data = NotificationResponse.fromJson(jsonDecode(response.body));
-
-        if (data.header?.statusCode == 200 && data.header?.result == true) {
-          uiState.value = state.copyWith(
-            badge: int.parse((data.body?.message).toString()),
-          );
-        }
-      } else {
-        log('Failed to load notification count: ${response.statusCode}');
+      if (data.header?.statusCode == 200 && data.header?.result == true) {
+        uiState.value = state.copyWith(
+          badge: int.tryParse((data.body?.message).toString()) ?? 0,
+        );
       }
     } on TimeoutException catch (e) {
       log('Timeout loading notification count: $e');

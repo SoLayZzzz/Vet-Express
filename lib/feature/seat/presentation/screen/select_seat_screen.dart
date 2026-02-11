@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
-import '../../../../models/seat/seat_data.dart';
+import '../controller/seat_data.dart';
 import '../../../../utils/app_colors.dart';
 
 class SelectSeatScreen extends StatelessWidget {

@@ -1,6 +1,4 @@
-
-
-import '../header.dart';
+import '../../../../../models/header.dart';
 
 class SeatResponse {
   Header? header;
@@ -9,18 +7,17 @@ class SeatResponse {
   SeatResponse({header, body});
 
   SeatResponse.fromJson(Map<String, dynamic> json) {
-    header =
-    json['header'] != null ?  Header.fromJson(json['header']) : null;
+    header = json['header'] != null ? Header.fromJson(json['header']) : null;
     if (json['body'] != null) {
       body = <Body>[];
       json['body'].forEach((v) {
-        body!.add( Body.fromJson(v));
+        body!.add(Body.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (header != null) {
       data['header'] = header!.toJson();
     }
@@ -43,7 +40,7 @@ class Body {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['layout'] = layout;
     data['seatType'] = seatType;
     return data;

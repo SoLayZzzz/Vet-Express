@@ -1,26 +1,23 @@
+import '../../../../../models/header.dart';
 
-
-import '../header.dart';
-
-class SeatUnavailable {
+class SeatUnavailableResponse {
   Header? header;
   List<Body>? body;
 
-  SeatUnavailable({header, body});
+  SeatUnavailableResponse({header, body});
 
-  SeatUnavailable.fromJson(Map<String, dynamic> json) {
-    header =
-    json['header'] != null ?  Header.fromJson(json['header']) : null;
+  SeatUnavailableResponse.fromJson(Map<String, dynamic> json) {
+    header = json['header'] != null ? Header.fromJson(json['header']) : null;
     if (json['body'] != null) {
       body = <Body>[];
       json['body'].forEach((v) {
-        body!.add( Body.fromJson(v));
+        body!.add(Body.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (header != null) {
       data['header'] = header!.toJson();
     }
@@ -45,7 +42,7 @@ class Body {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['seatNumber'] = seatNumber;
     data['gender'] = gender;
     data['status'] = status;

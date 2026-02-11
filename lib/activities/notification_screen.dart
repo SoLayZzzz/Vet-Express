@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import '../api/notifications.dart';
-import '../models/notification/notification_response.dart';
+import '../feature/menu/data/model/response/notification_response.dart';
 import '../utils/app_colors.dart';
 import '../utils/contains.dart';
 import 'logistic/goods_information_screen.dart';
@@ -39,7 +39,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
         elevation: 0.2,
         backgroundColor: AppColors.primaryColor,
         leading: IconButton(
-          icon: const Icon(Ionicons.chevron_back_outline, color: AppColors.whiteColor),
+          icon: const Icon(
+            Ionicons.chevron_back_outline,
+            color: AppColors.whiteColor,
+          ),
           onPressed: () {
             Navigator.of(context).pop('set');
           },
@@ -59,7 +62,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   'read_all'.tr,
-                  style: const TextStyle(color: AppColors.whiteColor, fontSize: 14),
+                  style: const TextStyle(
+                    color: AppColors.whiteColor,
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ),
@@ -89,25 +95,40 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   itemBuilder: (context, index) {
                     final notification = snapshot.data!.body?.data?[index];
                     return Card(
-                      color: notification?.isRead == 1 ? Colors.white : Colors.grey[200],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      color:
+                          notification?.isRead == 1
+                              ? Colors.white
+                              : Colors.grey[200],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       child: InkWell(
                         onTap: () async {
                           if (notification.type == 'TRACK' &&
                               notification.goodsTransferId != null &&
                               notification.goodsTransferId != 0) {
-
-                            Notifications().readNotification(context, notification.id.toString());
+                            Notifications().readNotification(
+                              context,
+                              notification.id.toString(),
+                            );
 
                             var result = await Get.to(
-                              () => GoodsInformationScreen(id: notification.goodsTransferId!),
+                              () => GoodsInformationScreen(
+                                id: notification.goodsTransferId!,
+                              ),
                               transition: Transition.rightToLeft,
-                              duration: const Duration(milliseconds: Constrains.duration),
+                              duration: const Duration(
+                                milliseconds: Constrains.duration,
+                              ),
                             );
 
                             if (result == null) {
                               setState(() {
-                                futureData = Notifications().getNotification(context, 1, 100);
+                                futureData = Notifications().getNotification(
+                                  context,
+                                  1,
+                                  100,
+                                );
                               });
                             }
                           }
@@ -120,7 +141,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 15),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '${notification!.title}',
@@ -130,7 +152,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 5,
+                                        ),
                                         child: Text('${notification.message}'),
                                       ),
                                     ],
@@ -149,7 +173,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/ic_no_notification.png', height: 84),
+                      Image.asset(
+                        'assets/images/ic_no_notification.png',
+                        height: 84,
+                      ),
                       Text('no_notification'.tr),
                     ],
                   ),

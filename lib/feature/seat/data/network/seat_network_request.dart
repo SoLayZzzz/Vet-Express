@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../base/endpoint.dart';
 import '../../../../base/network_data_source.dart';
-import '../../../../models/seat/seat_unavailable.dart';
+import '../model/response/seat_unavailable_response.dart';
 import '../../../../utils/alert_dialog.dart';
 import '../../../../utils/contains.dart';
 import '../../../../utils/loading.dart';
@@ -41,7 +41,7 @@ class SeatNetworkRequest {
     }
   }
 
-  Future<SeatUnavailable> getUnavailable({
+  Future<SeatUnavailableResponse> getUnavailable({
     required dynamic context,
     required String date,
     required String journeyId,
@@ -54,7 +54,7 @@ class SeatNetworkRequest {
         attachAuth: true,
       );
 
-      return SeatUnavailable.fromJson(json);
+      return SeatUnavailableResponse.fromJson(json);
     } on TimeoutException {
       Loading().loadingClose(context);
       alertDialogOneButton(

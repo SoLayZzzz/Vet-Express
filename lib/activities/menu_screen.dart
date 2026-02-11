@@ -18,7 +18,7 @@ import '../api/user.dart';
 import '../controller/china/china_controller.dart';
 import '../controller/connectivity_controller.dart';
 import '../feature/auth/presentation/controller/auth_controller.dart';
-import '../models/notification/notification_response.dart';
+import '../feature/menu/data/model/response/notification_response.dart';
 import '../utils/contains.dart';
 import 'china/warehouse_address_screen.dart';
 import 'components/profile_widget.dart';

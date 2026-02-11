@@ -1,5 +1,5 @@
 import '../../domain/repository/seat_repository.dart';
-import '../../../../models/seat/seat_unavailable.dart';
+import '../model/response/seat_unavailable_response.dart';
 import '../network/seat_network_request.dart';
 
 class SeatRepositoryImpl implements SeatRepository {
@@ -21,7 +21,7 @@ class SeatRepositoryImpl implements SeatRepository {
   }
 
   @override
-  Future<SeatUnavailable> getUnavailable({
+  Future<SeatUnavailableResponse> getUnavailable({
     required context,
     required String date,
     required String journeyId,

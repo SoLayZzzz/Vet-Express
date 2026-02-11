@@ -1,4 +1,4 @@
-import '../../../../models/seat/seat_unavailable.dart';
+import '../../data/model/response/seat_unavailable_response.dart';
 
 abstract class SeatRepository {
   Future<Map<dynamic, dynamic>> getSeatLayout({
@@ -7,7 +7,7 @@ abstract class SeatRepository {
     required String journeyId,
   });
 
-  Future<SeatUnavailable> getUnavailable({
+  Future<SeatUnavailableResponse> getUnavailable({
     required dynamic context,
     required String date,
     required String journeyId,

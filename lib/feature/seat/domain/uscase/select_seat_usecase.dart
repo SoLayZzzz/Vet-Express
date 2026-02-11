@@ -1,4 +1,4 @@
-import '../../../../models/seat/seat_unavailable.dart';
+import '../../data/model/response/seat_unavailable_response.dart';
 import '../repository/seat_repository.dart';
 
 class SelectSeatUseCase {
@@ -18,7 +18,7 @@ class SelectSeatUseCase {
     );
   }
 
-  Future<SeatUnavailable> fetchUnavailable({
+  Future<SeatUnavailableResponse> fetchUnavailable({
     required dynamic context,
     required String date,
     required String journeyId,
