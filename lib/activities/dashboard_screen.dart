@@ -11,16 +11,16 @@ import 'ticket/package_history_screen.dart';
 import 'ticket/ticket_history_screen.dart';
 import 'tracking_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class DashboardScreen extends StatefulWidget {
   final int from;
 
-  const HomeScreen({super.key, required this.from});
+  const DashboardScreen({super.key, required this.from});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
   bool _navigated = false;
 
@@ -74,60 +74,61 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.only(bottom: 12),
-        color: AppColors.whiteColor,
-        height: 70,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            buildNavItem(
-              _selectedIndex == 0
-                  ? 'assets/icons/home-active.png'
-                  : 'assets/icons/home.png',
-              'home'.tr,
-              0,
-            ),
-            buildNavItem(
-              _selectedIndex == 1
-                  ? 'assets/icons/tracking-active.png'
-                  : "assets/icons/tracking.png",
-              'history'.tr,
-              1,
-            ),
-            SizedBox(
-              height: 40,
-              width: MediaQuery.of(context).size.width * 0.2,
-              child: FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedIndex = 2;
-                  });
-                },
-                backgroundColor: AppColors.secondaryColor,
-                elevation: 0,
-                child: Image.asset(
-                  'assets/icons/icon_scan.png',
-                  width: 24,
-                  height: 24,
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          color: AppColors.whiteColor,
+          height: 70,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              buildNavItem(
+                _selectedIndex == 0
+                    ? 'assets/icons/home-active.png'
+                    : 'assets/icons/home.png',
+                'home'.tr,
+                0,
+              ),
+              buildNavItem(
+                _selectedIndex == 1
+                    ? 'assets/icons/tracking-active.png'
+                    : "assets/icons/tracking.png",
+                'history'.tr,
+                1,
+              ),
+              SizedBox(
+                height: 40,
+                width: MediaQuery.of(context).size.width * 0.2,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = 2;
+                    });
+                  },
+                  backgroundColor: AppColors.secondaryColor,
+                  elevation: 0,
+                  child: Image.asset(
+                    'assets/icons/icon_scan.png',
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
               ),
-            ),
-            buildNavItem(
-              _selectedIndex == 3
-                  ? 'assets/icons/membership-active.png'
-                  : 'assets/icons/membership.png',
-              'membership_card'.tr,
-              3,
-            ),
-            buildNavItem(
-              _selectedIndex == 4
-                  ? 'assets/icons/location-active.png'
-                  : 'assets/icons/location.png',
-              'location'.tr,
-              4,
-            ),
-          ],
+              buildNavItem(
+                _selectedIndex == 3
+                    ? 'assets/icons/membership-active.png'
+                    : 'assets/icons/membership.png',
+                'membership_card'.tr,
+                3,
+              ),
+              buildNavItem(
+                _selectedIndex == 4
+                    ? 'assets/icons/location-active.png'
+                    : 'assets/icons/location.png',
+                'location'.tr,
+                4,
+              ),
+            ],
+          ),
         ),
       ),
     );

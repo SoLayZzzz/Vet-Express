@@ -8,21 +8,21 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:express_vet/feature/menu/presentation/binding/menu_binding.dart';
 import 'package:express_vet/feature/menu/presentation/controller/menu_controller.dart'
     as menu;
-import '../../utils/app_colors.dart';
-import '../controller/china/china_controller.dart';
-import '../utils/contains.dart';
-import 'china/warehouse_address_screen.dart';
-import 'components/profile_widget.dart';
-import 'screen/resort_screen.dart';
-import 'components/slide_widget.dart';
-import 'screen/contact_us_screen.dart';
-import 'logistic/booking_delivery_screen.dart';
-import 'logistic/self_service_screen.dart';
-import 'notification_screen.dart';
-import 'ticket/package_list_screen.dart';
-import 'ticket/rental_car_list_screen.dart';
-import 'ticket/value_statics.dart';
-import '../routes/app_routes.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../controller/china/china_controller.dart';
+import '../../../../utils/contains.dart';
+import '../../../../activities/china/warehouse_address_screen.dart';
+import '../../../../activities/components/profile_widget.dart';
+import '../../../../activities/screen/resort_screen.dart';
+import '../../../../activities/components/slide_widget.dart';
+import '../../../../activities/screen/contact_us_screen.dart';
+import '../../../../activities/logistic/booking_delivery_screen.dart';
+import '../../../../activities/logistic/self_service_screen.dart';
+import '../../../../activities/notification_screen.dart';
+import '../../../../activities/ticket/package_list_screen.dart';
+import '../../../../activities/ticket/rental_car_list_screen.dart';
+import '../../../../activities/ticket/value_statics.dart';
+import '../../../../routes/app_routes.dart';
 
 class MenuScreen extends GetView<menu.MenuController> {
   const MenuScreen({super.key});

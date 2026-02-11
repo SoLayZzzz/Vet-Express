@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../activities/home_screen.dart';
+import '../activities/dashboard_screen.dart';
 import '../feature/auth/presentation/screen/new_password_screen.dart';
 
 import '../activities/ticket/value_statics.dart';
@@ -156,7 +156,7 @@ class User {
 
             await AppPref.setLogin().then((value) {
               Get.offAll(
-                () => const HomeScreen(from: 0),
+                () => const DashboardScreen(from: 0),
                 transition: Transition.rightToLeft,
                 duration: const Duration(milliseconds: Constrains.duration),
               );

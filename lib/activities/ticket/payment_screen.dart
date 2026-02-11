@@ -25,7 +25,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_pref.dart';
 import '../../utils/contains.dart';
 import '../../utils/loading.dart';
-import '../home_screen.dart';
+import '../dashboard_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String id;
@@ -1279,7 +1279,9 @@ class _PaymentScreenState extends State<PaymentScreen>
         ValueStatic().clearDataTicket();
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen(from: 0)),
+          MaterialPageRoute(
+            builder: (context) => const DashboardScreen(from: 0),
+          ),
           (Route<dynamic> route) => false,
         );
       },
@@ -1287,7 +1289,9 @@ class _PaymentScreenState extends State<PaymentScreen>
         ValueStatic().clearDataTicket();
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen(from: 2)),
+          MaterialPageRoute(
+            builder: (context) => const DashboardScreen(from: 2),
+          ),
           (Route<dynamic> route) => false,
         );
       },

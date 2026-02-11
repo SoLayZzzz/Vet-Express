@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import '../activities/home_screen.dart';
+import '../activities/dashboard_screen.dart';
 import '../controller/user_controller.dart';
 import '../feature/auth/data/model/response/check_token_response.dart';
 import '../feature/auth/data/model/response/check_version_response.dart';
@@ -210,7 +210,7 @@ class Auth {
 
           await AppPref.setLogin().then((value) {
             Get.offAll(
-              () => const HomeScreen(from: 0),
+              () => const DashboardScreen(from: 0),
               transition: Transition.rightToLeft,
               duration: const Duration(milliseconds: Constrains.duration),
             );

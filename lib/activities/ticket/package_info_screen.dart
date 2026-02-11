@@ -29,7 +29,7 @@ import '../../utils/alert_dialog.dart';
 import '../../utils/app_pref.dart';
 import '../../utils/check_input.dart';
 import '../../utils/contains.dart';
-import '../home_screen.dart';
+import '../dashboard_screen.dart';
 
 class PackageInfoScreen extends StatefulWidget {
   final int? travelPackageId;
@@ -1389,7 +1389,9 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         ValueStatic().clearDataTicket();
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen(from: 0)),
+          MaterialPageRoute(
+            builder: (context) => const DashboardScreen(from: 0),
+          ),
           (Route<dynamic> route) => false,
         );
       },
@@ -1397,7 +1399,9 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         ValueStatic().clearDataTicket();
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen(from: 5)),
+          MaterialPageRoute(
+            builder: (context) => const DashboardScreen(from: 5),
+          ),
           (Route<dynamic> route) => false,
         );
       },

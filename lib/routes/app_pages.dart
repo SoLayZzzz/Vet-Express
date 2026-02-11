@@ -1,6 +1,6 @@
 import 'package:express_vet/feature/passenger/presentation/screen/passenger_detail_screen.dart';
 import 'package:get/get.dart';
-import '../activities/home_screen.dart';
+import '../activities/dashboard_screen.dart';
 import '../activities/splash_screen.dart';
 import '../feature/auth/presentation/binding/auth_binding.dart';
 import '../feature/auth/presentation/screen/sign_in_screen.dart';
@@ -23,7 +23,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.home,
-      page: () => const HomeScreen(from: 0),
+      page: () => const DashboardScreen(from: 0),
       binding: AuthBinding(),
     ),
     GetPage(

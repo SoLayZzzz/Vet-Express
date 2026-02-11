@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
-import '../activities/home_screen.dart';
+import '../activities/dashboard_screen.dart';
 import '../activities/logistic/self_service_qr_screen.dart';
 import '../models/goods_transfer/review_response.dart';
 import '../models/request_transfer/add_goods.dart';
@@ -138,7 +138,9 @@ class RequestTransfer {
           );
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen(from: 0)),
+            MaterialPageRoute(
+              builder: (context) => const DashboardScreen(from: 0),
+            ),
             (Route<dynamic> route) => false,
           );
         } else {

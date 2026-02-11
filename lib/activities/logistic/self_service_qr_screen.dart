@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:express_vet/activities/home_screen.dart';
+import 'package:express_vet/activities/dashboard_screen.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 
 import '../../utils/app_bar.dart';
@@ -41,8 +41,11 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                             ValueStatic().clearSelfService();
                             Navigator.pushAndRemoveUntil(
                               context,
-                              MaterialPageRoute(builder: (context) => const HomeScreen(from: 0)),
-                                  (Route<dynamic> route) => false,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const DashboardScreen(from: 0),
+                              ),
+                              (Route<dynamic> route) => false,
                             );
                           },
                           child: Container(
@@ -57,7 +60,10 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   'home'.tr,
-                                  style: const TextStyle(fontSize: 13, color: Colors.white),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -69,8 +75,11 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                             ValueStatic().clearSelfService();
                             Navigator.pushAndRemoveUntil(
                               context,
-                              MaterialPageRoute(builder: (context) => const HomeScreen(from: 1)),
-                                  (Route<dynamic> route) => false,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const DashboardScreen(from: 1),
+                              ),
+                              (Route<dynamic> route) => false,
                             );
                           },
                           child: Container(
@@ -85,7 +94,10 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   'book_more'.tr,
-                                  style: const TextStyle(fontSize: 13, color: Colors.white),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -100,7 +112,12 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
             SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 10,
+                    bottom: 20,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -109,7 +126,10 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                       Text(
                         'plz_show'.tr,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16, color: Colors.black),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
                       const SizedBox(height: 50),
                       SizedBox(
@@ -124,13 +144,19 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                       const SizedBox(height: 30),
                       Text(
                         widget.qrCode,
-                        style: const TextStyle(fontSize: 16, color: Colors.black),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
                       const SizedBox(height: 50),
                       Text(
                         'plz_view'.tr,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16, color: Colors.black),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
                     ],
                   ),

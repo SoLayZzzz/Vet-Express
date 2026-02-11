@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../activities/home_screen.dart';
+import '../activities/dashboard_screen.dart';
 import '../activities/ticket/value_statics.dart';
 import 'app_colors.dart';
 import 'button.dart';
@@ -26,7 +26,9 @@ alertDialogOneButton({
             child: Material(
               color: Colors.transparent,
               child: Column(
-                mainAxisSize: MainAxisSize.min, // Ensure the column takes up minimum space
+                mainAxisSize:
+                    MainAxisSize
+                        .min, // Ensure the column takes up minimum space
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),
@@ -45,7 +47,10 @@ alertDialogOneButton({
                     child: Text(
                       description,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textColor,
+                      ),
                     ),
                   ),
                   InkWell(
@@ -104,7 +109,9 @@ alertDialogTravelPackage({
             child: Material(
               color: Colors.transparent,
               child: Column(
-                mainAxisSize: MainAxisSize.min, // Ensure the column takes up minimum space
+                mainAxisSize:
+                    MainAxisSize
+                        .min, // Ensure the column takes up minimum space
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),
@@ -123,7 +130,10 @@ alertDialogTravelPackage({
                     child: Text(
                       description,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textColor,
+                      ),
                     ),
                   ),
                   InkWell(
@@ -184,7 +194,9 @@ alertDialogTwoButton({
             child: Material(
               color: Colors.transparent,
               child: Column(
-                mainAxisSize: MainAxisSize.min, // Ensure the column takes up minimum space
+                mainAxisSize:
+                    MainAxisSize
+                        .min, // Ensure the column takes up minimum space
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),
@@ -203,7 +215,10 @@ alertDialogTwoButton({
                     child: Text(
                       description,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textColor,
+                      ),
                     ),
                   ),
                   Row(
@@ -309,7 +324,10 @@ alertDialogRental({context, required List<Map<String, String>> details}) {
                       Text(
                         'thz_info'.tr,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textColor,
+                        ),
                       ),
                       const SizedBox(height: 15),
                       Image.asset('assets/images/dots_line_rental.png'),
@@ -356,7 +374,10 @@ alertDialogRental({context, required List<Map<String, String>> details}) {
                         onPressed: () {
                           Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen(from: 0)),
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => const DashboardScreen(from: 0),
+                            ),
                             (Route<dynamic> route) => false,
                           );
                         },

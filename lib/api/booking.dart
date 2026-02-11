@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../activities/home_screen.dart';
+import '../activities/dashboard_screen.dart';
 import '../activities/ticket/payment_screen.dart';
 import '../activities/ticket/value_statics.dart';
 import '../models/booking/cancel_booking_response.dart';
@@ -133,7 +133,7 @@ class Booking {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HomeScreen(from: 0),
+                    builder: (context) => const DashboardScreen(from: 0),
                   ),
                   (Route<dynamic> route) => false,
                 );
@@ -143,7 +143,7 @@ class Booking {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HomeScreen(from: 2),
+                    builder: (context) => const DashboardScreen(from: 2),
                   ),
                   (Route<dynamic> route) => false,
                 );
@@ -224,7 +224,7 @@ class Booking {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HomeScreen(from: 0),
+                        builder: (context) => const DashboardScreen(from: 0),
                       ),
                       (Route<dynamic> route) => false,
                     );
@@ -281,7 +281,7 @@ class Booking {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => const HomeScreen(from: 0),
+                builder: (context) => const DashboardScreen(from: 0),
               ),
               (Route<dynamic> route) => false,
             );
