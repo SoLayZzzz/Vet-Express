@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -28,13 +29,10 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-              // ✅ OPTIMIZED: Show cached data immediately, even while loading updates
               buildImage(context, slideController),
 
-              /// menu ticket
               selectionView(context, formController),
 
-              /// button search
               searchButton(context, formController),
             ],
           ),
@@ -161,7 +159,7 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                 child: Row(
                   children: [
                     Image.asset(
-                      'assets/icons/icon_location.png',
+                      AssetImages.location_destination,
                       width: 22,
                       color:
                           ValueStatic.ticketType == '3'
@@ -221,7 +219,7 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                 child: Row(
                   children: [
                     Image.asset(
-                      'assets/icons/icon_location.png',
+                      AssetImages.location_destination,
                       width: 22,
                       color:
                           ValueStatic.ticketType == '3'
@@ -313,7 +311,7 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                     child: Row(
                       children: [
                         Image.asset(
-                          'assets/images/img_calendar.png',
+                          AssetImages.calendar,
                           width: 22,
                           color:
                               ValueStatic.ticketType == '3'
@@ -395,7 +393,7 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                     child: Row(
                       children: [
                         Image.asset(
-                          'assets/images/img_calendar.png',
+                          AssetImages.calendar,
                           width: 22,
                           color:
                               ValueStatic.ticketType == '3'
@@ -447,7 +445,7 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
       height: MediaQuery.of(context).size.height * 0.2,
       width: double.infinity,
       child: Image(
-        image: const AssetImage('assets/images/place_holder.png'),
+        image: AssetImage(AssetImages.place_holder),
         height: MediaQuery.of(context).size.height * 0.2,
         width: double.infinity,
         fit: BoxFit.cover,

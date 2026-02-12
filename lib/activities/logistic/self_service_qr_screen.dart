@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:express_vet/activities/dashboard_screen.dart';
+import 'package:express_vet/feature/dash_board/presentation/screen/dashboard_screen.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 
 import '../../utils/app_bar.dart';

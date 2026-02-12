@@ -40,9 +40,9 @@ class TicketMenuBinding implements Bindings {
       Get.lazyPut(() => TicketMenuFormController(), fenix: true);
     }
 
-    if (!Get.isRegistered<SelectTicketController>()) {
+    if (!Get.isRegistered<SelectDestinationController>()) {
       Get.lazyPut(
-        () => SelectTicketController(Get.find<TicketMenuController>()),
+        () => SelectDestinationController(Get.find<TicketMenuController>()),
         fenix: true,
       );
     }

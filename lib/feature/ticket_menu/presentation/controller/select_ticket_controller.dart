@@ -4,10 +4,10 @@ import '../../../../activities/ticket/value_statics.dart';
 import '../../data/model/response/destination_response.dart';
 import 'ticket_menu_controller.dart';
 
-class SelectTicketController extends GetxController {
+class SelectDestinationController extends GetxController {
   final TicketMenuController ticketMenuController;
 
-  SelectTicketController(this.ticketMenuController);
+  SelectDestinationController(this.ticketMenuController);
 
   final RxString searchText = ''.obs;
   final RxBool isLoading = false.obs;

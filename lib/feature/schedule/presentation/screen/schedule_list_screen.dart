@@ -1,17 +1,16 @@
 import 'dart:developer';
 
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
-import 'package:express_vet/activities/ticket/review_rate_screen.dart';
-import 'package:express_vet/activities/ticket/ticket_schedule_car_detail_screen.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import '../../data/model/response/schedule_response.dart';
 import '../../../../utils/alert_dialog_schedule.dart';
 import '../../../../utils/app_colors.dart';
-import '../../../../utils/contains.dart';
 import '../controller/schedule_list_controller.dart';
 
 class ScheduleListScreen extends StatelessWidget {
@@ -50,7 +49,7 @@ class ScheduleListScreen extends StatelessWidget {
           IconButton(
             onPressed: () => controller.pickDate(context),
             icon: Image.asset(
-              'assets/images/ic_date_select.png',
+              AssetImages.date_select,
               width: 24,
               color: AppColors.whiteColor,
             ),
@@ -106,7 +105,7 @@ class ScheduleListScreen extends StatelessWidget {
                             child: Row(
                               children: [
                                 Image.asset(
-                                  'assets/images/ic_location.png',
+                                  AssetImages.location_schedule,
                                   width: 24,
                                 ),
                                 const SizedBox(width: 10),
@@ -202,20 +201,22 @@ class ScheduleListScreen extends StatelessWidget {
                                                                   .body?[index]
                                                                   .journeyType ==
                                                               1
-                                                          ? 'assets/images/vet_logo.png'
+                                                          ? AssetImages.vet_logo
                                                           : scheduleData
                                                                   .data!
                                                                   .body?[index]
                                                                   .journeyType ==
                                                               2
-                                                          ? 'assets/images/ic_buva_sea.png'
+                                                          ? AssetImages.buva_sea
                                                           : scheduleData
                                                                   .data!
                                                                   .body?[index]
                                                                   .journeyType ==
                                                               3
-                                                          ? 'assets/images/vet_air_bus.png'
-                                                          : 'assets/images/ic_buva_sea.png',
+                                                          ? AssetImages
+                                                              .vet_air_bus_schedule
+                                                          : AssetImages
+                                                              .buva_sea,
                                                       height: 30,
                                                     ),
                                                     const SizedBox(width: 10),
@@ -390,7 +391,7 @@ class ScheduleListScreen extends StatelessWidget {
                                                       ),
                                                     ),
                                                     Image.asset(
-                                                      'assets/images/ic_departure.png',
+                                                      AssetImages.departure,
                                                       width: 70,
                                                     ),
                                                     Text(
@@ -405,7 +406,7 @@ class ScheduleListScreen extends StatelessWidget {
                                                       ),
                                                     ),
                                                     Image.asset(
-                                                      'assets/images/ic_arrival.png',
+                                                      AssetImages.arrive,
                                                       width: 70,
                                                     ),
                                                     Text(
@@ -445,101 +446,10 @@ class ScheduleListScreen extends StatelessWidget {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    controller
-                                                        .applySelectedScheduleData(
-                                                          scheduleData
-                                                              .data!
-                                                              .body![index],
-                                                        );
-
-                                                    Get.to(
-                                                      () => ReviewRateScreen(
-                                                        scheduleId:
-                                                            scheduleData
-                                                                .data!
-                                                                .body![index]
-                                                                .scheduleId,
-                                                        status:
-                                                            scheduleData
-                                                                .data!
-                                                                .body![index]
-                                                                .status,
-                                                        type:
-                                                            controller
-                                                                    .state
-                                                                    .isBack
-                                                                ? 2
-                                                                : 1,
-                                                        id:
-                                                            (scheduleData
-                                                                    .data!
-                                                                    .body?[index]
-                                                                    .id)
-                                                                .toString(),
-                                                      ),
-                                                      transition:
-                                                          Transition
-                                                              .rightToLeft,
-                                                      duration: const Duration(
-                                                        milliseconds:
-                                                            Constrains.duration,
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Column(
-                                                    children: [
-                                                      RatingBarIndicator(
-                                                        rating:
-                                                            scheduleData
-                                                                .data
-                                                                ?.body?[index]
-                                                                .totalRate ??
-                                                            0.0,
-                                                        itemBuilder:
-                                                            (
-                                                              context,
-                                                              _,
-                                                            ) => Icon(
-                                                              Icons.star,
-                                                              color:
-                                                                  Colors.orange,
-                                                            ),
-                                                        itemCount: 5,
-                                                        itemSize: 14,
-                                                        unratedColor:
-                                                            Colors.grey[300],
-                                                        direction:
-                                                            Axis.horizontal,
-                                                      ),
-                                                      const SizedBox(height: 4),
-                                                      RichText(
-                                                        text: TextSpan(
-                                                          style: const TextStyle(
-                                                            color:
-                                                                AppColors
-                                                                    .textColor,
-                                                          ),
-                                                          children: <TextSpan>[
-                                                            TextSpan(
-                                                              text:
-                                                                  '${scheduleData.data!.body?[index].totalReview} ',
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  scheduleData.data?.body?[index].totalReview ==
-                                                                              1 ||
-                                                                          scheduleData.data?.body?[index].totalReview ==
-                                                                              0
-                                                                      ? 'review'
-                                                                      : 'reviews',
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                gotoRateReview(
+                                                  controller,
+                                                  scheduleData,
+                                                  index,
                                                 ),
                                                 InkWell(
                                                   onTap: () async {
@@ -550,77 +460,22 @@ class ScheduleListScreen extends StatelessWidget {
                                                               .body![index],
                                                         );
 
-                                                    await Get.to(
-                                                      () => TicketScheduleCarDetailScreen(
-                                                        journeyId:
-                                                            (scheduleData
-                                                                    .data!
-                                                                    .body?[index]
-                                                                    .id)
-                                                                .toString(),
-                                                        carType:
-                                                            (scheduleData
-                                                                    .data!
-                                                                    .body?[index]
-                                                                    .transportationType)
-                                                                .toString(),
-                                                        seat:
-                                                            (scheduleData
-                                                                    .data!
-                                                                    .body?[index]
-                                                                    .totalSeat)
-                                                                .toString(),
-                                                        image:
-                                                            (scheduleData
-                                                                    .data!
-                                                                    .body?[index]
-                                                                    .transportationPhoto)
-                                                                .toString(),
-                                                        description:
-                                                            (scheduleData
-                                                                    .data!
-                                                                    .body?[index]
-                                                                    .note)
-                                                                .toString(),
-                                                        status:
-                                                            (scheduleData
-                                                                .data!
-                                                                .body?[index]
-                                                                .status)!,
-                                                        type:
-                                                            controller
-                                                                    .state
-                                                                    .isBack
-                                                                ? 2
-                                                                : 1,
-                                                        listSlide:
-                                                            scheduleData
-                                                                .data!
-                                                                .body?[index]
-                                                                .slidePhoto,
-                                                        listIcon:
-                                                            scheduleData
-                                                                .data!
-                                                                .body?[index]
-                                                                .amenities,
-                                                        boardingPoint:
-                                                            scheduleData
-                                                                .data!
-                                                                .body?[index]
-                                                                .boardingPointList,
-                                                        dropOffPoint:
-                                                            scheduleData
-                                                                .data!
-                                                                .body?[index]
-                                                                .dropOffPointList,
-                                                      ),
-                                                      transition:
-                                                          Transition
-                                                              .rightToLeft,
-                                                      duration: const Duration(
-                                                        milliseconds:
-                                                            Constrains.duration,
-                                                      ),
+                                                    final args =
+                                                        Get.arguments
+                                                            as Map<
+                                                              dynamic,
+                                                              dynamic
+                                                            >?;
+                                                    final flowId =
+                                                        (args?['flowId']
+                                                            as String?) ??
+                                                        '';
+
+                                                    await gotoScheduleDetail(
+                                                      scheduleData,
+                                                      index,
+                                                      controller,
+                                                      flowId,
                                                     );
                                                   },
                                                   child: Row(
@@ -795,7 +650,7 @@ class ScheduleListScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/ic_no_shcedule.png',
+                            AssetImages.no_schedule,
                             width: 100,
                             color:
                                 ValueStatic.ticketType == '3'
@@ -847,6 +702,86 @@ class ScheduleListScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget gotoRateReview(
+    ScheduleListController controller,
+    AsyncSnapshot<ScheduleResponse> scheduleData,
+    int index,
+  ) {
+    return InkWell(
+      onTap: () {
+        controller.applySelectedScheduleData(scheduleData.data!.body![index]);
+
+        Get.toNamed(
+          AppRoutes.reviewRate,
+          arguments: {
+            'scheduleId': scheduleData.data!.body![index].scheduleId,
+            'status': scheduleData.data!.body![index].status,
+            'type': controller.state.isBack ? 2 : 1,
+            'id': (scheduleData.data!.body?[index].id).toString(),
+          },
+        );
+      },
+      child: Column(
+        children: [
+          RatingBarIndicator(
+            rating: scheduleData.data?.body?[index].totalRate ?? 0.0,
+            itemBuilder: (context, _) => Icon(Icons.star, color: Colors.orange),
+            itemCount: 5,
+            itemSize: 14,
+            unratedColor: Colors.grey[300],
+            direction: Axis.horizontal,
+          ),
+          const SizedBox(height: 4),
+          RichText(
+            text: TextSpan(
+              style: const TextStyle(color: AppColors.textColor),
+              children: <TextSpan>[
+                TextSpan(
+                  text: '${scheduleData.data!.body?[index].totalReview} ',
+                ),
+                TextSpan(
+                  text:
+                      scheduleData.data?.body?[index].totalReview == 1 ||
+                              scheduleData.data?.body?[index].totalReview == 0
+                          ? 'review'
+                          : 'reviews',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<dynamic> gotoScheduleDetail(
+    AsyncSnapshot<ScheduleResponse> scheduleData,
+    int index,
+    ScheduleListController controller,
+    String flowId,
+  ) async {
+    return await Get.toNamed(
+      AppRoutes.ticketScheduleCarDetail,
+      arguments: {
+        'journeyId': (scheduleData.data!.body?[index].id).toString(),
+        'carType':
+            (scheduleData.data!.body?[index].transportationType).toString(),
+        'seat': (scheduleData.data!.body?[index].totalSeat).toString(),
+        'image':
+            (scheduleData.data!.body?[index].transportationPhoto).toString(),
+        'description': (scheduleData.data!.body?[index].note).toString(),
+        'status': (scheduleData.data!.body?[index].status)!,
+        'type': controller.state.isBack ? 2 : 1,
+        'isBack': controller.state.isBack,
+        'flowId': flowId,
+        'listSlide': scheduleData.data!.body?[index].slidePhoto,
+        'listIcon': scheduleData.data!.body?[index].amenities,
+        'boardingPoint': scheduleData.data!.body?[index].boardingPointList,
+        'dropOffPoint': scheduleData.data!.body?[index].dropOffPointList,
+      },
     );
   }
 }

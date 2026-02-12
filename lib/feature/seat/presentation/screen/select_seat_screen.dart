@@ -67,62 +67,11 @@ class SelectSeatScreen extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 12.0, left: 15, right: 15),
               child: Row(
                 children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
-                            border: Border.all(),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'available'.tr,
-                          style: const TextStyle(color: AppColors.textColor),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildColorSeat('available'.tr, AppColors.whiteColor),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryColor,
-                            border: Border.all(),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'selected'.tr,
-                          style: const TextStyle(color: AppColors.textColor),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildColorSeat('selected'.tr, AppColors.secondaryColor),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: AppColors.redColor,
-                            border: Border.all(),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'unavailable'.tr,
-                          style: const TextStyle(color: AppColors.textColor),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildColorSeat('unavailable'.tr, AppColors.redColor),
                 ],
               ),
             ),
@@ -256,6 +205,28 @@ class SelectSeatScreen extends StatelessWidget {
             }),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildColorSeat(String label, Color color) {
+    return Expanded(
+      child: Column(
+        children: [
+          Container(
+            height: 20,
+            decoration: BoxDecoration(
+              color: color,
+              border: Border.all(color: Colors.black),
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            style: const TextStyle(color: AppColors.textColor),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

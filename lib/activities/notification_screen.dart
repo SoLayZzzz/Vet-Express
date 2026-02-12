@@ -27,7 +27,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
     _menuController = Get.find<menu.MenuController>();
     futureData = Notifications().getNotification(context, 1, 100);
     Notifications().readAll(context);
-    _menuController.clearBadge();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _menuController.clearBadge();
+    });
   }
 
   @override
@@ -57,9 +59,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             radius: 20,
             onTap: () {
               Notifications().readAll(context);
-              setState(() {
-                _menuController.clearBadge();
-              });
+              _menuController.clearBadge();
             },
             child: Center(
               child: Padding(

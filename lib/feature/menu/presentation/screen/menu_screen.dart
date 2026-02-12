@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'package:express_vet/activities/china/registration_screen.dart';
-import 'package:express_vet/activities/ev/ev_charging_screen.dart';
-import 'package:express_vet/activities/screen/vet_airway.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,17 +8,9 @@ import 'package:express_vet/feature/menu/presentation/controller/menu_controller
     as menu;
 import '../../../../../utils/app_colors.dart';
 import '../../../../controller/china/china_controller.dart';
-import '../../../../utils/contains.dart';
-import '../../../../activities/china/warehouse_address_screen.dart';
 import '../../../../activities/components/profile_widget.dart';
 import '../../../../activities/screen/resort_screen.dart';
 import '../../../../activities/components/slide_widget.dart';
-import '../../../../activities/screen/contact_us_screen.dart';
-import '../../../../activities/logistic/booking_delivery_screen.dart';
-import '../../../../activities/logistic/self_service_screen.dart';
-import '../../../../activities/notification_screen.dart';
-import '../../../../activities/ticket/package_list_screen.dart';
-import '../../../../activities/ticket/rental_car_list_screen.dart';
 import '../../../../activities/ticket/value_statics.dart';
 import '../../../../routes/app_routes.dart';
 
@@ -65,7 +55,7 @@ class MenuScreen extends GetView<menu.MenuController> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(width: 15),
-            Image.asset("assets/images/vet_logo.png", height: 36, width: 36),
+            Image.asset(AssetImages.vet_logo, height: 36, width: 36),
             const SizedBox(width: 10),
             const Text(
               'VET Express',
@@ -122,45 +112,34 @@ class MenuScreen extends GetView<menu.MenuController> {
                 childAspectRatio: 1,
               ),
               children: [
+                _buildMenuView(AssetImages.booking_bus, 'booking_bus'.tr, () {
+                  _navigateToBusBooking();
+                }),
                 _buildMenuView(
-                  'assets/images/ic_booking_bus_new.png',
-                  'booking_bus'.tr,
-                  () {
-                    _navigateToBusBooking();
-                  },
-                ),
-                _buildMenuView(
-                  'assets/images/ic_booking_air_bus_new.png',
+                  AssetImages.booking_air_bus,
                   'booking_air_bus'.tr,
                   () => _navigateToAirBusBooking(),
                 ),
-                _buildMenuView(
-                  'assets/images/ic_booking_boat_new.png',
-                  'booking_boat'.tr,
-                  () {
-                    _navigateToBoatBooking();
-                  },
-                ),
-                _buildMenuView('assets/icons/icon_ev.png', 'ev_charger'.tr, () {
-                  _navigateToEvCharger();
+                _buildMenuView(AssetImages.booking_boat, 'booking_boat'.tr, () {
+                  _navigateToBoatBooking();
+                }),
+                _buildMenuView(AssetImages.ev_charger, 'ev_charger'.tr, () {
+                  // _navigateToEvCharger();
+                  Get.toNamed(AppRoutes.evCharger);
                 }),
                 _buildMenuView(
-                  'assets/images/ic_rental_car.png',
+                  AssetImages.rental_car,
                   'car_rental'.tr,
                   () async {
-                    await _navigateToCarRental();
+                    // await _navigateToCarRental();
+                    await Get.toNamed(AppRoutes.carRentalList);
                   },
                 ),
                 _buildMenuView(
-                  'assets/images/ic_v_tenh.png',
+                  AssetImages.vtinh_logo,
                   'v_tinh'.tr,
                   () => controller.openVtenhApp(),
                 ),
-                // _buildMenuView(
-                //   'assets/images/ic_travel_package.png',
-                //   'booking_travel_package'.tr,
-                //   () => _navigateToTravelPackage(),
-                // ),
               ],
             ),
           ],
@@ -203,45 +182,34 @@ class MenuScreen extends GetView<menu.MenuController> {
         padding: const EdgeInsets.only(left: 15.0),
         child: Row(
           children: [
+            _buildServiceView(AssetImages.self_service, 'self_service'.tr, () {
+              _navigateToSelfService();
+            }),
             _buildServiceView(
-              'assets/images/ic_add_goods.png',
-              'self_service'.tr,
-              () {
-                _navigateToSelfService();
-              },
-            ),
-            _buildServiceView(
-              'assets/images/ic_booking_moto.png',
+              AssetImages.booking_moto,
               'booking_delivery'.tr,
-              () => _navigateToBookingDelivery(),
+
+              () => Get.toNamed(AppRoutes.bookingDelivery),
             ),
             _buildServiceView(
-              'assets/icons/icon_address_china.jpg',
+              AssetImages.access_china,
               'access_address_china'.tr,
               () => _navigateToAccessChina(),
             ),
             _buildServiceView(
-              'assets/images/ic_travel_package.png',
+              AssetImages.travel_package,
               'booking_travel_package'.tr,
-              () => _navigateToTravelPackage(),
+              () => Get.toNamed(AppRoutes.travelPackageList),
             ),
-            _buildServiceView(
-              'assets/icons/icon_vet_airway.png',
-              'vet_airway'.tr,
-              () {
-                _navigateToVetAirway();
-              },
-            ),
+            _buildServiceView(AssetImages.vet_airway, 'vet_airway'.tr, () {
+              Get.toNamed(AppRoutes.vetAirway);
+            }),
             // _buildServiceView('assets/images/ic_v_tenh.png', 'v_tinh'.tr, () async {
             //   await _launch('https://www.vtenh.com/km/');
             // }),
-            _buildServiceView(
-              'assets/images/ic_vpsar.png',
-              'v_phsar'.tr,
-              () async {
-                await _launch('https://www.facebook.com/VPhsarCambodia');
-              },
-            ),
+            _buildServiceView(AssetImages.vpsar, 'v_phsar'.tr, () async {
+              await _launch('https://www.facebook.com/VPhsarCambodia');
+            }),
           ],
         ),
       ),
@@ -302,10 +270,10 @@ class MenuScreen extends GetView<menu.MenuController> {
         onPressed: () => _showLanguageBottomSheet(context),
         icon: Image.asset(
           language == "km"
-              ? "assets/images/ic_cambodia.png"
+              ? AssetImages.cambodia
               : language == "en"
-              ? "assets/images/ic_english.png"
-              : "assets/images/ic_chinese.png",
+              ? AssetImages.english
+              : AssetImages.china,
           height: 24,
         ),
       );
@@ -315,14 +283,10 @@ class MenuScreen extends GetView<menu.MenuController> {
   Widget _buildContactButton() {
     return IconButton(
       onPressed: () {
-        Get.to(
-          () => const ContactUsScreen(),
-          transition: Transition.rightToLeft,
-          duration: const Duration(milliseconds: Constrains.duration),
-        );
+        Get.toNamed(AppRoutes.contactUs);
       },
       icon: Image.asset(
-        "assets/icons/icon_contact.png",
+        AssetImages.contact,
         color: AppColors.whiteColor,
         height: 24,
       ),
@@ -340,7 +304,7 @@ class MenuScreen extends GetView<menu.MenuController> {
               backgroundColor: AppColors.redColor,
               textStyle: const TextStyle(fontSize: 14),
               child: Image.asset(
-                "assets/images/ic_notification.png",
+                AssetImages.notification,
                 color: AppColors.whiteColor,
                 width: 24,
                 height: 24,
@@ -350,7 +314,7 @@ class MenuScreen extends GetView<menu.MenuController> {
           )
           : IconButton(
             icon: Image.asset(
-              "assets/images/ic_notification.png",
+              AssetImages.notification,
               color: AppColors.whiteColor,
               width: 24,
               height: 24,
@@ -459,94 +423,25 @@ class MenuScreen extends GetView<menu.MenuController> {
     );
   }
 
-  void _navigateToEvCharger() {
-    Get.to(
-      //() => const EvCharger(),
-      () => EvChargerScreen(), //!new version
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
-  }
-
-  Future<void> _navigateToCarRental() async {
-    await Get.to(
-      () => RentalCarListScreen(),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
-  }
-
-  void _navigateToTravelPackage() async {
-    Get.to(
-      () => const PackageListScreen(),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
-  }
-
   void _navigateToSelfService() {
     ValueStatic().clearSelfService();
-    Get.to(
-      () => const SelfServiceScreen(),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
-  }
-
-  void _navigateToBookingDelivery() {
-    Get.to(
-      () => const BookingDeliveryScreen(),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
+    Get.toNamed(AppRoutes.selfService);
   }
 
   void _navigateToAccessChina() async {
-    // Check if user has existing customer data
     final ChinaController controller = Get.put(ChinaController());
 
-    // Ensure customer list is loaded
     await controller.fetchCustomerList();
 
     if (controller.hasCustomers) {
-      // User has existing customers, go directly to warehouse
-      Get.to(
-        () => WarehouseAddressScreen(),
-        transition: Transition.rightToLeft,
-        duration: const Duration(milliseconds: Constrains.duration),
-      );
+      Get.toNamed(AppRoutes.warehouseAddress);
     } else {
-      // No customers, go to registration
-      Get.to(
-        () => ChinaRegistrationScreen(),
-        transition: Transition.rightToLeft,
-        duration: const Duration(milliseconds: Constrains.duration),
-      );
+      Get.toNamed(AppRoutes.chinaRegistration);
     }
   }
 
-  void _navigateToVetAirway() {
-    Get.to(
-      () => const VetAirway(),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
-  }
-
-  /* void _navigateToWebView() {
-    Get.to(
-      () => const WebViewScreen(type: 2, ticketId: ''),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
-  }*/
-
   void _navigateToNotifications() async {
-    var result = await Get.to(
-      () => const NotificationScreen(),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: Constrains.duration),
-    );
+    var result = await Get.toNamed(AppRoutes.notifications);
     if (result == 'set') {
       controller.getNotificationCount();
     }
@@ -591,21 +486,17 @@ class MenuScreen extends GetView<menu.MenuController> {
                       children: [
                         _buildLanguageOption(
                           'km',
-                          'assets/images/ic_cambodia.png',
+                          AssetImages.cambodia,
                           'ភាសាខ្មែរ',
                         ),
                         const Divider(height: 1),
                         _buildLanguageOption(
                           'en',
-                          'assets/images/ic_english.png',
+                          AssetImages.english,
                           'English',
                         ),
                         const Divider(height: 1),
-                        _buildLanguageOption(
-                          'zh',
-                          'assets/images/ic_chinese.png',
-                          '中文',
-                        ),
+                        _buildLanguageOption('zh', AssetImages.china, '中文'),
                       ],
                     ),
                   ),

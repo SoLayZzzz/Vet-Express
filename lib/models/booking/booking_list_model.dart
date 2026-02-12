@@ -1,27 +1,20 @@
 import '../header.dart';
 
 class BookingListModel {
-  BookingListModel({
-    this.header,
-    this.body,
-  });
+  BookingListModel({this.header, this.body});
 
   Header? header;
   Body? body;
 
-  factory BookingListModel.fromJson(Map<String, dynamic> json) => BookingListModel(
+  factory BookingListModel.fromJson(Map<String, dynamic> json) =>
+      BookingListModel(
         header: Header.fromJson(json["header"]),
         body: Body.fromJson(json["body"]),
       );
 }
 
 class Body {
-  Body({
-    this.status,
-    this.message,
-    this.pagination,
-    this.data,
-  });
+  Body({this.status, this.message, this.pagination, this.data});
 
   bool? status;
   String? message;
@@ -29,39 +22,41 @@ class Body {
   List<BookingListDataItem>? data;
 
   factory Body.fromJson(Map<String, dynamic> json) => Body(
-        status: json["status"],
-        message: json["message"],
-        pagination: Pagination.fromJson(json["pagination"]),
-        data: List<BookingListDataItem>.from(
-            json["data"].map((x) => BookingListDataItem.fromJson(x))),
-      );
+    status: json["status"],
+    message: json["message"],
+    pagination: Pagination.fromJson(json["pagination"]),
+    data: List<BookingListDataItem>.from(
+      json["data"].map((x) => BookingListDataItem.fromJson(x)),
+    ),
+  );
 }
 
 class BookingListDataItem {
-  BookingListDataItem(
-      {this.id,
-        this.scheduleId,
-      this.bookingDate,
-      this.travelDate,
-      this.code,
-      this.destinationFrom,
-      this.destinationTo,
-      this.departure,
-      this.arrival,
-      this.duration,
-      this.paymentType,
-      this.transportationType,
-      this.boardingPoint,
-      this.dropOffPoint,
-      this.subTotal,
-      this.discount,
-      this.totalAmount,
-      this.isSurvey,
-      this.isLuckyDraw,
-      this.isTravelPackage,
-      this.journeyType,
-      this.totalSeat,
-      this.isRate});
+  BookingListDataItem({
+    this.id,
+    this.scheduleId,
+    this.bookingDate,
+    this.travelDate,
+    this.code,
+    this.destinationFrom,
+    this.destinationTo,
+    this.departure,
+    this.arrival,
+    this.duration,
+    this.paymentType,
+    this.transportationType,
+    this.boardingPoint,
+    this.dropOffPoint,
+    this.subTotal,
+    this.discount,
+    this.totalAmount,
+    this.isSurvey,
+    this.isLuckyDraw,
+    this.isTravelPackage,
+    this.journeyType,
+    this.totalSeat,
+    this.isRate,
+  });
 
   int? id;
   int? scheduleId;
@@ -87,7 +82,8 @@ class BookingListDataItem {
   int? totalSeat;
   int? isRate;
 
-  factory BookingListDataItem.fromJson(Map<String, dynamic> json) => BookingListDataItem(
+  factory BookingListDataItem.fromJson(Map<String, dynamic> json) =>
+      BookingListDataItem(
         id: json["id"],
         scheduleId: json["scheduleId"],
         bookingDate: json["bookingDate"],
@@ -115,19 +111,15 @@ class BookingListDataItem {
 }
 
 class Pagination {
-  Pagination({
-    this.page,
-    this.rowsPerPage,
-    this.total,
-  });
+  Pagination({this.page, this.rowsPerPage, this.total});
 
   int? page;
   int? rowsPerPage;
   int? total;
 
   factory Pagination.fromJson(Map<String, dynamic> json) => Pagination(
-        page: json["page"],
-        rowsPerPage: json["rowsPerPage"],
-        total: json["total"],
-      );
+    page: json["page"],
+    rowsPerPage: json["rowsPerPage"],
+    total: json["total"],
+  );
 }

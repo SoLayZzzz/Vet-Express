@@ -25,7 +25,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_pref.dart';
 import '../../utils/contains.dart';
 import '../../utils/loading.dart';
-import '../dashboard_screen.dart';
+import '../../feature/dash_board/presentation/screen/dashboard_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String id;

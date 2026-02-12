@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -6,8 +7,8 @@ import '../../../../activities/ticket/value_statics.dart';
 import '../../../../utils/app_colors.dart';
 import '../controller/select_ticket_controller.dart';
 
-class SelectTicketScreen extends GetView<SelectTicketController> {
-  const SelectTicketScreen({super.key});
+class SelectDestinationScreen extends GetView<SelectDestinationController> {
+  const SelectDestinationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class SelectTicketScreen extends GetView<SelectTicketController> {
             ValueStatic.ticketType == '3'
                 ? AppColors.airBusColor
                 : AppColors.primaryColor,
+
         elevation: 0.2,
         leading: IconButton(
           icon: const Icon(
@@ -70,14 +72,8 @@ class SelectTicketScreen extends GetView<SelectTicketController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ValueStatic.ticketType == '1' || ValueStatic.ticketType == '3'
-                      ? Image.asset(
-                        'assets/images/ic_bus_empty.png',
-                        height: 80,
-                      )
-                      : Image.asset(
-                        'assets/images/ic_boat_empty.png',
-                        height: 80,
-                      ),
+                      ? Image.asset(AssetImages.empty_bus, height: 80)
+                      : Image.asset(AssetImages.empty_boat, height: 80),
                   const SizedBox(height: 20),
                   Text(
                     'data_not_found'.tr,

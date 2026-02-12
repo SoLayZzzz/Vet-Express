@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import '../activities/dashboard_screen.dart';
+import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
 import '../controller/user_controller.dart';
 import '../feature/auth/data/model/response/check_token_response.dart';
 import '../feature/auth/data/model/response/check_version_response.dart';

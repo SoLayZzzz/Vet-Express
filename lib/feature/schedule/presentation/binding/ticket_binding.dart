@@ -1,3 +1,4 @@
+import 'package:express_vet/feature/passenger/presentation/controller/passenger_deatail_controller.dart';
 import 'package:get/get.dart';
 
 import '../../data/network/schedule_network_request.dart';
@@ -5,10 +6,15 @@ import '../../data/repo_Impl/schedule_repository_impl.dart';
 import '../../domain/repository/schedule_repository.dart';
 import '../../domain/uscase/ticket_usecase.dart';
 import '../../domain/uscase/schedule_list_usecase.dart';
+import '../../../passenger/data/network/passenger_network_request.dart';
+import '../../../passenger/data/repositoryImpl/passenger_repository_impl.dart';
+import '../../../passenger/domain/repository/passenger_repository.dart';
+import '../../../passenger/domain/uscase/passernger_uscase.dart';
 import '../../../seat/data/network/seat_network_request.dart';
 import '../../../seat/data/repo_Impl/seat_repository_impl.dart';
 import '../../../seat/domain/repository/seat_repository.dart';
 import '../../../seat/domain/uscase/select_seat_usecase.dart';
+import '../controller/schedule_car_detail_controller.dart';
 import '../controller/schedule_list_controller.dart';
 import '../../../seat/presentation/controller/select_seat_controller.dart';
 import '../controller/ticket_flow_controller.dart';
@@ -47,6 +53,36 @@ class TicketBinding implements Bindings {
         fenix: true,
       );
     }
+
+    if (!Get.isRegistered<PassengerNetworkRequest>()) {
+      Get.lazyPut(
+        () => PassengerNetworkRequest(
+          networkDataSource: NetworkDataSource(
+            baseUrl: BaseUrl.BASE_URL_TICKET,
+          ),
+        ),
+        fenix: true,
+      );
+    }
+
+    if (!Get.isRegistered<PassengerRepository>()) {
+      Get.lazyPut<PassengerRepository>(
+        () => PassengerRepositoryImpl(Get.find<PassengerNetworkRequest>()),
+        fenix: true,
+      );
+    }
+    if (!Get.isRegistered<PasserngerUscase>()) {
+      Get.lazyPut(
+        () => PasserngerUscase(Get.find<PassengerRepository>()),
+        fenix: true,
+      );
+    }
+    if (!Get.isRegistered<PassengerDetailController>()) {
+      Get.lazyPut(
+        () => PassengerDetailController(Get.find<PasserngerUscase>()),
+        fenix: true,
+      );
+    }
     if (!Get.isRegistered<SeatRepository>()) {
       Get.lazyPut<SeatRepository>(
         () => SeatRepositoryImpl(Get.find<SeatNetworkRequest>()),
@@ -78,6 +114,10 @@ class TicketBinding implements Bindings {
         () => SelectSeatController(Get.find<SelectSeatUseCase>()),
         fenix: true,
       );
+    }
+
+    if (!Get.isRegistered<ScheduleCarDetailController>()) {
+      Get.lazyPut(() => ScheduleCarDetailController(), fenix: true);
     }
 
     final args = Get.arguments as Map<dynamic, dynamic>?;

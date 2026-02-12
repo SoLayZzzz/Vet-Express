@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../activities/dashboard_screen.dart';
+import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
 import '../feature/auth/presentation/screen/new_password_screen.dart';
 
 import '../activities/ticket/value_statics.dart';

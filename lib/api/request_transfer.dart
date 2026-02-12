@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
-import '../activities/dashboard_screen.dart';
+import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
 import '../activities/logistic/self_service_qr_screen.dart';
 import '../models/goods_transfer/review_response.dart';
 import '../models/request_transfer/add_goods.dart';

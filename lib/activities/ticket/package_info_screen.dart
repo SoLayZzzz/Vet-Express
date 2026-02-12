@@ -29,7 +29,7 @@ import '../../utils/alert_dialog.dart';
 import '../../utils/app_pref.dart';
 import '../../utils/check_input.dart';
 import '../../utils/contains.dart';
-import '../dashboard_screen.dart';
+import '../../feature/dash_board/presentation/screen/dashboard_screen.dart';
 
 class PackageInfoScreen extends StatefulWidget {
   final int? travelPackageId;

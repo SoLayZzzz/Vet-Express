@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -7,39 +8,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:express_vet/activities/ticket/ticket_schedule_car_detail_map_screen.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/utils/app_bar.dart';
-import 'package:express_vet/routes/app_routes.dart';
 
-import '../../feature/schedule/data/model/response/schedule_response.dart';
-import '../../utils/app_colors.dart';
-import '../../utils/button.dart';
+import '../controller/schedule_car_detail_controller.dart';
+import '../../../../utils/app_colors.dart';
+import '../../../../utils/button.dart';
 
 class TicketScheduleCarDetailScreen extends StatefulWidget {
-  final String journeyId;
-  final String carType;
-  final String seat;
-  final String image;
-  final String description;
-  final int type;
-  final int status;
-  final List<SlidePhoto>? listSlide;
-  final List<Amenities>? listIcon;
-  final List<BoardingPointList>? boardingPoint;
-  final List<DropOffPointList>? dropOffPoint;
-
-  const TicketScheduleCarDetailScreen({
-    super.key,
-    required this.carType,
-    required this.seat,
-    required this.image,
-    required this.listSlide,
-    required this.listIcon,
-    required this.journeyId,
-    required this.type,
-    required this.boardingPoint,
-    required this.dropOffPoint,
-    required this.description,
-    required this.status,
-  });
+  const TicketScheduleCarDetailScreen({super.key});
 
   @override
   State<TicketScheduleCarDetailScreen> createState() =>
@@ -48,14 +23,15 @@ class TicketScheduleCarDetailScreen extends StatefulWidget {
 
 class _TicketScheduleCarDetailScreenState
     extends State<TicketScheduleCarDetailScreen> {
-  int _current = 0;
   final CarouselSliderController _controller = CarouselSliderController();
   @override
   Widget build(BuildContext context) {
+    final ScheduleCarDetailController controller =
+        Get.find<ScheduleCarDetailController>();
     return Scaffold(
       appBar: AppBarVET().appBar(
         context,
-        widget.type == 1
+        controller.type == 1
             ? '${ValueStatic.desfrom} - ${ValueStatic.desTo}'
             : '${ValueStatic.desTo} - ${ValueStatic.desfrom}',
       ),
@@ -67,7 +43,7 @@ class _TicketScheduleCarDetailScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if ((widget.listSlide)!.isNotEmpty)
+                if (controller.listSlide.isNotEmpty)
                   Stack(
                     children: [
                       Container(
@@ -88,14 +64,12 @@ class _TicketScheduleCarDetailScreenState
                             autoPlayCurve: Curves.fastOutSlowIn,
                             enableInfiniteScroll: true,
                             onPageChanged: (index, reason) {
-                              setState(() {
-                                _current = index;
-                              });
+                              controller.onCarouselPageChanged(index);
                             },
                           ),
                           items:
-                              widget.listSlide
-                                  ?.map(
+                              controller.listSlide
+                                  .map(
                                     (item) => ClipRRect(
                                       borderRadius: const BorderRadius.all(
                                         Radius.circular(6.0),
@@ -151,13 +125,17 @@ class _TicketScheduleCarDetailScreenState
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(5.0),
-                                    child: AnimatedSmoothIndicator(
-                                      activeIndex: _current,
-                                      count: (widget.listSlide)!.length,
-                                      effect: const ExpandingDotsEffect(
-                                        activeDotColor: AppColors.primaryColor,
-                                        dotHeight: 8,
-                                        dotWidth: 8,
+                                    child: Obx(
+                                      () => AnimatedSmoothIndicator(
+                                        activeIndex:
+                                            controller.currentSlideIndex.value,
+                                        count: controller.listSlide.length,
+                                        effect: const ExpandingDotsEffect(
+                                          activeDotColor:
+                                              AppColors.primaryColor,
+                                          dotHeight: 8,
+                                          dotWidth: 8,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -184,7 +162,7 @@ class _TicketScheduleCarDetailScreenState
                         ),
                       ),
                     ),
-                    if (widget.boardingPoint!.isNotEmpty)
+                    if (controller.boardingPoint.isNotEmpty)
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
@@ -193,7 +171,7 @@ class _TicketScheduleCarDetailScreenState
                         child: ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: (widget.boardingPoint)!.length,
+                          itemCount: controller.boardingPoint.length,
                           separatorBuilder:
                               (context, int index) => Container(
                                 height: 1,
@@ -201,14 +179,14 @@ class _TicketScheduleCarDetailScreenState
                               ),
                           itemBuilder: (context, i) {
                             return getAddress(
-                              (widget.boardingPoint?[i].name).toString(),
-                              (widget.boardingPoint?[i].address).toString(),
+                              (controller.boardingPoint[i].name).toString(),
+                              (controller.boardingPoint[i].address).toString(),
                               i,
                               double.parse(
-                                (widget.boardingPoint?[i].lats).toString(),
+                                (controller.boardingPoint[i].lats).toString(),
                               ),
                               double.parse(
-                                (widget.boardingPoint?[i].longs).toString(),
+                                (controller.boardingPoint[i].longs).toString(),
                               ),
                             );
                           },
@@ -227,7 +205,7 @@ class _TicketScheduleCarDetailScreenState
                         ),
                       ),
                     ),
-                    if (widget.dropOffPoint!.isNotEmpty)
+                    if (controller.dropOffPoint.isNotEmpty)
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
@@ -236,7 +214,7 @@ class _TicketScheduleCarDetailScreenState
                         child: ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: (widget.dropOffPoint)!.length,
+                          itemCount: controller.dropOffPoint.length,
                           separatorBuilder:
                               (context, int index) => Container(
                                 height: 1,
@@ -244,14 +222,14 @@ class _TicketScheduleCarDetailScreenState
                               ),
                           itemBuilder: (context, i) {
                             return getAddress(
-                              (widget.dropOffPoint?[i].name).toString(),
-                              (widget.dropOffPoint?[i].address).toString(),
+                              (controller.dropOffPoint[i].name).toString(),
+                              (controller.dropOffPoint[i].address).toString(),
                               i,
                               double.parse(
-                                (widget.dropOffPoint?[i].lats).toString(),
+                                (controller.dropOffPoint[i].lats).toString(),
                               ),
                               double.parse(
-                                (widget.dropOffPoint?[i].longs).toString(),
+                                (controller.dropOffPoint[i].longs).toString(),
                               ),
                             );
                           },
@@ -259,7 +237,7 @@ class _TicketScheduleCarDetailScreenState
                       ),
                   ],
                 ),
-                if ((widget.listIcon)!.isNotEmpty)
+                if (controller.listIcon.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0, bottom: 12),
                     child: Text(
@@ -271,7 +249,7 @@ class _TicketScheduleCarDetailScreenState
                       ),
                     ),
                   ),
-                if ((widget.listIcon)!.isNotEmpty)
+                if (controller.listIcon.isNotEmpty)
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const ScrollPhysics(),
@@ -280,11 +258,11 @@ class _TicketScheduleCarDetailScreenState
                           crossAxisCount: 4,
                           childAspectRatio: 1 / 0.7,
                         ),
-                    itemCount: (widget.listIcon)!.length,
+                    itemCount: controller.listIcon.length,
                     itemBuilder: (BuildContext context, i) {
                       return listAmen(
-                        (widget.listIcon?[i].icon).toString(),
-                        (widget.listIcon?[i].name).toString(),
+                        (controller.listIcon[i].icon).toString(),
+                        (controller.listIcon[i].name).toString(),
                       );
                     },
                   ),
@@ -292,7 +270,7 @@ class _TicketScheduleCarDetailScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
-                    if (widget.description.isNotEmpty)
+                    if (controller.description.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: Text(
@@ -307,7 +285,7 @@ class _TicketScheduleCarDetailScreenState
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children:
-                          widget.description
+                          controller.description
                               .split('\n')
                               .map(
                                 (line) => Padding(
@@ -331,59 +309,47 @@ class _TicketScheduleCarDetailScreenState
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        width: double.infinity,
-        color: AppColors.whiteColor,
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child:
-            widget.status == 1
-                ? globalButton(
-                  context: context,
-                  buttonText: 'booking_ticket'.tr,
-                  buttonColor:
-                      ValueStatic.ticketType == '3'
-                          ? AppColors.airBusColor
-                          : AppColors.primaryColor,
-                  onPressed: () {
-                    if (widget.type == 1) {
-                      Get.toNamed(
-                        AppRoutes.selectSeat,
-                        arguments: {
-                          'journeyId': widget.journeyId,
-                          'isBack': false,
-                        },
-                      );
-                    } else {
-                      Get.toNamed(
-                        AppRoutes.selectSeat,
-                        arguments: {
-                          'journeyId': widget.journeyId,
-                          'isBack': true,
-                        },
-                      );
-                    }
-                  },
-                )
-                : globalButton(
-                  context: context,
-                  buttonText:
-                      widget.status == 3
-                          ? 'full'.tr
-                          : (widget.status == 4 ? 'unavailable'.tr : 'left'.tr),
-                  buttonColor: Colors.grey,
-                  onPressed: () {},
-                ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          width: double.infinity,
+          color: AppColors.whiteColor,
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child:
+              controller.status == 1
+                  ? globalButton(
+                    context: context,
+                    buttonText: 'booking_ticket'.tr,
+                    buttonColor:
+                        ValueStatic.ticketType == '3'
+                            ? AppColors.airBusColor
+                            : AppColors.primaryColor,
+                    onPressed: () {
+                      controller.openSelectSeat();
+                    },
+                  )
+                  : globalButton(
+                    context: context,
+                    buttonText:
+                        controller.status == 3
+                            ? 'full'.tr
+                            : (controller.status == 4
+                                ? 'unavailable'.tr
+                                : 'left'.tr),
+                    buttonColor: Colors.grey,
+                    onPressed: () {},
+                  ),
+        ),
       ),
     );
   }
 
-  SizedBox placeHolder() {
+  Widget placeHolder() {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.25,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(6),
         child: Image(
-          image: const AssetImage('assets/images/place_holder.png'),
+          image: const AssetImage(AssetImages.place_holder),
           height: MediaQuery.of(context).size.height * 0.25,
           width: double.infinity,
           fit: BoxFit.fitHeight,
@@ -392,7 +358,7 @@ class _TicketScheduleCarDetailScreenState
     );
   }
 
-  Column listAmen(String path, String title) {
+  Widget listAmen(String path, String title) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -402,7 +368,7 @@ class _TicketScheduleCarDetailScreenState
           height: 30,
           errorBuilder: (context, error, stackTrace) {
             return Image(
-              image: const AssetImage('assets/images/place_holder.png'),
+              image: const AssetImage(AssetImages.place_holder),
               height: 30,
               fit: BoxFit.cover,
             );
@@ -410,7 +376,7 @@ class _TicketScheduleCarDetailScreenState
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Image(
-              image: const AssetImage('assets/images/place_holder.png'),
+              image: const AssetImage(AssetImages.place_holder),
               height: 30,
               fit: BoxFit.cover,
             );
@@ -432,7 +398,7 @@ class _TicketScheduleCarDetailScreenState
     );
   }
 
-  InkWell getAddress(
+  Widget getAddress(
     String name,
     String address,
     int index,
