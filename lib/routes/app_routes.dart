@@ -19,6 +19,9 @@ class AppRoutes {
   static const contactUs = '/contact-us';
   static const notifications = '/notifications';
   static const carRentalList = '/car-rental/list';
+  static const carRentalDetail = '/car-rental/detail';
+  static const carRentalInfo = '/car-rental/info';
+  static const carRentalSelectProvince = '/car-rental/select-province';
   static const travelPackageList = '/travel-package/list';
   static const selfService = '/self-service';
   static const bookingDelivery = '/booking-delivery';

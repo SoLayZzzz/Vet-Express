@@ -120,7 +120,7 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
       currentDate: formatted,
       titleRoute: _computeTitleRoute(state.isBack),
       futureSchedule: _buildFutureSchedule(
-        context: context,
+        context: Get.context!,
         isBack: state.isBack,
       ),
     );

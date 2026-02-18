@@ -1,5 +1,3 @@
-
-
 import '../header.dart';
 
 class DesFromResponse {
@@ -9,13 +7,12 @@ class DesFromResponse {
   DesFromResponse({header, body});
 
   DesFromResponse.fromJson(Map<String, dynamic> json) {
-    header =
-    json['header'] != null ?  Header.fromJson(json['header']) : null;
-    body = json['body'] != null ?  Body.fromJson(json['body']) : null;
+    header = json['header'] != null ? Header.fromJson(json['header']) : null;
+    body = json['body'] != null ? Body.fromJson(json['body']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (header != null) {
       data['header'] = header!.toJson();
     }
@@ -37,19 +34,20 @@ class Body {
   Body.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    pagination = json['pagination'] != null
-        ?  Pagination.fromJson(json['pagination'])
-        : null;
+    pagination =
+        json['pagination'] != null
+            ? Pagination.fromJson(json['pagination'])
+            : null;
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add( Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
     data['message'] = message;
     if (pagination != null) {
@@ -76,7 +74,7 @@ class Pagination {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['page'] = page;
     data['rowsPerPage'] = rowsPerPage;
     data['total'] = total;
@@ -91,12 +89,13 @@ class Data {
   String? code;
   int? id;
 
-  Data(
-      {destinationsFromId,
-        destinationsFromName,
-        destinationsFromNameKh,
-        code,
-        id});
+  Data({
+    destinationsFromId,
+    destinationsFromName,
+    destinationsFromNameKh,
+    code,
+    id,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     destinationsFromId = json['destinationsFromId'];
@@ -107,7 +106,7 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['destinationsFromId'] = destinationsFromId;
     data['destinationsFromName'] = destinationsFromName;
     data['destinationsFromNameKh'] = destinationsFromNameKh;

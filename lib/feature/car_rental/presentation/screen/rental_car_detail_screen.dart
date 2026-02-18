@@ -3,21 +3,20 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:express_vet/activities/ticket/rental_car_info_screen.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
-import 'package:express_vet/utils/app_bar.dart';
-import 'package:express_vet/utils/button.dart';
 
-import '../../models/vehicle_rental/car_type_response.dart';
-import '../../utils/app_colors.dart';
-import '../../utils/contains.dart';
+import '../../../../activities/ticket/value_statics.dart';
+import '../../../../routes/app_routes.dart';
+import '../../../../utils/app_bar.dart';
+import '../../../../utils/app_colors.dart';
+import '../../../../utils/button.dart';
+import '../../data/model/response/car_rental_car_type_response.dart';
 
 class RentalCarDetailScreen extends StatefulWidget {
   final String carType;
   final String seat;
   final String image;
-  final List<SlidePhoto>? listSlide;
-  final List<Amenities>? listIcon;
+  final List<CarRentalSlidePhoto>? listSlide;
+  final List<CarRentalAmenities>? listIcon;
 
   const RentalCarDetailScreen({
     super.key,
@@ -50,10 +49,28 @@ class _RentalCarDetailScreenState extends State<RentalCarDetailScreen> {
                 const SizedBox(height: 20),
                 Column(
                   children: [
-                    Image.network(
-                      widget.image,
-                      height: MediaQuery.of(context).size.height * 0.12,
-                    ),
+                    (widget.image.isEmpty)
+                        ? Image.asset(
+                          'assets/images/place_holder.png',
+                          height: MediaQuery.of(context).size.height * 0.12,
+                        )
+                        : CachedNetworkImage(
+                          imageUrl: widget.image,
+                          height: MediaQuery.of(context).size.height * 0.12,
+                          fit: BoxFit.contain,
+                          placeholder:
+                              (context, url) => Image.asset(
+                                'assets/images/place_holder.png',
+                                height:
+                                    MediaQuery.of(context).size.height * 0.12,
+                              ),
+                          errorWidget:
+                              (context, url, error) => Image.asset(
+                                'assets/images/place_holder.png',
+                                height:
+                                    MediaQuery.of(context).size.height * 0.12,
+                              ),
+                        ),
                     Text(
                       widget.carType,
                       style: const TextStyle(
@@ -152,28 +169,27 @@ class _RentalCarDetailScreenState extends State<RentalCarDetailScreen> {
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              color: AppColors.whiteColor,
-              width: double.infinity,
-              child: globalButton(
-                context: context,
-                buttonText: 'next'.tr,
-                onPressed: () {
-                  ValueStatic().clearCarRental();
-
-                  Get.to(
-                    () => const RentalCarInfoScreen(),
-                    transition: Transition.rightToLeft,
-                    duration: const Duration(milliseconds: Constrains.duration),
-                  );
-                },
-              ),
-            ),
-          ),
         ],
+      ),
+      bottomNavigationBar: nextButton(context),
+    );
+  }
+
+  Widget nextButton(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        color: AppColors.whiteColor,
+        width: double.infinity,
+        child: globalButton(
+          context: context,
+          buttonText: 'next'.tr,
+          onPressed: () {
+            ValueStatic().clearCarRental();
+
+            Get.toNamed(AppRoutes.carRentalInfo);
+          },
+        ),
       ),
     );
   }
@@ -200,8 +216,21 @@ class _RentalCarDetailScreenState extends State<RentalCarDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Image( image: AssetImage(path), height: 30),
-            Image.network(path, height: 30),
+            CachedNetworkImage(
+              imageUrl: path,
+              height: 30,
+              width: 30,
+              fit: BoxFit.contain,
+              placeholder:
+                  (context, url) => const SizedBox(height: 30, width: 30),
+              errorWidget:
+                  (context, url, error) => Image.asset(
+                    'assets/images/place_holder.png',
+                    height: 30,
+                    width: 30,
+                    fit: BoxFit.contain,
+                  ),
+            ),
             const SizedBox(height: 10),
             Text(
               title,

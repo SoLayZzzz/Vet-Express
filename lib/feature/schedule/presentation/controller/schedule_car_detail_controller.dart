@@ -6,27 +6,29 @@ import '../../data/model/response/schedule_response.dart';
 class ScheduleCarDetailController extends GetxController {
   final RxInt currentSlideIndex = 0.obs;
 
-  late final String journeyId;
-  late final String carType;
-  late final String seat;
-  late final String image;
-  late final String description;
-  late final int type;
-  late final int status;
-  late final List<SlidePhoto> listSlide;
-  late final List<Amenities> listIcon;
-  late final List<BoardingPointList> boardingPoint;
-  late final List<DropOffPointList> dropOffPoint;
+  String journeyId = '';
+  String carType = '';
+  String seat = '';
+  String image = '';
+  String description = '';
+  int type = 1;
+  int status = 0;
+  List<SlidePhoto> listSlide = <SlidePhoto>[];
+  List<Amenities> listIcon = <Amenities>[];
+  List<BoardingPointList> boardingPoint = <BoardingPointList>[];
+  List<DropOffPointList> dropOffPoint = <DropOffPointList>[];
 
-  late final bool isBack;
-  late final String flowId;
+  bool isBack = false;
+  String flowId = '';
 
   @override
   void onInit() {
     super.onInit();
 
-    final args = Get.arguments as Map<dynamic, dynamic>?;
+    applyArgs(Get.arguments as Map<dynamic, dynamic>?);
+  }
 
+  void applyArgs(Map<dynamic, dynamic>? args) {
     journeyId = (args?['journeyId'] as String?) ?? '';
     carType = (args?['carType'] as String?) ?? '';
     seat = (args?['seat'] as String?) ?? '';
@@ -46,6 +48,9 @@ class ScheduleCarDetailController extends GetxController {
 
     isBack = (args?['isBack'] as bool?) ?? (type != 1);
     flowId = (args?['flowId'] as String?) ?? '';
+
+    currentSlideIndex.value = 0;
+    update();
   }
 
   void onCarouselPageChanged(int index) {

@@ -9,7 +9,11 @@ import '../activities/notification_screen.dart';
 import '../activities/screen/contact_us_screen.dart';
 import '../activities/screen/vet_airway.dart';
 import '../activities/ticket/package_list_screen.dart';
-import '../activities/ticket/rental_car_list_screen.dart';
+import '../feature/car_rental/presentation/binding/car_rental_binding.dart';
+import '../feature/car_rental/presentation/screen/rental_car_detail_screen.dart';
+import '../feature/car_rental/presentation/screen/rental_car_info_screen.dart';
+import '../feature/car_rental/presentation/screen/rental_car_list_screen.dart';
+import '../feature/car_rental/presentation/screen/select_rental_province_screen.dart';
 import '../feature/schedule/presentation/screen/ticket_schedule_car_detail_screen.dart';
 import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
 import '../activities/splash_screen.dart';
@@ -87,7 +91,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.passengerDetail,
-      page: () => const PassengerDetailScreen(),
+      page: () => PassengerDetailScreen(),
       binding: TicketBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
@@ -114,6 +118,42 @@ class AppPages {
     GetPage(
       name: AppRoutes.carRentalList,
       page: () => const RentalCarListScreen(),
+      binding: CarRentalBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.carRentalDetail,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return RentalCarDetailScreen(
+          carType: (args?['carType'] as String?) ?? '',
+          seat: (args?['seat'] as String?) ?? '',
+          image: (args?['image'] as String?) ?? '',
+          listSlide: args?['listSlide'],
+          listIcon: args?['listIcon'],
+        );
+      },
+      binding: CarRentalBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.carRentalInfo,
+      page: () => const RentalCarInfoScreen(),
+      binding: CarRentalBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.carRentalSelectProvince,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return SelectRentalProvinceScreen(
+          selectType: (args?['selectType'] as String?) ?? '',
+        );
+      },
+      binding: CarRentalBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),
