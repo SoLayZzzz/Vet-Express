@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-import '../../../../base/endpoint.dart';
-import '../../../../base/network_data_source.dart';
+import '../../../../../base/endpoint.dart';
+import '../../../../../base/network_data_source.dart';
 import '../model/response/seat_unavailable_response.dart';
-import '../../../../utils/alert_dialog.dart';
-import '../../../../utils/contains.dart';
-import '../../../../utils/loading.dart';
+import '../../../../../utils/alert_dialog.dart';
+import '../../../../../utils/contains.dart';
+import '../../../../../utils/loading.dart';
 
 class SeatNetworkRequest {
   final NetWorkDataSource netWorkDataSource;

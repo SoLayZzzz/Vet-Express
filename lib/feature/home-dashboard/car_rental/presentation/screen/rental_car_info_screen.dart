@@ -5,14 +5,14 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../activities/ticket/value_statics.dart';
-import '../../../../routes/app_routes.dart';
-import '../../../../utils/alert_dialog.dart';
-import '../../../../utils/app_bar.dart';
-import '../../../../utils/app_colors.dart';
-import '../../../../utils/button.dart';
-import '../../../../utils/check_input.dart';
-import '../../../../utils/style.dart';
+import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../routes/app_routes.dart';
+import '../../../../../utils/alert_dialog.dart';
+import '../../../../../utils/app_bar.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/button.dart';
+import '../../../../../utils/check_input.dart';
+import '../../../../../utils/style.dart';
 import '../../data/model/request/car_rental_add_request_body.dart';
 import '../controller/car_rental_controller.dart';
 

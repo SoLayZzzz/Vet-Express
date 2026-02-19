@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../models/schedule/list_by_journey_response.dart';
-import '../feature/schedule/data/model/response/schedule_response.dart';
+import '../feature/home-dashboard/schedule/data/model/response/schedule_response.dart';
 import '../models/schedule/total_by_journey_response.dart';
 import '../utils/alert_dialog.dart';
 import '../utils/app_pref.dart';

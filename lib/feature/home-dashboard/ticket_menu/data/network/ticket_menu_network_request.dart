@@ -1,7 +1,7 @@
 import 'package:express_vet/base/network_data_source.dart';
 
-import '../../../../base/endpoint.dart';
-import '../../../../utils/contains.dart';
+import '../../../../../base/endpoint.dart';
+import '../../../../../utils/contains.dart';
 import '../model/request/destination_request.dart';
 import '../model/response/destination_response.dart';
 

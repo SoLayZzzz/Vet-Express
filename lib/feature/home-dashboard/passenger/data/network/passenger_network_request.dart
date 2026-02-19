@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:express_vet/base/network_data_source.dart';
-import 'package:express_vet/feature/passenger/data/model/request/check_booking_package_request.dart';
+import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';
 import 'package:get/get.dart';
 
-import '../../../../base/endpoint.dart';
+import '../../../../../base/endpoint.dart';
 import '../model/response/check_booking_package_apply_response.dart';
-import '../../../../utils/alert_dialog.dart';
-import '../../../../utils/contains.dart';
-import '../../../../utils/loading.dart';
+import '../../../../../utils/alert_dialog.dart';
+import '../../../../../utils/contains.dart';
+import '../../../../../utils/loading.dart';
 
 class PassengerNetworkRequest {
   final NetworkDataSource networkDataSource;

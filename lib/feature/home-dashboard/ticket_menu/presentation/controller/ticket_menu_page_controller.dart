@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../../../../controller/slide_controller.dart';
+import '../../../../../controller/slide_controller.dart';
 import 'ticket_menu_form_controller.dart';
 
 class TicketMenuPageController extends GetxController {
@@ -32,7 +32,8 @@ class TicketMenuPageController extends GetxController {
 
   void _preCacheRelevantImages() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final images = type == 2 ? slideController.imgListBoat : slideController.imgListBus;
+      final images =
+          type == 2 ? slideController.imgListBoat : slideController.imgListBus;
       if (images.isNotEmpty) {
         log('✅ TicketMenuScreen: Pre-cached relevant images for type $type');
       }

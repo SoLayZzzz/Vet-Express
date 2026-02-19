@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-import '../../../../base/base_url.dart';
-import '../../../../base/network_data_source.dart';
+import '../../../../../base/base_url.dart';
+import '../../../../../base/network_data_source.dart';
 import '../../data/network/car_rental_network_request.dart';
 import '../../data/repositoryImpl/car_rental_repository_impl.dart';
 import '../../domain/repository/car_rental_repository.dart';

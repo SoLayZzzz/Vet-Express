@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import '../../../../base/endpoint.dart';
-import '../../../../base/network_data_source.dart';
+import '../../../../../base/endpoint.dart';
+import '../../../../../base/network_data_source.dart';
 import '../model/response/notification_response.dart';
-import '../../../../utils/contains.dart';
+import '../../../../../utils/contains.dart';
 
 class MenuNetworkRequest {
   final NetWorkDataSource netWorkDataSource;

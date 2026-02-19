@@ -1,13 +1,13 @@
-import 'package:express_vet/feature/schedule/data/model/request/schedule_request_body.dart';
+import 'package:express_vet/feature/home-dashboard/schedule/data/model/request/schedule_request_body.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../base/state_controller.dart';
+import '../../../../../base/state_controller.dart';
 import '../../data/model/response/schedule_response.dart';
-import '../../../../routes/app_routes.dart';
-import '../../../../activities/ticket/value_statics.dart';
-import '../../../../utils/app_colors.dart';
+import '../../../../../routes/app_routes.dart';
+import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../utils/app_colors.dart';
 import '../uiState/schedule_list_ui_state.dart';
 import '../../domain/uscase/schedule_list_usecase.dart';
 

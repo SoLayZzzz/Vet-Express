@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import '../api/notifications.dart';
-import '../feature/menu/data/model/response/notification_response.dart';
-import '../feature/menu/presentation/binding/menu_binding.dart';
-import '../feature/menu/presentation/controller/menu_controller.dart' as menu;
+import '../feature/home-dashboard/menu/data/model/response/notification_response.dart';
+import '../feature/home-dashboard/menu/presentation/binding/menu_binding.dart';
+import '../feature/home-dashboard/menu/presentation/controller/menu_controller.dart'
+    as menu;
 import '../utils/app_colors.dart';
 import '../utils/contains.dart';
 import 'logistic/goods_information_screen.dart';

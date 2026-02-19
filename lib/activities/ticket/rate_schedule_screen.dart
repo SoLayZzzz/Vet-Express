@@ -5,7 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:express_vet/feature/schedule/data/network/schedule_network_request.dart';
+import 'package:express_vet/feature/home-dashboard/schedule/data/network/schedule_network_request.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/style.dart';
 import '../../base/base_url.dart';

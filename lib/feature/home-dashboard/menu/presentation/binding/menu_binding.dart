@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../base/network_data_source.dart';
+import '../../../../../base/network_data_source.dart';
 import '../../data/network/menu_network_request.dart';
 import '../../data/repo_Impl/menu_repository_impl.dart';
 import '../../domain/uscase/menu_usecase.dart';

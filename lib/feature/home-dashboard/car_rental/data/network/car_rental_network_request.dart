@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:get/get.dart';
 
-import '../../../../base/endpoint.dart';
-import '../../../../utils/alert_dialog.dart';
-import '../../../../utils/contains.dart';
-import '../../../../utils/loading.dart';
+import '../../../../../base/endpoint.dart';
+import '../../../../../utils/alert_dialog.dart';
+import '../../../../../utils/contains.dart';
+import '../../../../../utils/loading.dart';
 import '../model/request/car_rental_add_request_body.dart';
 import '../model/response/car_rental_add_response.dart';
 import '../model/response/car_rental_car_type_response.dart';

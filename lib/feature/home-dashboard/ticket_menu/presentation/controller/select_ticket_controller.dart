@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../activities/ticket/value_statics.dart';
+import '../../../../../activities/ticket/value_statics.dart';
 import '../../data/model/response/destination_response.dart';
 import 'ticket_menu_controller.dart';
 

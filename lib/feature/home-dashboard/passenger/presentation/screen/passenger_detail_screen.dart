@@ -9,14 +9,14 @@ import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
 import '../controller/passenger_deatail_controller.dart';
-import '../../../../api/travel_package.dart';
-import '../../../auth/data/model/response/nationality_response.dart';
-import '../../../../models/boarding_point.dart' as boarding;
-import '../../../../utils/app_colors.dart';
-import '../../../../utils/contains.dart';
-import '../../../../utils/style.dart';
-import '../../../../activities/screen/coupon_screen.dart';
-import '../../../../activities/screen/web_view_screen.dart';
+import '../../../../../api/travel_package.dart';
+import '../../../../auth/data/model/response/nationality_response.dart';
+import '../../../../../models/boarding_point.dart' as boarding;
+import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/contains.dart';
+import '../../../../../utils/style.dart';
+import '../../../../../activities/screen/coupon_screen.dart';
+import '../../../../../activities/screen/web_view_screen.dart';
 
 class PassengerDetailScreen extends GetView<PassengerDetailController> {
   PassengerDetailScreen({super.key});

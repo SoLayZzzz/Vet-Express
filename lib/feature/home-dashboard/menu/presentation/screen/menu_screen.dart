@@ -3,16 +3,16 @@ import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:express_vet/feature/menu/presentation/binding/menu_binding.dart';
-import 'package:express_vet/feature/menu/presentation/controller/menu_controller.dart'
+import 'package:express_vet/feature/home-dashboard/menu/presentation/binding/menu_binding.dart';
+import 'package:express_vet/feature/home-dashboard/menu/presentation/controller/menu_controller.dart'
     as menu;
-import '../../../../../utils/app_colors.dart';
-import '../../../../controller/china/china_controller.dart';
-import '../../../../activities/components/profile_widget.dart';
-import '../../../../activities/screen/resort_screen.dart';
-import '../../../../activities/components/slide_widget.dart';
-import '../../../../activities/ticket/value_statics.dart';
-import '../../../../routes/app_routes.dart';
+import '../../../../../../utils/app_colors.dart';
+import '../../../../../controller/china/china_controller.dart';
+import '../../../../../activities/components/profile_widget.dart';
+import '../../../../../activities/screen/resort_screen.dart';
+import '../../../../../activities/components/slide_widget.dart';
+import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../routes/app_routes.dart';
 
 class MenuScreen extends GetView<menu.MenuController> {
   const MenuScreen({super.key});

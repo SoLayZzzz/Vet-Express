@@ -9,8 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/routes/app_routes.dart';
 import '../../data/model/response/schedule_response.dart';
-import '../../../../utils/alert_dialog_schedule.dart';
-import '../../../../utils/app_colors.dart';
+import '../../../../../utils/alert_dialog_schedule.dart';
+import '../../../../../utils/app_colors.dart';
 import '../controller/schedule_list_controller.dart';
 
 class ScheduleListScreen extends StatelessWidget {

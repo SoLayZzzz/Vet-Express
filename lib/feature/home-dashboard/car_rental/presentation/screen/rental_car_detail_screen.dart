@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../../activities/ticket/value_statics.dart';
-import '../../../../routes/app_routes.dart';
-import '../../../../utils/app_bar.dart';
-import '../../../../utils/app_colors.dart';
-import '../../../../utils/button.dart';
+import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../routes/app_routes.dart';
+import '../../../../../utils/app_bar.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/button.dart';
 import '../../data/model/response/car_rental_car_type_response.dart';
 
 class RentalCarDetailScreen extends StatefulWidget {

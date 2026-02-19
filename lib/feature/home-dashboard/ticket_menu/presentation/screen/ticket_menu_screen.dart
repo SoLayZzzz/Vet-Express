@@ -5,11 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/button.dart';
-import '../../../../controller/slide_controller.dart';
-import '../../../../utils/app_bar.dart';
-import '../../../../utils/app_colors.dart';
-import '../../../../activities/components/cache_image_widget.dart';
-import '../../../../routes/app_routes.dart';
+import '../../../../../controller/slide_controller.dart';
+import '../../../../../utils/app_bar.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../../activities/components/cache_image_widget.dart';
+import '../../../../../routes/app_routes.dart';
 import '../controller/ticket_menu_page_controller.dart';
 import '../controller/ticket_menu_form_controller.dart';
 

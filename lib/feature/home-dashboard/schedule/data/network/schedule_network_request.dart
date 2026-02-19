@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:get/get.dart';
 
-import '../../../../base/endpoint.dart';
-import '../../../../models/schedule/list_by_journey_response.dart';
-import '../../../../models/schedule/total_by_journey_response.dart';
+import '../../../../../base/endpoint.dart';
+import '../../../../../models/schedule/list_by_journey_response.dart';
+import '../../../../../models/schedule/total_by_journey_response.dart';
 import '../model/request/schedule_request_body.dart';
 import '../model/response/schedule_response.dart';
-import '../../../../utils/alert_dialog.dart';
-import '../../../../utils/loading.dart';
-import '../../../../utils/contains.dart';
+import '../../../../../utils/alert_dialog.dart';
+import '../../../../../utils/loading.dart';
+import '../../../../../utils/contains.dart';
 
 class ScheduleNetworkRequest {
   final NetWorkDataSource netWorkDataSource;

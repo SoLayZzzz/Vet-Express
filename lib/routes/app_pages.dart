@@ -1,31 +1,32 @@
-import 'package:express_vet/feature/passenger/presentation/screen/passenger_detail_screen.dart';
+import 'package:express_vet/feature/home-dashboard/passenger/presentation/screen/passenger_detail_screen.dart';
 import 'package:get/get.dart';
 import '../activities/china/registration_screen.dart';
 import '../activities/china/warehouse_address_screen.dart';
-import '../activities/ev/ev_charging_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/binding/ev_charger_binding.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charging_screen.dart';
 import '../activities/logistic/booking_delivery_screen.dart';
 import '../activities/logistic/self_service_screen.dart';
 import '../activities/notification_screen.dart';
 import '../activities/screen/contact_us_screen.dart';
 import '../activities/screen/vet_airway.dart';
 import '../activities/ticket/package_list_screen.dart';
-import '../feature/car_rental/presentation/binding/car_rental_binding.dart';
-import '../feature/car_rental/presentation/screen/rental_car_detail_screen.dart';
-import '../feature/car_rental/presentation/screen/rental_car_info_screen.dart';
-import '../feature/car_rental/presentation/screen/rental_car_list_screen.dart';
-import '../feature/car_rental/presentation/screen/select_rental_province_screen.dart';
-import '../feature/schedule/presentation/screen/ticket_schedule_car_detail_screen.dart';
+import '../feature/home-dashboard/car_rental/presentation/binding/car_rental_binding.dart';
+import '../feature/home-dashboard/car_rental/presentation/screen/rental_car_detail_screen.dart';
+import '../feature/home-dashboard/car_rental/presentation/screen/rental_car_info_screen.dart';
+import '../feature/home-dashboard/car_rental/presentation/screen/rental_car_list_screen.dart';
+import '../feature/home-dashboard/car_rental/presentation/screen/select_rental_province_screen.dart';
+import '../feature/home-dashboard/schedule/presentation/screen/ticket_schedule_car_detail_screen.dart';
 import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
 import '../activities/splash_screen.dart';
 import '../feature/auth/presentation/binding/auth_binding.dart';
 import '../feature/auth/presentation/screen/sign_in_screen.dart';
-import '../feature/schedule/presentation/binding/ticket_binding.dart';
-import '../feature/schedule/presentation/screen/schedule_list_screen.dart';
-import '../feature/schedule/presentation/screen/review_rate_screen.dart';
-import '../feature/seat/presentation/screen/select_seat_screen.dart';
-import '../feature/ticket_menu/presentation/binding/ticket_menu_binding.dart';
-import '../feature/ticket_menu/presentation/screen/select_destination_screen.dart';
-import '../feature/ticket_menu/presentation/screen/ticket_menu_screen.dart';
+import '../feature/home-dashboard/schedule/presentation/binding/ticket_binding.dart';
+import '../feature/home-dashboard/schedule/presentation/screen/schedule_list_screen.dart';
+import '../feature/home-dashboard/schedule/presentation/screen/review_rate_screen.dart';
+import '../feature/home-dashboard/seat/presentation/screen/select_seat_screen.dart';
+import '../feature/home-dashboard/ticket_menu/presentation/binding/ticket_menu_binding.dart';
+import '../feature/home-dashboard/ticket_menu/presentation/screen/select_destination_screen.dart';
+import '../feature/home-dashboard/ticket_menu/presentation/screen/ticket_menu_screen.dart';
 import '../utils/contains.dart';
 import 'app_routes.dart';
 
@@ -100,6 +101,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.evCharger,
       page: () => EvChargerScreen(),
+      binding: EvChargerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

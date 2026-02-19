@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../../base/network_data_source.dart';
+import '../../../../../base/network_data_source.dart';
 import '../../data/network/ticket_menu_network_request.dart';
 import '../../data/repo_Impl/ticket_menu_repository_impl.dart';
 import '../../domain/uscase/ticket_menu_usecase.dart';

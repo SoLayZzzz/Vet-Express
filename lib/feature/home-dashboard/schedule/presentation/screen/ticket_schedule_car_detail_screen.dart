@@ -10,8 +10,8 @@ import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/utils/app_bar.dart';
 
 import '../controller/schedule_car_detail_controller.dart';
-import '../../../../utils/app_colors.dart';
-import '../../../../utils/button.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/button.dart';
 
 class TicketScheduleCarDetailScreen extends StatefulWidget {
   const TicketScheduleCarDetailScreen({super.key});

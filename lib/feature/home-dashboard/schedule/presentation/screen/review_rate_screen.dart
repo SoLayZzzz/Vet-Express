@@ -6,12 +6,12 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/routes/app_routes.dart';
-import 'package:express_vet/feature/schedule/data/network/schedule_network_request.dart';
-import '../../../../models/schedule/list_by_journey_response.dart';
-import '../../../../models/schedule/total_by_journey_response.dart';
-import '../../../../utils/app_bar.dart';
-import '../../../../utils/app_colors.dart';
-import '../../../../utils/button.dart';
+import 'package:express_vet/feature/home-dashboard/schedule/data/network/schedule_network_request.dart';
+import '../../../../../models/schedule/list_by_journey_response.dart';
+import '../../../../../models/schedule/total_by_journey_response.dart';
+import '../../../../../utils/app_bar.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/button.dart';
 
 class ReviewRateScreen extends StatefulWidget {
   final int? scheduleId; //use for rate

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/destination/destination_ev.dart';
-import '../models/ev_charger/ev_charger_response.dart';
+import '../feature/home-dashboard/ev-charger/data/model/response/ev_charger_response.dart';
 import '../utils/alert_dialog.dart';
 import '../utils/app_pref.dart';
 import '../utils/contains.dart';

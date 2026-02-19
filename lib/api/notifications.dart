@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../feature/menu/data/model/response/notification_response.dart';
+import '../feature/home-dashboard/menu/data/model/response/notification_response.dart';
 import '../models/simple_response.dart';
 import '../utils/alert_dialog.dart';
 import '../utils/app_pref.dart';

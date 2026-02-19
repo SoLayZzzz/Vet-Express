@@ -1,4 +1,4 @@
-import '../../../../../models/header.dart';
+import '../../../../../../models/header.dart';
 
 class SeatResponse {
   Header? header;

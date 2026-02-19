@@ -1,4 +1,4 @@
-import 'package:express_vet/feature/passenger/presentation/controller/passenger_deatail_controller.dart';
+import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/passenger_deatail_controller.dart';
 import 'package:get/get.dart';
 
 import '../../data/network/schedule_network_request.dart';
@@ -18,8 +18,8 @@ import '../controller/schedule_car_detail_controller.dart';
 import '../controller/schedule_list_controller.dart';
 import '../../../seat/presentation/controller/select_seat_controller.dart';
 import '../controller/ticket_flow_controller.dart';
-import '../../../../base/base_url.dart';
-import '../../../../base/network_data_source.dart';
+import '../../../../../base/base_url.dart';
+import '../../../../../base/network_data_source.dart';
 
 class TicketBinding implements Bindings {
   @override

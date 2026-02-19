@@ -1,4 +1,4 @@
-import '../../../../../models/header.dart';
+import '../../../../../../models/header.dart';
 
 class CarRentalCarTypeResponse {
   Header? header;
@@ -82,7 +82,9 @@ class CarRentalCarTypeData {
     if (json['slidePhoto'] != null) {
       slidePhoto = <CarRentalSlidePhoto>[];
       (json['slidePhoto'] as List<dynamic>).forEach((v) {
-        slidePhoto!.add(CarRentalSlidePhoto.fromJson(v as Map<String, dynamic>));
+        slidePhoto!.add(
+          CarRentalSlidePhoto.fromJson(v as Map<String, dynamic>),
+        );
       });
     }
     if (json['amenities'] != null) {

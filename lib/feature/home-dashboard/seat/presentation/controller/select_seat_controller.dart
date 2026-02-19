@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../../../../activities/ticket/value_statics.dart';
-import '../../../../base/state_controller.dart';
+import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../base/state_controller.dart';
 import 'seat_data.dart';
 import '../../data/model/response/seat_unavailable_response.dart'
     as seat_unavailable;
-import '../../../../routes/app_routes.dart';
+import '../../../../../routes/app_routes.dart';
 import '../uiState/select_seat_ui_state.dart';
 import '../../domain/uscase/select_seat_usecase.dart';
 

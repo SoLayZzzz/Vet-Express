@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../activities/ticket/value_statics.dart';
-import '../../../../utils/app_bar.dart';
-import '../../../../utils/app_colors.dart';
+import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../utils/app_bar.dart';
+import '../../../../../utils/app_colors.dart';
 import '../controller/car_rental_controller.dart';
 import '../../data/model/response/car_rental_province_response.dart';
 
@@ -17,7 +17,8 @@ class SelectRentalProvinceScreen extends StatefulWidget {
       _SelectRentalProvinceScreenState();
 }
 
-class _SelectRentalProvinceScreenState extends State<SelectRentalProvinceScreen> {
+class _SelectRentalProvinceScreenState
+    extends State<SelectRentalProvinceScreen> {
   late final CarRentalController controller;
 
   @override
@@ -51,7 +52,8 @@ class _SelectRentalProvinceScreenState extends State<SelectRentalProvinceScreen>
                             child: ListView.builder(
                               itemCount: selectData.data!.body?.data?.length,
                               itemBuilder: (BuildContext context, int index) {
-                                final data = selectData.data?.body?.data?[index];
+                                final data =
+                                    selectData.data?.body?.data?[index];
                                 return InkWell(
                                   onTap: () {
                                     if (widget.selectType == 'From') {

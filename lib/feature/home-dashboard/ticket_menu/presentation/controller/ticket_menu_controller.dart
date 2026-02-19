@@ -1,6 +1,6 @@
-import '../../../../base/state_controller.dart';
-import '../../../../utils/app_pref.dart';
-import '../../../../utils/contains.dart';
+import '../../../../../base/state_controller.dart';
+import '../../../../../utils/app_pref.dart';
+import '../../../../../utils/contains.dart';
 import '../../data/model/request/destination_request.dart';
 import '../../data/model/response/destination_response.dart';
 import '../../domain/uscase/ticket_menu_usecase.dart';

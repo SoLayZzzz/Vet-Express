@@ -10,7 +10,7 @@ import '../../../activities/member_ship_screen.dart';
 import '../../../activities/ticket/package_history_screen.dart';
 import '../../../activities/ticket/ticket_history_screen.dart';
 import '../../../activities/tracking_screen.dart';
-import '../../../feature/menu/presentation/screen/menu_screen.dart';
+import '../../home-dashboard/menu/presentation/screen/menu_screen.dart';
 import '../../../utils/contains.dart';
 
 class DashBoardController extends StateController<DashBoardState> {

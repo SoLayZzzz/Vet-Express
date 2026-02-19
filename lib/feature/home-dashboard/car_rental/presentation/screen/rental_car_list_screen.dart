@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:readmore/readmore.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../routes/app_routes.dart';
-import '../../../../utils/app_bar.dart';
-import '../../../../utils/app_colors.dart';
+import '../../../../../routes/app_routes.dart';
+import '../../../../../utils/app_bar.dart';
+import '../../../../../utils/app_colors.dart';
 import '../controller/car_rental_controller.dart';
 import '../../data/model/response/car_rental_car_type_response.dart';
 import 'rental_car_info_screen.dart';
