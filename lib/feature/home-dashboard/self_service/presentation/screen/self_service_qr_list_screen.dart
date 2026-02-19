@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../utils/app_bar.dart';
+import '../../../../../utils/app_bar.dart';
 
 class SelfServiceQRListScreen extends StatefulWidget {
   final String qrCode;
@@ -10,7 +10,8 @@ class SelfServiceQRListScreen extends StatefulWidget {
   const SelfServiceQRListScreen({super.key, required this.qrCode});
 
   @override
-  State<SelfServiceQRListScreen> createState() => _SelfServiceQRListScreenState();
+  State<SelfServiceQRListScreen> createState() =>
+      _SelfServiceQRListScreenState();
 }
 
 class _SelfServiceQRListScreenState extends State<SelfServiceQRListScreen> {
@@ -25,7 +26,12 @@ class _SelfServiceQRListScreenState extends State<SelfServiceQRListScreen> {
         child: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 10,
+                bottom: 20,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

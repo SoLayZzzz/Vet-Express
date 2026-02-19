@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../screen/ev_payment_screen.dart';
 import '../screen/payment_success_screen.dart';
-import '../../../../../api/ev.dart';
 import 'ev_wallet_controller.dart';
+import 'ev_payment_controller.dart';
+import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvTopUpController extends GetxController {
-  final EV _evApi = EV();
+  final EvChargerUseCase useCase;
   late final EvWalletController walletController;
+
+  EvTopUpController(this.useCase);
 
   // Amount selection
   final RxDouble selectedAmount = 5000.0.obs;
@@ -106,9 +109,9 @@ class EvTopUpController extends GetxController {
     try {
       // Send amount in cents (API expects cents)
       final amountInCents = (finalAmount);
-      final response = await _evApi.evWalletTopUp(
-        Get.context!,
-        amountInCents.toDouble(),
+      final response = await useCase.walletTopUp(
+        context: Get.context!,
+        amount: amountInCents.toDouble(),
       );
 
       if (response.header?.statusCode == 200 && response.body?.status == true) {
@@ -125,10 +128,17 @@ class EvTopUpController extends GetxController {
             data.checkoutQrUrl!.isNotEmpty) {
           // Navigate to payment screen with checkout URL and transaction ID
           Get.to(
-            () => EvPaymentScreen(
-              deepLink: data.deeplink!,
-              checkoutQrUrl: data.checkoutQrUrl!,
-            ),
+            () => const EvPaymentScreen(),
+            binding: BindingsBuilder(() {
+              if (Get.isRegistered<EvPaymentController>()) {
+                Get.delete<EvPaymentController>();
+              }
+              Get.put(EvPaymentController());
+            }),
+            arguments: {
+              'deepLink': data.deeplink!,
+              'checkoutQrUrl': data.checkoutQrUrl!,
+            },
           );
 
           // Start checking payment status when payment screen closes
@@ -186,9 +196,9 @@ class EvTopUpController extends GetxController {
     isCheckingPayment.value = true;
 
     try {
-      final response = await _evApi.evPaymentStatus(
-        Get.context!,
-        currentTransactionId.value,
+      final response = await useCase.walletTopUpStatus(
+        context: Get.context!,
+        transactionId: currentTransactionId.value,
       );
 
       if (response.header?.statusCode == 200 && response.body?.status == true) {

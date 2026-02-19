@@ -5,10 +5,8 @@ import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/style.dart';
 
-class EvTopUpScreen extends StatelessWidget {
-  EvTopUpScreen({super.key});
-
-  final EvTopUpController topUpController = Get.put(EvTopUpController());
+class EvTopUpScreen extends GetView<EvTopUpController> {
+  const EvTopUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

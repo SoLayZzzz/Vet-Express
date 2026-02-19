@@ -4,10 +4,8 @@ import 'package:get/get.dart';
 
 import '../controller/ev_faq_controller.dart';
 
-class EvFaqScreen extends StatelessWidget {
+class EvFaqScreen extends GetView<EvFaqController> {
   EvFaqScreen({super.key});
-
-  final EvFaqController faqController = Get.put(EvFaqController());
 
   @override
   Widget build(BuildContext context) {
@@ -15,15 +13,15 @@ class EvFaqScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBarVET().appBar(context, 'faq'.tr),
       body: Obx(() {
-        if (faqController.isLoading.value && faqController.faqList.isEmpty) {
+        if (controller.isLoading.value && controller.faqList.isEmpty) {
           return _buildLoadingState();
         }
 
-        if (faqController.hasError.value) {
+        if (controller.hasError.value) {
           return _buildErrorState();
         }
 
-        if (faqController.faqList.isEmpty) {
+        if (controller.faqList.isEmpty) {
           return _buildEmptyState();
         }
 
@@ -49,7 +47,7 @@ class EvFaqScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: faqController.refreshData,
+            onPressed: controller.refreshData,
             child: Text('retry'.tr),
           ),
         ],
@@ -81,20 +79,19 @@ class EvFaqScreen extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                ...faqController.faqList.asMap().entries.map((entry) {
+                ...controller.faqList.asMap().entries.map((entry) {
                   final index = entry.key;
                   final faq = entry.value;
                   return _buildExpansionItem(
-                    title: faqController.getLocalizedQuestion(faq),
-                    content: faqController.getLocalizedAnswer(faq),
+                    title: controller.getLocalizedQuestion(faq),
+                    content: controller.getLocalizedAnswer(faq),
                     isInitiallyExpanded:
                         index == 0, // First item expanded by default
                   );
                 }),
 
                 // Load more indicator
-                if (faqController.isLoading.value &&
-                    faqController.faqList.isNotEmpty)
+                if (controller.isLoading.value && controller.faqList.isNotEmpty)
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: CircularProgressIndicator(),
@@ -105,12 +102,12 @@ class EvFaqScreen extends StatelessWidget {
         ),
 
         // Load more button
-        if (faqController.hasMore.value && !faqController.isLoading.value)
+        if (controller.hasMore.value && !controller.isLoading.value)
           Container(
             padding: const EdgeInsets.all(16.0),
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: faqController.loadMore,
+              onPressed: controller.loadMore,
               child: Text('load_more'.tr),
             ),
           ),

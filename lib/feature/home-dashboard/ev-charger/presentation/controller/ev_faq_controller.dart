@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../api/ev.dart';
 import '../../data/model/response/ev_faq_response.dart';
+import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvFaqController extends GetxController {
+  final EvChargerUseCase useCase;
+  EvFaqController(this.useCase);
+
   var evFaqResponse = Rxn<EvFaqResponse>();
   var isLoading = false.obs;
   var hasError = false.obs;
@@ -22,7 +25,11 @@ class EvFaqController extends GetxController {
       isLoading(true);
       hasError(false);
 
-      var response = await EV().getEvFaQ(Get.context!, page, rowPerPage);
+      final response = await useCase.fetchEvFaqs(
+        context: Get.context!,
+        page: page,
+        rowsPerPage: rowPerPage,
+      );
       evFaqResponse.value = response;
 
       // Update pagination info

@@ -18,7 +18,7 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../../base/base_url.dart';
-import '../../api/booking.dart';
+import '../../feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import '../../models/booking/process_payment_response.dart';
 import '../../utils/alert_dialog.dart';
 import '../../utils/app_colors.dart';

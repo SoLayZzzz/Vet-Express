@@ -4,11 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import '../../../../../api/ev.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../data/model/response/ev_station_list_response.dart';
 import '../../data/model/response/ev_province_response.dart';
+import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvStationController extends GetxController {
+  final EvChargerUseCase useCase;
+
+  EvStationController(this.useCase);
+
+  final PanelController panelController = PanelController();
+  final TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNode = FocusNode();
+  Timer? _searchDebounce;
+
   // Station related variables
   var evStationResponse = Rxn<EvStationListResponse>();
   var isLoading = false.obs;
@@ -20,6 +30,8 @@ class EvStationController extends GetxController {
   var isLoadingProvinces = false.obs;
   var selectedProvince = Rxn<EvProvinceDatum>();
   var provinceSearchController = TextEditingController();
+  final RxString provinceSearchQuery = ''.obs;
+  final RxList<EvProvinceDatum> filteredProvinces = <EvProvinceDatum>[].obs;
 
   // Map related variables
   final Completer<GoogleMapController> mapController =
@@ -45,7 +57,65 @@ class EvStationController extends GetxController {
     fetchEvProvinces(1, 100);
     _getUserLocation();
     _loadMarkerIcon();
+
+    searchController.addListener(_onSearchChanged);
+    searchFocusNode.addListener(_onSearchFocusChanged);
+    provinceSearchController.addListener(_onProvinceSearchChanged);
+
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    _searchDebounce?.cancel();
+    searchController.dispose();
+    searchFocusNode.dispose();
+    provinceSearchController.dispose();
+    mapController.future
+        .then((controller) => controller.dispose())
+        .catchError((_) {});
+    super.onClose();
+  }
+
+  void _onSearchFocusChanged() {
+    if (searchFocusNode.hasFocus) {
+      panelController.open();
+    }
+  }
+
+  void _onSearchChanged() {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      if (searchController.text == searchQuery.value) return;
+      searchStations(searchController.text);
+    });
+  }
+
+  void _onProvinceSearchChanged() {
+    provinceSearchQuery.value = provinceSearchController.text;
+    _applyProvinceFilter();
+  }
+
+  void _applyProvinceFilter() {
+    final query = provinceSearchQuery.value.toLowerCase().trim();
+    if (query.isEmpty) {
+      filteredProvinces.assignAll(allProvinces);
+      return;
+    }
+
+    final filtered =
+        allProvinces.where((province) {
+          final nameEn = province.nameEn?.toLowerCase() ?? '';
+          final nameKh = province.nameKh?.toLowerCase() ?? '';
+          return nameEn.contains(query) || nameKh.contains(query);
+        }).toList();
+    filteredProvinces.assignAll(filtered);
+  }
+
+  void clearProvinceSearch() {
+    provinceSearchController.clear();
+    provinceSearchQuery.value = '';
+    _applyProvinceFilter();
   }
 
   // Station methods - Fetch with search and province filter
@@ -55,8 +125,8 @@ class EvStationController extends GetxController {
       hasError(false);
       errorMessage.value = '';
 
-      var response = await EV().getEvNewStation(
-        Get.context!,
+      final response = await useCase.fetchEvStationList(
+        context: Get.context!,
         searchText: searchText,
         provinceId: provinceId,
       );
@@ -107,7 +177,10 @@ class EvStationController extends GetxController {
 
         // Call API in background (optimistic update)
         try {
-          final response = await EV().eVFav(Get.context!, stationId);
+          final response = await useCase.addStationFavorite(
+            context: Get.context!,
+            stationId: stationId,
+          );
 
           if (response.header?.result == true &&
               response.body?.status == true) {
@@ -170,8 +243,13 @@ class EvStationController extends GetxController {
   Future<void> fetchEvProvinces(int page, int rowPerPage) async {
     try {
       isLoadingProvinces(true);
-      var response = await EV().getEvProvince(Get.context!, page, rowPerPage);
+      final response = await useCase.fetchEvProvinceList(
+        context: Get.context!,
+        page: page,
+        rowsPerPage: rowPerPage,
+      );
       evProvinceResponse.value = response;
+      _applyProvinceFilter();
     } catch (e) {
       debugPrint('Error fetching provinces: $e');
     } finally {
@@ -347,14 +425,5 @@ class EvStationController extends GetxController {
     isSearching.value = false;
     provinceSearchController.clear();
     fetchEvStations();
-  }
-
-  @override
-  void onClose() {
-    provinceSearchController.dispose();
-    mapController.future
-        .then((controller) => controller.dispose())
-        .catchError((_) {});
-    super.onClose();
   }
 }

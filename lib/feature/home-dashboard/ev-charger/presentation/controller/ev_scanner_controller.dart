@@ -5,18 +5,14 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/respons
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../../../../../api/ev.dart';
 import 'ev_wallet_controller.dart';
+import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvScannerController extends GetxController {
-  final EV _apiService = EV();
+  final EvChargerUseCase useCase;
   late final EvWalletController walletController;
 
-  @override
-  void onInit() {
-    super.onInit();
-    walletController = Get.find<EvWalletController>();
-  }
+  EvScannerController(this.useCase);
 
   // Observables
   var isLoading = false.obs;
@@ -53,7 +49,10 @@ class EvScannerController extends GetxController {
     isLoading.value = true;
 
     try {
-      final response = await _apiService.eVScanQR(Get.context!, transactionId);
+      final response = await useCase.scanQrFindSaleOrder(
+        context: Get.context!,
+        transactionId: transactionId,
+      );
 
       if (response.body?.status == true &&
           response.body?.data != null &&
@@ -81,9 +80,9 @@ class EvScannerController extends GetxController {
     isLoading.value = true;
 
     try {
-      final response = await _apiService.eVConfirmPayment(
-        Get.context!,
-        transactionId,
+      final response = await useCase.confirmPayment(
+        context: Get.context!,
+        transactionId: transactionId,
       );
 
       if (response.header?.result == true &&

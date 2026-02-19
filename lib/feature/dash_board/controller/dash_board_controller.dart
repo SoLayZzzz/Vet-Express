@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../activities/logistic/location_screen.dart';
 import '../../../activities/logistic/scan_qr_screen.dart';
-import '../../../activities/logistic/self_service_screen.dart';
+import '../../home-dashboard/self_service/presentation/screen/self_service_screen.dart';
 import '../../../activities/member_ship_screen.dart';
 import '../../../activities/ticket/package_history_screen.dart';
 import '../../../activities/ticket/ticket_history_screen.dart';
@@ -48,7 +48,7 @@ class DashBoardController extends StateController<DashBoardState> {
       if (from == 1) {
         uiState.value = state.copyWith(navigated: true);
         Get.to(
-          const SelfServiceScreen(),
+          SelfServiceScreen(),
           transition: Transition.rightToLeft,
           duration: const Duration(milliseconds: Constrains.duration),
         );

@@ -5,10 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../controller/ev_station_controller.dart';
 import '../../data/model/response/ev_station_list_response.dart';
 
-class EvFavoriteScreen extends StatelessWidget {
+class EvFavoriteScreen extends GetView<EvStationController> {
   EvFavoriteScreen({super.key});
-
-  final EvStationController stationController = Get.put(EvStationController());
 
   Future<void> _openMap(String lat, String lng) async {
     final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
@@ -24,20 +22,19 @@ class EvFavoriteScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'favorites'.tr),
       body: Obx(() {
-        if (stationController.isLoading.value &&
-            stationController.favoriteStations.isEmpty) {
+        if (controller.isLoading.value && controller.favoriteStations.isEmpty) {
           return _buildLoadingState();
         }
 
-        if (stationController.hasError.value) {
+        if (controller.hasError.value) {
           return _buildErrorState();
         }
 
-        if (stationController.favoriteStations.isEmpty) {
+        if (controller.favoriteStations.isEmpty) {
           return _buildEmptyState();
         }
 
-        return _buildStationList(stationController.favoriteStations);
+        return _buildStationList(controller.favoriteStations);
       }),
     );
   }
@@ -59,7 +56,7 @@ class EvFavoriteScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: stationController.refreshData,
+            onPressed: controller.refreshData,
             child: Text('retry'.tr),
           ),
         ],
@@ -199,7 +196,7 @@ class EvFavoriteScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "DC 1/6", // Or use ${stationController.allStations.length}/6
+                          "DC 1/6", // Or use ${controller.allStations.length}/6
                           style: TextStyle(
                             color: Colors.grey[700],
                             fontSize: 12,
@@ -295,9 +292,9 @@ class EvFavoriteScreen extends StatelessWidget {
 
     // Simple distance calculation - you can implement actual distance calculation here
     // This is a placeholder implementation
-    if (stationController.currentPosition.value != null) {
-      final userLat = stationController.currentPosition.value!.latitude;
-      final userLng = stationController.currentPosition.value!.longitude;
+    if (controller.currentPosition.value != null) {
+      final userLat = controller.currentPosition.value!.latitude;
+      final userLng = controller.currentPosition.value!.longitude;
       final stationLat = double.parse(lat);
       final stationLng = double.parse(lng);
 

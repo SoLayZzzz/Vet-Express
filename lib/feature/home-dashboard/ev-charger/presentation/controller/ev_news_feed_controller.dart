@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../api/ev.dart';
 import '../../../../../base/base_url.dart';
 import '../../data/model/response/ev_news_feed_response.dart';
+import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvNewsFeedController extends GetxController {
+  final EvChargerUseCase useCase;
+  EvNewsFeedController(this.useCase);
+
   var newsFeedResponse = Rxn<EvNewsFeedResponse>();
   var isLoading = false.obs;
   var hasError = false.obs;
@@ -24,7 +27,11 @@ class EvNewsFeedController extends GetxController {
     }
 
     try {
-      final response = await EV().getEvNewsFeed(Get.context!, page, rowPerPage);
+      final response = await useCase.fetchEvNewsFeed(
+        context: Get.context!,
+        page: page,
+        rowsPerPage: rowPerPage,
+      );
 
       if (page == 1) {
         newsFeedResponse.value = response;

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_province_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_station_list_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -11,46 +10,16 @@ import '../controller/ev_station_controller.dart';
 
 import '../../../../../utils/app_colors.dart';
 
-class EvAllStationScreen extends StatefulWidget {
+class EvAllStationScreen extends GetView<EvStationController> {
   const EvAllStationScreen({super.key});
-
-  @override
-  State<EvAllStationScreen> createState() => _EvAllStationScreenState();
-}
-
-class _EvAllStationScreenState extends State<EvAllStationScreen> {
-  final EvStationController stationController = Get.put(EvStationController());
-  final PanelController _panelController = PanelController();
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(_onSearchChanged);
-    _searchFocusNode.addListener(_onSearchFocusChanged);
-  }
-
-  void _onSearchFocusChanged() {
-    if (_searchFocusNode.hasFocus) {
-      _panelController.open();
-    }
-  }
-
-  void _onSearchChanged() {
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (_searchController.text == stationController.searchQuery.value) return;
-      stationController.searchStations(_searchController.text);
-    });
-  }
 
   void _onStationSelected(EvStationListDatum station) {
     if (station.lats != null && station.longs != null) {
-      stationController.moveToStation(
+      controller.moveToStation(
         LatLng(double.parse(station.lats!), double.parse(station.longs!)),
       );
     }
-    _panelController.animatePanelToPosition(0.0);
+    controller.panelController.animatePanelToPosition(0.0);
   }
 
   Future<void> _openMap(String lat, String lng) async {
@@ -63,12 +32,8 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
   }
 
   void _showProvinceFilterDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) =>
-              ProvinceFilterDialog(stationController: stationController),
-    );
+    controller.filteredProvinces.assignAll(controller.allProvinces);
+    Get.dialog(const ProvinceFilterDialog());
   }
 
   @override
@@ -87,12 +52,12 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                     target: LatLng(11.578036036368854, 104.922274625954),
                     zoom: 6,
                   ),
-                  markers: stationController.buildMarkers(_onStationSelected),
+                  markers: controller.buildMarkers(_onStationSelected),
                   myLocationEnabled: true,
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   onMapCreated: (controller) {
-                    stationController.mapController.complete(controller);
+                    this.controller.mapController.complete(controller);
                   },
                 ),
 
@@ -110,7 +75,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                   bottom: MediaQuery.of(context).size.height * 0.1,
                   child: FloatingActionButton(
                     heroTag: "location_btn",
-                    onPressed: stationController.goToCurrentLocation,
+                    onPressed: controller.goToCurrentLocation,
                     backgroundColor: Colors.white,
                     elevation: 4,
                     child: Icon(
@@ -121,7 +86,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                 ),
 
                 // Filter Badge (if province is selected)
-                if (stationController.selectedProvince.value != null)
+                if (controller.selectedProvince.value != null)
                   Positioned(
                     top: MediaQuery.of(context).size.height * 0.12,
                     left: 16,
@@ -138,8 +103,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            stationController.selectedProvince.value?.nameEn ??
-                                '',
+                            controller.selectedProvince.value?.nameEn ?? '',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -147,7 +111,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                           ),
                           const SizedBox(width: 4),
                           GestureDetector(
-                            onTap: stationController.clearProvinceFilter,
+                            onTap: controller.clearProvinceFilter,
                             child: const Icon(
                               Icons.close,
                               size: 14,
@@ -160,13 +124,10 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                   ),
 
                 // Search Badge (if searching)
-                if (stationController.searchQuery.value.isNotEmpty)
+                if (controller.searchQuery.value.isNotEmpty)
                   Positioned(
                     top: MediaQuery.of(context).size.height * 0.12,
-                    left:
-                        stationController.selectedProvince.value != null
-                            ? 120
-                            : 16,
+                    left: controller.selectedProvince.value != null ? 120 : 16,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -180,7 +141,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '"${stationController.searchQuery.value}"',
+                            '"${controller.searchQuery.value}"',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -188,7 +149,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                           ),
                           const SizedBox(width: 4),
                           GestureDetector(
-                            onTap: stationController.clearSearch,
+                            onTap: controller.clearSearch,
                             child: const Icon(
                               Icons.close,
                               size: 14,
@@ -202,7 +163,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
 
                 // Sliding Up Panel
                 SlidingUpPanel(
-                  controller: _panelController,
+                  controller: controller.panelController,
                   minHeight: 0,
                   maxHeight: MediaQuery.of(context).size.height * 0.8,
                   borderRadius: const BorderRadius.only(
@@ -212,7 +173,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                   panel: _buildStationPanel(),
                   body: Container(),
                   onPanelClosed: () {
-                    _searchFocusNode.unfocus();
+                    controller.searchFocusNode.unfocus();
                   },
                 ),
               ],
@@ -221,7 +182,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
 
           // Favorite Success Animation
           Obx(() {
-            if (stationController.showFavoriteAnimation.value) {
+            if (controller.showFavoriteAnimation.value) {
               return _buildFavoriteAnimation();
             }
             return const SizedBox.shrink();
@@ -237,13 +198,12 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           color: Colors.black.withOpacity(
-            stationController.showFavoriteAnimation.value ? 0.5 : 0.0,
+            controller.showFavoriteAnimation.value ? 0.5 : 0.0,
           ),
           child: Center(
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 300),
-              opacity:
-                  stationController.showFavoriteAnimation.value ? 1.0 : 0.0,
+              opacity: controller.showFavoriteAnimation.value ? 1.0 : 0.0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -253,9 +213,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                     curve: Curves.elasticOut,
                     transform:
                         Matrix4.identity()..scale(
-                          stationController.showFavoriteAnimation.value
-                              ? 1.2
-                              : 0.8,
+                          controller.showFavoriteAnimation.value ? 1.2 : 0.8,
                         ),
                     child: const Icon(
                       Icons.favorite,
@@ -294,7 +252,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          stationController.favoriteStationName.value,
+                          controller.favoriteStationName.value,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -319,13 +277,15 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              _panelController.open();
-              FocusScope.of(context).requestFocus(_searchFocusNode);
+              controller.panelController.open();
+              FocusScope.of(
+                Get.context!,
+              ).requestFocus(controller.searchFocusNode);
             },
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: _searchController.text.isNotEmpty ? 0 : 12,
+                vertical: controller.searchController.text.isNotEmpty ? 0 : 12,
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -344,8 +304,8 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: TextField(
-                      controller: _searchController,
-                      focusNode: _searchFocusNode,
+                      controller: controller.searchController,
+                      focusNode: controller.searchFocusNode,
                       decoration: InputDecoration(
                         hintText: 'search_station'.tr,
                         border: InputBorder.none,
@@ -354,16 +314,16 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                       ),
                       style: const TextStyle(fontSize: 16),
                       onTap: () {
-                        _panelController.open();
+                        controller.panelController.open();
                       },
                     ),
                   ),
-                  if (_searchController.text.isNotEmpty)
+                  if (controller.searchController.text.isNotEmpty)
                     IconButton(
                       icon: const Icon(Icons.clear, size: 20),
                       onPressed: () {
-                        _searchController.clear();
-                        stationController.clearSearch();
+                        controller.searchController.clear();
+                        controller.clearSearch();
                       },
                     ),
                 ],
@@ -387,7 +347,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                   color: AppColors.primaryColor,
                   size: 30,
                 ),
-                if (stationController.selectedProvince.value != null)
+                if (controller.selectedProvince.value != null)
                   Positioned(
                     right: 0,
                     top: 0,
@@ -417,7 +377,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
         // Drag handle
         GestureDetector(
           onTap: () {
-            _panelController.close();
+            controller.panelController.close();
           },
           child: Container(
             margin: const EdgeInsets.only(top: 12),
@@ -448,7 +408,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  _panelController.close();
+                  controller.panelController.close();
                 },
                 icon: const Icon(Icons.close),
               ),
@@ -461,19 +421,19 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
         // Station List
         Expanded(
           child: Obx(() {
-            if (stationController.isLoading.value) {
+            if (controller.isLoading.value) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (stationController.hasError.value) {
+            if (controller.hasError.value) {
               return _buildErrorState();
             }
 
-            final stations = stationController.allStations;
+            final stations = controller.allStations;
 
             if (stations.isEmpty) {
-              if (stationController.searchQuery.value.isNotEmpty ||
-                  stationController.selectedProvince.value != null) {
+              if (controller.searchQuery.value.isNotEmpty ||
+                  controller.selectedProvince.value != null) {
                 return _buildNoResultsState();
               }
               return _buildEmptyState();
@@ -564,8 +524,6 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
                             return GestureDetector(
                               onTap: () {
                                 if (station.id != null) {
-                                  // Provide haptic feedback
-                                  _vibrate();
                                   controller.toggleFavorite(
                                     station.id!,
                                     station.name ?? 'Unknown Station',
@@ -718,17 +676,12 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
     );
   }
 
-  // Add haptic feedback function
-  void _vibrate() {
-    // You can add haptic feedback here if needed
-    // HapticFeedback.lightImpact();
-  }
   String _calculateDistance(String? lat, String? lng) {
     if (lat == null || lng == null) return 'N/A km';
 
-    if (stationController.currentPosition.value != null) {
-      final userLat = stationController.currentPosition.value!.latitude;
-      final userLng = stationController.currentPosition.value!.longitude;
+    if (controller.currentPosition.value != null) {
+      final userLat = controller.currentPosition.value!.latitude;
+      final userLng = controller.currentPosition.value!.longitude;
       final stationLat = double.parse(lat);
       final stationLng = double.parse(lng);
 
@@ -768,7 +721,7 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: stationController.refreshData,
+            onPressed: controller.refreshData,
             child: Text('retry'.tr),
           ),
         ],
@@ -810,63 +763,18 @@ class _EvAllStationScreenState extends State<EvAllStationScreen> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: stationController.clearAllFilters,
+            onPressed: controller.clearAllFilters,
             child: Text('clear_filters'.tr),
           ),
         ],
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _searchFocusNode.dispose();
-    super.dispose();
-  }
 }
 
 // ProvinceFilterDialog is defined here at the bottom of the file
-class ProvinceFilterDialog extends StatefulWidget {
-  final EvStationController stationController;
-
-  const ProvinceFilterDialog({super.key, required this.stationController});
-
-  @override
-  State<ProvinceFilterDialog> createState() => _ProvinceFilterDialogState();
-}
-
-class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
-  final TextEditingController _searchController = TextEditingController();
-  final RxList<EvProvinceDatum> _filteredProvinces = <EvProvinceDatum>[].obs;
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredProvinces.assignAll(widget.stationController.allProvinces);
-    _searchController.addListener(_filterProvinces);
-  }
-
-  void _filterProvinces() {
-    final query = _searchController.text.toLowerCase().trim();
-
-    if (query.isEmpty) {
-      _filteredProvinces.assignAll(widget.stationController.allProvinces);
-    } else {
-      final filtered =
-          widget.stationController.allProvinces.where((province) {
-            final nameEn = province.nameEn?.toLowerCase() ?? '';
-            final nameKh = province.nameKh?.toLowerCase() ?? '';
-            return nameEn.contains(query) || nameKh.contains(query);
-          }).toList();
-      _filteredProvinces.assignAll(filtered);
-    }
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-    _filterProvinces();
-  }
+class ProvinceFilterDialog extends GetView<EvStationController> {
+  const ProvinceFilterDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -888,7 +796,7 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Get.back(),
                   icon: const Icon(Icons.close),
                 ),
               ],
@@ -900,16 +808,16 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: TextField(
-                controller: _searchController,
+                controller: controller.provinceSearchController,
                 decoration: InputDecoration(
                   hintText: 'search_province'.tr,
                   border: InputBorder.none,
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   suffixIcon:
-                      _searchController.text.isNotEmpty
+                      controller.provinceSearchController.text.isNotEmpty
                           ? IconButton(
                             icon: const Icon(Icons.clear, size: 20),
-                            onPressed: _clearSearch,
+                            onPressed: controller.clearProvinceSearch,
                           )
                           : null,
                   contentPadding: const EdgeInsets.symmetric(
@@ -928,7 +836,7 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                   children: [
                     Text(
                       'provinces_found'.trParams({
-                        'count': _filteredProvinces.length.toString(),
+                        'count': controller.filteredProvinces.length.toString(),
                       }),
                       style: TextStyle(
                         fontSize: 12,
@@ -936,9 +844,9 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    if (_searchController.text.isNotEmpty)
+                    if (controller.provinceSearchController.text.isNotEmpty)
                       TextButton(
-                        onPressed: _clearSearch,
+                        onPressed: controller.clearProvinceSearch,
                         child: Text(
                           'clear_search'.tr,
                           style: const TextStyle(fontSize: 12),
@@ -951,11 +859,11 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
             const SizedBox(height: 8),
             Expanded(
               child: Obx(() {
-                if (widget.stationController.isLoadingProvinces.value) {
+                if (controller.isLoadingProvinces.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                final allProvinces = widget.stationController.allProvinces;
+                final allProvinces = controller.allProvinces;
 
                 if (allProvinces.isEmpty) {
                   return Center(
@@ -980,8 +888,8 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                   );
                 }
 
-                if (_filteredProvinces.isEmpty &&
-                    _searchController.text.isNotEmpty) {
+                if (controller.filteredProvinces.isEmpty &&
+                    controller.provinceSearchController.text.isNotEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -1009,7 +917,7 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: _clearSearch,
+                          onPressed: controller.clearSearch,
                           child: Text('clear_search'.tr),
                         ),
                       ],
@@ -1018,12 +926,11 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                 }
 
                 return ListView.builder(
-                  itemCount: _filteredProvinces.length,
+                  itemCount: controller.filteredProvinces.length,
                   itemBuilder: (context, index) {
-                    final province = _filteredProvinces[index];
+                    final province = controller.filteredProvinces[index];
                     final isSelected =
-                        widget.stationController.selectedProvince.value?.id ==
-                        province.id;
+                        controller.selectedProvince.value?.id == province.id;
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 4),
@@ -1079,8 +986,8 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                           ),
                         ),
                         onTap: () {
-                          widget.stationController.selectProvince(province);
-                          Navigator.of(context).pop();
+                          controller.selectProvince(province);
+                          Get.back();
                         },
                       ),
                     );
@@ -1094,8 +1001,8 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      widget.stationController.clearProvinceFilter();
-                      Navigator.of(context).pop();
+                      controller.clearProvinceFilter();
+                      Get.back();
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primaryColor,
@@ -1108,7 +1015,7 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Get.back(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       foregroundColor: Colors.white,
@@ -1123,12 +1030,5 @@ class _ProvinceFilterDialogState extends State<ProvinceFilterDialog> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _filteredProvinces.close();
-    super.dispose();
   }
 }

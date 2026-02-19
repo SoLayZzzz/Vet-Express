@@ -3,10 +3,14 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/respons
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../../../../../api/ev.dart';
 import '../../../../../base/base_url.dart';
+import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvPolicyController extends GetxController {
+  final EvChargerUseCase useCase;
+
+  EvPolicyController(this.useCase);
+
   var evPolicyResponse = Rxn<EvPolicyResponse>();
   var isLoading = false.obs;
   var hasError = false.obs;
@@ -34,7 +38,11 @@ class EvPolicyController extends GetxController {
       htmlContent.value = ''; // Clear previous HTML content
       htmlUrl.value = ''; // Clear previous URL
 
-      var response = await EV().getEvPolicy(Get.context!, page, rowPerPage);
+      final response = await useCase.fetchEvPolicy(
+        context: Get.context!,
+        page: page,
+        rowsPerPage: rowPerPage,
+      );
       evPolicyResponse.value = response;
 
       // If we have policy data, fetch the HTML content

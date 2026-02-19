@@ -24,6 +24,10 @@ class AppRoutes {
   static const carRentalSelectProvince = '/car-rental/select-province';
   static const travelPackageList = '/travel-package/list';
   static const selfService = '/self-service';
+  static const selfServiceSelect = '/self-service/select';
+  static const selfServiceCheck = '/self-service/check';
+  static const selfServiceQr = '/self-service/qr';
+  static const selfServiceQrList = '/self-service/qr-list';
   static const bookingDelivery = '/booking-delivery';
   static const warehouseAddress = '/china/warehouse-address';
   static const chinaRegistration = '/china/registration';

@@ -11,7 +11,9 @@ import '../../../../../models/destination/destination_ev.dart';
 import '../uiState/ev_charger_ui_state.dart';
 
 class EvChargerController extends StateController<EvChargerUiState> {
-  final EvChargerUseCase useCase = Get.find<EvChargerUseCase>();
+  final EvChargerUseCase useCase;
+
+  EvChargerController(this.useCase);
 
   @override
   EvChargerUiState onInitUiState() => const EvChargerUiState();
@@ -321,10 +323,5 @@ class EvChargerController extends StateController<EvChargerUiState> {
   double get walletBalance {
     final amount = state.walletAmountResponse?.body?.data;
     return (amount ?? 0).toDouble();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
   }
 }

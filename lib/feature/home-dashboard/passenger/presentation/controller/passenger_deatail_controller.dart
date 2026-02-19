@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/api/boarding_point.dart';
-import 'package:express_vet/api/booking.dart';
+import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import 'package:express_vet/api/user.dart';
 import 'package:express_vet/base/state_controller.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';

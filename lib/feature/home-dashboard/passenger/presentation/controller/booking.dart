@@ -6,19 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
-import '../activities/ticket/payment_screen.dart';
-import '../activities/ticket/value_statics.dart';
-import '../models/booking/cancel_booking_response.dart';
-import '../models/booking/confirm_booking_response.dart';
-import '../models/booking/booking_detail_model.dart';
-import '../models/booking/booking_list_model.dart';
-import '../utils/alert_dialog.dart';
-import '../utils/app_colors.dart';
-import '../utils/app_pref.dart';
-import '../utils/contains.dart';
-import '../utils/loading.dart';
-import '../base/base_url.dart';
+import '../../../../dash_board/presentation/screen/dashboard_screen.dart';
+import '../../../../../activities/ticket/payment_screen.dart';
+import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../models/booking/cancel_booking_response.dart';
+import '../../../../../models/booking/confirm_booking_response.dart';
+import '../../../../../models/booking/booking_detail_model.dart';
+import '../../../../../models/booking/booking_list_model.dart';
+import '../../../../../utils/alert_dialog.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/app_pref.dart';
+import '../../../../../utils/contains.dart';
+import '../../../../../utils/loading.dart';
+import '../../../../../base/base_url.dart';
 
 class Booking {
   // For get confirm booking

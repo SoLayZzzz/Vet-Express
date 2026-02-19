@@ -9,7 +9,7 @@ import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:toastification/toastification.dart';
 
-import '../../api/booking.dart';
+import '../../feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import '../../models/booking/booking_list_model.dart';
 import '../../utils/contains.dart';
 
@@ -48,30 +48,43 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                       itemCount: (bookingData.data?.body?.data)!.length,
                       itemBuilder: (BuildContext context, int index) {
                         //* get the travel date value Example: (2024-10-3)
-                        final String? travelDate = bookingData.data?.body?.data?[index].travelDate;
+                        final String? travelDate =
+                            bookingData.data?.body?.data?[index].travelDate;
                         //* get the departure of the starting hour Example: (01:00:00)
                         final String departure =
-                            bookingData.data?.body?.data?[index].departure ?? "01:00:00";
+                            bookingData.data?.body?.data?[index].departure ??
+                            "01:00:00";
 
                         String dateTimeString = "$travelDate $departure";
-                        final DateFormat dateTimeFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
-                        DateTime travelDateTime = dateTimeFormat.parse(dateTimeString);
+                        final DateFormat dateTimeFormat = DateFormat(
+                          'yyyy-MM-dd HH:mm:ss',
+                        );
+                        DateTime travelDateTime = dateTimeFormat.parse(
+                          dateTimeString,
+                        );
 
                         return Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6),
                             color: AppColors.whiteColor,
-                            border: Border.all(width: 0.2, color: AppColors.borderColor),
+                            border: Border.all(
+                              width: 0.2,
+                              color: AppColors.borderColor,
+                            ),
                           ),
                           child: InkWell(
                             onTap: () {
                               Get.to(
                                 () => TicketDetailScreen(
-                                  id: (bookingData.data?.body?.data?[index].id)!.toInt(),
+                                  id:
+                                      (bookingData.data?.body?.data?[index].id)!
+                                          .toInt(),
                                 ),
                                 transition: Transition.rightToLeft,
-                                duration: const Duration(milliseconds: Constrains.duration),
+                                duration: const Duration(
+                                  milliseconds: Constrains.duration,
+                                ),
                               );
                             },
                             child: Padding(
@@ -82,11 +95,26 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                   Row(
                                     children: [
                                       Image.asset(
-                                        bookingData.data?.body?.data?[index].journeyType == 1
+                                        bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                1
                                             ? 'assets/images/vet_logo.png'
-                                            : bookingData.data?.body?.data?[index].journeyType == 2
+                                            : bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                2
                                             ? 'assets/images/ic_buva_sea.png'
-                                            : bookingData.data?.body?.data?[index].journeyType == 3
+                                            : bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                3
                                             ? 'assets/images/vet_air_bus.png'
                                             : 'assets/images/ic_buva_sea.png',
                                         height: 30,
@@ -108,7 +136,8 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
 
                                   //* code and date time
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         flex: 1,
@@ -161,14 +190,19 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
 
                                   //* transportationType and total seats
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         flex: 1,
                                         child: Row(
                                           children: [
                                             Icon(
-                                              bookingData.data?.body?.data?[index].journeyType ==
+                                              bookingData
+                                                              .data
+                                                              ?.body
+                                                              ?.data?[index]
+                                                              .journeyType ==
                                                           2 ||
                                                       bookingData
                                                               .data
@@ -215,7 +249,8 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                                         '${bookingData.data?.body?.data?[index].totalSeat} ',
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      color: AppColors.textColor,
+                                                      color:
+                                                          AppColors.textColor,
                                                     ),
                                                   ),
                                                   TextSpan(
@@ -231,7 +266,8 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                                             : 'seats'.tr,
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      color: AppColors.textColor,
+                                                      color:
+                                                          AppColors.textColor,
                                                     ),
                                                   ),
                                                 ],
@@ -244,42 +280,74 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                   ),
 
                                   //* lucky ticket
-                                  if (bookingData.data?.body?.data?[index].isLuckyDraw == 1)
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isLuckyDraw ==
+                                      1)
                                     const SizedBox(height: 12),
-                                  if (bookingData.data?.body?.data?[index].isLuckyDraw == 1)
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isLuckyDraw ==
+                                      1)
                                     const Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "*",
-                                          style: TextStyle(color: AppColors.redColor, fontSize: 14),
+                                          style: TextStyle(
+                                            color: AppColors.redColor,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                         SizedBox(width: 10),
                                         Expanded(
                                           child: Text(
                                             "Please show your e-ticket to our staff at the ticket counter to get your physical Lucky Ticket",
-                                            style: TextStyle(color: AppColors.primaryColor),
+                                            style: TextStyle(
+                                              color: AppColors.primaryColor,
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
 
                                   //* travel package
-                                  if (bookingData.data?.body?.data?[index].isTravelPackage == 1)
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isTravelPackage ==
+                                      1)
                                     const SizedBox(height: 12),
-                                  if (bookingData.data?.body?.data?[index].isTravelPackage == 1)
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isTravelPackage ==
+                                      1)
                                     Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           "*",
-                                          style: TextStyle(color: AppColors.redColor, fontSize: 14),
+                                          style: TextStyle(
+                                            color: AppColors.redColor,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                         const SizedBox(width: 10),
                                         Expanded(
                                           child: Text(
                                             "booking_travel_package2".tr,
-                                            style: const TextStyle(color: AppColors.primaryColor),
+                                            style: const TextStyle(
+                                              color: AppColors.primaryColor,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -288,11 +356,19 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                   //* rate and view detail
                                   const SizedBox(height: 12),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       //* show the rating button after the car left
-                                      if (travelDateTime.isBefore(DateTime.now()))
-                                        bookingData.data?.body?.data?[index].isRate == 0
+                                      if (travelDateTime.isBefore(
+                                        DateTime.now(),
+                                      ))
+                                        bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .isRate ==
+                                                0
                                             ? Expanded(
                                               flex: 1,
                                               child: InkWell(
@@ -306,12 +382,18 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                                               ?.data?[index]
                                                               .scheduleId,
                                                       id:
-                                                          bookingData.data?.body?.data?[index].id
+                                                          bookingData
+                                                              .data
+                                                              ?.body
+                                                              ?.data?[index]
+                                                              .id
                                                               .toString(),
                                                     ),
-                                                    transition: Transition.rightToLeft,
+                                                    transition:
+                                                        Transition.rightToLeft,
                                                     duration: const Duration(
-                                                      milliseconds: Constrains.duration,
+                                                      milliseconds:
+                                                          Constrains.duration,
                                                     ),
                                                   );
 
@@ -319,36 +401,49 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                                   if (result == true) {
                                                     // Refresh the booking list
                                                     setState(() {
-                                                      futureListBooking = Booking().getBookingList(
-                                                        context,
-                                                      );
+                                                      futureListBooking =
+                                                          Booking()
+                                                              .getBookingList(
+                                                                context,
+                                                              );
                                                     });
                                                   }
                                                 },
                                                 child: const Row(
                                                   children: [
                                                     Icon(
-                                                      Ionicons.chatbubble_ellipses_outline,
+                                                      Ionicons
+                                                          .chatbubble_ellipses_outline,
                                                       size: 18,
-                                                      color: AppColors.primaryColor,
+                                                      color:
+                                                          AppColors
+                                                              .primaryColor,
                                                     ),
                                                     SizedBox(width: 6),
                                                     Text(
                                                       'Rate a schedule',
                                                       style: TextStyle(
-                                                        color: AppColors.primaryColor,
+                                                        color:
+                                                            AppColors
+                                                                .primaryColor,
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.w600,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                             )
-                                            : const Expanded(flex: 1, child: SizedBox()),
+                                            : const Expanded(
+                                              flex: 1,
+                                              child: SizedBox(),
+                                            ),
 
                                       //* show the countdown time before car left
-                                      if (travelDateTime.isAfter(DateTime.now()))
+                                      if (travelDateTime.isAfter(
+                                        DateTime.now(),
+                                      ))
                                         Expanded(
                                           flex: 1,
                                           child: Row(
@@ -379,7 +474,8 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                                         child: Row(
                                           children: [
                                             const Icon(
-                                              Ionicons.information_circle_outline,
+                                              Ionicons
+                                                  .information_circle_outline,
                                               size: 18,
                                               color: AppColors.textColor,
                                             ),
@@ -405,7 +501,10 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                       separatorBuilder: (BuildContext context, int index) {
                         return const SizedBox(height: 10);
                       },
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 12,
+                      ),
                     ),
                   ],
                 ),
@@ -419,7 +518,11 @@ class _TicketHistoryScreenState extends State<TicketHistoryScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset('assets/images/ic_empty.png', width: 150, height: 150),
+                    Image.asset(
+                      'assets/images/ic_empty.png',
+                      width: 150,
+                      height: 150,
+                    ),
                     Text(
                       "data_not_found".tr,
                       style: const TextStyle(

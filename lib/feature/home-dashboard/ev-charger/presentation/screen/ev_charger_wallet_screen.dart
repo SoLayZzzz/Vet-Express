@@ -7,26 +7,23 @@ import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
 import 'ev_top_up_screen.dart';
 
-class EvWalletScreen extends StatelessWidget {
+class EvWalletScreen extends GetView<EvWalletController> {
   const EvWalletScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final EvWalletController walletController = Get.find<EvWalletController>();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
         // Loading state (only for initial load)
-        if (walletController.isLoading.value &&
-            !walletController.hasWalletData) {
+        if (controller.isLoading.value && !controller.hasWalletData) {
           return const Center(child: CircularProgressIndicator());
         }
 
         return CustomScrollView(
           slivers: [
             // 1. The Header (Matches UI, Collapses as you scroll)
-            _buildSliverHeader(context, walletController),
+            _buildSliverHeader(context, controller),
 
             // 2. The Filter Chips (Sticks to top)
             SliverPersistentHeader(
@@ -34,24 +31,24 @@ class EvWalletScreen extends StatelessWidget {
               delegate: _StickyFilterDelegate(
                 child: Container(
                   color: Colors.white,
-                  child: _buildFilterChips(walletController),
+                  child: _buildFilterChips(controller),
                 ),
                 height: 80.0,
               ),
             ),
 
             // 3. The Transaction List (Scrollable)
-            if (walletController.hasError.value)
-              SliverFillRemaining(child: _buildErrorState(walletController))
-            else if (!walletController.hasWalletData)
+            if (controller.hasError.value)
+              SliverFillRemaining(child: _buildErrorState(controller))
+            else if (!controller.hasWalletData)
               SliverFillRemaining(child: _buildEmptyState())
-            else if (walletController.searchQuery.value.isNotEmpty &&
-                walletController
-                    .searchTransactions(walletController.searchQuery.value)
+            else if (controller.searchQuery.value.isNotEmpty &&
+                controller
+                    .searchTransactions(controller.searchQuery.value)
                     .isEmpty)
-              SliverFillRemaining(child: _buildNoResultsState(walletController))
+              SliverFillRemaining(child: _buildNoResultsState(controller))
             else
-              _buildSliverTransactionList(walletController),
+              _buildSliverTransactionList(controller),
           ],
         );
       }),

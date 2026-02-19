@@ -24,15 +24,17 @@ class EvProvinceSelectionScreen extends GetView<EvChargerController> {
   }
 
   /// Handle province selection
-  void _onProvinceSelected(BuildContext context, BodyEv province) {
-    Navigator.pop(context, {
-      'id': province.id!.toString(),
-      'name': _localizedProvinceName(province),
-    });
+  void _onProvinceSelected(BodyEv province) {
+    Get.back(
+      result: {
+        'id': province.id!.toString(),
+        'name': _localizedProvinceName(province),
+      },
+    );
   }
 
   /// Build province item
-  Widget _buildProvinceItem(BuildContext context, BodyEv province) {
+  Widget _buildProvinceItem(BodyEv province) {
     return ListTile(
       leading: Container(
         width: 40,
@@ -48,7 +50,7 @@ class EvProvinceSelectionScreen extends GetView<EvChargerController> {
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () => _onProvinceSelected(context, province),
+      onTap: () => _onProvinceSelected(province),
     );
   }
 
@@ -170,7 +172,7 @@ class EvProvinceSelectionScreen extends GetView<EvChargerController> {
                         physics: const BouncingScrollPhysics(),
                         itemCount: provinces.length,
                         itemBuilder: (context, index) {
-                          return _buildProvinceItem(context, provinces[index]);
+                          return _buildProvinceItem(provinces[index]);
                         },
                       ),
             ),

@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:express_vet/feature/dash_board/presentation/screen/dashboard_screen.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 
-import '../../utils/app_bar.dart';
-import '../../utils/app_colors.dart';
+import '../../../../../utils/app_bar.dart';
+import '../../../../../utils/app_colors.dart';
 
-class SelfServiceQRScreen extends StatefulWidget {
-  final String qrCode;
+import '../../../../../routes/app_routes.dart';
+import '../controller/self_service_controller.dart';
 
-  const SelfServiceQRScreen({super.key, required this.qrCode});
+class SelfServiceQRScreen extends GetView<SelfServiceController> {
+  final String? qrCode;
 
-  @override
-  State<SelfServiceQRScreen> createState() => _SelfServiceQRScreenState();
-}
+  const SelfServiceQRScreen({super.key, this.qrCode});
 
-class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
+  String get _qrCode {
+    final args = Get.arguments;
+    if (args is Map && args['qrCode'] != null) {
+      return args['qrCode'].toString();
+    }
+    return qrCode ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,13 +44,9 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                         InkWell(
                           onTap: () {
                             ValueStatic().clearSelfService();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const DashboardScreen(from: 0),
-                              ),
-                              (Route<dynamic> route) => false,
+                            Get.offAllNamed(
+                              AppRoutes.home,
+                              arguments: {'from': 0},
                             );
                           },
                           child: Container(
@@ -73,13 +74,9 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                         InkWell(
                           onTap: () {
                             ValueStatic().clearSelfService();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const DashboardScreen(from: 1),
-                              ),
-                              (Route<dynamic> route) => false,
+                            Get.offAllNamed(
+                              AppRoutes.home,
+                              arguments: {'from': 1},
                             );
                           },
                           child: Container(
@@ -136,14 +133,14 @@ class _SelfServiceQRScreenState extends State<SelfServiceQRScreen> {
                         height: 200,
                         width: 200,
                         child: QrImageView(
-                          data: widget.qrCode,
+                          data: _qrCode,
                           version: QrVersions.auto,
                           size: 200.0,
                         ),
                       ),
                       const SizedBox(height: 30),
                       Text(
-                        widget.qrCode,
+                        _qrCode,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black,

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:express_vet/utils/app_colors.dart';
 
-import '../../api/booking.dart';
+import '../../feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import '../../models/booking/booking_detail_model.dart';
 import '../../utils/contains.dart';
 import '../logistic/location_detail_screen.dart';
@@ -55,8 +55,6 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                             ),
                           ),
 
-
-
                           // * qrCode slider
                           Positioned(
                             top: 90,
@@ -67,7 +65,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                               child: CarouselSlider.builder(
                                 carouselController: _controller,
                                 itemCount:
-                                    (bookingData.data?.body?.data?[0].bookingSeatDetailList)!
+                                    (bookingData
+                                            .data
+                                            ?.body
+                                            ?.data?[0]
+                                            .bookingSeatDetailList)!
                                         .length,
                                 options: CarouselOptions(
                                   height: 250,
@@ -79,11 +81,16 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                   final isFirstIndex = i == 0;
                                   final isLastIndex =
                                       i ==
-                                      (bookingData.data?.body?.data?[0].bookingSeatDetailList)!
+                                      (bookingData
+                                                  .data
+                                                  ?.body
+                                                  ?.data?[0]
+                                                  .bookingSeatDetailList)!
                                               .length -
                                           1;
                                   return Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
                                       !isFirstIndex
                                           ? Container(
@@ -91,14 +98,21 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                             height: 50,
                                             decoration: BoxDecoration(
                                               color: Colors.grey[200],
-                                              borderRadius: BorderRadius.circular(50),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
                                             ),
                                             child: IconButton(
                                               onPressed: back,
-                                              icon: const Icon(Icons.arrow_back, size: 24),
+                                              icon: const Icon(
+                                                Icons.arrow_back,
+                                                size: 24,
+                                              ),
                                             ),
                                           )
-                                          : const SizedBox(width: 50, height: 50),
+                                          : const SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                          ),
                                       Container(
                                         color: Colors.white,
                                         child: Padding(
@@ -131,14 +145,20 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                             height: 50,
                                             decoration: BoxDecoration(
                                               color: Colors.grey[200],
-                                              borderRadius: BorderRadius.circular(50),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
                                             ),
                                             child: IconButton(
                                               onPressed: next,
-                                              icon: const Icon(Icons.arrow_forward),
+                                              icon: const Icon(
+                                                Icons.arrow_forward,
+                                              ),
                                             ),
                                           )
-                                          : const SizedBox(width: 50, height: 50),
+                                          : const SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                          ),
                                     ],
                                   );
                                 },
@@ -167,7 +187,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      (bookingData.data?.body?.data?[0].code).toString(),
+                                      (bookingData.data?.body?.data?[0].code)
+                                          .toString(),
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
@@ -198,12 +219,24 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         child: Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                              ),
                               child: Row(
                                 children: [
                                   Image.asset(
-                                    bookingData.data?.body?.data![0].journeyType == 2 ||
-                                            bookingData.data?.body?.data![0].journeyType == 4
+                                    bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data![0]
+                                                    .journeyType ==
+                                                2 ||
+                                            bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data![0]
+                                                    .journeyType ==
+                                                4
                                         ? 'assets/images/icon_buva_sea.png'
                                         : 'assets/images/icon_bus.png',
                                     height: 22,
@@ -211,7 +244,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                   ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    (bookingData.data?.body?.data?[0].transportationType)
+                                    (bookingData
+                                            .data
+                                            ?.body
+                                            ?.data?[0]
+                                            .transportationType)
                                         .toString(),
                                     style: const TextStyle(
                                       fontSize: 18,
@@ -224,32 +261,49 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                             const SizedBox(height: 10),
                             _item(
                               label: "booking_date".tr,
-                              value: (bookingData.data?.body?.data?[0].bookingDate).toString(),
+                              value:
+                                  (bookingData.data?.body?.data?[0].bookingDate)
+                                      .toString(),
                             ),
                             _item(
                               label: "transaction_id".tr,
                               value:
-                                  (bookingData.data?.body?.data?[0].transactionId)
+                                  (bookingData
+                                              .data
+                                              ?.body
+                                              ?.data?[0]
+                                              .transactionId)
                                           .toString()
                                           .isEmpty
                                       ? '-'
-                                      : (bookingData.data?.body?.data?[0].transactionId).toString(),
+                                      : (bookingData
+                                              .data
+                                              ?.body
+                                              ?.data?[0]
+                                              .transactionId)
+                                          .toString(),
                             ),
                             _item(
                               label: 'telephone_num'.tr,
-                              value: (bookingData.data?.body?.data?[0].telephone).toString(),
+                              value:
+                                  (bookingData.data?.body?.data?[0].telephone)
+                                      .toString(),
                             ),
 
                             _item(
                               label: "payment".tr,
-                              value: (bookingData.data?.body?.data?[0].paymentType).toString(),
+                              value:
+                                  (bookingData.data?.body?.data?[0].paymentType)
+                                      .toString(),
                             ),
 
                             const SizedBox(height: 12),
 
                             // * destination
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -258,15 +312,22 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                     padding: const EdgeInsets.all(10),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey.shade300),
-                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               "boarding_point".tr,
@@ -275,7 +336,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                 fontSize: 16,
                                               ),
                                             ),
-                                            if ((bookingData.data?.body?.data?[0].boardingPointLat)
+                                            if ((bookingData
+                                                        .data
+                                                        ?.body
+                                                        ?.data?[0]
+                                                        .boardingPointLat)
                                                     .toString() !=
                                                 '')
                                               InkWell(
@@ -301,9 +366,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                       name: '',
                                                       telephone: '',
                                                     ),
-                                                    transition: Transition.rightToLeft,
+                                                    transition:
+                                                        Transition.rightToLeft,
                                                     duration: const Duration(
-                                                      milliseconds: Constrains.duration,
+                                                      milliseconds:
+                                                          Constrains.duration,
                                                     ),
                                                   );
                                                 },
@@ -311,7 +378,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                   'view_map'.tr,
                                                   style: const TextStyle(
                                                     color: Color(0xff312783),
-                                                    decoration: TextDecoration.underline,
+                                                    decoration:
+                                                        TextDecoration
+                                                            .underline,
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 14,
                                                   ),
@@ -322,12 +391,17 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                         const SizedBox(height: 10),
                                         Text(
                                           "${(bookingData.data?.body?.data?[0].boardingPoint).toString()} (${(bookingData.data?.body?.data?[0].departure).toString()})",
-                                          style: const TextStyle(color: AppColors.textColor, fontWeight: FontWeight.w600),
+                                          style: const TextStyle(
+                                            color: AppColors.textColor,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                         const SizedBox(height: 6),
                                         Text(
                                           ". ${(bookingData.data?.body?.data?[0].boardingPointAddress).toString()}",
-                                          style: const TextStyle(color: AppColors.textColor),
+                                          style: const TextStyle(
+                                            color: AppColors.textColor,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -340,15 +414,22 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                     padding: const EdgeInsets.all(10),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey.shade300),
-                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               "drop_off_point".tr,
@@ -357,7 +438,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                 fontSize: 16,
                                               ),
                                             ),
-                                            if ((bookingData.data?.body?.data?[0].dropOffPointLat)
+                                            if ((bookingData
+                                                        .data
+                                                        ?.body
+                                                        ?.data?[0]
+                                                        .dropOffPointLat)
                                                     .toString() !=
                                                 '')
                                               InkWell(
@@ -383,9 +468,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                       name: '',
                                                       telephone: '',
                                                     ),
-                                                    transition: Transition.rightToLeft,
+                                                    transition:
+                                                        Transition.rightToLeft,
                                                     duration: const Duration(
-                                                      milliseconds: Constrains.duration,
+                                                      milliseconds:
+                                                          Constrains.duration,
                                                     ),
                                                   );
                                                 },
@@ -394,7 +481,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                   style: const TextStyle(
                                                     fontWeight: FontWeight.w600,
                                                     color: Color(0xff312783),
-                                                    decoration: TextDecoration.underline,
+                                                    decoration:
+                                                        TextDecoration
+                                                            .underline,
                                                     fontSize: 14,
                                                   ),
                                                 ),
@@ -404,12 +493,17 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                         const SizedBox(height: 10),
                                         Text(
                                           "${(bookingData.data?.body?.data?[0].dropOffPoint).toString()} (${(bookingData.data?.body?.data?[0].arrival).toString()})",
-                                          style: const TextStyle(color: AppColors.textColor, fontWeight: FontWeight.w600),
+                                          style: const TextStyle(
+                                            color: AppColors.textColor,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                         const SizedBox(height: 6),
                                         Text(
                                           ". ${(bookingData.data?.body?.data?[0].dropOffPointAddress).toString()}",
-                                          style: const TextStyle(color: AppColors.textColor),
+                                          style: const TextStyle(
+                                            color: AppColors.textColor,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -426,10 +520,16 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount:
-                                    bookingData.data!.body!.data![0].bookingSeatDetailList!.length,
+                                    bookingData
+                                        .data!
+                                        .body!
+                                        .data![0]
+                                        .bookingSeatDetailList!
+                                        .length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       _listSeat(
                                         label: 'name_pro'.tr,
@@ -439,7 +539,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                       _listSeat(
                                         label: 'gender'.tr,
                                         value:
-                                        '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].gender}',
+                                            '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].gender}',
                                       ),
                                       _listSeat(
                                         label: 'nationality'.tr,
@@ -479,7 +579,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                   );
                                 },
                                 separatorBuilder:
-                                    (BuildContext context, int index) => const Divider(),
+                                    (BuildContext context, int index) =>
+                                        const Divider(),
                               ),
                             ),
 
@@ -491,18 +592,35 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                 children: [
                                   _listPrice(
                                     label: "sub_total".tr,
-                                    value: (bookingData.data?.body?.data?[0].subTotal).toString(),
+                                    value:
+                                        (bookingData
+                                                .data
+                                                ?.body
+                                                ?.data?[0]
+                                                .subTotal)
+                                            .toString(),
                                   ),
                                   const SizedBox(height: 10),
                                   _listPrice(
                                     label: "discount".tr,
-                                    value: (bookingData.data?.body?.data?[0].discount).toString(),
+                                    value:
+                                        (bookingData
+                                                .data
+                                                ?.body
+                                                ?.data?[0]
+                                                .discount)
+                                            .toString(),
                                   ),
                                   const SizedBox(height: 10),
                                   _listPrice(
                                     label: "total_ticket_price".tr,
                                     value:
-                                        (bookingData.data?.body?.data?[0].totalAmount).toString(),
+                                        (bookingData
+                                                .data
+                                                ?.body
+                                                ?.data?[0]
+                                                .totalAmount)
+                                            .toString(),
                                   ),
                                 ],
                               ),
@@ -518,7 +636,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 child: SizedBox(
                   height: 50.0,
                   width: 50.0,
-                  child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
+                  child: CircularProgressIndicator(
+                    value: null,
+                    strokeWidth: 5.0,
+                  ),
                 ),
               );
             },
@@ -532,7 +653,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
+              icon: const Icon(
+                Ionicons.chevron_back_outline,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -546,7 +670,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(color: AppColors.titleColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: AppColors.titleColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Text(
           value,
@@ -591,13 +718,19 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                 ),
               ),
-              const Text(":", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              const Text(
+                ":",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(width: 20),
               Expanded(
                 flex: 4,
                 child: Text(
                   value,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

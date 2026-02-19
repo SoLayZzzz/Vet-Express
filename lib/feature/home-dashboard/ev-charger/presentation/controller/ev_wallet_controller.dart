@@ -4,10 +4,12 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/respons
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../../../../../api/ev.dart';
+import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvWalletController extends GetxController {
-  final EV _evApi = EV();
+  final EvChargerUseCase useCase;
+
+  EvWalletController(this.useCase);
 
   // Transaction data
   final RxList<Group> walletTransactions = <Group>[].obs;
@@ -50,7 +52,7 @@ class EvWalletController extends GetxController {
   Future<void> fetchBalance() async {
     try {
       isLoadingBalance.value = true;
-      final response = await _evApi.getEvWalletAmount(Get.context!);
+      final response = await useCase.fetchWalletAmount(context: Get.context!);
 
       if (response.body?.status == true) {
         totalBalance.value = (response.body?.data ?? 0).toDouble();
@@ -83,10 +85,10 @@ class EvWalletController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
 
-      final response = await _evApi.getEvWalletList(
-        Get.context!,
-        currentPage.value,
-        rowsPerPage,
+      final response = await useCase.fetchWalletList(
+        context: Get.context!,
+        page: currentPage.value,
+        rowsPerPage: rowsPerPage,
       );
 
       if (response.body?.status == true) {

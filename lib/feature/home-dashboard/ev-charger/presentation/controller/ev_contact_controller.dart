@@ -8,7 +8,9 @@ import '../../domain/uscase/ev_charger_usecase.dart';
 import '../uiState/ev_contact_ui_state.dart';
 
 class EvContactController extends StateController<EvContactUiState> {
-  final EvChargerUseCase useCase = Get.find<EvChargerUseCase>();
+  final EvChargerUseCase useCase;
+
+  EvContactController(this.useCase);
 
   @override
   EvContactUiState onInitUiState() => const EvContactUiState();

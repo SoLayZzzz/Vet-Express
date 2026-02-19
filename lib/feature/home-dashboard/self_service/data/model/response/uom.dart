@@ -1,4 +1,4 @@
-import '../header.dart';
+import '../../../../../../models/header.dart';
 
 class UomListResponse {
   Header? header;
@@ -7,13 +7,12 @@ class UomListResponse {
   UomListResponse({header, body});
 
   UomListResponse.fromJson(Map<String, dynamic> json) {
-    header =
-    json['header'] != null ?  Header.fromJson(json['header']) : null;
-    body = json['body'] != null ?  Body.fromJson(json['body']) : null;
+    header = json['header'] != null ? Header.fromJson(json['header']) : null;
+    body = json['body'] != null ? Body.fromJson(json['body']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (header != null) {
       data['header'] = header!.toJson();
     }
@@ -37,13 +36,13 @@ class Body {
     if (json['data'] != null) {
       data = <UomData>[];
       json['data'].forEach((v) {
-        data!.add( UomData.fromJson(v));
+        data!.add(UomData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
     data['message'] = message;
     if (this.data != null) {

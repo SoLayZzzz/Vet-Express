@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
 import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
-import '../activities/logistic/self_service_qr_screen.dart';
+import '../routes/app_routes.dart';
 import '../models/goods_transfer/review_response.dart';
 import '../models/request_transfer/add_goods.dart';
 import '../utils/alert_dialog.dart';
@@ -52,14 +52,9 @@ class RequestTransfer {
           jsonDecode(response.body),
         );
         if (data.header?.statusCode == 200 && data.header?.result == true) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => SelfServiceQRScreen(
-                    qrCode: (data.body?.message).toString(),
-                  ),
-            ),
+          Get.toNamed(
+            AppRoutes.selfServiceQr,
+            arguments: {'qrCode': (data.body?.message).toString()},
           );
         } else {
           Loading().loadingClose(context);

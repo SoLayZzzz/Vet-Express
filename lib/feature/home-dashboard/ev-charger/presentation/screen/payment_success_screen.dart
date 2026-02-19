@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/app_colors.dart';
 import 'ev_charger_wallet_screen.dart';
+import '../controller/ev_top_up_controller.dart';
 
-class PaymentSuccessScreen extends StatefulWidget {
+class PaymentSuccessScreen extends GetView<EvTopUpController> {
   final double amount;
 
   const PaymentSuccessScreen({super.key, required this.amount});
-
-  @override
-  State<PaymentSuccessScreen> createState() => _PaymentSuccessScreenState();
-}
-
-class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +50,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
 
                     // Amount
                     Text(
-                      '${widget.amount.toStringAsFixed(0)} KHR',
+                      '${amount.toStringAsFixed(0)} KHR',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,

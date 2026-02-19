@@ -4,10 +4,8 @@ import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../controller/ev_scanner_controller.dart';
 
-class EvQrScannerScreen extends StatelessWidget {
-  final EvScannerController controller = Get.put(EvScannerController());
-
-  EvQrScannerScreen({super.key});
+class EvQrScannerScreen extends GetView<EvScannerController> {
+  const EvQrScannerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

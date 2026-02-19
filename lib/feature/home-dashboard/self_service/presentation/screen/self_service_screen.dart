@@ -1,49 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import 'package:express_vet/activities/logistic/select_screen.dart';
-import 'package:express_vet/activities/logistic/self_service_check_screen.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/utils/button.dart';
 
-import '../../utils/alert_dialog.dart';
-import '../../utils/app_bar.dart';
-import '../../utils/app_colors.dart';
-import '../../utils/check_input.dart';
-import '../../utils/style.dart';
+import 'package:express_vet/utils/alert_dialog.dart';
+import 'package:express_vet/utils/app_bar.dart';
+import 'package:express_vet/utils/app_colors.dart';
+import 'package:express_vet/utils/check_input.dart';
+import 'package:express_vet/utils/style.dart';
+import 'package:express_vet/routes/app_routes.dart';
 
-class SelfServiceScreen extends StatefulWidget {
-  const SelfServiceScreen({super.key});
+import '../controller/self_service_controller.dart';
 
-  @override
-  State<SelfServiceScreen> createState() => _SelfServiceScreenState();
-}
+class SelfServiceScreen extends GetView<SelfServiceController> {
+  SelfServiceScreen({super.key});
 
-class _SelfServiceScreenState extends State<SelfServiceScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  final phoneSenderController = TextEditingController();
-  final phoneReceivedController = TextEditingController();
-  final provinceController = TextEditingController();
-  final locationController = TextEditingController();
-  final itemPriceController = TextEditingController();
-  final amountController = TextEditingController();
-  final unitController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    phoneSenderController.text = ValueStatic.phone;
-    amountController.text = "1";
-  }
-
-  @override
-  void dispose() {
-    provinceController.dispose();
-    locationController.dispose();
-
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +46,14 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text('sender_telephone'.tr, style: const TextStyle(color: Colors.grey)),
+                    Text(
+                      'sender_telephone'.tr,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
                     const SizedBox(height: 5),
                     TextFormField(
-                      controller: phoneSenderController,
+                      controller:
+                          controller.uiState.value.phoneSenderController,
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
@@ -95,10 +72,14 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text('receiver_telephone'.tr, style: const TextStyle(color: Colors.grey)),
+                    Text(
+                      'receiver_telephone'.tr,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
                     const SizedBox(height: 5),
                     TextFormField(
-                      controller: phoneReceivedController,
+                      controller:
+                          controller.uiState.value.phoneReceivedController,
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
@@ -111,7 +92,10 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                           'phone_number_is_incorrect'.tr,
                         );
                       },
-                      decoration: Style.inputText('010522522', iconLeft: Ionicons.call_outline),
+                      decoration: Style.inputText(
+                        '010522522',
+                        iconLeft: Ionicons.call_outline,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Text(
@@ -123,7 +107,10 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text('name_of_the_location'.tr, style: const TextStyle(color: Colors.grey)),
+                    Text(
+                      'name_of_the_location'.tr,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
                     const SizedBox(height: 5),
                     SizedBox(
                       child: Row(
@@ -134,18 +121,19 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                             width: MediaQuery.of(context).size.width / 2.4,
                             child: TextFormField(
                               onTap: () async {
-                                await Get.to(
-                                  () => const SelectLogisticScreen(selectType: "province"),
-                                  transition: Transition.rightToLeft,
-                                  duration: const Duration(milliseconds: 350),
+                                await Get.toNamed(
+                                  AppRoutes.selfServiceSelect,
+                                  arguments: {'selectType': 'province'},
                                 );
-                                setState(() {});
+                                controller.syncSelectionFieldsFromValueStatic();
                               },
-                              controller: provinceController..text = ValueStatic.provinceName,
+                              controller:
+                                  controller.uiState.value.provinceController,
                               autofocus: false,
                               readOnly: true,
                               showCursor: false,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               keyboardType: TextInputType.phone,
                               style: const TextStyle(fontSize: 14),
                               validator: (String? value) {
@@ -176,20 +164,22 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                                     buttonText: 'yes'.tr,
                                   );
                                 } else {
-                                  await Get.to(
-                                    () => const SelectLogisticScreen(selectType: "location"),
-                                    transition: Transition.rightToLeft,
-                                    duration: const Duration(milliseconds: 350),
+                                  await Get.toNamed(
+                                    AppRoutes.selfServiceSelect,
+                                    arguments: {'selectType': 'location'},
                                   );
 
-                                  setState(() {});
+                                  controller
+                                      .syncSelectionFieldsFromValueStatic();
                                 }
                               },
-                              controller: locationController..text = ValueStatic.locationName,
+                              controller:
+                                  controller.uiState.value.locationController,
                               autofocus: false,
                               readOnly: true,
                               showCursor: false,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               keyboardType: TextInputType.phone,
                               style: const TextStyle(fontSize: 14),
                               validator: (String? value) {
@@ -219,10 +209,13 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text('items_price'.tr, style: const TextStyle(color: Colors.grey)),
+                    Text(
+                      'items_price'.tr,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
                     const SizedBox(height: 5),
                     TextFormField(
-                      controller: itemPriceController,
+                      controller: controller.uiState.value.itemPriceController,
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
@@ -240,7 +233,7 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                     const SizedBox(height: 20),
                     SizedBox(
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline, // <--
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           SizedBox(
@@ -248,12 +241,17 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('amount'.tr, style: const TextStyle(color: Colors.grey)),
+                                Text(
+                                  'amount'.tr,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
                                 const SizedBox(height: 5),
                                 TextFormField(
-                                  controller: amountController,
+                                  controller:
+                                      controller.uiState.value.amountController,
                                   autofocus: false,
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
                                   keyboardType: TextInputType.phone,
                                   style: const TextStyle(fontSize: 14),
                                   validator: (String? value) {
@@ -275,23 +273,28 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('unit'.tr, style: const TextStyle(color: Colors.grey)),
+                                Text(
+                                  'unit'.tr,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
                                 const SizedBox(height: 5),
                                 TextFormField(
                                   onTap: () async {
-                                    await Get.to(
-                                      () => const SelectLogisticScreen(selectType: "uom"),
-                                      transition: Transition.rightToLeft,
-                                      duration: const Duration(milliseconds: 350),
+                                    await Get.toNamed(
+                                      AppRoutes.selfServiceSelect,
+                                      arguments: {'selectType': 'uom'},
                                     );
 
-                                    setState(() {});
+                                    controller
+                                        .syncSelectionFieldsFromValueStatic();
                                   },
-                                  controller: unitController..text = ValueStatic.uomName,
+                                  controller:
+                                      controller.uiState.value.unitController,
                                   autofocus: false,
                                   readOnly: true,
                                   showCursor: false,
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
                                   keyboardType: TextInputType.phone,
                                   style: const TextStyle(fontSize: 14),
                                   validator: (String? value) {
@@ -320,27 +323,31 @@ class _SelfServiceScreenState extends State<SelfServiceScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        color: AppColors.whiteColor,
-        width: double.infinity,
-        child: globalButton(
-          context: context,
-          buttonText: 'save'.tr,
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              Get.to(
-                () => SelfServiceCheckScreen(
-                  senderPhone: phoneSenderController.text,
-                  receiverPhone: phoneReceivedController.text,
-                  itemPrice: itemPriceController.text,
-                  amount: amountController.text,
-                ),
-                transition: Transition.rightToLeft,
-                duration: const Duration(milliseconds: 350),
-              );
-            }
-          },
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          color: AppColors.whiteColor,
+          width: double.infinity,
+          child: globalButton(
+            context: context,
+            buttonText: 'save'.tr,
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                Get.toNamed(
+                  AppRoutes.selfServiceCheck,
+                  arguments: {
+                    'senderPhone':
+                        controller.uiState.value.phoneSenderController.text,
+                    'receiverPhone':
+                        controller.uiState.value.phoneReceivedController.text,
+                    'itemPrice':
+                        controller.uiState.value.itemPriceController.text,
+                    'amount': controller.uiState.value.amountController.text,
+                  },
+                );
+              }
+            },
+          ),
         ),
       ),
     );

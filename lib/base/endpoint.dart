@@ -52,6 +52,8 @@ class Endpoint {
   static const String destinationsDestinationByProvince =
       'destinations/destinationByProvince';
 
+  static const String uomList = 'uom/list';
+
   static const String notificationList = 'notification/list';
   static const String notificationReadAll = 'notification/read-all';
   static const String notificationRead = 'notification/read';

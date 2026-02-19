@@ -1,11 +1,16 @@
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/screen/passenger_detail_screen.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/select_screen.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_check_screen.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_qr_list_screen.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_qr_screen.dart';
 import 'package:get/get.dart';
 import '../activities/china/registration_screen.dart';
 import '../activities/china/warehouse_address_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/binding/ev_charger_binding.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charging_screen.dart';
 import '../activities/logistic/booking_delivery_screen.dart';
-import '../activities/logistic/self_service_screen.dart';
+import '../feature/home-dashboard/self_service/presentation/binding/self_service_binding.dart';
+import '../feature/home-dashboard/self_service/presentation/screen/self_service_screen.dart';
 import '../activities/notification_screen.dart';
 import '../activities/screen/contact_us_screen.dart';
 import '../activities/screen/vet_airway.dart';
@@ -167,7 +172,54 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.selfService,
-      page: () => const SelfServiceScreen(),
+      page: () => SelfServiceScreen(),
+      binding: SelfServiceBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.selfServiceSelect,
+      page: () {
+        return SelectLogisticScreen();
+      },
+      binding: SelfServiceBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.selfServiceCheck,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return SelfServiceCheckScreen(
+          senderPhone: (args?['senderPhone'] as String?) ?? '',
+          receiverPhone: (args?['receiverPhone'] as String?) ?? '',
+          itemPrice: (args?['itemPrice'] as String?) ?? '',
+          amount: (args?['amount'] as String?) ?? '',
+        );
+      },
+      binding: SelfServiceBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.selfServiceQr,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return SelfServiceQRScreen(qrCode: (args?['qrCode'] as String?) ?? '');
+      },
+      binding: SelfServiceBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.selfServiceQrList,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return SelfServiceQRListScreen(
+          qrCode: (args?['qrCode'] as String?) ?? '',
+        );
+      },
+      binding: SelfServiceBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

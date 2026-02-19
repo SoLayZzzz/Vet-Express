@@ -8,7 +8,9 @@ import '../../domain/uscase/ev_charger_usecase.dart';
 import '../uiState/ev_slideshow_ui_state.dart';
 
 class EvSlideshowController extends StateController<EvSlideshowUiState> {
-  final EvChargerUseCase useCase = Get.find<EvChargerUseCase>();
+  final EvChargerUseCase useCase;
+
+  EvSlideshowController(this.useCase);
 
   @override
   EvSlideshowUiState onInitUiState() => const EvSlideshowUiState();

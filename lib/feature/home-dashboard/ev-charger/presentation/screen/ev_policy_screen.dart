@@ -1,135 +1,3 @@
-// import 'package:express_vet/utils/app_bar.dart';
-// import 'package:express_vet/utils/app_colors.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-//
-// import '../../controller/ev/ev_policy_controller.dart';
-//
-// class EvPolicyScreen extends StatelessWidget {
-//   EvPolicyScreen({super.key});
-//
-//   final EvPolicyController policyController = Get.put(EvPolicyController());
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBarVET().appBar(context, 'privacy_policy'.tr),
-//       body: Obx(() {
-//         if (policyController.isLoading.value && policyController.policyList.isEmpty) {
-//           return _buildLoadingState();
-//         }
-//
-//         if (policyController.hasError.value) {
-//           return _buildErrorState();
-//         }
-//
-//         if (policyController.policyList.isEmpty) {
-//           return _buildEmptyState();
-//         }
-//
-//         return _buildPolicyContent();
-//       }),
-//     );
-//   }
-//
-//   Widget _buildLoadingState() {
-//     return const Center(child: CircularProgressIndicator());
-//   }
-//
-//   Widget _buildErrorState() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           const Icon(Icons.error_outline, size: 64, color: Colors.grey),
-//           const SizedBox(height: 16),
-//           Text(
-//             'failed_to_load_policy'.tr,
-//             style: const TextStyle(fontSize: 16, color: Colors.grey),
-//           ),
-//           const SizedBox(height: 16),
-//           ElevatedButton(onPressed: policyController.refreshData, child: Text('retry'.tr)),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildEmptyState() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           const Icon(Icons.privacy_tip_outlined, size: 64, color: Colors.grey),
-//           const SizedBox(height: 16),
-//           Text('no_policy_available'.tr, style: const TextStyle(fontSize: 16, color: Colors.grey)),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildPolicyContent() {
-//     return SafeArea(
-//       child: Padding(
-//         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-//         child: SingleChildScrollView(
-//           physics: const BouncingScrollPhysics(),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               const SizedBox(height: 16),
-//               Text(
-//                 "privacy_policy".tr,
-//                 style: TextStyle(
-//                   color: AppColors.titleColor,
-//                   fontSize: 16,
-//                   fontWeight: FontWeight.w600,
-//                 ),
-//               ),
-//               const SizedBox(height: 12),
-//
-//               // Dynamic policy content from API
-//               ...policyController.policyList.map(
-//                 (policy) => _buildPolicySection(policyController.getLocalizedPolicyContent(policy)),
-//               ),
-//
-//               // Load more indicator
-//               if (policyController.isLoading.value && policyController.policyList.isNotEmpty)
-//                 const Padding(
-//                   padding: EdgeInsets.all(16.0),
-//                   child: Center(child: CircularProgressIndicator()),
-//                 ),
-//
-//               // Load more button
-//               if (policyController.hasMore.value && !policyController.isLoading.value)
-//                 Padding(
-//                   padding: const EdgeInsets.all(16.0),
-//                   child: Center(
-//                     child: ElevatedButton(
-//                       onPressed: policyController.loadMore,
-//                       child: Text('load_more'.tr),
-//                     ),
-//                   ),
-//                 ),
-//
-//               const SizedBox(height: 20),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _buildPolicySection(String content) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(content, style: const TextStyle(fontSize: 14, height: 1.6, color: Colors.black87)),
-//         const SizedBox(height: 16),
-//       ],
-//     );
-//   }
-// }
-
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -138,26 +6,23 @@ import 'package:url_launcher/url_launcher.dart'; // For links in HTML
 
 import '../controller/ev_policy_controller.dart';
 
-class EvPolicyScreen extends StatelessWidget {
+class EvPolicyScreen extends GetView<EvPolicyController> {
   EvPolicyScreen({super.key});
-
-  final EvPolicyController policyController = Get.put(EvPolicyController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'privacy_policy'.tr),
       body: Obx(() {
-        if (policyController.isLoading.value &&
-            policyController.policyList.isEmpty) {
+        if (controller.isLoading.value && controller.policyList.isEmpty) {
           return _buildLoadingState();
         }
 
-        if (policyController.hasError.value) {
+        if (controller.hasError.value) {
           return _buildErrorState();
         }
 
-        if (policyController.policyList.isEmpty) {
+        if (controller.policyList.isEmpty) {
           return _buildEmptyState();
         }
 
@@ -183,7 +48,7 @@ class EvPolicyScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: policyController.refreshData,
+            onPressed: controller.refreshData,
             child: Text('retry'.tr),
           ),
         ],
@@ -219,15 +84,15 @@ class EvPolicyScreen extends StatelessWidget {
               const SizedBox(height: 16),
               // HTML Content Section
               Obx(() {
-                if (policyController.isFetchingHtml.value) {
+                if (controller.isFetchingHtml.value) {
                   return _buildHtmlLoading();
                 }
 
-                if (policyController.htmlError.value.isNotEmpty) {
+                if (controller.htmlError.value.isNotEmpty) {
                   return _buildHtmlError();
                 }
 
-                if (policyController.htmlContent.value.isEmpty) {
+                if (controller.htmlContent.value.isEmpty) {
                   return _buildNoHtmlContent();
                 }
 
@@ -235,13 +100,12 @@ class EvPolicyScreen extends StatelessWidget {
               }),
 
               // Load more button (if applicable)
-              if (policyController.hasMore.value &&
-                  !policyController.isLoading.value)
+              if (controller.hasMore.value && !controller.isLoading.value)
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Center(
                     child: ElevatedButton(
-                      onPressed: policyController.loadMore,
+                      onPressed: controller.loadMore,
                       child: Text('load_more'.tr),
                     ),
                   ),
@@ -273,7 +137,7 @@ class EvPolicyScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: policyController.fetchHtmlContent,
+          onPressed: controller.fetchHtmlContent,
           child: Text('retry'.tr),
         ),
       ],
@@ -295,7 +159,7 @@ class EvPolicyScreen extends StatelessWidget {
 
   Widget _buildHtmlContent() {
     return Html(
-      data: policyController.htmlContent.value,
+      data: controller.htmlContent.value,
       style: {
         'body': Style(
           margin: Margins.zero,

@@ -12,11 +12,11 @@ class SearchEvScreen extends GetView<EvChargerController> {
 
   final TextEditingController _searchController = TextEditingController();
 
-  void _onStationSelected(BuildContext context, BodyEV station) {
-    Navigator.pop(context, station);
+  void _onStationSelected(BodyEV station) {
+    Get.back(result: station);
   }
 
-  Widget _buildStationItem(BuildContext context, BodyEV station) {
+  Widget _buildStationItem(BodyEV station) {
     return ListTile(
       leading: Container(
         width: 40,
@@ -40,7 +40,7 @@ class SearchEvScreen extends GetView<EvChargerController> {
               )
               : null,
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () => _onStationSelected(context, station),
+      onTap: () => _onStationSelected(station),
     );
   }
 
@@ -133,7 +133,7 @@ class SearchEvScreen extends GetView<EvChargerController> {
                 physics: const BouncingScrollPhysics(),
                 itemCount: stations.length,
                 itemBuilder: (context, index) {
-                  return _buildStationItem(context, stations[index]);
+                  return _buildStationItem(stations[index]);
                 },
               );
             }),
