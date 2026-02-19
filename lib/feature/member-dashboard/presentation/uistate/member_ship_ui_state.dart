@@ -1,0 +1,3 @@
+class MemberShipUiState {
+  const MemberShipUiState();
+}

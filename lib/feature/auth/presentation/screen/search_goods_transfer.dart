@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../api/goods_transfer.dart';
+import '../../../dash_board/scan_qr/presentation/binding/scan_qr_binding.dart';
+import '../../../dash_board/scan_qr/presentation/controller/scan_qr_controller.dart';
+import '../../../../utils/alert_dialog.dart';
 import '../../../../utils/app_bar.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/button.dart';
 import '../../../../utils/check_input.dart';
 import '../../../../utils/style.dart';
-import '../../../../activities/logistic/scan_qr_screen.dart';
+import '../../../../routes/app_routes.dart';
 
 class SearchGoodsTransferScreen extends StatefulWidget {
   const SearchGoodsTransferScreen({super.key});
@@ -82,10 +84,13 @@ class SearchGoodsTransferScreenState extends State<SearchGoodsTransferScreen> {
                           buttonText: 'search'.tr,
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              GoodsTransfer().goodsSearch(
+                              if (!Get.isRegistered<ScanQrController>()) {
+                                ScanQrBinding().dependencies();
+                              }
+                              Get.find<ScanQrController>().setScanFrom(1);
+                              Get.find<ScanQrController>().goodsSearch(
                                 context,
                                 codeController.text,
-                                1,
                               );
                             }
                           },
@@ -133,10 +138,9 @@ class SearchGoodsTransferScreenState extends State<SearchGoodsTransferScreen> {
                           context: context,
                           buttonText: 'scan_btn'.tr,
                           onPressed: () {
-                            Get.to(
-                              () => const ScanQR(scanFrom: 1),
-                              transition: Transition.rightToLeft,
-                              duration: const Duration(milliseconds: 350),
+                            Get.toNamed(
+                              AppRoutes.scanQr,
+                              arguments: <String, dynamic>{'scanFrom': 1},
                             );
                           },
                         ),

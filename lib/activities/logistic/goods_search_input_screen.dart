@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
 
-import '../../api/goods_transfer.dart';
+import '../../feature/dash_board/scan_qr/presentation/binding/scan_qr_binding.dart';
+import '../../feature/dash_board/scan_qr/presentation/controller/scan_qr_controller.dart';
 import '../../utils/alert_dialog.dart';
 import '../../utils/check_input.dart';
 import '../../utils/style.dart';
@@ -26,33 +27,47 @@ class _GoodsSearchInputScreenState extends State<GoodsSearchInputScreen> {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'search_tracking_code'.tr),
       body: SafeArea(
-          child: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
                   controller: codeController,
                   autofocus: false,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   style: const TextStyle(fontSize: 14),
                   validator: (String? value) {
-                    return CheckInput()
-                        .checkLength(value!, 6, 'code_is_required'.tr, 'code_not_correct'.tr);
+                    return CheckInput().checkLength(
+                      value!,
+                      6,
+                      'code_is_required'.tr,
+                      'code_not_correct'.tr,
+                    );
                   },
-                  decoration:
-                      Style.inputText('enter_tracking_code'.tr, iconLeft: Ionicons.person_outline)),
-              const SizedBox(height: 20),
-              globalButton(
+                  decoration: Style.inputText(
+                    'enter_tracking_code'.tr,
+                    iconLeft: Ionicons.person_outline,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                globalButton(
                   context: context,
                   buttonText: 'search'.tr,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       if (codeController.text.isNotEmpty) {
-                        GoodsTransfer().goodsSearch(context, codeController.text, 0);
+                        if (!Get.isRegistered<ScanQrController>()) {
+                          ScanQrBinding().dependencies();
+                        }
+                        Get.find<ScanQrController>().setScanFrom(0);
+                        Get.find<ScanQrController>().goodsSearch(
+                          context,
+                          codeController.text,
+                        );
                       } else {
                         alertDialogOneButton(
                           title: 'information'.tr,
@@ -61,11 +76,13 @@ class _GoodsSearchInputScreenState extends State<GoodsSearchInputScreen> {
                         );
                       }
                     }
-                  })
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }

@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../activities/logistic/location_screen.dart';
-import '../../../activities/logistic/scan_qr_screen.dart';
 import '../../home-dashboard/self_service/presentation/screen/self_service_screen.dart';
-import '../../../activities/member_ship_screen.dart';
-import '../../../activities/ticket/package_history_screen.dart';
-import '../../../activities/ticket/ticket_history_screen.dart';
-import '../../../activities/tracking_screen.dart';
+import '../../member-dashboard/presentation/screen/member_ship_screen.dart';
+import '../../history-dashboard/main-history/tracking_screen.dart';
 import '../../home-dashboard/menu/presentation/screen/menu_screen.dart';
+import '../scan_qr/presentation/screen/scan_qr_screen.dart';
+import '../../../routes/app_routes.dart';
 import '../../../utils/contains.dart';
 
 class DashBoardController extends StateController<DashBoardState> {
@@ -20,7 +19,7 @@ class DashBoardController extends StateController<DashBoardState> {
   final List<Widget> pages = const [
     MenuScreen(),
     TrackingScreen(),
-    ScanQR(scanFrom: 0),
+    ScanQrScreen(scanFrom: 0),
     MemberShipScreen(),
   ];
 
@@ -54,18 +53,10 @@ class DashBoardController extends StateController<DashBoardState> {
         );
       } else if (from == 2) {
         uiState.value = state.copyWith(navigated: true);
-        Get.to(
-          const TicketHistoryScreen(),
-          transition: Transition.rightToLeft,
-          duration: const Duration(milliseconds: Constrains.duration),
-        );
+        Get.toNamed(AppRoutes.ticketHistory);
       } else if (from == 5) {
         uiState.value = state.copyWith(navigated: true);
-        Get.to(
-          const PackageHistoryScreen(),
-          transition: Transition.rightToLeft,
-          duration: const Duration(milliseconds: Constrains.duration),
-        );
+        Get.toNamed(AppRoutes.packageHistory);
       }
     });
   }

@@ -14,6 +14,18 @@ class AppRoutes {
 
   // Ev charger route
   static const evCharger = '/ev-charger';
+  static const evWallet = '/ev-charger/wallet';
+  static const evTopUp = '/ev-charger/top-up';
+  static const evPayment = '/ev-charger/payment';
+  static const evPaymentSuccess = '/ev-charger/payment-success';
+  static const evQrScanner = '/ev-charger/qr-scanner';
+  static const evFaq = '/ev-charger/faq';
+  static const evPolicy = '/ev-charger/policy';
+  static const evNewsFeed = '/ev-charger/news-feed';
+  static const evAllStations = '/ev-charger/stations';
+  static const evFavorites = '/ev-charger/favorites';
+  static const evSearchStations = '/ev-charger/search-stations';
+  static const evSelectProvince = '/ev-charger/select-province';
 
   // Menu route
   static const contactUs = '/contact-us';
@@ -28,8 +40,14 @@ class AppRoutes {
   static const selfServiceCheck = '/self-service/check';
   static const selfServiceQr = '/self-service/qr';
   static const selfServiceQrList = '/self-service/qr-list';
+  static const scanQr = '/scan-qr';
   static const bookingDelivery = '/booking-delivery';
   static const warehouseAddress = '/china/warehouse-address';
   static const chinaRegistration = '/china/registration';
   static const vetAirway = '/vet-airway';
+
+  // History route
+  static const ticketHistory = '/history/ticket';
+  static const packageHistory = '/history/package';
+  static const goodsTransferHistory = '/history/goods-transfer';
 }

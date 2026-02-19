@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../controller/ev_wallet_controller.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
-import 'ev_top_up_screen.dart';
+import '../../../../../routes/app_routes.dart';
 
 class EvWalletScreen extends GetView<EvWalletController> {
   const EvWalletScreen({super.key});
@@ -115,11 +115,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
               // Top Up Button
               ElevatedButton.icon(
                 onPressed: () {
-                  Get.to(
-                    () => EvTopUpScreen(),
-                    transition: Transition.rightToLeft,
-                    duration: const Duration(milliseconds: Constrains.duration),
-                  );
+                  Get.toNamed(AppRoutes.evTopUp);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
@@ -428,7 +424,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
           ),
           const SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () => Get.to(() => EvTopUpScreen()),
+            onPressed: () => Get.toNamed(AppRoutes.evTopUp),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
               foregroundColor: Colors.white,

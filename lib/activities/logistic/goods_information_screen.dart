@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/utils/app_bar.dart';
 
-import '../../api/goods_transfer.dart';
+import '../../feature/dash_board/scan_qr/presentation/binding/scan_qr_binding.dart';
+import '../../feature/dash_board/scan_qr/presentation/controller/scan_qr_controller.dart';
 import '../../models/destination/goods_find_response.dart';
 import '../../utils/app_colors.dart';
 
@@ -23,7 +24,13 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
   @override
   void initState() {
     super.initState();
-    futureData = GoodsTransfer().findGoodsTransfer(context, widget.id);
+    if (!Get.isRegistered<ScanQrController>()) {
+      ScanQrBinding().dependencies();
+    }
+    futureData = Get.find<ScanQrController>().scanQrUseCase.findGoodsTransfer(
+      context: context,
+      id: widget.id,
+    );
   }
 
   @override
@@ -50,7 +57,10 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                           decoration: BoxDecoration(
                             color: AppColors.whiteColor,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.borderColor, width: 0.5),
+                            border: Border.all(
+                              color: AppColors.borderColor,
+                              width: 0.5,
+                            ),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
@@ -60,32 +70,65 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                 Expanded(
                                   flex: 4,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       labelDisplay(
                                         title: 'tracking_code'.tr,
-                                        value: (transferData.data!.body?.data?[0].code)!,
+                                        value:
+                                            (transferData
+                                                .data!
+                                                .body
+                                                ?.data?[0]
+                                                .code)!,
                                       ),
                                       labelDisplay(
                                         title: 'sender'.tr,
-                                        value: (transferData.data!.body?.data?[0].senderTelephone)!,
+                                        value:
+                                            (transferData
+                                                .data!
+                                                .body
+                                                ?.data?[0]
+                                                .senderTelephone)!,
                                       ),
                                       labelDisplay(
                                         title: 'from'.tr,
-                                        value: (transferData.data!.body?.data?[0].destinationFromEn.toString())!,
+                                        value:
+                                            (transferData
+                                                .data!
+                                                .body
+                                                ?.data?[0]
+                                                .destinationFromEn
+                                                .toString())!,
                                       ),
                                       labelDisplay(
                                         title: 'receiver'.tr,
                                         value:
-                                            (transferData.data!.body?.data?[0].receiverTelephone)!,
+                                            (transferData
+                                                .data!
+                                                .body
+                                                ?.data?[0]
+                                                .receiverTelephone)!,
                                       ),
                                       labelDisplay(
                                         title: 'to'.tr,
-                                        value: (transferData.data!.body?.data?[0].destinationToEn.toString())!,
+                                        value:
+                                            (transferData
+                                                .data!
+                                                .body
+                                                ?.data?[0]
+                                                .destinationToEn
+                                                .toString())!,
                                       ),
                                       labelDisplay(
                                         title: 'qty'.tr,
-                                        value: (transferData.data!.body?.data?[0].qty.toString())!,
+                                        value:
+                                            (transferData
+                                                .data!
+                                                .body
+                                                ?.data?[0]
+                                                .qty
+                                                .toString())!,
                                       ),
                                     ],
                                   ),
@@ -93,7 +136,9 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                 const SizedBox(width: 20),
                                 Expanded(
                                   flex: 1,
-                                  child: Image.asset('assets/icons/icon_tracking_parcel.png'),
+                                  child: Image.asset(
+                                    'assets/icons/icon_tracking_parcel.png',
+                                  ),
                                 ),
                               ],
                             ),
@@ -116,10 +161,20 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount:
-                              transferData.data!.body!.data![0].goodsTransferMoveList!.length,
+                              transferData
+                                  .data!
+                                  .body!
+                                  .data![0]
+                                  .goodsTransferMoveList!
+                                  .length,
                           itemBuilder: (context, index) {
                             int? length =
-                                transferData.data!.body!.data![0].goodsTransferMoveList!.length;
+                                transferData
+                                    .data!
+                                    .body!
+                                    .data![0]
+                                    .goodsTransferMoveList!
+                                    .length;
 
                             return Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +204,8 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                 Expanded(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       if ((transferData
                                               .data!
@@ -414,85 +470,23 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
           children: [
             Image.asset(img, width: 28, height: 28),
             const SizedBox(width: 10),
-            Text("${status.tr} ${des.tr}", style: TextStyle(fontSize: 14, color: colorText)),
+            Text(
+              "${status.tr} ${des.tr}",
+              style: TextStyle(fontSize: 14, color: colorText),
+            ),
             const Spacer(),
-            // view == true
-            //     ? InkWell(
-            //         onTap: () {
-            //           Get.bottomSheet(
-            //             Container(
-            //               padding: const EdgeInsets.all(16),
-            //               decoration: const BoxDecoration(
-            //                 color: AppColors.whiteColor,
-            //                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-            //               ),
-            //               child: Column(
-            //                 mainAxisSize: MainAxisSize.min,
-            //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //                 children: [
-            //                   Center(
-            //                     child: Container(
-            //                         height: 5,
-            //                         width: MediaQuery.sizeOf(context).width * 0.25,
-            //                         decoration: BoxDecoration(
-            //                             color: AppColors.borderColor,
-            //                             borderRadius: BorderRadius.circular(10))),
-            //                   ),
-            //                   const SizedBox(height: 30),
-            //                   Row(
-            //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //                     children: [
-            //                       Container(
-            //                         width: 12,
-            //                         height: 12,
-            //                         decoration: const BoxDecoration(
-            //                           shape: BoxShape.circle,
-            //                           color: Colors.green,
-            //                         ),
-            //                       ),
-            //                       const SizedBox(width: 10),
-            //                       const Expanded(
-            //                         child: Column(
-            //                           crossAxisAlignment:
-            //                               CrossAxisAlignment.start, // Align text to the start
-            //                           children: [
-            //                             Text(
-            //                               "Hello I'm from UDAYA company and want to build something",
-            //                               style: TextStyle(
-            //                                   fontSize: 14), // Optional: Adjust text style
-            //                             ),
-            //                             SizedBox(height: 4), // Optional: Add space between texts
-            //                             Text(
-            //                               "Hello I'm from UDAYA company and want to build something",
-            //                               style: TextStyle(
-            //                                   fontSize: 14), // Optional: Adjust text style
-            //                             ),
-            //                           ],
-            //                         ),
-            //                       ),
-            //                     ],
-            //                   )
-            //                 ],
-            //               ),
-            //             ),
-            //             isScrollControlled: true, // Allows the bottom sheet to be scrollable
-            //           );
-            //         },
-            //         child: Container(
-            //           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-            //           decoration: BoxDecoration(
-            //               borderRadius: BorderRadius.circular(20),
-            //               border: Border.all(color: AppColors.primaryColor)),
-            //           child: const Text("View Detail"),
-            //         ),
-            //       )
-            //     : const SizedBox.shrink()
           ],
         ),
         const SizedBox(height: 5),
-        Text(msg, style: const TextStyle(fontSize: 12, color: AppColors.textColor)),
+        Text(
+          msg,
+          style: const TextStyle(fontSize: 12, color: AppColors.textColor),
+        ),
         const SizedBox(height: 5),
-        Text(created, style: const TextStyle(fontSize: 12, color: AppColors.textColor)),
+        Text(
+          created,
+          style: const TextStyle(fontSize: 12, color: AppColors.textColor),
+        ),
       ],
     );
   }
@@ -506,13 +500,19 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
           Expanded(
             child: Text(
               '$title:',
-              style: const TextStyle(fontWeight: FontWeight.w500, color: AppColors.titleColor),
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: AppColors.titleColor,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontWeight: FontWeight.w500, color: AppColors.titleColor),
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: AppColors.titleColor,
+              ),
             ),
           ),
         ],

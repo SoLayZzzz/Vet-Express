@@ -7,15 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../controller/ev_charger_controller.dart';
 import '../../../../../utils/app_colors.dart';
-import '../../../../../utils/contains.dart';
-import 'ev_policy_screen.dart';
-import 'ev_qr_scanner_screen.dart';
-import 'ev_charger_wallet_screen.dart';
+import '../../../../../routes/app_routes.dart';
 import 'ev_new_feed_screen.dart';
-import 'ev_station_screen.dart';
-import 'ev_top_up_screen.dart';
-import 'ev_faq_screen.dart';
-import 'ev_fav_screen.dart';
 
 class EvChargerScreen extends GetView<EvChargerController> {
   EvChargerScreen({super.key});
@@ -27,7 +20,20 @@ class EvChargerScreen extends GetView<EvChargerController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: _buildBody(),
+      body: Obx(() {
+        final s = controller.state;
+
+        final isInitialLoading =
+            (s.isLoadingSlides && controller.slideshowList.isEmpty) ||
+            (s.isLoadingNews && controller.newsList.isEmpty) ||
+            s.isLoadingWalletBalance;
+
+        if (isInitialLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return _buildBody();
+      }),
       bottomNavigationBar: _buildBottomNavigationBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: _buildFloatingActionButton(),
@@ -37,11 +43,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
   Widget _buildFloatingActionButton() {
     return GestureDetector(
       onTap: () {
-        Get.to(
-          () => EvQrScannerScreen(),
-          transition: Transition.rightToLeft,
-          duration: const Duration(milliseconds: Constrains.duration),
-        );
+        Get.toNamed(AppRoutes.evQrScanner);
       },
       child: Container(
         width: 68,
@@ -100,11 +102,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
       actions: [
         IconButton(
           onPressed: () {
-            Get.to(
-              () => EvFaqScreen(),
-              transition: Transition.rightToLeft,
-              duration: const Duration(milliseconds: Constrains.duration),
-            );
+            Get.toNamed(AppRoutes.evFaq);
           },
           icon: Image.asset("assets/icons/icon_ev_faq.png"),
         ),
@@ -116,11 +114,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
         ),
         IconButton(
           onPressed: () {
-            Get.to(
-              () => EvPolicyScreen(),
-              transition: Transition.rightToLeft,
-              duration: const Duration(milliseconds: Constrains.duration),
-            );
+            Get.toNamed(AppRoutes.evPolicy);
           },
           icon: Image.asset("assets/icons/icon_ev_policy.png"),
         ),
@@ -188,7 +182,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
             borderRadius: BorderRadius.circular(12),
             color: Colors.grey[300],
           ),
-          child: const Center(child: CircularProgressIndicator()),
+          child: const SizedBox.shrink(),
         ),
         const SizedBox(height: 32),
       ],
@@ -264,7 +258,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
         placeholder:
             (context, url) => Container(
               color: Colors.grey[200],
-              child: const Center(child: CircularProgressIndicator()),
+              child: const SizedBox.shrink(),
             ),
         errorWidget:
             (context, url, error) => Container(
@@ -300,11 +294,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
   Widget _buildBalanceCard() {
     return InkWell(
       onTap: () {
-        Get.to(
-          () => const EvWalletScreen(),
-          transition: Transition.rightToLeft,
-          duration: const Duration(milliseconds: Constrains.duration),
-        );
+        Get.toNamed(AppRoutes.evWallet);
       },
       child: Obx(() {
         return Container(
@@ -348,10 +338,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
               ),
               const SizedBox(height: 8),
               controller.state.isLoadingWalletBalance
-                  ? const SizedBox(
-                    height: 40,
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                  ? const SizedBox(height: 40)
                   : Text(
                     "${controller.walletBalance.toStringAsFixed(2)} KHR",
                     style: const TextStyle(
@@ -364,13 +351,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Get.to(
-                      () => EvTopUpScreen(),
-                      transition: Transition.rightToLeft,
-                      duration: const Duration(
-                        milliseconds: Constrains.duration,
-                      ),
-                    );
+                    Get.toNamed(AppRoutes.evTopUp);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
@@ -410,21 +391,13 @@ class EvChargerScreen extends GetView<EvChargerController> {
       children: [
         Expanded(
           child: _buildActionButton(Icons.ev_station, "ev_station".tr, () {
-            Get.to(
-              () => EvAllStationScreen(),
-              transition: Transition.rightToLeft,
-              duration: const Duration(milliseconds: Constrains.duration),
-            );
+            Get.toNamed(AppRoutes.evAllStations);
           }),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: _buildActionButton(Icons.favorite, "favorites".tr, () {
-            Get.to(
-              () => EvFavoriteScreen(),
-              transition: Transition.rightToLeft,
-              duration: const Duration(milliseconds: Constrains.duration),
-            );
+            Get.toNamed(AppRoutes.evFavorites);
           }),
         ),
       ],
@@ -493,14 +466,10 @@ class EvChargerScreen extends GetView<EvChargerController> {
             ),
             TextButton(
               onPressed: () {
-                Get.to(
-                  () => const NewsFeedScreen(),
-                  transition: Transition.rightToLeft,
-                  duration: const Duration(milliseconds: Constrains.duration),
-                );
+                Get.toNamed(AppRoutes.evNewsFeed);
               },
               child: Text(
-                "view_all".tr,
+                "see_all".tr,
                 style: const TextStyle(
                   color: AppColors.primaryColor,
                   decoration: TextDecoration.underline,
@@ -517,10 +486,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
 
           // Loading state (only show when first load and empty)
           if (controller.state.isLoadingNews && publicNews.isEmpty) {
-            return const SizedBox(
-              height: 100,
-              child: Center(child: CircularProgressIndicator()),
-            );
+            return const SizedBox(height: 100);
           }
 
           // Error state
@@ -589,9 +555,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                         width: 80,
                         height: 80,
                         color: Colors.grey[200],
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
+                        child: const SizedBox.shrink(),
                       ),
                   errorWidget:
                       (context, url, error) => Container(
@@ -875,11 +839,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                         placeholder:
                             (context, url) => Container(
                               color: Colors.grey[200],
-                              child: const Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
+                              child: const SizedBox.shrink(),
                             ),
                         errorWidget:
                             (context, url, error) => Container(

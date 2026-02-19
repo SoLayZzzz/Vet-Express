@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_charger_wallet_screen.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_scan_qr_response.dart'
     as ev_scan;
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'ev_wallet_controller.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
+import '../../../../../routes/app_routes.dart';
 
 class EvScannerController extends GetxController {
   final EvChargerUseCase useCase;
@@ -328,11 +328,7 @@ class EvScannerController extends GetxController {
     resetScanner();
     Get.back();
     // If EvChargerScreen is not the first screen, navigate to it
-    Get.off(
-      () => EvWalletScreen(),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: 300),
-    );
+    Get.offNamed(AppRoutes.evWallet);
   }
 
   // Helper methods

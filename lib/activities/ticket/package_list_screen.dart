@@ -81,30 +81,36 @@ class _PackageListScreenState extends State<PackageListScreen> {
                                           ? models.titleKh!
                                           : models.titleEn ?? '')
                                       : Get.locale.toString() == 'zh_CN'
-                                          ? (models.titleCn?.isNotEmpty == true
-                                              ? models.titleCn!
-                                              : models.titleEn ?? '')
-                                          : models.titleEn ?? '',
+                                      ? (models.titleCn?.isNotEmpty == true
+                                          ? models.titleCn!
+                                          : models.titleEn ?? '')
+                                      : models.titleEn ?? '',
                                   style: const TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.secondaryColor,
-                                      fontWeight: FontWeight.w600),
+                                    fontSize: 16,
+                                    color: AppColors.secondaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
+                              const SizedBox(height: 10),
                               ReadMoreText(
                                 localizedText,
                                 trimMode: TrimMode.Line,
                                 trimLines: 3,
-                                moreStyle:
-                                    const TextStyle(fontSize: 14, color: AppColors.seeMoreColor),
+                                moreStyle: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.seeMoreColor,
+                                ),
                                 trimCollapsedText: 'see_more'.tr,
-                                lessStyle:
-                                    const TextStyle(fontSize: 14, color: AppColors.titleColor),
+                                lessStyle: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.titleColor,
+                                ),
                                 trimExpandedText: 'see_less'.tr,
-                                style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.textColor,
+                                ),
                               ),
                             ],
                           );
@@ -139,93 +145,132 @@ class _PackageListScreenState extends State<PackageListScreen> {
                               child: Column(
                                 children: [
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         width: 140,
                                         height: 130,
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                           child: CachedNetworkImage(
                                             fit: BoxFit.cover,
                                             imageUrl: models.photo!,
-                                            placeholder: (context, url) => placeHolder(),
-                                            errorWidget: (context, url, error) => placeHolder(),
+                                            placeholder:
+                                                (context, url) => placeHolder(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    placeHolder(),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
+                                      const SizedBox(width: 10),
                                       Expanded(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            Get.locale.toString() == 'km_KH'
-                                                ? (models.nameKh?.isNotEmpty == true
-                                                    ? models.nameKh!
-                                                    : models.name ?? '')
-                                                : Get.locale.toString() == 'zh_CN'
-                                                    ? (models.nameCn?.isNotEmpty == true
-                                                        ? models.nameCn!
-                                                        : models.name ?? '')
-                                                    : models.name ?? '',
-                                            style: const TextStyle(
-                                                fontSize: 14, fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            Get.locale.toString() == 'km_KH'
-                                                ? (models.descriptionKh?.isNotEmpty == true
-                                                    ? models.descriptionKh!
-                                                    : models.description ?? '')
-                                                : Get.locale.toString() == 'zh_CN'
-                                                    ? (models.descriptionCn?.isNotEmpty == true
-                                                        ? models.descriptionCn!
-                                                        : models.description ?? '')
-                                                    : models.description ?? '',
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                fontSize: 14, color: AppColors.textColor),
-                                          )
-                                        ],
-                                      ))
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              Get.locale.toString() == 'km_KH'
+                                                  ? (models
+                                                              .nameKh
+                                                              ?.isNotEmpty ==
+                                                          true
+                                                      ? models.nameKh!
+                                                      : models.name ?? '')
+                                                  : Get.locale.toString() ==
+                                                      'zh_CN'
+                                                  ? (models
+                                                              .nameCn
+                                                              ?.isNotEmpty ==
+                                                          true
+                                                      ? models.nameCn!
+                                                      : models.name ?? '')
+                                                  : models.name ?? '',
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              Get.locale.toString() == 'km_KH'
+                                                  ? (models
+                                                              .descriptionKh
+                                                              ?.isNotEmpty ==
+                                                          true
+                                                      ? models.descriptionKh!
+                                                      : models.description ??
+                                                          '')
+                                                  : Get.locale.toString() ==
+                                                      'zh_CN'
+                                                  ? (models
+                                                              .descriptionCn
+                                                              ?.isNotEmpty ==
+                                                          true
+                                                      ? models.descriptionCn!
+                                                      : models.description ??
+                                                          '')
+                                                  : models.description ?? '',
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: AppColors.textColor,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 20),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Container(
                                         height: 36,
                                         width: 120,
                                         decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(50),
-                                            border: Border.all(
-                                                color: AppColors.primaryColor, width: 0.5)),
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
+                                          border: Border.all(
+                                            color: AppColors.primaryColor,
+                                            width: 0.5,
+                                          ),
+                                        ),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               '\$${models.price}',
                                               style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: AppColors.primaryColor,
-                                                  fontWeight: FontWeight.bold),
+                                                fontSize: 14,
+                                                color: AppColors.primaryColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                            if (models.originalPrice!.isNotEmpty)
+                                            if (models
+                                                .originalPrice!
+                                                .isNotEmpty)
                                               const SizedBox(width: 5),
-                                            if (models.originalPrice!.isNotEmpty)
+                                            if (models
+                                                .originalPrice!
+                                                .isNotEmpty)
                                               Text(
                                                 '\$${models.originalPrice}',
                                                 style: const TextStyle(
-                                                    fontSize: 12,
-                                                    decoration: TextDecoration.lineThrough,
-                                                    color: AppColors.textColor),
+                                                  fontSize: 12,
+                                                  decoration:
+                                                      TextDecoration
+                                                          .lineThrough,
+                                                  color: AppColors.textColor,
+                                                ),
                                               ),
                                           ],
                                         ),
@@ -233,31 +278,38 @@ class _PackageListScreenState extends State<PackageListScreen> {
                                       InkWell(
                                         onTap: () {
                                           Get.to(
-                                            () => PackageInfoScreen(travelPackageId: models.id!),
+                                            () => PackageInfoScreen(
+                                              travelPackageId: models.id!,
+                                            ),
                                             transition: Transition.rightToLeft,
-                                            duration:
-                                                const Duration(milliseconds: Constrains.duration),
+                                            duration: const Duration(
+                                              milliseconds: Constrains.duration,
+                                            ),
                                           );
                                         },
                                         child: Container(
                                           height: 36,
                                           width: 120,
                                           decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(50),
-                                              color: const Color(0xFFE38F5A)),
+                                            borderRadius: BorderRadius.circular(
+                                              50,
+                                            ),
+                                            color: const Color(0xFFE38F5A),
+                                          ),
                                           child: Center(
                                             child: Text(
                                               'buy_now'.tr,
                                               style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: AppColors.whiteColor,
-                                                  fontWeight: FontWeight.bold),
+                                                fontSize: 14,
+                                                color: AppColors.whiteColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -270,12 +322,16 @@ class _PackageListScreenState extends State<PackageListScreen> {
                     }
 
                     return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        width: double.infinity,
-                        child: const Center(
-                          child:
-                              SizedBox(height: 40, width: 40, child: CircularProgressIndicator()),
-                        ));
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      width: double.infinity,
+                      child: const Center(
+                        child: SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
                   },
                 ),
               ],
@@ -288,13 +344,12 @@ class _PackageListScreenState extends State<PackageListScreen> {
 
   SizedBox placeHolder() {
     return const SizedBox(
-        height: 130.0,
-        width: 140.0,
-        child: Image(
-          image: AssetImage(
-            'assets/images/place_holder.png',
-          ),
-          fit: BoxFit.cover,
-        ));
+      height: 130.0,
+      width: 140.0,
+      child: Image(
+        image: AssetImage('assets/images/place_holder.png'),
+        fit: BoxFit.cover,
+      ),
+    );
   }
 }

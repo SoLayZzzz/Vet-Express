@@ -1,3 +1,4 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_charger_response.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/screen/passenger_detail_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/select_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_check_screen.dart';
@@ -6,8 +7,26 @@ import 'package:express_vet/feature/home-dashboard/self_service/presentation/scr
 import 'package:get/get.dart';
 import '../activities/china/registration_screen.dart';
 import '../activities/china/warehouse_address_screen.dart';
+import '../feature/history-dashboard/other-history/presentation/binding/goods_transfer_history_binding.dart';
+import '../feature/history-dashboard/other-history/presentation/binding/package_history_binding.dart';
+import '../feature/history-dashboard/other-history/presentation/binding/ticket_history_binding.dart';
+import '../feature/history-dashboard/other-history/presentation/screen/goods_transfer_history_screen.dart';
+import '../feature/history-dashboard/other-history/presentation/screen/package_history_screen.dart';
+import '../feature/history-dashboard/other-history/presentation/screen/ticket_history_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/binding/ev_charger_binding.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charging_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charger_wallet_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_faq_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_fav_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_new_feed_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_payment_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_policy_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_province_selection_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_qr_scanner_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_station_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_top_up_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/payment_success_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/search_ev_screen.dart';
 import '../activities/logistic/booking_delivery_screen.dart';
 import '../feature/home-dashboard/self_service/presentation/binding/self_service_binding.dart';
 import '../feature/home-dashboard/self_service/presentation/screen/self_service_screen.dart';
@@ -32,8 +51,12 @@ import '../feature/home-dashboard/seat/presentation/screen/select_seat_screen.da
 import '../feature/home-dashboard/ticket_menu/presentation/binding/ticket_menu_binding.dart';
 import '../feature/home-dashboard/ticket_menu/presentation/screen/select_destination_screen.dart';
 import '../feature/home-dashboard/ticket_menu/presentation/screen/ticket_menu_screen.dart';
+import '../feature/dash_board/scan_qr/presentation/binding/scan_qr_binding.dart';
+import '../feature/dash_board/scan_qr/presentation/screen/scan_qr_screen.dart';
 import '../utils/contains.dart';
 import 'app_routes.dart';
+
+import '../feature/home-dashboard/ev-charger/presentation/controller/ev_payment_controller.dart';
 
 class AppPages {
   static final pages = <GetPage<dynamic>>[
@@ -106,6 +129,105 @@ class AppPages {
     GetPage(
       name: AppRoutes.evCharger,
       page: () => EvChargerScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+
+    GetPage(
+      name: AppRoutes.evWallet,
+      page: () => const EvWalletScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evTopUp,
+      page: () => const EvTopUpScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evPayment,
+      page: () => const EvPaymentScreen(),
+      binding: BindingsBuilder(() {
+        if (Get.isRegistered<EvPaymentController>()) {
+          Get.delete<EvPaymentController>();
+        }
+        Get.put(EvPaymentController());
+      }),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evPaymentSuccess,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        final amount = (args?['amount'] as num?)?.toDouble() ?? 0.0;
+        return PaymentSuccessScreen(amount: amount);
+      },
+      binding: EvChargerBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evQrScanner,
+      page: () => const EvQrScannerScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evFaq,
+      page: () => EvFaqScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evPolicy,
+      page: () => EvPolicyScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evNewsFeed,
+      page: () => const NewsFeedScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evAllStations,
+      page: () => const EvAllStationScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evFavorites,
+      page: () => EvFavoriteScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evSearchStations,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        final stations =
+            (args?['allStations'] as List?)?.cast<BodyEV>() ?? <BodyEV>[];
+        return SearchEvScreen(allStations: stations);
+      },
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evSelectProvince,
+      page: () => EvProvinceSelectionScreen(),
       binding: EvChargerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
@@ -223,6 +345,14 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),
+
+    GetPage(
+      name: AppRoutes.scanQr,
+      page: () => const ScanQrScreen(),
+      binding: ScanQrBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
     GetPage(
       name: AppRoutes.bookingDelivery,
       page: () => const BookingDeliveryScreen(),
@@ -244,6 +374,28 @@ class AppPages {
     GetPage(
       name: AppRoutes.vetAirway,
       page: () => const VetAirway(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+
+    GetPage(
+      name: AppRoutes.ticketHistory,
+      page: () => const TicketHistoryScreen(),
+      binding: TicketHistoryBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.packageHistory,
+      page: () => const PackageHistoryScreen(),
+      binding: PackageHistoryBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.goodsTransferHistory,
+      page: () => const GoodsTransferHistoryScreen(),
+      binding: GoodsTransferHistoryBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../screen/ev_payment_screen.dart';
-import '../screen/payment_success_screen.dart';
 import 'ev_wallet_controller.dart';
 import 'ev_payment_controller.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
+import '../../../../../routes/app_routes.dart';
 
 class EvTopUpController extends GetxController {
   final EvChargerUseCase useCase;
@@ -127,14 +126,9 @@ class EvTopUpController extends GetxController {
             data.checkoutQrUrl != null &&
             data.checkoutQrUrl!.isNotEmpty) {
           // Navigate to payment screen with checkout URL and transaction ID
-          Get.to(
-            () => const EvPaymentScreen(),
-            binding: BindingsBuilder(() {
-              if (Get.isRegistered<EvPaymentController>()) {
-                Get.delete<EvPaymentController>();
-              }
-              Get.put(EvPaymentController());
-            }),
+          Get.toNamed(
+            AppRoutes.evPayment,
+
             arguments: {
               'deepLink': data.deeplink!,
               'checkoutQrUrl': data.checkoutQrUrl!,
@@ -259,10 +253,9 @@ class EvTopUpController extends GetxController {
 
     // Then show success screen (with a tiny delay to ensure screens are closed)
     Future.delayed(const Duration(milliseconds: 200), () {
-      Get.to(
-        () => PaymentSuccessScreen(amount: currentTopUpAmount.value),
-        transition: Transition.fadeIn,
-        duration: const Duration(milliseconds: 300),
+      Get.toNamed(
+        AppRoutes.evPaymentSuccess,
+        arguments: {'amount': currentTopUpAmount.value},
       );
     });
   }
@@ -291,8 +284,8 @@ class EvTopUpController extends GetxController {
     while (attempts < maxAttempts) {
       final currentRoute = Get.currentRoute;
 
-      if (currentRoute.contains('EvPaymentScreen') ||
-          currentRoute.contains('EvTopUpScreen')) {
+      if (currentRoute == AppRoutes.evPayment ||
+          currentRoute == AppRoutes.evTopUp) {
         Get.back();
         attempts++;
       } else {

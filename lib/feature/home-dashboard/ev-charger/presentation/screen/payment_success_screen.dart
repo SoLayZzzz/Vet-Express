@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/app_colors.dart';
-import 'ev_charger_wallet_screen.dart';
+import '../../../../../routes/app_routes.dart';
 import '../controller/ev_top_up_controller.dart';
 
 class PaymentSuccessScreen extends GetView<EvTopUpController> {
@@ -80,7 +80,7 @@ class PaymentSuccessScreen extends GetView<EvTopUpController> {
               child: ElevatedButton(
                 onPressed: () {
                   // Go back to wallet screen
-                  Get.off(() => EvWalletScreen());
+                  Get.offNamed(AppRoutes.evWallet);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,

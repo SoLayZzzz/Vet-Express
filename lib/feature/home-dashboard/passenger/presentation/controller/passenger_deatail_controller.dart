@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:express_vet/activities/ticket/value_statics.dart';
-import 'package:express_vet/api/boarding_point.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import 'package:express_vet/api/user.dart';
 import 'package:express_vet/base/state_controller.dart';
@@ -40,27 +39,27 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   Future<PassengerDetailInitResult> initPassengerDetail(
     BuildContext context,
   ) async {
-    futureBoardingPointOneWay = CarPoint().getBoardingPoint(
-      context,
-      ValueStatic.goDate,
-      ValueStatic.journeyIdGo.toString(),
+    futureBoardingPointOneWay = passerngerUscase.getBoardingPoint(
+      context: context,
+      date: ValueStatic.goDate,
+      journeyId: ValueStatic.journeyIdGo.toString(),
     );
-    futureDropOffPointOneWay = CarPoint().getDropOffPoint(
-      context,
-      ValueStatic.journeyIdGo.toString(),
+    futureDropOffPointOneWay = passerngerUscase.getDropOffPoint(
+      context: context,
+      journeyId: ValueStatic.journeyIdGo.toString(),
     );
 
     futureBoardingPointTwoWay = null;
     futureDropOffPointTwoWay = null;
     if (ValueStatic.journeyType == 2) {
-      futureBoardingPointTwoWay = CarPoint().getBoardingPoint(
-        context,
-        ValueStatic.backDate,
-        ValueStatic.journeyIdBack.toString(),
+      futureBoardingPointTwoWay = passerngerUscase.getBoardingPoint(
+        context: context,
+        date: ValueStatic.backDate,
+        journeyId: ValueStatic.journeyIdBack.toString(),
       );
-      futureDropOffPointTwoWay = CarPoint().getDropOffPoint(
-        context,
-        ValueStatic.journeyIdBack.toString(),
+      futureDropOffPointTwoWay = passerngerUscase.getDropOffPoint(
+        context: context,
+        journeyId: ValueStatic.journeyIdBack.toString(),
       );
     }
 
