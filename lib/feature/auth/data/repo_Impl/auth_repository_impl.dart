@@ -3,7 +3,9 @@ import '../model/request/login_request.dart';
 import '../model/response/check_token_response.dart';
 import '../model/response/check_version_response.dart';
 import '../model/response/login_response.dart';
+import '../model/response/nationality_response.dart';
 import '../../../../models/simple_response.dart';
+import '../model/response/user_me.dart';
 import '../network/auth_network_request.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -28,4 +30,101 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<SimpleResponse> deleteAccount() => authNetworkRequest.deleteAccount();
+
+  // ===== Delegations for migrated legacy endpoints =====
+  @override
+  Future<SimpleResponse> register({
+    required String name,
+    required String password,
+    required String telephone,
+    String? email,
+    String? dob,
+    String? filename,
+    int? gender,
+    int? nationalityId,
+  }) => authNetworkRequest.register(
+    name: name,
+    password: password,
+    telephone: telephone,
+    email: email,
+    dob: dob,
+    filename: filename,
+    gender: gender,
+    nationalityId: nationalityId,
+  );
+
+  @override
+  Future<SimpleResponse> verification({
+    required String code,
+    required String deviceId,
+    required String deviceName,
+    required String token,
+  }) => authNetworkRequest.verification(
+    code: code,
+    deviceId: deviceId,
+    deviceName: deviceName,
+    token: token,
+  );
+
+  @override
+  Future<SimpleResponse> resendVerification({required String phone}) =>
+      authNetworkRequest.resendVerification(phone: phone);
+
+  @override
+  Future<SimpleResponse> resetPasswordSendSms({required String phone}) =>
+      authNetworkRequest.resetPasswordSendSms(phone: phone);
+
+  @override
+  Future<SimpleResponse> resetPasswordVerify({
+    required String code,
+    required String token,
+  }) => authNetworkRequest.resetPasswordVerify(code: code, token: token);
+
+  @override
+  Future<SimpleResponse> resendCode({required String token}) =>
+      authNetworkRequest.resendCode(token: token);
+
+  @override
+  Future<SimpleResponse> newPassword({
+    required String newPassword,
+    required String token,
+  }) => authNetworkRequest.newPassword(newPassword: newPassword, token: token);
+
+  @override
+  Future<UserMeResponse> getUserMe() => authNetworkRequest.getUserMe();
+
+  @override
+  Future<SimpleResponse> profileUpdate({
+    required String name,
+    String? telephone,
+    String? email,
+    String? filename,
+    int? gender,
+    int? nationalityId,
+  }) => authNetworkRequest.profileUpdate(
+    name: name,
+    telephone: telephone,
+    email: email,
+    filename: filename,
+    gender: gender,
+    nationalityId: nationalityId,
+  );
+
+  @override
+  Future<NationalityResponse> nationalityList() =>
+      authNetworkRequest.nationalityList();
+
+  @override
+  Future<NationalityResponse> nationalityListTicket() =>
+      authNetworkRequest.nationalityListTicket();
+
+  @override
+  Future<SimpleResponse> sendOtpForgetPassword({required String phone}) =>
+      authNetworkRequest.sendOtpForgetPassword(phone: phone);
+
+  @override
+  Future<SimpleResponse> sendOtpRegister({
+    required String type,
+    required String phone,
+  }) => authNetworkRequest.sendOtpRegister(type: type, phone: phone);
 }

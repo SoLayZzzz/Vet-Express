@@ -7,7 +7,7 @@ import '../../data/model/response/ev_contact_response.dart';
 import '../../data/model/response/ev_news_feed_response.dart';
 import '../../data/model/response/ev_slide_show_response.dart';
 import '../../data/model/response/ev_charger_response.dart';
-import '../../../../../models/destination/destination_ev.dart';
+import '../../data/model/response/destination_ev.dart';
 import '../uiState/ev_charger_ui_state.dart';
 
 class EvChargerController extends StateController<EvChargerUiState> {

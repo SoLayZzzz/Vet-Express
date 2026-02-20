@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
-import 'package:express_vet/api/request_transfer.dart';
 
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
@@ -56,7 +55,7 @@ class SelfServiceCheckScreen extends GetView<SelfServiceController> {
                       children: [
                         InkWell(
                           onTap: () {
-                            RequestTransfer().saveGoodsSelfService(
+                            controller.saveSelfService(
                               context,
                               ValueStatic.locationId,
                               amountText,

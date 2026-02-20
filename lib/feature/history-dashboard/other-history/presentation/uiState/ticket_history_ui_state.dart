@@ -1,4 +1,4 @@
-import '../../../../../models/booking/booking_list_model.dart';
+import '../../../../home-dashboard/passenger/data/model/response/booking_list_model.dart';
 
 class TicketHistoryUiState {
   final Future<BookingListModel>? futureListBooking;

@@ -1,9 +1,13 @@
 import 'package:get/get.dart';
 
-import '../api/user.dart';
-import '../models/user/user_me.dart';
+import '../feature/auth/data/model/response/user_me.dart';
+import '../feature/auth/domain/uscase/auth_usecase.dart';
 
 class UserController extends GetxController {
+  final AuthUseCase authUseCase;
+
+  UserController(this.authUseCase);
+
   var userMeResponse = Rxn<UserMeResponse>();
   var isLoading = true.obs;
   var hasError = false.obs;
@@ -18,8 +22,7 @@ class UserController extends GetxController {
     try {
       isLoading(true);
       hasError(false);
-
-      var response = await User().getUserMe(Get.context!);
+      var response = await authUseCase.getUserMe();
       userMeResponse.value = response;
     } catch (e) {
       hasError(true);
@@ -34,7 +37,8 @@ class UserController extends GetxController {
   String get email => userMeResponse.value?.body?.email ?? '';
   String get dob => userMeResponse.value?.body?.dob ?? '';
   int get gender => userMeResponse.value?.body?.gender ?? 0;
-  String get nationalityName => userMeResponse.value?.body?.nationalityName ?? '';
+  String get nationalityName =>
+      userMeResponse.value?.body?.nationalityName ?? '';
   int get nationalityId => userMeResponse.value?.body?.nationalityId ?? 0;
 
   /// Optional: clear data (e.g. on logout)

@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
 import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
-import '../routes/app_routes.dart';
 import '../models/goods_transfer/review_response.dart';
 import '../models/request_transfer/add_goods.dart';
 import '../utils/alert_dialog.dart';
@@ -16,70 +15,6 @@ import '../utils/loading.dart';
 import '../base/base_url.dart';
 
 class RequestTransfer {
-  void saveGoodsSelfService(
-    context,
-    String destinationToId,
-    String itemQty,
-    String itemValue,
-    String receiverTelephone,
-    String senderTelephone,
-    String uomId,
-  ) async {
-    var map = <String, dynamic>{};
-    map['destinationToId'] = destinationToId;
-    map['itemQty'] = itemQty;
-    map['itemValue'] = itemValue;
-    map['receiverTelephone'] = receiverTelephone;
-    map['senderTelephone'] = senderTelephone;
-    map['uomId'] = uomId;
-
-    try {
-      final response = await http
-          .post(
-            Uri.parse('${BaseUrl.BASE_URL}request-transfer/addGoods'),
-            headers: <String, String>{
-              "Content-type": "application/x-www-form-urlencoded",
-              'Authorization': AppPref.getToken() ?? '',
-            },
-            body: map,
-          )
-          .timeout(const Duration(seconds: Constrains.timeout30));
-
-      if (response.statusCode == 200) {
-        Loading().loadingClose(context);
-        log('This is response save self service==>>${response.body}');
-        AddGoodsResponse data = AddGoodsResponse.fromJson(
-          jsonDecode(response.body),
-        );
-        if (data.header?.statusCode == 200 && data.header?.result == true) {
-          Get.toNamed(
-            AppRoutes.selfServiceQr,
-            arguments: {'qrCode': (data.body?.message).toString()},
-          );
-        } else {
-          Loading().loadingClose(context);
-          alertDialogOneButton(
-            title: 'Save not Success',
-            description: 'Please try agian!',
-            buttonText: 'ok'.tr,
-          );
-        }
-      } else {
-        throw Exception('Failed to load to server!');
-      }
-    } on TimeoutException {
-      Loading().loadingClose(context);
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   void bookingTransferItem(
     BuildContext context,
     String? filepath,

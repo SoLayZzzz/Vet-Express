@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../../../activities/logistic/goods_information_screen.dart';
 import '../../../../../activities/screen/review_screen.dart';
 import '../../../../../feature/home-dashboard/self_service/presentation/screen/self_service_qr_list_screen.dart';
-import '../../../../../models/goods_transfer/transfer_list_response.dart';
+import '../../data/model/response/transfer_list_response.dart';
 import '../../../../../models/request_transfer/self_service_response.dart';
 import '../../../../../utils/alert_dialog_filter.dart';
 import '../../../../../utils/app_bar.dart';

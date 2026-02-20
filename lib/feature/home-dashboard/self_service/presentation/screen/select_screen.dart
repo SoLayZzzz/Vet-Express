@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
-import '../../../../../models/destination/destination_province.dart';
+import '../../data/model/response/destination_province.dart';
 import '../../data/model/response/uom.dart';
 import '../../../../../utils/app_colors.dart';
 

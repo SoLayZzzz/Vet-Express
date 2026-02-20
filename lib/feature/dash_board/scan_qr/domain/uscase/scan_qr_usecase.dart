@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../../../models/destination/goods_find_response.dart';
+import '../../data/model/response/goods_find_response.dart';
 import '../repository/scan_qr_repository.dart';
 
 class ScanQrUseCase {

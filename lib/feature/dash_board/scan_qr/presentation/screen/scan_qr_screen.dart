@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../../../../activities/logistic/goods_search_input_screen.dart';
+import 'goods_search_input_screen.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/button.dart';
 import '../binding/scan_qr_binding.dart';

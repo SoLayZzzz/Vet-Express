@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/uom.dart';
-import 'package:express_vet/models/destination/destination_province.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/destination_province.dart';
 import 'package:flutter/widgets.dart';
 
 class SelfServiceUistate {

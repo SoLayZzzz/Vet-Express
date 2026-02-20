@@ -9,12 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:express_vet/activities/ticket/payment_aba_package_screen.dart';
+import 'package:express_vet/feature/home-dashboard/payment/presentaion/ui/payment_aba_package_screen.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/api/travel_package.dart';
-import 'package:express_vet/models/booking/process_payment_response.dart';
-import 'package:express_vet/models/payment/aba_payment_response.dart';
+import 'package:express_vet/feature/home-dashboard/passenger/data/model/response/process_payment_response.dart';
+import 'package:express_vet/feature/home-dashboard/payment/data/model/response/aba_payment_response.dart';
 import 'package:express_vet/models/travel_package/find_travel_package_response.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/button.dart';
@@ -22,7 +22,8 @@ import 'package:express_vet/utils/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:express_vet/utils/style.dart';
 
-import '../../api/user.dart';
+import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
+import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
 import '../../feature/auth/data/model/response/nationality_response.dart';
 import '../../feature/auth/data/model/response/signup_response.dart';
 import '../../utils/alert_dialog.dart';
@@ -116,7 +117,10 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
       });
     }
 
-    futureNationality = User().getNationalityTicket(context);
+    if (!Get.isRegistered<AuthUseCase>()) {
+      AuthBinding().dependencies();
+    }
+    futureNationality = Get.find<AuthUseCase>().nationalityListTicket();
   }
 
   @override
@@ -357,12 +361,6 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                             color: AppColors.primaryColor,
                           ),
                         ),
-                        // const SizedBox(width: 10),
-                        // const Text('\$120',
-                        //     style: TextStyle(
-                        //         fontSize: 12,
-                        //         decoration: TextDecoration.lineThrough,
-                        //         color: AppColors.textColor)),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -1379,7 +1377,6 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   }
 
   void showDialogPaymentComplete() {
-    PaymentABAPackageScreenState.loop = false;
     alertDialogTwoButton(
       title: 'Your Travel Package Has Been Completed',
       description: 'You can use the travel package to book your trips with us.',
@@ -1409,7 +1406,6 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   }
 
   void showDialogPaymentFail() {
-    PaymentABAPackageScreenState.loop = false;
     alertDialogOneButton(
       title: 'information'.tr,
       description: 'payment_not_success'.tr,
@@ -1423,9 +1419,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
     var map = <String, dynamic>{};
     map['code'] = transactionId.toString();
     map['paymentMethodId'] = paymentMethodID.toString();
-    map['totalAmount'] =
-        "22.22"
-            .toString() /*(_findTravelPackageResponse?.body?.data![0].price).toString()*/;
+    map['totalAmount'] = "22.22".toString();
 
     log(map.toString());
 

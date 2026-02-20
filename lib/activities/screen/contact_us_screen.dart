@@ -31,18 +31,37 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               children: [
                 Text(
                   "hotline".tr,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 10),
-                viewPhone('assets/icons/icon_call_VireakBus.png', 'vetBus'.tr, '081 911 911'),
+                viewPhone(
+                  'assets/icons/icon_call_VireakBus.png',
+                  'vetBus'.tr,
+                  '081 911 911',
+                ),
                 viewPhone(
                   'assets/icons/icon_call_VireakLogistic.png',
                   'vetLogistic'.tr,
                   '010 522 522',
                 ),
-                viewPhone('assets/icons/icon_call_buvaSea.png', 'vetBuva'.tr, '015 888 850'),
-                viewPhone('assets/icons/Icon_call_ThaiLogistics.png', 'vetThai'.tr, '012 722 848'),
-                viewPhone('assets/icons/icon_call_VietnamLogistics.png', 'vetVN'.tr, '012 322 302'),
+                viewPhone(
+                  'assets/icons/icon_call_buvaSea.png',
+                  'vetBuva'.tr,
+                  '015 888 850',
+                ),
+                viewPhone(
+                  'assets/icons/Icon_call_ThaiLogistics.png',
+                  'vetThai'.tr,
+                  '012 722 848',
+                ),
+                viewPhone(
+                  'assets/icons/icon_call_VietnamLogistics.png',
+                  'vetVN'.tr,
+                  '012 322 302',
+                ),
                 viewPhone(
                   'assets/icons/icon_call_vehicleRental.png',
                   'vetRental'.tr,
@@ -50,17 +69,33 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 ),
 
                 //* chat
-                Text("chat".tr, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                Text(
+                  "chat".tr,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 10),
-                view('assets/icons/icon_messenger.png', 'vetService'.tr, 'fb'.tr, () {
-                  _open('https://m.me/vireakbunthambus/');
-                }),
-                view('assets/icons/icon_telegram.png', 'vetBus'.tr, 'rental_tele'.tr, () async {
-                  final url = Uri.parse("https://t.me/VETransportation");
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                }),
+                view(
+                  'assets/icons/icon_messenger.png',
+                  'vetService'.tr,
+                  'fb'.tr,
+                  () {
+                    _open('https://m.me/vireakbunthambus/');
+                  },
+                ),
+                view(
+                  'assets/icons/icon_telegram.png',
+                  'vetBus'.tr,
+                  'rental_tele'.tr,
+                  () async {
+                    final url = Uri.parse("https://t.me/VETransportation");
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    }
+                  },
+                ),
                 view(
                   'assets/icons/icon_telegram.png',
                   'vetLogistic'.tr,
@@ -72,50 +107,94 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     }
                   },
                 ),
-                view('assets/icons/icon_telegram.png', 'vetRental'.tr, 'rental_tele'.tr, () async {
-                  final url = Uri.parse("https://t.me/vetairbusexpress");
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                }),
+                view(
+                  'assets/icons/icon_telegram.png',
+                  'vetRental'.tr,
+                  'rental_tele'.tr,
+                  () async {
+                    final url = Uri.parse("https://t.me/vetairbusexpress");
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    }
+                  },
+                ),
 
                 //* social media
                 Text(
                   "social".tr,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 10),
-                view('assets/icons/icon_facebook.png', 'vetService'.tr, 'fb'.tr, () async {
-                  final url = Uri.parse("https://www.facebook.com/vireakbunthambus");
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  }
-                }),
-                view('assets/icons/icon_instagram.png', 'vetService'.tr, 'ig'.tr, () {
-                  Get.to(
-                    () => const WebViewScreen(type: 3, ticketId: ''),
-                    duration: const Duration(milliseconds: Constrains.duration),
-                    transition: Transition.rightToLeft,
-                  );
-                }),
-                view('assets/icons/icon_telegram.png', 'vetService'.tr, 'tele'.tr, () async {
-                  final url = Uri.parse("https://t.me/virakbunthamexpress");
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                }),
-                view('assets/icons/icon_tiktok.png', 'vetService'.tr, 'tiktok'.tr, () async {
-                  final url = Uri.parse("https://www.tiktok.com/@virakbuntham?_t=8dthpgdhhsf&_r=1");
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                }),
-                view('assets/icons/icon_youtube.png', 'vetService'.tr, 'yt'.tr, () async {
-                  final url = Uri.parse("https://www.youtube.com/@virakbuntham668");
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                }),
+                view(
+                  'assets/icons/icon_facebook.png',
+                  'vetService'.tr,
+                  'fb'.tr,
+                  () async {
+                    final url = Uri.parse(
+                      "https://www.facebook.com/vireakbunthambus",
+                    );
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  },
+                ),
+                view(
+                  'assets/icons/icon_instagram.png',
+                  'vetService'.tr,
+                  'ig'.tr,
+                  () {
+                    Get.to(
+                      () => const WebViewScreen(type: 3, ticketId: ''),
+                      duration: const Duration(
+                        milliseconds: Constrains.duration,
+                      ),
+                      transition: Transition.rightToLeft,
+                    );
+                  },
+                ),
+                view(
+                  'assets/icons/icon_telegram.png',
+                  'vetService'.tr,
+                  'tele'.tr,
+                  () async {
+                    final url = Uri.parse("https://t.me/virakbunthamexpress");
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    }
+                  },
+                ),
+                view(
+                  'assets/icons/icon_tiktok.png',
+                  'vetService'.tr,
+                  'tiktok'.tr,
+                  () async {
+                    final url = Uri.parse(
+                      "https://www.tiktok.com/@virakbuntham?_t=8dthpgdhhsf&_r=1",
+                    );
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    }
+                  },
+                ),
+                view(
+                  'assets/icons/icon_youtube.png',
+                  'vetService'.tr,
+                  'yt'.tr,
+                  () async {
+                    final url = Uri.parse(
+                      "https://www.youtube.com/@virakbuntham668",
+                    );
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    }
+                  },
+                ),
               ],
             ),
           ),
@@ -124,7 +203,12 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     );
   }
 
-  Padding view(String img, String title, String subTitle, void Function() onTap) {
+  Padding view(
+    String img,
+    String title,
+    String subTitle,
+    void Function() onTap,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: InkWell(
@@ -230,7 +314,10 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   void _open(String url) async {
     Uri fbProtocolUrl = Uri.parse(url);
     try {
-      bool launched = await launchUrl(fbProtocolUrl, mode: LaunchMode.externalApplication);
+      bool launched = await launchUrl(
+        fbProtocolUrl,
+        mode: LaunchMode.externalApplication,
+      );
       if (!launched) {
         alertDialogOneButton(
           title: 'info'.tr,

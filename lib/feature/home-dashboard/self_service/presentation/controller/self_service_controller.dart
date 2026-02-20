@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/uom.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/uistate/self_service_uiState.dart';
-import 'package:express_vet/models/destination/destination_province.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/destination_province.dart';
 import 'package:express_vet/base/state_controller.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:express_vet/routes/app_routes.dart';
+import 'package:express_vet/utils/alert_dialog.dart';
 
 import '../../domain/uscase/self_service_usecase.dart';
 
@@ -180,5 +183,40 @@ class SelfServiceController extends StateController<SelfServiceUistate> {
     state.searchText = searchText;
     state.filteredProvinceData = filtered;
     uiState.refresh();
+  }
+
+  Future<void> saveSelfService(
+    BuildContext context,
+    String destinationToId,
+    String itemQty,
+    String itemValue,
+    String receiverTelephone,
+    String senderTelephone,
+    String uomId,
+  ) async {
+    try {
+      final res = await selfServiceUsecase.saveGoodsSelfService(
+        context: context,
+        destinationToId: destinationToId,
+        itemQty: itemQty,
+        itemValue: itemValue,
+        receiverTelephone: receiverTelephone,
+        senderTelephone: senderTelephone,
+        uomId: uomId,
+      );
+
+      if (res.header?.statusCode == 200 && res.header?.result == true) {
+        Get.toNamed(
+          AppRoutes.selfServiceQr,
+          arguments: {'qrCode': (res.body?.message).toString()},
+        );
+      } else {
+        alertDialogOneButton(
+          title: 'Save not Success',
+          description: 'Please try agian!',
+          buttonText: 'ok'.tr,
+        );
+      }
+    } catch (_) {}
   }
 }

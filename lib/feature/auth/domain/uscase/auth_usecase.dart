@@ -1,8 +1,10 @@
 import '../../../../models/simple_response.dart';
+import '../../data/model/response/user_me.dart';
 import '../../data/model/request/login_request.dart';
 import '../../data/model/response/check_token_response.dart';
 import '../../data/model/response/check_version_response.dart';
 import '../../data/model/response/login_response.dart';
+import '../../data/model/response/nationality_response.dart';
 import '../repository/auth_repository.dart';
 
 class AuthUseCase {
@@ -21,4 +23,88 @@ class AuthUseCase {
   Future<CheckVersionResponse> checkVersion() => authRepository.checkVersion();
 
   Future<SimpleResponse> deleteAccount() => authRepository.deleteAccount();
+
+  // ===== Migrated endpoints from legacy api/user.dart =====
+  Future<SimpleResponse> register({
+    required String name,
+    required String password,
+    required String telephone,
+    String? email,
+    String? dob,
+    String? filename,
+    int? gender,
+    int? nationalityId,
+  }) => authRepository.register(
+    name: name,
+    password: password,
+    telephone: telephone,
+    email: email,
+    dob: dob,
+    filename: filename,
+    gender: gender,
+    nationalityId: nationalityId,
+  );
+
+  Future<SimpleResponse> verification({
+    required String code,
+    required String deviceId,
+    required String deviceName,
+    required String token,
+  }) => authRepository.verification(
+    code: code,
+    deviceId: deviceId,
+    deviceName: deviceName,
+    token: token,
+  );
+
+  Future<SimpleResponse> resendVerification({required String phone}) =>
+      authRepository.resendVerification(phone: phone);
+
+  Future<SimpleResponse> resetPasswordSendSms({required String phone}) =>
+      authRepository.resetPasswordSendSms(phone: phone);
+
+  Future<SimpleResponse> resetPasswordVerify({
+    required String code,
+    required String token,
+  }) => authRepository.resetPasswordVerify(code: code, token: token);
+
+  Future<SimpleResponse> resendCode({required String token}) =>
+      authRepository.resendCode(token: token);
+
+  Future<SimpleResponse> newPassword({
+    required String newPassword,
+    required String token,
+  }) => authRepository.newPassword(newPassword: newPassword, token: token);
+
+  Future<UserMeResponse> getUserMe() => authRepository.getUserMe();
+
+  Future<SimpleResponse> profileUpdate({
+    required String name,
+    String? telephone,
+    String? email,
+    String? filename,
+    int? gender,
+    int? nationalityId,
+  }) => authRepository.profileUpdate(
+    name: name,
+    telephone: telephone,
+    email: email,
+    filename: filename,
+    gender: gender,
+    nationalityId: nationalityId,
+  );
+
+  Future<NationalityResponse> nationalityList() =>
+      authRepository.nationalityList();
+
+  Future<NationalityResponse> nationalityListTicket() =>
+      authRepository.nationalityListTicket();
+
+  Future<SimpleResponse> sendOtpForgetPassword({required String phone}) =>
+      authRepository.sendOtpForgetPassword(phone: phone);
+
+  Future<SimpleResponse> sendOtpRegister({
+    required String type,
+    required String phone,
+  }) => authRepository.sendOtpRegister(type: type, phone: phone);
 }

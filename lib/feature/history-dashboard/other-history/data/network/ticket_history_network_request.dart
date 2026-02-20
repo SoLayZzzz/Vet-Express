@@ -7,7 +7,7 @@ import '../../../../../base/endpoint.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';
 import '../../../../../utils/loading.dart';
-import '../../../../../models/booking/booking_list_model.dart';
+import '../../../../home-dashboard/passenger/data/model/response/booking_list_model.dart';
 
 class TicketHistoryNetworkRequest {
   final NetWorkDataSource netWorkDataSource;

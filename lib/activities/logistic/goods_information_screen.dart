@@ -6,7 +6,7 @@ import 'package:express_vet/utils/app_bar.dart';
 
 import '../../feature/dash_board/scan_qr/presentation/binding/scan_qr_binding.dart';
 import '../../feature/dash_board/scan_qr/presentation/controller/scan_qr_controller.dart';
-import '../../models/destination/goods_find_response.dart';
+import '../../feature/dash_board/scan_qr/data/model/response/goods_find_response.dart';
 import '../../utils/app_colors.dart';
 
 class GoodsInformationScreen extends StatefulWidget {

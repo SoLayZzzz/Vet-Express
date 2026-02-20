@@ -1,14 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
+import 'package:express_vet/feature/location-dashboard/presentation/screen/location_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:express_vet/utils/app_colors.dart';
-
-import '../../feature/home-dashboard/passenger/presentation/controller/booking.dart';
-import '../../models/booking/booking_detail_model.dart';
+import '../../feature/home-dashboard/passenger/data/model/response/booking_detail_model.dart';
 import '../../utils/contains.dart';
-import '../logistic/location_detail_screen.dart';
 
 class TicketDetailScreen extends StatefulWidget {
   final int id;

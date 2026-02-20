@@ -3,7 +3,7 @@ import 'package:express_vet/feature/dash_board/presentation/uistate/dash_board_s
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../activities/logistic/location_screen.dart';
+import 'package:express_vet/feature/location-dashboard/presentation/screen/location_screen.dart';
 import '../../home-dashboard/self_service/presentation/screen/self_service_screen.dart';
 import '../../member-dashboard/presentation/screen/member_ship_screen.dart';
 import '../../history-dashboard/main-history/tracking_screen.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import '../../../../models/membership/membership_ticket_response.dart';
+import '../../data/model/reponse/membership_ticket_response.dart';
 import '../../../../utils/app_colors.dart';
 
 import 'package:flutter_flip_card/flutter_flip_card.dart';

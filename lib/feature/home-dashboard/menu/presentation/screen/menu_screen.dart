@@ -8,7 +8,7 @@ import 'package:express_vet/feature/home-dashboard/menu/presentation/controller/
     as menu;
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../controller/china/china_controller.dart';
-import '../../../../../activities/components/profile_widget.dart';
+import '../../../profile/presentaion/ui/profile_widget.dart';
 import '../../../../../activities/screen/resort_screen.dart';
 import '../../../../../activities/components/slide_widget.dart';
 import '../../../../../activities/ticket/value_statics.dart';

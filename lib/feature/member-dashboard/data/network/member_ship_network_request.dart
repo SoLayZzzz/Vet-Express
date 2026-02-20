@@ -4,8 +4,8 @@ import 'package:express_vet/base/network_data_source.dart';
 import 'package:get/get.dart';
 
 import '../../../../base/endpoint.dart';
-import '../../../../models/membership/membership_response.dart';
-import '../../../../models/membership/membership_ticket_response.dart';
+import '../model/reponse/membership_response.dart';
+import '../model/reponse/membership_ticket_response.dart';
 import '../../../../utils/alert_dialog.dart';
 import '../../../../utils/contains.dart';
 import '../../../../utils/loading.dart';

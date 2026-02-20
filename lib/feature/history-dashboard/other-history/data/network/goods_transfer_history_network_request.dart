@@ -4,7 +4,7 @@ import 'package:express_vet/base/network_data_source.dart';
 import 'package:get/get.dart';
 
 import '../../../../../base/endpoint.dart';
-import '../../../../../models/goods_transfer/transfer_list_response.dart';
+import '../model/response/transfer_list_response.dart';
 import '../../../../../models/request_transfer/self_service_response.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';

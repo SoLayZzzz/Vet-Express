@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../models/destination/destination_ev.dart';
+import '../../data/model/response/destination_ev.dart';
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../controller/ev_charger_controller.dart';

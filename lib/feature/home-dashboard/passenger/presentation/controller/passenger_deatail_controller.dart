@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 
 import 'package:express_vet/activities/ticket/value_statics.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
-import 'package:express_vet/api/user.dart';
+import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
+import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
 import 'package:express_vet/base/state_controller.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/uistate/passenger_uistate.dart';
@@ -65,7 +66,10 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
     updateTotals();
 
-    futureNationality = User().getNationalityTicket(context);
+    if (!Get.isRegistered<AuthUseCase>()) {
+      AuthBinding().dependencies();
+    }
+    futureNationality = Get.find<AuthUseCase>().nationalityListTicket();
 
     await Future.wait([
       futureBoardingPointOneWay,

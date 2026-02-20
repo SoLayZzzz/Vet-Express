@@ -6,7 +6,7 @@ import 'controller/user_controller.dart';
 class AppBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => UserController(), fenix: true);
+    Get.lazyPut(() => UserController(Get.find()), fenix: true);
 
     Get.lazyPut(() => NetworkDataSource(), fenix: true);
   }

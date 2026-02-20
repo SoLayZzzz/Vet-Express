@@ -2,7 +2,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import '../../../../api/user.dart';
 import '../../data/model/response/nationality_response.dart';
 import '../../../../utils/app_bar.dart';
 import '../../../../utils/app_colors.dart';
@@ -489,11 +488,13 @@ class SignUpScreen extends GetView<AuthController> {
                       onPressed: () {
                         if (controller.signUpFormKey.currentState!.validate()) {
                           final ui = controller.uiState.value;
-                          User().register(
+                          controller.register(
                             context,
-                            controller.signUpUsernameController.text,
-                            controller.signUpPasswordController.text.trim(),
-                            controller.signUpPhoneController.text.trim(),
+                            name: controller.signUpUsernameController.text,
+                            password:
+                                controller.signUpPasswordController.text.trim(),
+                            telephone:
+                                controller.signUpPhoneController.text.trim(),
                             email: controller.signUpEmailController.text,
                             dob: controller.signUpDateOfBirthController.text,
                             filename: ui.signUpImagePath ?? '',

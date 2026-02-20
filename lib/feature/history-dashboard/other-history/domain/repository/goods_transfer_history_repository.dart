@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../../../models/goods_transfer/transfer_list_response.dart';
+import '../../data/model/response/transfer_list_response.dart';
 import '../../../../../models/request_transfer/self_service_response.dart';
 
 abstract class GoodsTransferHistoryRepository {

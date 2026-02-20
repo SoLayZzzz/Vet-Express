@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 import '../../../../api/saving_point.dart';
-import '../../../../models/membership/membership_response.dart';
+import '../../data/model/reponse/membership_response.dart';
 import '../../../../models/saving_point/saving_point_response.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../activities/logistic/account_detail_screen.dart';

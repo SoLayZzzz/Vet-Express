@@ -1,11 +1,12 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../../../models/goods_transfer/transfer_list_response.dart';
+import '../model/response/transfer_list_response.dart';
 import '../../../../../models/request_transfer/self_service_response.dart';
 import '../../domain/repository/goods_transfer_history_repository.dart';
 import '../network/goods_transfer_history_network_request.dart';
 
-class GoodsTransferHistoryRepositoryImpl implements GoodsTransferHistoryRepository {
+class GoodsTransferHistoryRepositoryImpl
+    implements GoodsTransferHistoryRepository {
   final GoodsTransferHistoryNetworkRequest goodsTransferHistoryNetworkRequest;
 
   GoodsTransferHistoryRepositoryImpl(this.goodsTransferHistoryNetworkRequest);

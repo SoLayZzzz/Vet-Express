@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 class BaseUrl {
   // Locale
   // static String BASE_URL = 'http://192.168.2.132:8035/UtLogVET/';
@@ -21,9 +23,12 @@ class BaseUrl {
 
   // Production
   // static String BASE_URL = 'https://tomapicaps.utlog.net/vetAppApi/'; //logistic
-  // static String BASE_URL_TICKET = 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ticket
-  // static String BASE_URL_EV = 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ev
-  // static String BASE_URL_SLIDE_IMAGE = 'https://oc.utlog.net/public/slide_photo/';
+  // static String BASE_URL_TICKET =
+  //     'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ticket
+  // static String BASE_URL_EV =
+  //     'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ev
+  // static String BASE_URL_SLIDE_IMAGE =
+  //     'https://oc.utlog.net/public/slide_photo/';
   // static String PAYMENT_URL = 'https://vetticket.utlog.net/';
   // static String BASE_URL_UPLOAD_IMAGE = 'https://oc.utlog.net/';
 

@@ -15,7 +15,7 @@ import '../../../../../models/boarding_point.dart' as boarding;
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
 import '../../../../../utils/style.dart';
-import '../../../../../activities/screen/coupon_screen.dart';
+import 'coupon_screen.dart';
 import '../../../../../activities/screen/web_view_screen.dart';
 
 class PassengerDetailScreen extends GetView<PassengerDetailController> {
@@ -887,6 +887,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         color: AppColors.titleColor,
                                       ),
                                     ),
+
                                     Padding(
                                       padding: const EdgeInsets.only(
                                         top: 20.0,
@@ -905,7 +906,6 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         ),
                                       ),
                                     ),
-
                                     Padding(
                                       padding: const EdgeInsets.only(
                                         bottom: 10.0,

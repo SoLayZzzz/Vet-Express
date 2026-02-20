@@ -7,8 +7,7 @@ class ReviewResponse {
   ReviewResponse({this.header, this.body});
 
   ReviewResponse.fromJson(Map<String, dynamic> json) {
-    header =
-    json['header'] != null ? Header.fromJson(json['header']) : null;
+    header = json['header'] != null ? Header.fromJson(json['header']) : null;
     body = json['body'] != null ? Body.fromJson(json['body']) : null;
   }
 

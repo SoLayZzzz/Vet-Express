@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../activities/ticket/value_statics.dart';
-import '../models/booking/booking_detail_model.dart';
+import '../feature/home-dashboard/passenger/data/model/response/booking_detail_model.dart';
 import 'app_colors.dart';
 
 class AlertDialogQRCodeTicket extends StatefulWidget {
@@ -44,9 +44,7 @@ class AlertDialogQRCodeTicketState extends State<AlertDialogQRCodeTicket>
     return Dialog(
       elevation: 0,
       backgroundColor: const Color(0xffffffff),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -76,9 +74,7 @@ class AlertDialogQRCodeTicketState extends State<AlertDialogQRCodeTicket>
                 unselectedLabelColor: Colors.grey,
                 tabs: [
                   for (int i = 0; i < widget.data.length; i++)
-                    Tab(
-                      text: widget.data[i].seatNumber,
-                    ),
+                    Tab(text: widget.data[i].seatNumber),
                 ],
               ),
             ),
@@ -107,23 +103,27 @@ class AlertDialogQRCodeTicketState extends State<AlertDialogQRCodeTicket>
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: ValueStatic.ticketType == '3'
-                          ? AppColors.secondaryColor
-                          : AppColors.primaryColor,
-                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      color:
+                          ValueStatic.ticketType == '3'
+                              ? AppColors.secondaryColor
+                              : AppColors.primaryColor,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
                     ),
                     width: MediaQuery.of(context).size.width / 1.5,
                     height: 50,
                     child: Center(
-                        child: Text(
-                      widget.ans,
-                      style: const TextStyle(color: AppColors.whiteColor),
-                    )),
+                      child: Text(
+                        widget.ans,
+                        style: const TextStyle(color: AppColors.whiteColor),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -143,19 +143,19 @@ class AlertDialogQRCodeTicketState extends State<AlertDialogQRCodeTicket>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${'seat_number'.tr} : ${widget.data[index].seatNumber}'),
                   Text(
-                      '${'gender'.tr} : ${widget.data[index].gender == "Male" ? 'male'.tr : 'female'.tr}'),
+                    '${'seat_number'.tr} : ${widget.data[index].seatNumber}',
+                  ),
+                  Text(
+                    '${'gender'.tr} : ${widget.data[index].gender == "Male" ? 'male'.tr : 'female'.tr}',
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
         const SizedBox(height: 20),
-        const Divider(
-          height: 1,
-          thickness: 1,
-        ),
+        const Divider(height: 1, thickness: 1),
         const SizedBox(height: 10),
         SizedBox(
           height: 180,

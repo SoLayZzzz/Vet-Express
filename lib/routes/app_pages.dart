@@ -57,6 +57,11 @@ import '../utils/contains.dart';
 import 'app_routes.dart';
 
 import '../feature/home-dashboard/ev-charger/presentation/controller/ev_payment_controller.dart';
+import '../feature/home-dashboard/payment/presentaion/ui/payment_screen.dart';
+import '../feature/home-dashboard/payment/presentaion/ui/payment_aba_screen.dart';
+import '../feature/home-dashboard/payment/presentaion/ui/payment_aba_package_screen.dart';
+import '../feature/home-dashboard/payment/presentaion/ui/payment_wing_screen.dart';
+import '../feature/home-dashboard/payment/presentaion/binding/payment_binding.dart';
 
 class AppPages {
   static final pages = <GetPage<dynamic>>[
@@ -210,6 +215,63 @@ class AppPages {
       name: AppRoutes.evFavorites,
       page: () => EvFavoriteScreen(),
       binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+
+    // Payment routes
+    GetPage(
+      name: AppRoutes.payment,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return PaymentScreen(
+          id: (args?['id'] as String?) ?? '',
+          datas: args?['datas'],
+        );
+      },
+      binding: PaymentBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.paymentAba,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return PaymentABAScreen(
+          transactionId: (args?['transactionId'] as String?) ?? '',
+          token: (args?['token'] as String?) ?? '',
+          type: (args?['type'] as int?) ?? 1,
+          title: (args?['title'] as String?) ?? '',
+          url: (args?['url'] as String?) ?? '',
+        );
+      },
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.paymentAbaPackage,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return PaymentABAPackageScreen(
+          transactionId: (args?['transactionId'] as String?) ?? '',
+          token: (args?['token'] as String?) ?? '',
+          type: (args?['type'] as int?) ?? 1,
+          title: (args?['title'] as String?) ?? '',
+          url: (args?['url'] as String?) ?? '',
+        );
+      },
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.paymentWing,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return PaymentWingScreen(
+          transactionId: (args?['transactionId'] as String?) ?? '',
+          token: (args?['token'] as String?) ?? '',
+        );
+      },
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

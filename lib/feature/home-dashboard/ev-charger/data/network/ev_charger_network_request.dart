@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:express_vet/base/network_data_source.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
 import '../model/response/ev_charger_response.dart';
 import '../model/response/ev_contact_response.dart';
 import '../model/response/ev_faq_response.dart';
@@ -15,7 +16,7 @@ import '../model/response/ev_wallet_amount_response.dart';
 import '../model/response/ev_wallet_list_response.dart';
 import 'package:get/get.dart';
 import '../../../../../base/endpoint.dart';
-import '../../../../../models/destination/destination_ev.dart';
+import '../model/response/destination_ev.dart';
 import '../../../../../models/simple_response.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';
@@ -36,17 +37,14 @@ class EvChargerNetworkRequest {
     String? provinceId,
   }) async {
     try {
-      final Map<String, dynamic> requestBody = <String, dynamic>{};
-      if (provinceId != null && provinceId.isNotEmpty) {
-        requestBody['provinceId'] = provinceId;
-      }
-      if (name != null && name.isNotEmpty) {
-        requestBody['name'] = name;
-      }
+      final request = EvTicketStationListRequest(
+        name: name,
+        provinceId: provinceId,
+      );
 
       final json = await ticketDataSource.postJson(
         Endpoint.ticketEvStationList,
-        body: requestBody,
+        body: request.toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -96,11 +94,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evDropdownContactUsList,
-        body: <String, dynamic>{
-          'page': page,
-          'rowsPerPage': rowsPerPage,
-          'searchText': '',
-        },
+        body: EvPagedListRequest(page: page, rowsPerPage: rowsPerPage).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -127,11 +121,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evDropdownFaqsList,
-        body: <String, dynamic>{
-          'page': page,
-          'rowsPerPage': rowsPerPage,
-          'searchText': '',
-        },
+        body: EvPagedListRequest(page: page, rowsPerPage: rowsPerPage).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -158,11 +148,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evDropdownPrivacyPolicyList,
-        body: <String, dynamic>{
-          'page': page,
-          'rowsPerPage': rowsPerPage,
-          'searchText': '',
-        },
+        body: EvPagedListRequest(page: page, rowsPerPage: rowsPerPage).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -189,11 +175,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evDropdownSlideShowsList,
-        body: <String, dynamic>{
-          'page': page,
-          'rowsPerPage': rowsPerPage,
-          'searchText': '',
-        },
+        body: EvPagedListRequest(page: page, rowsPerPage: rowsPerPage).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -220,11 +202,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evDropdownNewFeedList,
-        body: <String, dynamic>{
-          'page': page,
-          'rowsPerPage': rowsPerPage,
-          'searchText': '',
-        },
+        body: EvPagedListRequest(page: page, rowsPerPage: rowsPerPage).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -251,11 +229,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evDropdownProvinceList,
-        body: <String, dynamic>{
-          'page': page,
-          'rowsPerPage': rowsPerPage,
-          'searchText': '',
-        },
+        body: EvPagedListRequest(page: page, rowsPerPage: rowsPerPage).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -282,12 +256,13 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evStationList,
-        body: <String, dynamic>{
-          'page': 1,
-          'rowsPerPage': 100,
-          'searchText': searchText,
-          'provinceId': provinceId,
-        },
+        body:
+            EvStationListRequest(
+              page: 1,
+              rowsPerPage: 100,
+              searchText: searchText,
+              provinceId: provinceId,
+            ).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -339,11 +314,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evSaleOrderWalletList,
-        body: <String, dynamic>{
-          'page': page,
-          'rowsPerPage': rowsPerPage,
-          'searchText': '',
-        },
+        body: EvPagedListRequest(page: page, rowsPerPage: rowsPerPage).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
@@ -393,7 +364,7 @@ class EvChargerNetworkRequest {
     try {
       final json = await evDataSource.postJson(
         Endpoint.evSaleOrderWalletTopUp,
-        body: <String, dynamic>{'amount': amount},
+        body: EvWalletTopUpRequest(amount: amount).toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );

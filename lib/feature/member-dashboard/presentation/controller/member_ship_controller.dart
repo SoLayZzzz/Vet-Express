@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../base/state_controller.dart';
-import '../../../../models/membership/membership_response.dart';
-import '../../../../models/membership/membership_ticket_response.dart';
+import '../../data/model/reponse/membership_response.dart';
+import '../../data/model/reponse/membership_ticket_response.dart';
 import '../../domain/uscase/member_ship_usecase.dart';
 import '../uistate/member_ship_ui_state.dart';
 

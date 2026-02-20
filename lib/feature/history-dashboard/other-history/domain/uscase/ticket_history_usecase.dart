@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../../../models/booking/booking_list_model.dart';
+import '../../../../home-dashboard/passenger/data/model/response/booking_list_model.dart';
 import '../repository/ticket_history_repository.dart';
 
 class TicketHistoryUseCase {
@@ -8,9 +8,7 @@ class TicketHistoryUseCase {
 
   TicketHistoryUseCase(this.ticketHistoryRepository);
 
-  Future<BookingListModel> fetchBookingList({
-    required BuildContext context,
-  }) {
+  Future<BookingListModel> fetchBookingList({required BuildContext context}) {
     return ticketHistoryRepository.fetchBookingList(context: context);
   }
 }

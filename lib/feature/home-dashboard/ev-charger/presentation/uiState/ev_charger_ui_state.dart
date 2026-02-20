@@ -6,7 +6,7 @@ import '../../data/model/response/ev_wallet_list_response.dart';
 import '../../data/model/response/ev_charger_response.dart';
 import '../../data/model/response/ev_faq_response.dart';
 import '../../data/model/response/ev_policy_response.dart';
-import '../../../../../models/destination/destination_ev.dart';
+import '../../data/model/response/destination_ev.dart';
 
 class EvChargerUiState {
   final EvContactResponse? contactResponse;

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../../../models/booking/booking_list_model.dart';
+import '../../../../home-dashboard/passenger/data/model/response/booking_list_model.dart';
 import '../../domain/repository/ticket_history_repository.dart';
 import '../network/ticket_history_network_request.dart';
 

@@ -1,4 +1,4 @@
-import 'package:express_vet/models/destination/destination_ev.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/destination_ev.dart';
 import 'package:express_vet/models/simple_response.dart';
 
 import '../../data/model/response/ev_charger_response.dart';
@@ -144,9 +144,7 @@ class EvChargerUseCase {
     );
   }
 
-  Future<EvWalletAmountResponse> fetchWalletAmount({
-    required dynamic context,
-  }) {
+  Future<EvWalletAmountResponse> fetchWalletAmount({required dynamic context}) {
     return repository.fetchWalletAmount(context: context);
   }
 
@@ -154,10 +152,7 @@ class EvChargerUseCase {
     required dynamic context,
     required double amount,
   }) {
-    return repository.walletTopUp(
-      context: context,
-      amount: amount,
-    );
+    return repository.walletTopUp(context: context, amount: amount);
   }
 
   Future<EvTopUpResponse> walletTopUpStatus({

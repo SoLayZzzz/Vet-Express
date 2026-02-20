@@ -39,7 +39,12 @@ class VerifyCodeScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.setVerifyIdentify(identify);
+    if (controller.uiState.value.verifyIdentify != identify) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.setVerifyIdentify(identify);
+      });
+    }
+
     if (identify >= 3) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _openTelegram(context);

@@ -8,7 +8,9 @@ import 'package:get/get.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../api/notifications.dart';
-import '../../../../../api/user.dart';
+import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
+import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
+import 'package:express_vet/activities/ticket/value_statics.dart';
 import '../../../../../base/state_controller.dart';
 import '../../../../../controller/connectivity_controller.dart';
 import '../../../../auth/presentation/controller/auth_controller.dart';
@@ -43,8 +45,27 @@ class MenuController extends StateController<MenuUiState>
     });
   }
 
+  Future<void> _refreshUserStatics() async {
+    try {
+      if (!Get.isRegistered<AuthUseCase>()) {
+        AuthBinding().dependencies();
+      }
+      final data = await Get.find<AuthUseCase>().getUserMe();
+      if (data.header?.statusCode == 200 && data.header?.result == true) {
+        ValueStatic.username = data.body?.name?.toString() ?? '';
+        ValueStatic.phone = data.body?.telephone?.toString() ?? '';
+        ValueStatic.email = data.body?.email?.toString() ?? '';
+        ValueStatic.gender = data.body?.gender?.toInt() ?? 0;
+        ValueStatic.dob = data.body?.dob?.toString() ?? '';
+        ValueStatic.nationalityName =
+            data.body?.nationalityName?.toString() ?? '';
+        ValueStatic.nationalityId = data.body?.nationalityId ?? 0;
+      }
+    } catch (_) {}
+  }
+
   @override
-  void onReady() {
+  void onReady() async {
     super.onReady();
 
     if (!_initialized) {
@@ -66,10 +87,7 @@ class MenuController extends StateController<MenuUiState>
         }();
       } catch (_) {}
 
-      final context = Get.context;
-      if (context != null) {
-        User().getUserMeStatic(context);
-      }
+      await _refreshUserStatics();
 
       _initialized = true;
     }

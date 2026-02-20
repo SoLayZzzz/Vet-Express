@@ -1,6 +1,7 @@
 import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/uom.dart';
-import 'package:express_vet/models/destination/destination_province.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/destination_province.dart';
 import 'package:flutter/widgets.dart';
+import 'package:express_vet/models/request_transfer/add_goods.dart';
 
 import '../repository/self_service_repo.dart';
 
@@ -33,5 +34,25 @@ class SelfServiceUsecase {
 
   Future<UomListResponse> fetchUomList({required BuildContext context}) {
     return selfServiceRepo.fetchUomList(context: context);
+  }
+
+  Future<AddGoodsResponse> saveGoodsSelfService({
+    required BuildContext context,
+    required String destinationToId,
+    required String itemQty,
+    required String itemValue,
+    required String receiverTelephone,
+    required String senderTelephone,
+    required String uomId,
+  }) {
+    return selfServiceRepo.saveGoodsSelfService(
+      context: context,
+      destinationToId: destinationToId,
+      itemQty: itemQty,
+      itemValue: itemValue,
+      receiverTelephone: receiverTelephone,
+      senderTelephone: senderTelephone,
+      uomId: uomId,
+    );
   }
 }

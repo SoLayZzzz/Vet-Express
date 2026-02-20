@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../api/destination.dart';
-import '../models/destination/destination_from.dart';
-import '../models/destination/destination_to.dart';
+import 'package:express_vet/feature/common/netowrk/destination_network_request.dart';
+import '../feature/common/model/reponse/destination_from.dart';
+import '../feature/common/model/reponse/destination_to.dart';
 import 'app_colors.dart';
 
 class AlertDialogFilter extends StatefulWidget {
@@ -16,6 +16,7 @@ class AlertDialogFilter extends StatefulWidget {
 class AlertDialogFilterState extends State<AlertDialogFilter> {
   late Future<DesFromResponse> futureDesFrom;
   late Future<DesToResponse> futureDesTo;
+  final DestinationNetworkRequest _destination = DestinationNetworkRequest();
 
   bool _loadingDesFrom = true;
   bool _loadingDesTo = true;
@@ -28,9 +29,6 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
   bool desToCondition = true;
   int? desToId = 0;
   bool enable = true;
-
-  // in this point not good but it nearly deadline (T_T)
-  // if new developer is here please correct it
 
   String status = 'All';
   String statusKh = 'ទាំងអស់';
@@ -65,8 +63,8 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
   @override
   void initState() {
     super.initState();
-    _setFutureDesFrom(Destination().getDesFrom(context));
-    _setFutureDesTo(Destination().getDesTo(context, 0));
+    _setFutureDesFrom(_destination.getDesFrom(context));
+    _setFutureDesTo(_destination.getDesTo(context, 0));
     Get.locale.toString() == 'en_US'
         ? status = items[0]
         : statusKh = itemsKh[0];
@@ -169,7 +167,7 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
                                               desToCondition = true;
                                               setState(() {
                                                 _setFutureDesTo(
-                                                  Destination().getDesTo(
+                                                  _destination.getDesTo(
                                                     context,
                                                     desToId!,
                                                   ),
@@ -449,10 +447,10 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
                             desToCondition = true;
                             setState(() {
                               _setFutureDesFrom(
-                                Destination().getDesFrom(context),
+                                _destination.getDesFrom(context),
                               );
                               _setFutureDesTo(
-                                Destination().getDesTo(context, 0),
+                                _destination.getDesTo(context, 0),
                               );
                             });
                             status = items[0];

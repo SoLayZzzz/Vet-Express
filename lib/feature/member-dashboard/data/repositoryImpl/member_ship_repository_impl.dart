@@ -1,7 +1,7 @@
 import '../../domain/repository/member_ship_repository.dart';
 import '../network/member_ship_network_request.dart';
-import '../../../../models/membership/membership_response.dart';
-import '../../../../models/membership/membership_ticket_response.dart';
+import '../model/reponse/membership_response.dart';
+import '../model/reponse/membership_ticket_response.dart';
 
 class MemberShipRepositoryImpl implements MemberShipRepository {
   final MemberShipNetworkRequest memberShipNetworkRequest;

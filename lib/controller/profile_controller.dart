@@ -7,10 +7,11 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import '../activities/ticket/value_statics.dart';
 import '../base/base_url.dart';
-import '../api/user.dart';
+import '../feature/auth/presentation/binding/auth_binding.dart';
+import '../feature/auth/domain/uscase/auth_usecase.dart';
 import '../feature/auth/data/model/response/nationality_response.dart';
 import '../feature/auth/data/model/response/signup_response.dart';
-import '../models/user/user_me.dart';
+import '../feature/auth/data/model/response/user_me.dart';
 import '../utils/alert_dialog.dart';
 import '../utils/app_colors.dart';
 import '../utils/check_input.dart';
@@ -46,7 +47,10 @@ class ProfileController extends GetxController {
 
   void fetchNationalities() async {
     try {
-      final response = await User().getNationality(Get.context!);
+      if (!Get.isRegistered<AuthUseCase>()) {
+        AuthBinding().dependencies();
+      }
+      final response = await Get.find<AuthUseCase>().nationalityList();
       if (response.header?.result == true &&
           response.header?.statusCode == 200) {
         if (response.body?.status == true && response.body?.data != null) {
@@ -65,7 +69,10 @@ class ProfileController extends GetxController {
 
   Future<void> fetchUserMe() async {
     try {
-      final user = await User().getUserMe(Get.context);
+      if (!Get.isRegistered<AuthUseCase>()) {
+        AuthBinding().dependencies();
+      }
+      final user = await Get.find<AuthUseCase>().getUserMe();
       userMeResponse.value = user;
       nameController.text = user.body?.name ?? '';
       phoneNumberController.text = user.body?.telephone ?? '';
@@ -145,12 +152,17 @@ class ProfileController extends GetxController {
           }
 
           if (checkValidate) {
-            User().profileUpdate(
-              Get.context,
-              nameController.text,
-              telephone: phoneNumberController.text,
-              email: emailController.text,
-              filename: imagePath.value ?? '',
+            if (!Get.isRegistered<AuthUseCase>()) {
+              AuthBinding().dependencies();
+            }
+            await Get.find<AuthUseCase>().profileUpdate(
+              name: nameController.text,
+              telephone:
+                  phoneNumberController.text.isEmpty
+                      ? null
+                      : phoneNumberController.text,
+              email: emailController.text.isEmpty ? null : emailController.text,
+              filename: imagePath.value,
               gender:
                   gender.value == 'male'.tr
                       ? 1

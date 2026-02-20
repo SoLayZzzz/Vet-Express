@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/base/network_data_source.dart';
-import 'package:express_vet/models/destination/destination_province.dart';
+import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/destination_province.dart';
 import 'package:get/get.dart';
 
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';
 import '../../../../../utils/loading.dart';
 import '../model/response/uom.dart';
+import 'package:express_vet/models/request_transfer/add_goods.dart';
 
 class SelfServiceNetworkRequest {
   final NetWorkDataSource netWorkDataSource;
@@ -94,6 +96,55 @@ class SelfServiceNetworkRequest {
       rethrow;
     } catch (_) {
       rethrow;
+    }
+  }
+
+  Future<AddGoodsResponse> saveGoodsSelfService({
+    required dynamic context,
+    required String destinationToId,
+    required String itemQty,
+    required String itemValue,
+    required String receiverTelephone,
+    required String senderTelephone,
+    required String uomId,
+  }) async {
+    const maxAttempts = 3;
+    int attempt = 0;
+    while (true) {
+      try {
+        final json = await netWorkDataSource.postFormUrlEncoded(
+          Endpoint.requestTransferAddGoods,
+          fields: <String, String>{
+            'destinationToId': destinationToId,
+            'itemQty': itemQty,
+            'itemValue': itemValue,
+            'receiverTelephone': receiverTelephone,
+            'senderTelephone': senderTelephone,
+            'uomId': uomId,
+          },
+          timeout: const Duration(seconds: Constrains.timeout30),
+          attachAuth: true,
+        );
+        return AddGoodsResponse.fromJson(json);
+      } on TimeoutException {
+        Loading().loadingClose(context);
+        alertDialogOneButton(
+          title: 'timeout'.tr,
+          description: 'request_timed_out'.tr,
+          buttonText: 'ok'.tr,
+        );
+        rethrow;
+      } on SocketException catch (_) {
+        if (++attempt >= maxAttempts) rethrow;
+        await Future.delayed(const Duration(milliseconds: 800));
+        continue;
+      } on HttpException catch (_) {
+        if (++attempt >= maxAttempts) rethrow;
+        await Future.delayed(const Duration(milliseconds: 800));
+        continue;
+      } catch (_) {
+        rethrow;
+      }
     }
   }
 }

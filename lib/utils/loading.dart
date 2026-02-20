@@ -18,7 +18,9 @@ class Loading {
             child: CircularProgressIndicator(
               value: null,
               color:
-                  ValueStatic.ticketType == '3' ? AppColors.secondaryColor : AppColors.primaryColor,
+                  ValueStatic.ticketType == '3'
+                      ? AppColors.secondaryColor
+                      : AppColors.primaryColor,
               strokeWidth: 5.0,
             ),
           ),

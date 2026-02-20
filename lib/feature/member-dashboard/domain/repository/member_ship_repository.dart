@@ -1,5 +1,5 @@
-import '../../../../models/membership/membership_response.dart';
-import '../../../../models/membership/membership_ticket_response.dart';
+import '../../data/model/reponse/membership_response.dart';
+import '../../data/model/reponse/membership_ticket_response.dart';
 
 abstract class MemberShipRepository {
   Future<MemberShipResponse> getMemberShip({required dynamic context});

@@ -12,6 +12,12 @@ class AppRoutes {
   static const selectSeat = '/ticket/select-seat';
   static const passengerDetail = '/ticket/passenger-detail';
 
+  // Payment route
+  static const payment = '/payment';
+  static const paymentWing = '/payment/wing';
+  static const paymentAba = '/payment/aba';
+  static const paymentAbaPackage = '/payment/aba-package';
+
   // Ev charger route
   static const evCharger = '/ev-charger';
   static const evWallet = '/ev-charger/wallet';
