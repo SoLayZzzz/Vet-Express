@@ -56,4 +56,7 @@ class AppRoutes {
   static const ticketHistory = '/history/ticket';
   static const packageHistory = '/history/package';
   static const goodsTransferHistory = '/history/goods-transfer';
+
+  // Member dashboard routes
+  static const memberAccountDetail = '/member/account-detail';
 }

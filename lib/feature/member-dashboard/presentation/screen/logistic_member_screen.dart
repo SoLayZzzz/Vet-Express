@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:widget_zoom/widget_zoom.dart';
-import '../../../../api/saving_point.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import '../../data/model/reponse/membership_response.dart';
 import '../../../../models/saving_point/saving_point_response.dart';
 import '../../../../utils/app_colors.dart';
-import '../../../../activities/logistic/account_detail_screen.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 
 import '../binding/member_ship_binding.dart';
@@ -22,58 +20,12 @@ class LogisticMemberScreen extends StatefulWidget {
 }
 
 class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
-  late Future<SavingPointResponse> futureData;
   late Future<MemberShipResponse> futureMembership;
-  bool showInfo = false;
   final cong = FlipCardController();
-
-  String status = 'January';
-  String statusKh = 'មករា';
-  int statusId = 0;
-
-  var items = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  var itemsKh = [
-    'មករា',
-    'កុម្ភៈ',
-    'មិនា',
-    'មេសា',
-    'ឧសភា',
-    'មិថុនា',
-    'កក្កដា',
-    'សីហា',
-    'កញ្ញា',
-    'តុលា',
-    'វិច្ឆិកា',
-    'ធ្នូ',
-  ];
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      status = items[getMonth() - 1];
-      statusKh = itemsKh[getMonth() - 1];
-    });
-    futureData = SavingPoint().getSavingPoint(
-      context,
-      (getMonth()).toString(),
-      getYear().toString(),
-    );
-
     if (!Get.isRegistered<MemberShipController>()) {
       MemberShipBinding().dependencies();
     }
@@ -95,6 +47,22 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                   FutureBuilder<MemberShipResponse>(
                     future: futureMembership,
                     builder: (context, membershipData) {
+                      if (membershipData.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (membershipData.hasError) {
+                        return Row(
+                          children: const [
+                            Icon(
+                              Ionicons.information_circle,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(child: Text('Failed to load member card')),
+                          ],
+                        );
+                      }
                       if (membershipData.hasData &&
                           membershipData.data!.header?.statusCode == 200 &&
                           membershipData.data?.header?.result == true) {
@@ -245,9 +213,8 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                   InkWell(
                                     onTap: () {
                                       cong.flipcard();
-                                      setState(() {
-                                        showInfo = !showInfo;
-                                      });
+                                      Get.find<MemberShipController>()
+                                          .toggleShowInfo();
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(12),
@@ -266,15 +233,21 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                             color: AppColors.secondaryColor,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text(
-                                            showInfo
-                                                ? 'hide_info_card'.tr
-                                                : 'see_info_card'.tr,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                          Obx(() {
+                                            final ctrl =
+                                                Get.find<
+                                                  MemberShipController
+                                                >();
+                                            return Text(
+                                              ctrl.showInfo.value
+                                                  ? 'hide_info_card'.tr
+                                                  : 'see_info_card'.tr,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            );
+                                          }),
                                           const Spacer(),
                                           const Icon(
                                             Icons.chevron_right,
@@ -289,8 +262,57 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                 ],
                               ),
                               FutureBuilder<SavingPointResponse>(
-                                future: futureData,
+                                future:
+                                    Get.find<MemberShipController>()
+                                        .futureSavingPoint ??
+                                    Get.find<MemberShipController>()
+                                        .loadSavingPointAccount(context),
                                 builder: (context, selectData) {
+                                  if (selectData.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                          0.7,
+                                      child: const Center(
+                                        child: SizedBox(
+                                          height: 40.0,
+                                          width: 40.0,
+                                          child: CircularProgressIndicator(
+                                            value: null,
+                                            strokeWidth: 3.0,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  if (selectData.hasError) {
+                                    return Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.whiteColor,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: AppColors.borderColor,
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: const [
+                                          Icon(
+                                            Ionicons.information_circle,
+                                            color: Colors.redAccent,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              'Failed to load saving point',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
                                   if (selectData.hasData) {
                                     if (selectData.data!.header?.statusCode ==
                                             200 &&
@@ -485,108 +507,80 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                                                 ),
                                                           ),
                                                         ),
-                                                        child: DropdownButtonHideUnderline(
-                                                          child: DropdownButton<
-                                                            String
-                                                          >(
-                                                            value:
-                                                                Get.locale.toString() ==
-                                                                        'en_US'
-                                                                    ? status
-                                                                    : statusKh,
-                                                            icon: const Icon(
-                                                              Icons
-                                                                  .arrow_drop_down,
-                                                              color:
-                                                                  AppColors
-                                                                      .borderColor,
+                                                        child: Obx(() {
+                                                          final mCtrl =
+                                                              Get.find<
+                                                                MemberShipController
+                                                              >();
+                                                          final isEn =
+                                                              Get.locale
+                                                                  .toString() ==
+                                                              'en_US';
+                                                          final currentValue =
+                                                              isEn
+                                                                  ? mCtrl
+                                                                      .status
+                                                                      .value
+                                                                  : mCtrl
+                                                                      .statusKh
+                                                                      .value;
+                                                          final months =
+                                                              isEn
+                                                                  ? mCtrl
+                                                                      .monthsEn
+                                                                  : mCtrl
+                                                                      .monthsKh;
+                                                          return DropdownButtonHideUnderline(
+                                                            child: DropdownButton<
+                                                              String
+                                                            >(
+                                                              value:
+                                                                  currentValue,
+                                                              icon: const Icon(
+                                                                Icons
+                                                                    .arrow_drop_down,
+                                                                color:
+                                                                    AppColors
+                                                                        .borderColor,
+                                                              ),
+                                                              onChanged: (
+                                                                value,
+                                                              ) {
+                                                                if (value !=
+                                                                    null) {
+                                                                  mCtrl
+                                                                      .onMonthChanged(
+                                                                        value,
+                                                                        context,
+                                                                      );
+                                                                }
+                                                              },
+                                                              items:
+                                                                  months
+                                                                      .map(
+                                                                        (
+                                                                          value,
+                                                                        ) => DropdownMenuItem<
+                                                                          String
+                                                                        >(
+                                                                          value:
+                                                                              value,
+                                                                          child: Text(
+                                                                            value,
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                      .toList(),
                                                             ),
-                                                            onChanged: (value) {
-                                                              futureData = SavingPoint().getSavingPoint(
-                                                                context,
-                                                                Get.locale
-                                                                            .toString() ==
-                                                                        'en_US'
-                                                                    ? (items.indexOf(
-                                                                              value!,
-                                                                            ) +
-                                                                            1)
-                                                                        .toString()
-                                                                    : (itemsKh.indexOf(
-                                                                              value!,
-                                                                            ) +
-                                                                            1)
-                                                                        .toString(),
-                                                                getYear()
-                                                                    .toString(),
-                                                              );
-                                                              setState(() {
-                                                                Get.locale.toString() ==
-                                                                        'en_US'
-                                                                    ? status =
-                                                                        value
-                                                                            .toString()
-                                                                    : statusKh =
-                                                                        value.toString();
-                                                              });
-                                                            },
-                                                            items:
-                                                                Get.locale
-                                                                            .toString() ==
-                                                                        'en_US'
-                                                                    ? items
-                                                                        .map(
-                                                                          (
-                                                                            value,
-                                                                          ) => DropdownMenuItem<
-                                                                            String
-                                                                          >(
-                                                                            value:
-                                                                                value,
-                                                                            onTap: () {
-                                                                              //print(value);
-                                                                            },
-                                                                            child: Text(
-                                                                              value,
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                        .toList()
-                                                                    : itemsKh
-                                                                        .map(
-                                                                          (
-                                                                            value,
-                                                                          ) => DropdownMenuItem<
-                                                                            String
-                                                                          >(
-                                                                            value:
-                                                                                value,
-                                                                            onTap: () {
-                                                                              //print(value);
-                                                                            },
-                                                                            child: Text(
-                                                                              value,
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                        .toList(),
-                                                          ),
-                                                        ),
+                                                          );
+                                                        }),
                                                       ),
                                                     ),
                                                     InkWell(
                                                       onTap: () {
-                                                        Get.to(
-                                                          () =>
-                                                              const AccountDetailScreen(),
-                                                          transition:
-                                                              Transition
-                                                                  .rightToLeft,
-                                                          duration:
-                                                              const Duration(
-                                                                milliseconds:
-                                                                    350,
-                                                              ),
+                                                        Get.toNamed(
+                                                          AppRoutes
+                                                              .memberAccountDetail,
                                                         );
                                                       },
                                                       child: Container(
@@ -633,20 +627,28 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                         ),
                                       );
                                     }
-                                  } else if (selectData.hasError) {}
-                                  return SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height *
-                                        0.7,
-                                    child: const Center(
-                                      child: SizedBox(
-                                        height: 40.0,
-                                        width: 40.0,
-                                        child: CircularProgressIndicator(
-                                          value: null,
-                                          strokeWidth: 3.0,
-                                        ),
+                                  }
+                                  return Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.whiteColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: AppColors.borderColor,
+                                        width: 0.5,
                                       ),
+                                    ),
+                                    child: Row(
+                                      children: const [
+                                        Icon(
+                                          Ionicons.information_circle,
+                                          color: Colors.grey,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text('No saving point data'),
+                                        ),
+                                      ],
                                     ),
                                   );
                                 },
@@ -656,7 +658,13 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                         }
                       }
 
-                      return const Center(child: CircularProgressIndicator());
+                      return Row(
+                        children: const [
+                          Icon(Ionicons.information_circle, color: Colors.grey),
+                          SizedBox(width: 10),
+                          Expanded(child: Text('Member info not available')),
+                        ],
+                      );
                     },
                   ),
 
@@ -711,17 +719,5 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
         ),
       ],
     );
-  }
-
-  int getMonth() {
-    DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat('MM');
-    return int.parse(formatter.format(now).toString());
-  }
-
-  int getYear() {
-    DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat('yyyy');
-    return int.parse(formatter.format(now).toString());
   }
 }

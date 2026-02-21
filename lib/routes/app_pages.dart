@@ -14,6 +14,8 @@ import '../feature/history-dashboard/other-history/presentation/screen/goods_tra
 import '../feature/history-dashboard/other-history/presentation/screen/package_history_screen.dart';
 import '../feature/history-dashboard/other-history/presentation/screen/ticket_history_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/binding/ev_charger_binding.dart';
+import '../feature/member-dashboard/presentation/screen/account_detail_screen.dart';
+import '../feature/member-dashboard/presentation/binding/member_ship_binding.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charging_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charger_wallet_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_faq_screen.dart';
@@ -458,6 +460,14 @@ class AppPages {
       name: AppRoutes.goodsTransferHistory,
       page: () => const GoodsTransferHistoryScreen(),
       binding: GoodsTransferHistoryBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    // Member dashboard routes
+    GetPage(
+      name: AppRoutes.memberAccountDetail,
+      page: () => const AccountDetailScreen(),
+      binding: MemberShipBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

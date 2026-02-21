@@ -20,7 +20,6 @@ class TicketMemberScreen extends StatefulWidget {
 
 class _TicketMemberScreenState extends State<TicketMemberScreen> {
   late Future<GetTicketMemberCardResponse> futureMembershipTicket;
-  bool showDetail = false;
   final con = FlipCardController();
 
   @override
@@ -180,9 +179,8 @@ class _TicketMemberScreenState extends State<TicketMemberScreen> {
                           InkWell(
                             onTap: () {
                               con.flipcard();
-                              setState(() {
-                                showDetail = !showDetail;
-                              });
+                              Get.find<MemberShipController>()
+                                  .toggleTicketInfo();
                             },
                             child: Container(
                               padding: const EdgeInsets.all(12),
@@ -201,15 +199,19 @@ class _TicketMemberScreenState extends State<TicketMemberScreen> {
                                     color: AppColors.secondaryColor,
                                   ),
                                   const SizedBox(width: 10),
-                                  Text(
-                                    showDetail
-                                        ? 'hide_info_card'.tr
-                                        : 'see_info_card'.tr,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
+                                  Obx(() {
+                                    final ctrl =
+                                        Get.find<MemberShipController>();
+                                    return Text(
+                                      ctrl.showTicketInfo.value
+                                          ? 'hide_info_card'.tr
+                                          : 'see_info_card'.tr,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    );
+                                  }),
                                   const Spacer(),
                                   const Icon(
                                     Icons.chevron_right,

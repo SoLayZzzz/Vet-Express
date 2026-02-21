@@ -3,24 +3,11 @@ import 'package:get/get.dart';
 import 'package:express_vet/models/saving_point/saving_list_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
 
-import '../../api/saving_point.dart';
-import '../../utils/app_colors.dart';
+import '../../../../utils/app_colors.dart';
+import '../controller/member_ship_controller.dart';
 
-class AccountDetailScreen extends StatefulWidget {
+class AccountDetailScreen extends GetView<MemberShipController> {
   const AccountDetailScreen({super.key});
-
-  @override
-  State<AccountDetailScreen> createState() => _AccountDetailScreenState();
-}
-
-class _AccountDetailScreenState extends State<AccountDetailScreen> {
-  late Future<SavingListResponse> futureData;
-
-  @override
-  void initState() {
-    super.initState();
-    futureData = SavingPoint().getSavingPointDetail(context);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +15,7 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
       appBar: AppBarVET().appBar(context, 'detail_new'.tr),
       body: SafeArea(
         child: FutureBuilder<SavingListResponse>(
-          future: futureData,
+          future: controller.loadSavingPointList(context),
           builder: (context, selectData) {
             if (selectData.hasData) {
               if (selectData.data!.header?.statusCode == 200 &&
@@ -75,8 +62,8 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                                   borderRadius: BorderRadius.circular(50),
                                   gradient: const LinearGradient(
                                     colors: [
-                                      Color(0xFFE38F5A), // Example end color
-                                      Color(0xFF312783), // Example start color
+                                      Color(0xFFE38F5A),
+                                      Color(0xFF312783),
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -84,8 +71,7 @@ class _AccountDetailScreenState extends State<AccountDetailScreen> {
                                 ),
                                 child: Center(
                                   child: Container(
-                                    width:
-                                        72, // slightly smaller to create the border effect
+                                    width: 72,
                                     height: 72,
                                     decoration: BoxDecoration(
                                       color: Colors.white,

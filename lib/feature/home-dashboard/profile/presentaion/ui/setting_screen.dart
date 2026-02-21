@@ -144,6 +144,7 @@ class SettingScreen extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       onButtonPressed2: () {
+                        Navigator.pop(context);
                         final authController = Get.find<AuthController>();
                         authController.logout(context);
                       },
@@ -284,6 +285,7 @@ class SettingScreen extends StatelessWidget {
         Navigator.pop(context);
       },
       onButtonPressed2: () {
+        Navigator.pop(context);
         final authController = Get.find<AuthController>();
         authController.deleteAccount(context);
       },
