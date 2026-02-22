@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../../api/notifications.dart';
 import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
 import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
 import 'package:express_vet/activities/ticket/value_statics.dart';
@@ -16,6 +15,8 @@ import '../../../../../controller/connectivity_controller.dart';
 import '../../../../auth/presentation/controller/auth_controller.dart';
 import '../../../../../utils/app_pref.dart';
 import '../../../../../utils/contains.dart';
+import 'package:express_vet/feature/home-dashboard/notifications/presentation/binding/notifications_binding.dart';
+import 'package:express_vet/feature/home-dashboard/notifications/domain/uscase/notifications_usecase.dart';
 import '../../domain/uscase/menu_usecase.dart';
 import '../uiState/menu_ui_state.dart';
 
@@ -171,11 +172,14 @@ class MenuController extends StateController<MenuUiState>
     );
 
     if ((OneSignal.User.pushSubscription.id).toString().isNotEmpty) {
-      Notifications().notificationRegister(
-        context,
-        deviceType,
-        deviceId,
-        OneSignal.User.pushSubscription.id,
+      if (!Get.isRegistered<NotificationsUseCase>()) {
+        NotificationsBinding().dependencies();
+      }
+      await Get.find<NotificationsUseCase>().notificationRegister(
+        context: context,
+        appType: deviceType,
+        deviceId: deviceId,
+        deviceToken: OneSignal.User.pushSubscription.id,
       );
     } else {
       Future.delayed(const Duration(seconds: Constrains.timeout15), () {

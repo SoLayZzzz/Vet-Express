@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import '../activities/notification_screen.dart';
+import 'package:express_vet/feature/home-dashboard/notifications/presentation/screen/notification_screen.dart';
 import 'navigate.dart';
 
 Future<void> initOneSignalPlatformState() async {

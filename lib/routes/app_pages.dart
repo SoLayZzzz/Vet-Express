@@ -1,4 +1,5 @@
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_charger_response.dart';
+import 'package:express_vet/feature/home-dashboard/notifications/presentation/screen/notification_screen.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/screen/passenger_detail_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/select_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_check_screen.dart';

@@ -674,8 +674,7 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                     children: [
                       const SizedBox(height: 20),
                       WidgetZoom(
-                        heroAnimationTag:
-                            'vip_image_tag', // Unique tag for Hero animation
+                        heroAnimationTag: 'vip_image_tag',
                         zoomWidget: Image.asset(
                           'assets/images/ic_vet_vip.jpg',
                           fit: BoxFit.contain,
@@ -704,7 +703,7 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
     );
   }
 
-  Row view(String name, String description) {
+  Widget view(String name, String description) {
     return Row(
       children: [
         Text(
