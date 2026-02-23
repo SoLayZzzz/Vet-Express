@@ -125,14 +125,12 @@ class MenuScreen extends GetView<menu.MenuController> {
                   _navigateToBoatBooking();
                 }),
                 _buildMenuView(AssetImages.ev_charger, 'ev_charger'.tr, () {
-                  // _navigateToEvCharger();
                   Get.toNamed(AppRoutes.evCharger);
                 }),
                 _buildMenuView(
                   AssetImages.rental_car,
                   'car_rental'.tr,
                   () async {
-                    // await _navigateToCarRental();
                     await Get.toNamed(AppRoutes.carRentalList);
                   },
                 ),
@@ -575,11 +573,7 @@ class MenuScreen extends GetView<menu.MenuController> {
             Obx(() {
               final language = controller.state.language;
               if (language != langCode) return const SizedBox.shrink();
-              return Image.asset(
-                "assets/images/ic_check_mark.png",
-                width: 30,
-                height: 30,
-              );
+              return Image.asset(AssetImages.check_mark, width: 30, height: 30);
             }),
           ],
         ),

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:express_vet/feature/home-dashboard/payment/presentaion/controller/payment_aba_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -21,7 +21,6 @@ import 'package:express_vet/utils/button.dart';
 import 'package:express_vet/utils/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:express_vet/utils/style.dart';
-
 import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
 import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
 import '../../../../auth/data/model/response/nationality_response.dart';
@@ -69,9 +68,8 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   late Future<FindTravelPackageResponse> _findTravelPackageResponse;
 
   //
-  int paymentMethodID = 0; // 2 cash, 6 credit, 5 ABA, 4 wing, 7 Ali pay
-  int paymentMethodSelected =
-      0; // 1 ABA and KHQR, 2 Credit Card, 3 Wing, 4 Acleda
+  int paymentMethodID = 0;
+  int paymentMethodSelected = 0;
 
   String transactionID = '';
 
@@ -1367,6 +1365,13 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
               ),
         ),
       );
+      // Ensure payment controller stops polling after returning
+      if (Get.isRegistered<PaymentAbaController>()) {
+        try {
+          Get.find<PaymentAbaController>().stop();
+        } catch (_) {}
+        Get.delete<PaymentAbaController>(force: true);
+      }
       if (result == "1") {
         /// Payment ABA KHQR success
         showDialogPaymentComplete();
@@ -1464,6 +1469,14 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                     ),
               ),
             );
+
+            // Ensure payment controller stops polling after returning
+            if (Get.isRegistered<PaymentAbaController>()) {
+              try {
+                Get.find<PaymentAbaController>().stop();
+              } catch (_) {}
+              Get.delete<PaymentAbaController>(force: true);
+            }
 
             log('Result $result');
 

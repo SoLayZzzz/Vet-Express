@@ -2,6 +2,10 @@
 
 class AssetImages {
   // =========================
+  // For auth
+  // =========================
+
+  // =========================
   // For dash board
   // =========================
 
@@ -50,13 +54,24 @@ class AssetImages {
   static const String vet_airway = 'assets/icons/icon_vet_airway.png';
   static const String vpsar = 'assets/images/ic_vpsar.png';
 
+  static const String check_mark = 'assets/images/ic_check_mark.png';
+
+  // =========================
+  // Contact us screen
+  // =========================
+  static const String ic_call_vireak_bus =
+      'assets/icons/icon_call_VireakBus.png';
+  static const String ic_call_vireak_logistics =
+      'assets/icons/icon_call_VireakLogistic.png';
+  static const String ic_call_vireak_buva_sea =
+      'assets/icons/icon_call_buvaSea.png';
+
   // =========================
   // For ticket menu screen
   // =========================
 
   static const String location_destination = 'assets/icons/icon_location.png';
   static const String calendar = 'assets/images/img_calendar.png';
-
   static const String place_holder = 'assets/images/place_holder.png';
 
   // =========================

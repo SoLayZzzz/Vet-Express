@@ -6,7 +6,7 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../value_statics.dart';
 
-class PaymentABAPackageScreen extends GetView<PaymentAbaController> {
+class PaymentABAPackageScreen extends StatefulWidget {
   final String transactionId;
   final String token;
   final String title;
@@ -23,35 +23,54 @@ class PaymentABAPackageScreen extends GetView<PaymentAbaController> {
   });
 
   @override
-  Widget build(BuildContext context) {
+  State<PaymentABAPackageScreen> createState() =>
+      _PaymentABAPackageScreenState();
+}
+
+class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
+  late final PaymentAbaController controller;
+
+  @override
+  void initState() {
+    super.initState();
     if (Get.isRegistered<PaymentAbaController>()) {
-      // Ensure no lingering polling from previous session
       try {
         Get.find<PaymentAbaController>().stop();
       } catch (_) {}
       Get.delete<PaymentAbaController>();
     }
-    Get.put(
+    controller = Get.put(
       PaymentAbaController(
-        transactionId: transactionId,
-        token: token,
-        title: title,
-        url: url,
-        type: type,
+        transactionId: widget.transactionId,
+        token: widget.token,
+        title: widget.title,
+        url: widget.url,
+        type: widget.type,
       ),
     );
-
-    // Initialize controller synchronously; guarded internally to avoid re-init
     controller.init(context: context);
+  }
 
+  @override
+  void dispose() {
+    try {
+      controller.stop();
+    } catch (_) {}
+    if (Get.isRegistered<PaymentAbaController>()) {
+      Get.delete<PaymentAbaController>(force: true);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Stop polling and dispose controller when user leaves
         try {
           controller.stop();
         } catch (_) {}
         if (Get.isRegistered<PaymentAbaController>()) {
-          Get.delete<PaymentAbaController>();
+          Get.delete<PaymentAbaController>(force: true);
         }
         return true;
       },
@@ -72,14 +91,14 @@ class PaymentABAPackageScreen extends GetView<PaymentAbaController> {
                 controller.stop();
               } catch (_) {}
               if (Get.isRegistered<PaymentAbaController>()) {
-                Get.delete<PaymentAbaController>();
+                Get.delete<PaymentAbaController>(force: true);
               }
               Navigator.pop(context);
             },
           ),
           centerTitle: true,
           title: Text(
-            title,
+            widget.title,
             style: const TextStyle(
               color: AppColors.whiteColor,
               fontSize: 18,

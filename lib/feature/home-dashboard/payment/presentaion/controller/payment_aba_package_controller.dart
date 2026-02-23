@@ -16,6 +16,7 @@ import '../../../../../utils/app_pref.dart';
 
 class PaymentAbaPackageController extends GetxController {
   bool _loop = true;
+  bool _initialized = false;
 
   final String transactionId;
   final String token;
@@ -39,7 +40,12 @@ class PaymentAbaPackageController extends GetxController {
     super.onClose();
   }
 
+  void stop() {
+    _loop = false;
+  }
+
   void init({required BuildContext context}) {
+    if (_initialized) return;
     _loop = true;
 
     webViewController = WebViewController();
@@ -77,6 +83,8 @@ class PaymentAbaPackageController extends GetxController {
         token: token,
       );
     }
+
+    _initialized = true;
   }
 
   String _returnUrl(int type, String transactionId, String token) {

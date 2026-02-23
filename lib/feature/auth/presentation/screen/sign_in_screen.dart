@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/button.dart';
@@ -38,11 +39,7 @@ class SignInScreen extends GetView<AuthController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'assets/images/vet_logo.png',
-                      width: 200,
-                      height: 140,
-                    ),
+                    Image.asset(AssetImages.vet_logo, width: 200, height: 140),
                     const SizedBox(height: 4),
                     const Text(
                       "VET Express",

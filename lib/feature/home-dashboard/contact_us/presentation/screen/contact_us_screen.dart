@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -33,17 +34,19 @@ class ContactUsScreen extends GetView<ContactUsController> {
                 ),
                 const SizedBox(height: 10),
                 viewPhone(
-                  'assets/icons/icon_call_VireakBus.png',
+                  AssetImages.ic_call_vireak_bus,
                   'vetBus'.tr,
                   '081 911 911',
                 ),
                 viewPhone(
-                  'assets/icons/icon_call_VireakLogistic.png',
+                  // 'assets/icons/icon_call_VireakLogistic.png',
+                  AssetImages.ic_call_vireak_logistics,
                   'vetLogistic'.tr,
                   '010 522 522',
                 ),
                 viewPhone(
-                  'assets/icons/icon_call_buvaSea.png',
+                  // 'assets/icons/icon_call_buvaSea.png',
+                  AssetImages.ic_call_vireak_buva_sea,
                   'vetBuva'.tr,
                   '015 888 850',
                 ),
