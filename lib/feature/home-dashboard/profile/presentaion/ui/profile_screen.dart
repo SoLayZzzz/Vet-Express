@@ -9,7 +9,7 @@ import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/button.dart';
 import '../../../../../utils/check_input.dart';
 import '../../../../../utils/style.dart';
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});

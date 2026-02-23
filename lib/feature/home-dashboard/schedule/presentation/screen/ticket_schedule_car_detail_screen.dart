@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:express_vet/activities/ticket/ticket_schedule_car_detail_map_screen.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/feature/home-dashboard/schedule/presentation/screen/ticket_schedule_car_detail_map_screen.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/app_bar.dart';
 
 import '../controller/schedule_car_detail_controller.dart';

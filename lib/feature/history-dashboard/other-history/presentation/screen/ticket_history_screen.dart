@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'rate_schedule_screen.dart';
-import '../../../../../activities/ticket/ticket_detail_screen.dart';
+import 'ticket_detail_screen.dart';
 import '../../../../home-dashboard/passenger/data/model/response/booking_list_model.dart';
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';

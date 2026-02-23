@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../activities/ticket/value_statics.dart';
+import '../../../../value_statics.dart';
 import '../../../../base/state_controller.dart';
 import '../../../../controller/user_controller.dart';
 import '../../../../utils/alert_dialog.dart';
@@ -145,6 +145,7 @@ class AuthController extends StateController<AuthUiState> {
           final userController = Get.find<UserController>();
           userController.fetchUserMe();
           await AppPref.setLogin();
+
           Get.offAllNamed(AppRoutes.home);
           return;
         }

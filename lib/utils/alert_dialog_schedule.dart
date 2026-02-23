@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../activities/ticket/value_statics.dart';
+import '../value_statics.dart';
 import 'app_colors.dart';
 
 //Dialog Schedule
@@ -17,16 +17,16 @@ void alertDialogSchedule({
         child: Container(
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(6),
-            ),
+            borderRadius: BorderRadius.all(Radius.circular(6)),
           ),
           child: Padding(
             padding: const EdgeInsets.all(15),
             child: Material(
               color: Colors.transparent,
               child: Column(
-                mainAxisSize: MainAxisSize.min, // Ensure the column takes up minimum space
+                mainAxisSize:
+                    MainAxisSize
+                        .min, // Ensure the column takes up minimum space
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
@@ -54,7 +54,10 @@ void alertDialogSchedule({
                     child: Text(
                       description,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textColor,
+                      ),
                     ),
                   ),
                   InkWell(
@@ -65,16 +68,22 @@ void alertDialogSchedule({
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: ValueStatic.ticketType == '3'
-                            ? AppColors.airBusColor
-                            : AppColors.primaryColor,
+                        color:
+                            ValueStatic.ticketType == '3'
+                                ? AppColors.airBusColor
+                                : AppColors.primaryColor,
                       ),
                       child: Center(
-                          child: Text(buttonText,
-                              style: const TextStyle(
-                                  color: AppColors.whiteColor, fontWeight: FontWeight.bold))),
+                        child: Text(
+                          buttonText,
+                          style: const TextStyle(
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

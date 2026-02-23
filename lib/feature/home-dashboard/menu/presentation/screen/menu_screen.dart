@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,11 +8,10 @@ import 'package:express_vet/feature/home-dashboard/menu/presentation/binding/men
 import 'package:express_vet/feature/home-dashboard/menu/presentation/controller/menu_controller.dart'
     as menu;
 import '../../../../../../utils/app_colors.dart';
-import '../../../../../controller/china/china_controller.dart';
 import '../../../profile/presentaion/ui/profile_widget.dart';
-import '../../../../../activities/screen/resort_screen.dart';
-import '../../../../../activities/components/slide_widget.dart';
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../resort/resort_screen.dart';
+import '../../../../../components/slide_widget.dart';
+import '../../../../../value_statics.dart';
 import '../../../../../routes/app_routes.dart';
 
 class MenuScreen extends GetView<menu.MenuController> {
@@ -429,7 +429,7 @@ class MenuScreen extends GetView<menu.MenuController> {
   }
 
   void _navigateToAccessChina() async {
-    final ChinaController controller = Get.put(ChinaController());
+    final ChinaController controller = Get.put(ChinaController(Get.find()));
 
     await controller.fetchCustomerList();
 

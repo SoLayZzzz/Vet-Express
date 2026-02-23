@@ -6,11 +6,14 @@ import '../../data/network/goods_transfer_history_network_request.dart';
 import '../../data/repositoryImpl/goods_transfer_history_repository_impl.dart';
 import '../../domain/repository/goods_transfer_history_repository.dart';
 import '../../domain/uscase/goods_transfer_history_usecase.dart';
+import '../binding/goods_transfer_action_binding.dart';
 import '../controller/goods_transfer_history_controller.dart';
 
 class GoodsTransferHistoryBinding implements Bindings {
   @override
   void dependencies() {
+    GoodsTransferActionBinding().dependencies();
+
     if (!Get.isRegistered<GoodsTransferHistoryNetworkRequest>()) {
       Get.lazyPut(
         () => GoodsTransferHistoryNetworkRequest(

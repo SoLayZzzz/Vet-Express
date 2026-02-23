@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';

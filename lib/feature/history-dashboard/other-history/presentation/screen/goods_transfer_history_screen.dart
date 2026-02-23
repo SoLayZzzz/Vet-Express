@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 
-import '../../../../../activities/logistic/goods_information_screen.dart';
-import '../../../../../activities/screen/review_screen.dart';
+import '../../../../home-dashboard/notifications/presentation/screen/goods_information_screen.dart';
+import 'review_screen.dart';
 import '../../../../../feature/home-dashboard/self_service/presentation/screen/self_service_qr_list_screen.dart';
 import '../../data/model/response/transfer_list_response.dart';
 import '../../../../../models/request_transfer/self_service_response.dart';

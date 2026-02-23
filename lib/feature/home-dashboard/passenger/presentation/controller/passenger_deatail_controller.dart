@@ -2,7 +2,7 @@ import 'package:express_vet/models/boarding_point.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
 import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';

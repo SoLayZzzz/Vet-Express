@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 import '../../../../../routes/app_routes.dart';
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/button.dart';
 
 import 'package:express_vet/utils/alert_dialog.dart';

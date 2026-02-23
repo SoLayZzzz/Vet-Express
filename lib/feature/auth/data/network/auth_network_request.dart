@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:express_vet/base/endpoint.dart';
 
@@ -20,12 +21,12 @@ class AuthNetworkRequest {
 
   Future<LoginResponse> login(LoginRequest request) async {
     final json = await netWorkDataSource.postMultipart(
-      // 'auth/login',
       Endpoint.authLogin,
       fields: request.toFields(),
       attachAuth: false,
       timeout: const Duration(seconds: Constrains.timeout180),
     );
+
     return LoginResponse.fromJson(json);
   }
 

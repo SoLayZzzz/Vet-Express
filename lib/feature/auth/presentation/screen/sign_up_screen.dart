@@ -8,8 +8,8 @@ import '../../../../utils/app_colors.dart';
 import '../../../../utils/button.dart';
 import '../../../../utils/check_input.dart';
 import '../../../../utils/style.dart';
-import '../../../../activities/ticket/value_statics.dart';
-import '../../../../activities/screen/web_view_screen.dart';
+import '../../../../value_statics.dart';
+import '../../../../base/web_view_screen.dart';
 import '../controller/auth_controller.dart';
 
 class SignUpScreen extends GetView<AuthController> {

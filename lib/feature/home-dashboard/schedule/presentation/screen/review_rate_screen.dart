@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/feature/home-dashboard/schedule/data/network/schedule_network_request.dart';
 import '../../../../../models/schedule/list_by_journey_response.dart';

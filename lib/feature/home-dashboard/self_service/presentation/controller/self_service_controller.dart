@@ -4,7 +4,7 @@ import 'package:express_vet/feature/home-dashboard/self_service/data/model/respo
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/uistate/self_service_uiState.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/destination_province.dart';
 import 'package:express_vet/base/state_controller.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/routes/app_routes.dart';

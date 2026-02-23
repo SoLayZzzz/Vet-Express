@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:express_vet/feature/home-dashboard/seat/presentation/controller/select_seat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
 import '../controller/seat_data.dart';

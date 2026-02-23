@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/loading.dart';
 import '../../../../dash_board/presentation/screen/dashboard_screen.dart';

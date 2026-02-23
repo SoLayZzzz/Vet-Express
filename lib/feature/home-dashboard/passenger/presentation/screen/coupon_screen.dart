@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/network/passenger_network_request.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/binding/passenger_binding.dart';
 import 'package:express_vet/utils/alert_dialog.dart';

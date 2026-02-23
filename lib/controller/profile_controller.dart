@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import '../activities/ticket/value_statics.dart';
+import '../value_statics.dart';
 import '../base/base_url.dart';
 import '../feature/auth/presentation/binding/auth_binding.dart';
 import '../feature/auth/domain/uscase/auth_usecase.dart';

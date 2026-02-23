@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
@@ -16,7 +16,7 @@ import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
 import '../../../../../utils/style.dart';
 import 'coupon_screen.dart';
-import '../../../../../activities/screen/web_view_screen.dart';
+import '../../../../../base/web_view_screen.dart';
 
 class PassengerDetailScreen extends GetView<PassengerDetailController> {
   PassengerDetailScreen({super.key});

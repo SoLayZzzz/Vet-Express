@@ -7,16 +7,11 @@ import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
-import '../../../../../activities/screen/web_view_screen.dart';
+import 'package:express_vet/feature/home-dashboard/contact_us/presentation/controller/contact_us_controller.dart';
+import '../../../../../base/web_view_screen.dart';
 
-class ContactUsScreen extends StatefulWidget {
+class ContactUsScreen extends GetView<ContactUsController> {
   const ContactUsScreen({super.key});
-
-  @override
-  State<ContactUsScreen> createState() => _ContactUsScreenState();
-}
-
-class _ContactUsScreenState extends State<ContactUsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

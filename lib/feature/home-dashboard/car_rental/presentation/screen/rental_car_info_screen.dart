@@ -5,7 +5,7 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 import '../../../../../routes/app_routes.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/app_bar.dart';

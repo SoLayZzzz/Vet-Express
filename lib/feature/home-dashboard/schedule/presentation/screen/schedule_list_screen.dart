@@ -6,7 +6,7 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/routes/app_routes.dart';
 import '../../data/model/response/schedule_response.dart';
 import '../../../../../utils/alert_dialog_schedule.dart';

@@ -10,8 +10,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../../../../activities/logistic/goods_information_no_token_screen.dart';
-import '../../../../../activities/logistic/goods_information_screen.dart';
+import '../screen/goods_information_no_token_screen.dart';
+import '../../../../home-dashboard/notifications/presentation/screen/goods_information_screen.dart';
 import '../../data/model/response/goods_find_response.dart';
 import '../../data/model/response/good_search_response.dart';
 import '../../../../../utils/app_colors.dart';

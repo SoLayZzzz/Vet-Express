@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../controller/car_rental_controller.dart';

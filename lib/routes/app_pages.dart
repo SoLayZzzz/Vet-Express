@@ -1,3 +1,4 @@
+import 'package:express_vet/feature/home-dashboard/contact_us/presentation/screen/contact_us_screen.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_charger_response.dart';
 import 'package:express_vet/feature/home-dashboard/notifications/presentation/screen/notification_screen.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/screen/passenger_detail_screen.dart';
@@ -6,8 +7,8 @@ import 'package:express_vet/feature/home-dashboard/self_service/presentation/scr
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_qr_list_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_qr_screen.dart';
 import 'package:get/get.dart';
-import '../activities/china/registration_screen.dart';
-import '../activities/china/warehouse_address_screen.dart';
+import '../feature/home-dashboard/china-service/presentation/ui/registration_screen.dart';
+import '../feature/home-dashboard/china-service/presentation/ui/warehouse_address_screen.dart';
 import '../feature/history-dashboard/other-history/presentation/binding/goods_transfer_history_binding.dart';
 import '../feature/history-dashboard/other-history/presentation/binding/package_history_binding.dart';
 import '../feature/history-dashboard/other-history/presentation/binding/ticket_history_binding.dart';
@@ -30,13 +31,12 @@ import '../feature/home-dashboard/ev-charger/presentation/screen/ev_station_scre
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_top_up_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/payment_success_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/search_ev_screen.dart';
-import '../activities/logistic/booking_delivery_screen.dart';
+import '../feature/home-dashboard/booking_delivery/presentation/binding/booking_delivery_binding.dart';
+import '../feature/home-dashboard/booking_delivery/presentation/screen/booking_delivery_screen.dart';
 import '../feature/home-dashboard/self_service/presentation/binding/self_service_binding.dart';
 import '../feature/home-dashboard/self_service/presentation/screen/self_service_screen.dart';
-import '../activities/notification_screen.dart';
-import '../activities/screen/contact_us_screen.dart';
-import '../activities/screen/vet_airway.dart';
-import '../activities/ticket/package_list_screen.dart';
+import '../feature/home-dashboard/vet-air/vet_airway.dart';
+import '../feature/home-dashboard/menu/presentation/screen/package_list_screen.dart';
 import '../feature/home-dashboard/car_rental/presentation/binding/car_rental_binding.dart';
 import '../feature/home-dashboard/car_rental/presentation/screen/rental_car_detail_screen.dart';
 import '../feature/home-dashboard/car_rental/presentation/screen/rental_car_info_screen.dart';
@@ -44,7 +44,7 @@ import '../feature/home-dashboard/car_rental/presentation/screen/rental_car_list
 import '../feature/home-dashboard/car_rental/presentation/screen/select_rental_province_screen.dart';
 import '../feature/home-dashboard/schedule/presentation/screen/ticket_schedule_car_detail_screen.dart';
 import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
-import '../activities/splash_screen.dart';
+import '../splash_screen.dart';
 import '../feature/auth/presentation/binding/auth_binding.dart';
 import '../feature/auth/presentation/screen/sign_in_screen.dart';
 import '../feature/home-dashboard/schedule/presentation/binding/ticket_binding.dart';
@@ -421,6 +421,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.bookingDelivery,
       page: () => const BookingDeliveryScreen(),
+      binding: BookingDeliveryBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

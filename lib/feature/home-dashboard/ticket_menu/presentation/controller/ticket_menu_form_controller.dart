@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 
 class TicketMenuFormController extends GetxController {
   final RxString goDate = ''.obs;

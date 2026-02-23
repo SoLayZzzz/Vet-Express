@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../activities/ticket/value_statics.dart';
+import '../value_statics.dart';
 import '../feature/home-dashboard/passenger/data/model/response/booking_detail_model.dart';
 import 'app_colors.dart';
 

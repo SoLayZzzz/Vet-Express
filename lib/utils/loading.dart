@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../activities/ticket/value_statics.dart';
+import '../value_statics.dart';
 import 'app_colors.dart';
 
 class Loading {

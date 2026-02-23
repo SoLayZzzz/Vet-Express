@@ -1,10 +1,12 @@
 // // ignore_for_file: unnecessary_null_comparison, prefer_const_declarations
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/multipart/form_data.dart';
+import 'package:get/get_connect/http/src/multipart/multipart_file.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 
 import 'base_url.dart';
@@ -14,11 +16,26 @@ import '../utils/contains.dart';
 class NetWorkDataSource extends GetConnect {
   final String baseUrl;
 
+  static bool _didLogStartupToken = false;
+
   NetWorkDataSource({String? baseUrl}) : baseUrl = baseUrl ?? BaseUrl.BASE_URL;
 
   @override
   void onInit() {
     httpClient.timeout = const Duration(seconds: Constrains.timeout30);
+
+    if (!_didLogStartupToken) {
+      _didLogStartupToken = true;
+      final token = AppPref.getToken();
+      // final refreshToken =
+      //     AppPref.getToken();
+
+      // Log the FULL tokens
+      log('=============== AUTH ===============');
+      log('Access Token: ${token ?? "<empty>"}');
+      // log('Refresh Token: ${refreshToken ?? "<empty>"}');
+      log('====================================');
+    }
 
     httpClient.addRequestModifier<dynamic>((Request<dynamic> request) async {
       final normalizedBase = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
@@ -38,8 +55,6 @@ class NetWorkDataSource extends GetConnect {
         }
       }
 
-      // GetConnect typically already combines `baseUrl` + `path` into an absolute URL.
-      // If we re-resolve again, we can end up with duplicated base paths (e.g. /UtLogVET/UtLogVET/...).
       if (request.url.hasScheme && request.url.host.isNotEmpty) {
         return request;
       }
@@ -167,6 +182,59 @@ class NetWorkDataSource extends GetConnect {
       headers: outHeaders,
       query: queryParameters,
       contentType: 'application/x-www-form-urlencoded',
+    ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
+
+    if (!res.isOk) {
+      final message = res.bodyString ?? res.statusText ?? '';
+      throw HttpException('Request failed (${res.statusCode}): $message');
+    }
+
+    final decoded = res.body;
+    if (decoded is Map<String, dynamic>) return decoded;
+    return <String, dynamic>{'data': decoded};
+  }
+
+  Future<Map<String, dynamic>> postMultipartWithFile(
+    String path, {
+    required Map<String, String> fields,
+    String? fileField,
+    String? filePath,
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
+    Duration? timeout,
+    bool attachAuth = true,
+  }) async {
+    final formData = FormData(<String, dynamic>{...fields});
+
+    final normalizedFileField = fileField ?? 'file';
+    if (filePath != null && filePath.isNotEmpty) {
+      final f = File(filePath);
+      if (await f.exists()) {
+        formData.files.add(
+          MapEntry(
+            normalizedFileField,
+            MultipartFile(
+              f,
+              filename:
+                  f.uri.pathSegments.isNotEmpty
+                      ? f.uri.pathSegments.last
+                      : 'upload',
+            ),
+          ),
+        );
+      }
+    }
+
+    final res = await post<dynamic>(
+      path,
+      formData,
+      headers: _buildHeaders(
+        headers: headers,
+        attachAuth: attachAuth,
+        isJson: false,
+      ),
+      query: queryParameters,
+      contentType: 'multipart/form-data',
     ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
 
     if (!res.isOk) {

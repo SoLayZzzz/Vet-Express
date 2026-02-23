@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../../base/state_controller.dart';
 import '../../data/model/response/schedule_response.dart';
 import '../../../../../routes/app_routes.dart';
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 import '../../../../../utils/app_colors.dart';
 import '../uiState/schedule_list_ui_state.dart';
 import '../../domain/uscase/schedule_list_usecase.dart';

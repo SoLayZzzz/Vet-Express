@@ -50,6 +50,8 @@ class AppRoutes {
   static const bookingDelivery = '/booking-delivery';
   static const warehouseAddress = '/china/warehouse-address';
   static const chinaRegistration = '/china/registration';
+  static const chinaProvinceSelection = '/china/province-selection';
+  static const chinaBranchSelection = '/china/branch-selection';
   static const vetAirway = '/vet-airway';
 
   // History route

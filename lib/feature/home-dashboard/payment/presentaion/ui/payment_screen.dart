@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/response/confirm_booking_response.dart';
 import 'package:express_vet/utils/button.dart';
 import 'package:webview_flutter/webview_flutter.dart';

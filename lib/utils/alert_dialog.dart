@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../feature/dash_board/presentation/screen/dashboard_screen.dart';
-import '../activities/ticket/value_statics.dart';
+import '../value_statics.dart';
 import 'app_colors.dart';
 import 'button.dart';
 

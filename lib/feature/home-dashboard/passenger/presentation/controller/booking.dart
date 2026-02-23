@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../payment/presentaion/ui/payment_screen.dart';
-import '../../../../../activities/ticket/value_statics.dart';
+import '../../../../../value_statics.dart';
 import '../../../../../feature/dash_board/presentation/screen/dashboard_screen.dart';
 import '../../data/model/response/booking_list_model.dart';
 import '../../../../../utils/alert_dialog.dart';

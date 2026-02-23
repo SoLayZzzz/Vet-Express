@@ -9,7 +9,7 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
 import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
-import 'package:express_vet/activities/ticket/value_statics.dart';
+import 'package:express_vet/value_statics.dart';
 import '../../../../../base/state_controller.dart';
 import '../../../../../controller/connectivity_controller.dart';
 import '../../../../auth/presentation/controller/auth_controller.dart';
