@@ -216,22 +216,24 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        color: AppColors.whiteColor,
-        width: double.infinity,
-        child: globalButton(
-          context: context,
-          buttonText: status == 3 ? 'pay_now'.tr : 'continue'.tr,
-          onPressed: () {
-            if (status == 1) {
-              _onStatus1Tap();
-            } else if (status == 2) {
-              _onStatus2Tap();
-            } else if (status == 3) {
-              _onStatus3Tap();
-            }
-          },
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          color: AppColors.whiteColor,
+          width: double.infinity,
+          child: globalButton(
+            context: context,
+            buttonText: status == 3 ? 'pay_now'.tr : 'continue'.tr,
+            onPressed: () {
+              if (status == 1) {
+                _onStatus1Tap();
+              } else if (status == 2) {
+                _onStatus2Tap();
+              } else if (status == 3) {
+                _onStatus3Tap();
+              }
+            },
+          ),
         ),
       ),
     );

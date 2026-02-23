@@ -17,6 +17,7 @@ import '../../../../../utils/loading.dart';
 
 class PaymentAbaController extends GetxController {
   bool _loop = true;
+  bool _initialized = false;
 
   final String transactionId;
   final String token;
@@ -40,7 +41,12 @@ class PaymentAbaController extends GetxController {
     super.onClose();
   }
 
+  void stop() {
+    _loop = false;
+  }
+
   void init({required BuildContext context}) {
+    if (_initialized) return;
     _loop = true;
 
     webViewController = WebViewController();
@@ -96,6 +102,8 @@ class PaymentAbaController extends GetxController {
         token: token,
       );
     }
+
+    _initialized = true;
   }
 
   Future<void> openDeepLinkABA(String deepLink) async {
