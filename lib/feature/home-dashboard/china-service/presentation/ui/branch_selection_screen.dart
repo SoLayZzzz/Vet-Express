@@ -38,8 +38,6 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    // Clear branch search when leaving screen
-    controller.clearBranchSearch();
     super.dispose();
   }
 

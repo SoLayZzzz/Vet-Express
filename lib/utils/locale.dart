@@ -860,7 +860,7 @@ class LocaleString extends Translations {
         'an_error_occurred': "Something went wrong. Please try again.",
 
         //access china address
-        'access_address_china': 'អាស័យដ្ឋានប្រទេសចិន',
+        'access_address_china': 'អាសយដ្ឋានប្រទេសចិន',
         'full_name': 'ឈ្មោះពេញ',
         'enter_full_name': 'បញ្ចូលឈ្មោះពេញ',
         'phone_number': 'លេខទូរស័ព្ទ',

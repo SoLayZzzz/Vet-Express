@@ -9,6 +9,7 @@ import 'package:express_vet/feature/home-dashboard/self_service/presentation/scr
 import 'package:get/get.dart';
 import '../feature/home-dashboard/china-service/presentation/ui/registration_screen.dart';
 import '../feature/home-dashboard/china-service/presentation/ui/warehouse_address_screen.dart';
+import '../feature/home-dashboard/china-service/presentation/ui/china_edit_info_screen.dart';
 import '../feature/history-dashboard/other-history/presentation/binding/goods_transfer_history_binding.dart';
 import '../feature/history-dashboard/other-history/presentation/binding/package_history_binding.dart';
 import '../feature/history-dashboard/other-history/presentation/binding/ticket_history_binding.dart';
@@ -434,6 +435,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.chinaRegistration,
       page: () => ChinaRegistrationScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.chinaEditInfo,
+      page: () => const EditChinaAddressScreen(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

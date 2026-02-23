@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
+import 'package:express_vet/feature/home-dashboard/china-service/presentation/bindding/china_service_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -429,7 +430,8 @@ class MenuScreen extends GetView<menu.MenuController> {
   }
 
   void _navigateToAccessChina() async {
-    final ChinaController controller = Get.put(ChinaController(Get.find()));
+    ChinaServiceBinding().dependencies();
+    final ChinaController controller = Get.find<ChinaController>();
 
     await controller.fetchCustomerList();
 

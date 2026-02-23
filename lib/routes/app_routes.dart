@@ -52,6 +52,7 @@ class AppRoutes {
   static const chinaRegistration = '/china/registration';
   static const chinaProvinceSelection = '/china/province-selection';
   static const chinaBranchSelection = '/china/branch-selection';
+  static const chinaEditInfo = '/china/edit-info';
   static const vetAirway = '/vet-airway';
 
   // History route

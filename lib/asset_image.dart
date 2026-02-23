@@ -78,4 +78,7 @@ class AssetImages {
   static const String arrive = 'assets/images/ic_arrival.png';
 
   static const String no_schedule = 'assets/images/ic_no_shcedule.png';
+
+  static const String phone = 'assets/icons/phone.png';
+  static const String building = 'assets/icons/building.png';
 }

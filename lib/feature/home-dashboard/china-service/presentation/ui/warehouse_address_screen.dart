@@ -1,11 +1,13 @@
-import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
-import 'package:express_vet/feature/home-dashboard/china-service/presentation/ui/registration_screen.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
+import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
+import 'package:express_vet/feature/home-dashboard/china-service/presentation/ui/registration_screen.dart';
 import '../../../../../models/china/customer_china_response.dart';
 import '../../../../../utils/app_colors.dart';
+import '../../../../../routes/app_routes.dart';
 
 class WarehouseAddressScreen extends GetView<ChinaController> {
   WarehouseAddressScreen({super.key});
@@ -15,12 +17,14 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(
+        0xFFF5F5F5,
+      ), // Light gray background for the whole screen
       appBar: _buildAppBar(),
       body: Obx(() {
         final customer = controller.state.selectedCustomer;
 
         if (customer == null && !controller.hasCustomers) {
-          // If no customers, automatically navigate to registration
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Get.off(() => ChinaRegistrationScreen());
           });
@@ -28,16 +32,12 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
         }
 
         if (customer == null && controller.hasCustomers) {
-          // Auto-select first customer
           controller.selectCustomer(controller.state.customerList.first);
-
-          // Check if warehouse data needs to be fetched
           if (!controller.hasWarehouses && !controller.state.isLoading) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               controller.fetchWarehouseList(controller.state.transportType);
             });
           }
-
           return _buildContent(customer!);
         }
 
@@ -48,109 +48,208 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      elevation: 0.2,
+      elevation: 0,
       backgroundColor: AppColors.primaryColor,
       leading: IconButton(
-        icon: const Icon(
-          Ionicons.chevron_back_outline,
-          color: AppColors.whiteColor,
-        ),
-        onPressed: () {
-          Get.back();
-        },
+        icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
+        onPressed: () => Get.back(),
       ),
       centerTitle: true,
       title: Text(
         'access_address_china'.tr,
         style: const TextStyle(
-          color: AppColors.whiteColor,
+          color: Colors.white,
           fontSize: 18,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _buildLoading() {
-    return const Center(child: CircularProgressIndicator());
+  Widget _buildLoading() => const Center(child: CircularProgressIndicator());
+
+  Widget _buildContent(CustomerChinaListData customer) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Top Contact Info Section
+          Container(
+            width: double.infinity,
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'contact_information'.tr,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      customer.name ?? '',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.chinaEditInfo),
+                      child: const Icon(
+                        MaterialCommunityIcons.square_edit_outline,
+                        color: Colors.grey,
+                        size: 22,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildContactRow(AssetImages.phone, customer.telephone ?? ''),
+                _buildContactRow(
+                  AssetImages.building,
+                  customer.branchName ?? '',
+                ),
+                _buildContactRow(AssetImages.location, customer.address ?? ''),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12), // Grey divider space
+          // Warehouse Section
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'warehouse_address_by'.tr,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildTransportModeSelector(),
+                const SizedBox(height: 24),
+                _buildWarehouseDetails(customer),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactRow(String imagePath, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          // Using Image.asset instead of Icon
+          Image.asset(
+            imagePath,
+            width: 18,
+            height: 18,
+            // ColorFilter ensures the PNG behaves like a monochrome icon
+            color: Colors.grey[600],
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 15, color: Colors.black87),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransportModeSelector() {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0F0F0),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          _buildTransportButton('land'.tr, 1),
+          _buildTransportButton('sea'.tr, 2),
+          _buildTransportButton('air'.tr, 3),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransportButton(String label, int type) {
+    return Obx(() {
+      final isSelected = controller.transportType.value == type;
+      return Expanded(
+        child: GestureDetector(
+          onTap: () => controller.updateTransportMode(type),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.primaryColor : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+              // border: isSelected ? null : Border.all(color: Colors.grey[400]!),
+              border: Border.all(color: AppColors.primaryColor),
+            ),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: Center(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildWarehouseDetails(CustomerChinaListData customer) {
     return Obx(() {
-      // Show loading when fetching new data
       if (controller.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      final warehouse = controller.selectedWarehouse.value;
-
-      // Check if we need to fetch warehouse data
       if (!controller.hasWarehouses && !controller.isLoading.value) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           controller.fetchWarehouseList(controller.transportType.value);
         });
-        return _buildNoWarehouseData();
+        return const Center(child: CircularProgressIndicator());
       }
 
-      // Show warehouse data if available
-      if (warehouse != null) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // _buildCopyableField('warehouse_name'.tr, warehouse.name ?? ''),
-            _buildCopyableField('customer_code'.tr, customer.code ?? ''),
-            _buildCopyableField(
-              'warehouse_phone'.tr,
-              warehouse.telephone ?? '',
-            ),
-            _buildCopyableField(
-              'address'.tr,
-              warehouse.address ?? '',
-              isLarge: true,
-            ),
-          ],
-        );
-      } else if (controller.hasWarehouses) {
-        // Has warehouses but none selected (shouldn't happen, but just in case)
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_buildNoWarehouseData()],
-        );
-      } else {
-        // No warehouse data at all
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_buildNoWarehouseData()],
-        );
-      }
+      final warehouse = controller.selectedWarehouse.value;
+      if (warehouse == null) return _buildNoWarehouseData();
+
+      return Column(
+        children: [
+          _buildCopyableField('warehouse_name'.tr, warehouse.name ?? ''),
+          _buildCopyableField('customer_code'.tr, customer.code ?? ''),
+          _buildCopyableField('warehouse_phone'.tr, warehouse.telephone ?? ''),
+          _buildCopyableField(
+            'address'.tr,
+            warehouse.address ?? '',
+            isLarge: true,
+          ),
+        ],
+      );
     });
-  }
-
-  Widget _buildNoWarehouseData() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Center(
-        child: Text(
-          'no_warehouse_data_for_transport'.tr,
-          style: const TextStyle(color: Colors.grey),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-        color: Color(0xFF333333),
-      ),
-    );
   }
 
   Widget _buildCopyableField(
@@ -159,25 +258,20 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
     bool isLarge = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(color: Colors.black54, fontSize: 14),
           ),
           const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey[300]!),
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
             ),
             child: Row(
               children: [
@@ -185,21 +279,20 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                   child: Text(
                     value,
                     maxLines: isLarge ? 3 : 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 15, color: Colors.black87),
                   ),
                 ),
                 Obx(() {
                   final isCopied = _copiedItems[value] ?? false;
-                  return IconButton(
-                    icon: Icon(
+                  return GestureDetector(
+                    onTap: () => _copyToClipboard(value),
+                    child: Icon(
                       isCopied
-                          ? Ionicons.checkmark_outline
-                          : Ionicons.copy_outline,
-                      color: isCopied ? Colors.green : Colors.grey,
-                      size: 20,
+                          ? Ionicons.checkmark_done
+                          : MaterialCommunityIcons.content_copy,
+                      color: isCopied ? Colors.green : Colors.grey[400],
+                      size: 22,
                     ),
-                    onPressed: () => _copyToClipboard(value),
                   );
                 }),
               ],
@@ -210,163 +303,21 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
     );
   }
 
-  Widget _buildTransportModeSelector() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE5E7EB),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          _buildTransportModeButton('land'.tr, 1),
-          _buildTransportModeButton('sea'.tr, 2),
-          _buildTransportModeButton('air'.tr, 3),
-        ],
+  Widget _buildNoWarehouseData() {
+    return Center(
+      child: Text(
+        'no_warehouse_data_for_transport'.tr,
+        style: const TextStyle(color: Colors.grey),
       ),
     );
-  }
-
-  Widget _buildTransportModeButton(String mode, int type) {
-    return Obx(() {
-      bool isSelected = controller.transportType.value == type;
-      return Expanded(
-        child: GestureDetector(
-          onTap: () {
-            controller.updateTransportMode(type);
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 6),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              color:
-                  isSelected
-                      ? const Color(0xFFD35F27)
-                      : const Color(0xFFE5E7EB),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFFD35F27), width: 1),
-            ),
-            child: Center(
-              child: Text(
-                mode,
-                style: TextStyle(
-                  color:
-                      isSelected ? AppColors.whiteColor : AppColors.titleColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    });
   }
 
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text));
-
-    // Mark this item as copied
     _copiedItems[text] = true;
-
-    // Reset after 2.5 seconds
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      _copiedItems[text] = false;
-    });
-  }
-
-  Widget _buildContent(CustomerChinaListData customer) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Customer details
-          Container(
-            color: AppColors.whiteColor,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Contact information
-                _buildSectionTitle('contact_information'.tr),
-                const SizedBox(height: 12),
-                _buildInfoField('full_name'.tr, customer.name ?? ''),
-                _buildInfoField('phone_number'.tr, customer.telephone ?? ''),
-                _buildInfoField(
-                  'vet_branch_near_you'.tr,
-                  customer.branchName ?? '',
-                ),
-                _buildInfoField('address'.tr, customer.address ?? ''),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          /// Warehouse details
-          Container(
-            color: AppColors.whiteColor,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Transport mode
-                _buildSectionTitle('warehouse_address_by'.tr),
-                const SizedBox(height: 12),
-                _buildTransportModeSelector(),
-
-                const SizedBox(height: 24),
-
-                // Warehouse details - Show based on selected transport mode
-                _buildWarehouseDetails(customer),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoField(String label, String value, {bool isLarge = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    value,
-                    maxLines: isLarge ? 3 : 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    Future.delayed(
+      const Duration(seconds: 2),
+      () => _copiedItems[text] = false,
     );
   }
 }
