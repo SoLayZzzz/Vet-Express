@@ -121,7 +121,7 @@ class NetWorkDataSource extends GetConnect {
 
   Future<Map<String, dynamic>> postMultipart(
     String path, {
-    required Map<String, String> fields,
+    required Map<String, dynamic> fields,
     Map<String, String>? headers,
     Map<String, dynamic>? queryParameters,
     Duration? timeout,

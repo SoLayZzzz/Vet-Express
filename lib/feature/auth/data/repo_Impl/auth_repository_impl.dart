@@ -1,5 +1,8 @@
+import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
+
 import '../../domain/repository/auth_repository.dart';
 import '../model/request/login_request.dart';
+import '../model/request/register_request.dart';
 import '../model/response/check_token_response.dart';
 import '../model/response/check_version_response.dart';
 import '../model/response/login_response.dart';
@@ -33,38 +36,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   // ===== Delegations for migrated legacy endpoints =====
   @override
-  Future<SimpleResponse> register({
-    required String name,
-    required String password,
-    required String telephone,
-    String? email,
-    String? dob,
-    String? filename,
-    int? gender,
-    int? nationalityId,
-  }) => authNetworkRequest.register(
-    name: name,
-    password: password,
-    telephone: telephone,
-    email: email,
-    dob: dob,
-    filename: filename,
-    gender: gender,
-    nationalityId: nationalityId,
-  );
+  Future<SimpleResponse> register(RegisterRequest request) =>
+      authNetworkRequest.register(request);
 
   @override
-  Future<SimpleResponse> verification({
-    required String code,
-    required String deviceId,
-    required String deviceName,
-    required String token,
-  }) => authNetworkRequest.verification(
-    code: code,
-    deviceId: deviceId,
-    deviceName: deviceName,
-    token: token,
-  );
+  Future<SimpleResponse> verification(VerificationRequest request) =>
+      authNetworkRequest.verification(request);
 
   @override
   Future<SimpleResponse> resendVerification({required String phone}) =>

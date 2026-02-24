@@ -1,4 +1,7 @@
+import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
+
 import '../../data/model/request/login_request.dart';
+import '../../data/model/request/register_request.dart';
 import '../../data/model/response/check_token_response.dart';
 import '../../data/model/response/check_version_response.dart';
 import '../../data/model/response/login_response.dart';
@@ -18,23 +21,9 @@ abstract class AuthRepository {
   Future<SimpleResponse> deleteAccount();
 
   // Migrated endpoints from legacy api/user.dart
-  Future<SimpleResponse> register({
-    required String name,
-    required String password,
-    required String telephone,
-    String? email,
-    String? dob,
-    String? filename,
-    int? gender,
-    int? nationalityId,
-  });
+  Future<SimpleResponse> register(RegisterRequest request);
 
-  Future<SimpleResponse> verification({
-    required String code,
-    required String deviceId,
-    required String deviceName,
-    required String token,
-  });
+  Future<SimpleResponse> verification(VerificationRequest request);
 
   Future<SimpleResponse> resendVerification({required String phone});
 

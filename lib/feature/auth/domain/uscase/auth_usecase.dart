@@ -1,3 +1,6 @@
+import 'package:express_vet/feature/auth/data/model/request/register_request.dart';
+import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
+
 import '../../../../models/simple_response.dart';
 import '../../data/model/response/user_me.dart';
 import '../../data/model/request/login_request.dart';
@@ -24,38 +27,11 @@ class AuthUseCase {
 
   Future<SimpleResponse> deleteAccount() => authRepository.deleteAccount();
 
-  // ===== Migrated endpoints from legacy api/user.dart =====
-  Future<SimpleResponse> register({
-    required String name,
-    required String password,
-    required String telephone,
-    String? email,
-    String? dob,
-    String? filename,
-    int? gender,
-    int? nationalityId,
-  }) => authRepository.register(
-    name: name,
-    password: password,
-    telephone: telephone,
-    email: email,
-    dob: dob,
-    filename: filename,
-    gender: gender,
-    nationalityId: nationalityId,
-  );
+  Future<SimpleResponse> register(RegisterRequest request) =>
+      authRepository.register(request);
 
-  Future<SimpleResponse> verification({
-    required String code,
-    required String deviceId,
-    required String deviceName,
-    required String token,
-  }) => authRepository.verification(
-    code: code,
-    deviceId: deviceId,
-    deviceName: deviceName,
-    token: token,
-  );
+  Future<SimpleResponse> verification(VerificationRequest request) =>
+      authRepository.verification(request);
 
   Future<SimpleResponse> resendVerification({required String phone}) =>
       authRepository.resendVerification(phone: phone);

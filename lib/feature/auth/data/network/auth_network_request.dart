@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:express_vet/base/endpoint.dart';
+import 'package:express_vet/feature/auth/data/model/request/register_request.dart';
+import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
 import '../../../../base/network_data_source.dart';
 import '../../../../base/base_url.dart';
 import '../../../../utils/contains.dart';
@@ -68,49 +70,20 @@ class AuthNetworkRequest {
 
   // ===== Migrated legacy api/user.dart methods =====
 
-  Future<SimpleResponse> register({
-    required String name,
-    required String password,
-    required String telephone,
-    String? email,
-    String? dob,
-    String? filename,
-    int? gender,
-    int? nationalityId,
-  }) async {
-    final fields = <String, String>{
-      'name': name,
-      'password': password,
-      'telephone': telephone,
-      if (email != null) 'email': email,
-      if (dob != null) 'dob': dob,
-      if (filename != null) 'filename': filename,
-      if (gender != null) 'gender': gender.toString(),
-      if (nationalityId != null) 'nationalityId': nationalityId.toString(),
-    };
+  Future<SimpleResponse> register(RegisterRequest request) async {
     final json = await netWorkDataSource.postMultipart(
       Endpoint.userRegister,
-      fields: fields,
+      fields: request.toJson(),
       attachAuth: false,
       timeout: const Duration(seconds: Constrains.timeout90),
     );
     return SimpleResponse.fromJson(json);
   }
 
-  Future<SimpleResponse> verification({
-    required String code,
-    required String deviceId,
-    required String deviceName,
-    required String token,
-  }) async {
+  Future<SimpleResponse> verification(VerificationRequest request) async {
     final json = await netWorkDataSource.postMultipart(
       Endpoint.userVerification,
-      fields: {
-        'code': code,
-        'deviceId': deviceId,
-        'deviceName': deviceName,
-        'token': token,
-      },
+      fields: request.toJson(),
       attachAuth: false,
       timeout: const Duration(seconds: Constrains.timeout30),
     );

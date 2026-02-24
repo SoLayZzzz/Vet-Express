@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,7 @@ import '../../../../utils/app_pref.dart';
 import '../../../../utils/contains.dart';
 import '../../../../utils/loading.dart';
 import '../../data/model/request/login_request.dart';
+import '../../data/model/request/register_request.dart';
 import '../../domain/uscase/auth_usecase.dart';
 import '../uiState/auth_ui_state.dart';
 import '../../../../routes/app_routes.dart';
@@ -60,14 +62,16 @@ class AuthController extends StateController<AuthUiState> {
     Loading().loadingShow();
     try {
       final res = await authUseCase.register(
-        name: name,
-        password: password,
-        telephone: telephone,
-        email: email,
-        dob: dob,
-        filename: filename,
-        gender: gender,
-        nationalityId: nationalityId,
+        RegisterRequest(
+          name: name,
+          password: password,
+          telephone: telephone,
+          email: email,
+          dob: dob,
+          filename: filename,
+          gender: gender,
+          nationalityId: nationalityId,
+        ),
       );
       Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
@@ -105,10 +109,12 @@ class AuthController extends StateController<AuthUiState> {
     Loading().loadingShow();
     try {
       final res = await authUseCase.verification(
-        code: code,
-        deviceId: deviceId,
-        deviceName: deviceName,
-        token: token,
+        VerificationRequest(
+          code: code,
+          deviceId: deviceId,
+          deviceName: deviceName,
+          token: token,
+        ),
       );
       Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
