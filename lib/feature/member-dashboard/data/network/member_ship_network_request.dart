@@ -27,7 +27,7 @@ class MemberShipNetworkRequest {
       );
       return MemberShipResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -51,7 +51,7 @@ class MemberShipNetworkRequest {
       );
       return GetTicketMemberCardResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -78,7 +78,7 @@ class MemberShipNetworkRequest {
       );
       return SavingPointResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -86,7 +86,7 @@ class MemberShipNetworkRequest {
       );
       rethrow;
     } catch (_) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }
@@ -103,7 +103,7 @@ class MemberShipNetworkRequest {
       );
       return SavingListResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -111,7 +111,7 @@ class MemberShipNetworkRequest {
       );
       rethrow;
     } catch (_) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }

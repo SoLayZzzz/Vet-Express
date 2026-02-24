@@ -23,7 +23,7 @@ class CreateNewPasswordScreen extends GetView<AuthController> {
           FocusScope.of(context).unfocus();
         },
         child: Form(
-          key: controller.createNewPasswordFormKey,
+          key: controller.uiState.value.createNewPasswordFormKey,
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(15),
@@ -47,7 +47,8 @@ class CreateNewPasswordScreen extends GetView<AuthController> {
                   Obx(() {
                     final ui = controller.uiState.value;
                     return TextFormField(
-                      controller: controller.createNewPasswordController,
+                      controller:
+                          controller.uiState.value.createNewPasswordController,
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       style: const TextStyle(fontSize: 14),
@@ -63,26 +64,34 @@ class CreateNewPasswordScreen extends GetView<AuthController> {
                         'pass'.tr,
                         iconLeft: Ionicons.lock_closed_outline,
                         iconRight:
-                            ui.newPasswordVisible
+                            ui.newPasswordVisible.value
                                 ? Ionicons.eye
                                 : Ionicons.eye_off_outline,
                         onPressed: controller.toggleCreateNewPasswordVisibility,
                       ),
-                      obscureText: !ui.newPasswordVisible,
+                      obscureText: !ui.newPasswordVisible.value,
                     );
                   }),
                   const SizedBox(height: 12),
                   Obx(() {
                     final ui = controller.uiState.value;
                     return TextFormField(
-                      controller: controller.createNewRePasswordController,
+                      controller:
+                          controller
+                              .uiState
+                              .value
+                              .createNewRePasswordController,
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       style: const TextStyle(fontSize: 14),
                       validator: (String? value) {
                         return CheckInput().checkMatch(
                           value!,
-                          controller.createNewPasswordController.text,
+                          controller
+                              .uiState
+                              .value
+                              .createNewPasswordController
+                              .text,
                           'pass_not_match'.tr,
                         );
                       },
@@ -90,13 +99,13 @@ class CreateNewPasswordScreen extends GetView<AuthController> {
                         'confirm_pass'.tr,
                         iconLeft: Ionicons.lock_closed_outline,
                         iconRight:
-                            ui.newRePasswordVisible
+                            ui.newRePasswordVisible.value
                                 ? Ionicons.eye
                                 : Ionicons.eye_off_outline,
                         onPressed:
                             controller.toggleCreateNewRePasswordVisibility,
                       ),
-                      obscureText: !ui.newRePasswordVisible,
+                      obscureText: !ui.newRePasswordVisible.value,
                     );
                   }),
                   Padding(

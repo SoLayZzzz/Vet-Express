@@ -10,64 +10,38 @@ import '../../../../utils/alert_dialog.dart';
 import '../../../../utils/app_pref.dart';
 import '../../../../utils/contains.dart';
 import '../../../../utils/loading.dart';
-import '../../data/model/response/nationality_response.dart';
 import '../../data/model/request/login_request.dart';
 import '../../domain/uscase/auth_usecase.dart';
 import '../uiState/auth_ui_state.dart';
 import '../../../../routes/app_routes.dart';
-import '../screen/verify_code_screen.dart';
-import '../screen/new_password_screen.dart';
 
 class AuthController extends StateController<AuthUiState> {
   final AuthUseCase authUseCase;
 
   AuthController(this.authUseCase);
 
-  final signInFormKey = GlobalKey<FormState>();
-  final signUpFormKey = GlobalKey<FormState>();
-
-  late TextEditingController signInPhoneController;
-  late TextEditingController signInPasswordController;
-
-  late TextEditingController signUpUsernameController;
-  late TextEditingController signUpPhoneController;
-  late TextEditingController signUpPasswordController;
-  late TextEditingController signUpRePasswordController;
-  late TextEditingController signUpEmailController;
-  late TextEditingController signUpDateOfBirthController;
-  late TextEditingController signUpNationalitySearchController;
-
-  final forgotPasswordFormKey = GlobalKey<FormState>();
-  late TextEditingController forgotPasswordPhoneController;
-
-  final createNewPasswordFormKey = GlobalKey<FormState>();
-  late TextEditingController createNewPasswordController;
-  late TextEditingController createNewRePasswordController;
-
-  Future<NationalityResponse>? nationalityFuture;
-
   @override
-  AuthUiState onInitUiState() => const AuthUiState();
+  AuthUiState onInitUiState() => AuthUiState();
 
   @override
   void onInit() {
     super.onInit();
-    // Initialize all text controllers here to ensure fresh instances after DI recreation
-    signInPhoneController = TextEditingController();
-    signInPasswordController = TextEditingController();
 
-    signUpUsernameController = TextEditingController();
-    signUpPhoneController = TextEditingController();
-    signUpPasswordController = TextEditingController();
-    signUpRePasswordController = TextEditingController();
-    signUpEmailController = TextEditingController();
-    signUpDateOfBirthController = TextEditingController();
-    signUpNationalitySearchController = TextEditingController();
+    uiState.value.signInPhoneController.value;
+    uiState.value.signInPasswordController.value;
 
-    forgotPasswordPhoneController = TextEditingController();
+    uiState.value.signUpUsernameController.value;
+    uiState.value.signUpPhoneController.value;
+    uiState.value.signUpPasswordController.value;
+    uiState.value.signUpRePasswordController.value;
+    uiState.value.signUpEmailController.value;
+    uiState.value.signUpDateOfBirthController.value;
+    uiState.value.signUpNationalitySearchController.value;
 
-    createNewPasswordController = TextEditingController();
-    createNewRePasswordController = TextEditingController();
+    uiState.value.forgotPasswordPhoneController.value;
+
+    uiState.value.createNewPasswordController.value;
+    uiState.value.createNewRePasswordController.value;
     _loadLanguageFromPref();
   }
 
@@ -83,7 +57,7 @@ class AuthController extends StateController<AuthUiState> {
     int? gender,
     int? nationalityId,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
     try {
       final res = await authUseCase.register(
         name: name,
@@ -95,14 +69,13 @@ class AuthController extends StateController<AuthUiState> {
         gender: gender,
         nationalityId: nationalityId,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final token = res.body?.message?.toString() ?? '';
-          Get.to(
-            () => VerifyCodeScreen(identify: 1, token: token, phone: telephone),
-            transition: Transition.rightToLeft,
-            duration: const Duration(milliseconds: Constrains.duration),
+          Get.toNamed(
+            AppRoutes.verifyCode,
+            arguments: {'identify': 1, 'token': token, 'phone': telephone},
           );
           return;
         }
@@ -114,11 +87,11 @@ class AuthController extends StateController<AuthUiState> {
         return;
       }
       ScaffoldMessenger.of(
-        context,
+        Get.context!,
       ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
     } catch (e) {
-      Loading().loadingClose(context);
-      uiState.value = state.copyWith(errorMessage: e.toString());
+      Loading().loadingClose();
+      uiState.value.errorMessage.value = e.toString();
     }
   }
 
@@ -129,7 +102,7 @@ class AuthController extends StateController<AuthUiState> {
     required String deviceName,
     required String token,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
     try {
       final res = await authUseCase.verification(
         code: code,
@@ -137,7 +110,7 @@ class AuthController extends StateController<AuthUiState> {
         deviceName: deviceName,
         token: token,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final newToken = res.body?.message?.toString() ?? '';
@@ -162,8 +135,8 @@ class AuthController extends StateController<AuthUiState> {
         buttonText: 'yes'.tr,
       );
     } catch (e) {
-      Loading().loadingClose(context);
-      uiState.value = state.copyWith(errorMessage: e.toString());
+      Loading().loadingClose();
+      uiState.value.errorMessage.value = e.toString();
     }
   }
 
@@ -181,17 +154,17 @@ class AuthController extends StateController<AuthUiState> {
     required String code,
     required String token,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
     try {
       final res = await authUseCase.resetPasswordVerify(
         code: code,
         token: token,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final newToken = res.body?.message?.toString() ?? '';
-          Get.off(() => CreateNewPasswordScreen(token: newToken));
+          Get.offNamed(AppRoutes.newPassword, arguments: {'token': newToken});
           return;
         }
         alertDialogOneButton(
@@ -202,11 +175,11 @@ class AuthController extends StateController<AuthUiState> {
         return;
       }
       ScaffoldMessenger.of(
-        context,
+        Get.context!,
       ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
     } catch (e) {
-      Loading().loadingClose(context);
-      uiState.value = state.copyWith(errorMessage: e.toString());
+      Loading().loadingClose();
+      uiState.value.errorMessage.value = e.toString();
     }
   }
 
@@ -224,39 +197,38 @@ class AuthController extends StateController<AuthUiState> {
     String password,
     String token,
   ) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
     try {
       final res = await authUseCase.newPassword(
         newPassword: password,
         token: token,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           Get.offAllNamed(AppRoutes.signIn);
           return;
         }
         ScaffoldMessenger.of(
-          context,
+          Get.context!,
         ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
       }
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
     }
   }
 
   Future<void> _forgotPassword(BuildContext context, String phone) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
     try {
       final res = await authUseCase.resetPasswordSendSms(phone: phone);
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final token = res.body?.message?.toString() ?? '';
-          Get.to(
-            () => VerifyCodeScreen(identify: 2, token: token, phone: phone),
-            transition: Transition.rightToLeft,
-            duration: const Duration(milliseconds: Constrains.duration),
+          Get.toNamed(
+            AppRoutes.verifyCode,
+            arguments: {'identify': 2, 'token': token, 'phone': phone},
           );
           return;
         }
@@ -268,10 +240,10 @@ class AuthController extends StateController<AuthUiState> {
         return;
       }
       ScaffoldMessenger.of(
-        context,
+        Get.context!,
       ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
     }
   }
 
@@ -295,42 +267,45 @@ class AuthController extends StateController<AuthUiState> {
   }
 
   void submitForgotPassword(BuildContext context) {
-    final valid = forgotPasswordFormKey.currentState?.validate() ?? false;
+    final valid =
+        uiState.value.forgotPasswordFormKey.currentState?.validate() ?? false;
     if (!valid) return;
-    _forgotPassword(context, forgotPasswordPhoneController.text);
+    _forgotPassword(context, uiState.value.forgotPasswordPhoneController.text);
   }
 
   void toggleCreateNewPasswordVisibility() {
-    uiState.value = state.copyWith(
-      newPasswordVisible: !state.newPasswordVisible,
-    );
+    uiState.value.newPasswordVisible.value =
+        !uiState.value.newPasswordVisible.value;
   }
 
   void toggleCreateNewRePasswordVisibility() {
-    uiState.value = state.copyWith(
-      newRePasswordVisible: !state.newRePasswordVisible,
-    );
+    uiState.value.newRePasswordVisible.value =
+        !uiState.value.newRePasswordVisible.value;
   }
 
   void submitCreateNewPassword(BuildContext context, {required String token}) {
-    final valid = createNewPasswordFormKey.currentState?.validate() ?? false;
+    final valid =
+        uiState.value.createNewPasswordFormKey.currentState?.validate() ??
+        false;
     if (!valid) return;
-    _createNewPassword(context, createNewPasswordController.text, token);
+    _createNewPassword(
+      context,
+      uiState.value.createNewPasswordController.text,
+      token,
+    );
   }
 
   void setVerifyIdentify(int identify) {
-    uiState.value = state.copyWith(verifyIdentify: identify);
+    uiState.value.verifyIdentify.value = identify;
   }
 
   void setVerifyTimeExpired(bool expired) {
-    uiState.value = state.copyWith(verifyTimeExpired: expired);
+    uiState.value.verifyTimeExpired.value = expired;
   }
 
   void markVerifyResent() {
-    uiState.value = state.copyWith(
-      verifyResend: true,
-      verifyTimeExpired: false,
-    );
+    uiState.value.verifyResend.value = true;
+    uiState.value.verifyTimeExpired.value = false;
   }
 
   void verifyCodeCompleted(
@@ -342,7 +317,7 @@ class AuthController extends StateController<AuthUiState> {
     required bool resend,
     required String newToken,
   }) {
-    if (state.verifyTimeExpired) {
+    if (uiState.value.verifyTimeExpired.value) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('code_expired'.tr)));
@@ -380,11 +355,11 @@ class AuthController extends StateController<AuthUiState> {
     required String token,
     required String phone,
   }) async {
-    final nextCount = state.verifyCountResend + 1;
-    uiState.value = state.copyWith(verifyCountResend: nextCount);
+    final nextCount = uiState.value.verifyCountResend.value + 1;
+    uiState.value.verifyCountResend.value = nextCount;
 
     if (nextCount == 2) {
-      uiState.value = state.copyWith(verifyCountResend: 0);
+      uiState.value.verifyCountResend.value = 0;
       return;
     }
 
@@ -394,28 +369,23 @@ class AuthController extends StateController<AuthUiState> {
       await _resendCode(context, token: token);
     } else if (identify == 3) {
       await _sendOtpForgetPassword(context, phone: phone);
-      Navigator.pop(context);
+      Get.back();
     } else {
       await _sendOtpRegister(context, type: '2', phone: phone);
-      Navigator.pop(context);
+      Get.back();
     }
 
     markVerifyResent();
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   void _loadLanguageFromPref() {
     final languagePref = AppPref.getLanguage();
     if (languagePref == Constrains.ENGLISH) {
-      uiState.value = state.copyWith(activeLanguage: 'en');
+      uiState.value.activeLanguage.value = 'en';
     } else if (languagePref == Constrains.CHINESE) {
-      uiState.value = state.copyWith(activeLanguage: 'zh');
+      uiState.value.activeLanguage.value = 'zh';
     } else {
-      uiState.value = state.copyWith(activeLanguage: 'km');
+      uiState.value.activeLanguage.value = 'km';
     }
   }
 
@@ -430,51 +400,46 @@ class AuthController extends StateController<AuthUiState> {
       Get.updateLocale(const Locale('zh', 'CN'));
       AppPref.setLanguage('zh');
     }
-    uiState.value = state.copyWith(activeLanguage: langCode);
+    uiState.value.activeLanguage.value = langCode;
   }
 
   void toggleSignInPasswordVisibility() {
-    uiState.value = state.copyWith(
-      signInPasswordVisible: !state.signInPasswordVisible,
-    );
+    uiState.value.signInPasswordVisible.value =
+        !uiState.value.signInPasswordVisible.value;
   }
 
   void toggleSignUpPasswordVisibility() {
-    uiState.value = state.copyWith(
-      signUpPasswordVisible: !state.signUpPasswordVisible,
-    );
+    uiState.value.signUpPasswordVisible.value =
+        !uiState.value.signUpPasswordVisible.value;
   }
 
   void toggleSignUpRePasswordVisibility() {
-    uiState.value = state.copyWith(
-      signUpRePasswordVisible: !state.signUpRePasswordVisible,
-    );
+    uiState.value.signUpRePasswordVisible.value =
+        !uiState.value.signUpRePasswordVisible.value;
   }
 
   void submitLogin(BuildContext context) {
-    final valid = signInFormKey.currentState?.validate() ?? false;
+    final valid = uiState.value.signInFormKey.currentState?.validate() ?? false;
     if (!valid) return;
 
     login(
       context,
-      username: signInPhoneController.text.trim(),
-      password: signInPasswordController.text.trim(),
+      username: uiState.value.signInPhoneController.text.trim(),
+      password: uiState.value.signInPasswordController.text.trim(),
     );
   }
 
   void ensureNationalityLoaded(BuildContext context) {
-    nationalityFuture ??= authUseCase.nationalityList();
+    uiState.value.nationalityFuture ??= authUseCase.nationalityList();
   }
 
   void setSignUpGender(String? value) {
-    uiState.value = state.copyWith(signUpGender: value);
+    uiState.value.signUpGender.value = value ?? '';
   }
 
   void setSignUpNationality({required String? value, required int? id}) {
-    uiState.value = state.copyWith(
-      signUpNationalityValue: value,
-      signUpNationalityId: id,
-    );
+    uiState.value.signUpNationalityValue.value = value ?? '';
+    uiState.value.signUpNationalityId.value = id ?? 0;
     if (value != null) {
       ValueStatic.nationalityName = value;
     }
@@ -488,8 +453,9 @@ class AuthController extends StateController<AuthUiState> {
     required String username,
     required String password,
   }) async {
-    uiState.value = state.copyWith(isLoading: true, errorMessage: null);
-    Loading().loadingShow(context);
+    uiState.value.isLoading.value = true;
+    uiState.value.errorMessage.value = '';
+    Loading().loadingShow();
 
     final deviceId = AppPref.getDeviceId() ?? 'VET_Express_DeviceID';
     final deviceName = AppPref.getDeviceName() ?? 'VET_Express_DeviceName';
@@ -504,7 +470,7 @@ class AuthController extends StateController<AuthUiState> {
         ),
       );
 
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (response.header?.result == false &&
           response.header?.statusCode == 401) {
@@ -520,9 +486,9 @@ class AuthController extends StateController<AuthUiState> {
       final token = response.body?.accessToken;
 
       if (tokenType == null || token == null) {
-        uiState.value = state.copyWith(errorMessage: 'try_again'.tr);
+        uiState.value.errorMessage.value = 'try_again'.tr;
         ScaffoldMessenger.of(
-          context,
+          Get.context!,
         ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
         return;
       }
@@ -536,44 +502,46 @@ class AuthController extends StateController<AuthUiState> {
 
       Get.offAllNamed(AppRoutes.home);
     } on Exception catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       log('login error', error: e);
-      uiState.value = state.copyWith(errorMessage: e.toString());
+      uiState.value.errorMessage.value = e.toString();
       ScaffoldMessenger.of(
-        context,
+        Get.context!,
       ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
     } finally {
-      uiState.value = state.copyWith(isLoading: false);
+      uiState.value.isLoading.value = false;
     }
   }
 
   Future<void> logout(BuildContext context) async {
-    uiState.value = state.copyWith(isLoading: true, errorMessage: null);
-    Loading().loadingShow(context);
+    uiState.value.isLoading.value = true;
+    uiState.value.errorMessage.value = '';
+    Loading().loadingShow();
 
     try {
       final deviceId = AppPref.getDeviceId() ?? '';
       await authUseCase.logout(deviceId: deviceId);
       await AppPref.clearAllData();
 
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       Get.offAllNamed(AppRoutes.signIn);
     } catch (e) {
-      Loading().loadingClose(context);
-      uiState.value = state.copyWith(errorMessage: e.toString());
+      Loading().loadingClose();
+      uiState.value.errorMessage.value = e.toString();
     } finally {
-      uiState.value = state.copyWith(isLoading: false);
+      uiState.value.isLoading.value = false;
     }
   }
 
   Future<void> deleteAccount(BuildContext context) async {
-    uiState.value = state.copyWith(isLoading: true, errorMessage: null);
-    Loading().loadingShow(context);
+    uiState.value.isLoading.value = true;
+    uiState.value.errorMessage.value = '';
+    Loading().loadingShow();
 
     try {
       final response = await authUseCase.deleteAccount();
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (response.header?.result == false) {
         alertDialogOneButton(
@@ -597,10 +565,10 @@ class AuthController extends StateController<AuthUiState> {
         );
       }
     } catch (e) {
-      Loading().loadingClose(context);
-      uiState.value = state.copyWith(errorMessage: e.toString());
+      Loading().loadingClose();
+      uiState.value.errorMessage.value = e.toString();
     } finally {
-      uiState.value = state.copyWith(isLoading: false);
+      uiState.value.isLoading.value = false;
     }
   }
 }

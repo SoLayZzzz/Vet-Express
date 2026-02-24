@@ -213,7 +213,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> uploadImageUpdate(File filepath) async {
-    Loading().loadingShow(Get.context!);
+    Loading().loadingShow();
     var request = http.MultipartRequest(
       'POST',
       Uri.parse(
@@ -228,7 +228,7 @@ class ProfileController extends GetxController {
 
     request.send().then((result) async {
       http.Response.fromStream(result).then((response) async {
-        Loading().loadingClose(Get.context!);
+        Loading().loadingClose();
         if (response.statusCode == 200) {
           final registerImageResponse = UploadImage.fromJson(
             jsonDecode(response.body),

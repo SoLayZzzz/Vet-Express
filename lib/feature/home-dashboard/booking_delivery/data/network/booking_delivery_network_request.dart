@@ -52,7 +52,7 @@ class BookingDeliveryNetworkRequest {
 
       throw Exception('Failed to load to server!');
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,

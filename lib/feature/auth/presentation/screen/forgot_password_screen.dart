@@ -21,7 +21,7 @@ class ForgotPasswordScreen extends GetView<AuthController> {
           FocusScope.of(context).unfocus();
         },
         child: Form(
-          key: controller.forgotPasswordFormKey,
+          key: controller.uiState.value.forgotPasswordFormKey,
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
@@ -43,7 +43,8 @@ class ForgotPasswordScreen extends GetView<AuthController> {
                     ),
                   ),
                   TextFormField(
-                    controller: controller.forgotPasswordPhoneController,
+                    controller:
+                        controller.uiState.value.forgotPasswordPhoneController,
                     autofocus: false,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.number,

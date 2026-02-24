@@ -31,7 +31,7 @@ class ScheduleNetworkRequest {
 
       return ScheduleResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -57,7 +57,7 @@ class ScheduleNetworkRequest {
 
       return ListByJourneyResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -83,7 +83,7 @@ class ScheduleNetworkRequest {
 
       return TotalByJourneyResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,

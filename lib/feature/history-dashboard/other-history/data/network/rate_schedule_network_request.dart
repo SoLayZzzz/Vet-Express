@@ -26,7 +26,7 @@ class RateScheduleNetworkRequest {
       );
       return json;
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,

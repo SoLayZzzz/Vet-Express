@@ -28,11 +28,11 @@ class GoodsTransferActionController
     required GoodsTransferAddRequestBody body,
     required VoidCallback onSuccess,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final res = await useCase.addGoodsTransfer(body: body);
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (res.header?.statusCode == 200 && res.header?.result == true) {
         alertDialogOneButton(
@@ -45,7 +45,7 @@ class GoodsTransferActionController
 
       return res;
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -53,7 +53,7 @@ class GoodsTransferActionController
       );
       rethrow;
     } catch (_) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }
@@ -63,28 +63,28 @@ class GoodsTransferActionController
     required GoodsTransferReviewRequestBody body,
     required VoidCallback onSuccess,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final res = await useCase.review(body: body);
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (res.header?.statusCode == 200 && res.header?.result == true) {
         if (res.body?.status == true) {
           ScaffoldMessenger.of(
-            context,
+            Get.context!,
           ).showSnackBar(SnackBar(content: Text('survey_submitted'.tr)));
           onSuccess();
         } else {
           ScaffoldMessenger.of(
-            context,
+            Get.context!,
           ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
         }
       }
 
       return res;
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -92,7 +92,7 @@ class GoodsTransferActionController
       );
       rethrow;
     } catch (_) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }

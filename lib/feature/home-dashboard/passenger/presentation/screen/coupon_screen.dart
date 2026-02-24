@@ -229,7 +229,7 @@ class _SelectCouponScreenState extends State<SelectCouponScreen> {
     String code,
     String travelDate,
   ) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final data = await _ensureNetworkRequest().checkCoupon(
@@ -238,7 +238,7 @@ class _SelectCouponScreenState extends State<SelectCouponScreen> {
         code: code,
         travelDate: travelDate,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (data.header!.statusCode == 200 && data.header?.result == true) {
         ///Coupon applied successfully
@@ -316,7 +316,7 @@ class _SelectCouponScreenState extends State<SelectCouponScreen> {
         }
       }
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -324,7 +324,7 @@ class _SelectCouponScreenState extends State<SelectCouponScreen> {
       );
       rethrow;
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('error_occurred'.tr),

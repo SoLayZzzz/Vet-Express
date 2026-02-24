@@ -137,18 +137,18 @@ class ScanQrController extends StateController<ScanQrUiState>
 
     final code = barcodes.first.rawValue;
     if (code != null) {
-      await goodsSearch(context, code);
+      await goodsSearch(Get.context!, code);
     }
   }
 
   Future<void> goodsSearch(BuildContext context, String code) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final json = await scanQrUseCase.searchCode(context: context, code: code);
 
-      if (context.mounted) {
-        Loading().loadingClose(context);
+      if (Get.context!.mounted) {
+        Loading().loadingClose();
       }
 
       final searchResponse = GoodsSearchResponse.fromJson(json);
@@ -180,7 +180,7 @@ class ScanQrController extends StateController<ScanQrUiState>
         await _displayDialog('information'.tr, 'code_invalid'.tr);
       }
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       await _displayDialog('information'.tr, 'error_occurred'.tr);
       log('Goods search error: $e');
     }
@@ -256,7 +256,7 @@ class ScanQrController extends StateController<ScanQrUiState>
           if (capture != null && capture.barcodes.isNotEmpty) {
             final code = capture.barcodes.first.rawValue;
             if (code != null) {
-              await goodsSearch(context, code);
+              await goodsSearch(Get.context!, code);
             }
           } else {
             await _displayDialog('information'.tr, 'code_invalid'.tr);

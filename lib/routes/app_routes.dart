@@ -3,6 +3,9 @@ class AppRoutes {
   static const signIn = '/sign-in';
   static const home = '/home';
 
+  static const verifyCode = '/verify-code';
+  static const newPassword = '/new-password';
+
   // Booking route
   static const ticketMenu = '/ticket-menu';
   static const selectTicket = '/select-ticket';

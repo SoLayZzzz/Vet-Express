@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:express_vet/base/endpoint.dart';
-
 import '../../../../base/network_data_source.dart';
 import '../../../../base/base_url.dart';
 import '../../../../utils/contains.dart';

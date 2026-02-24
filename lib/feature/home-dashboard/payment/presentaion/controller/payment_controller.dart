@@ -74,7 +74,7 @@ class PaymentController extends StateController<PaymentUistate> {
     required BuildContext context,
     required String transactionId,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final data = await uscase.processPayment(
@@ -82,13 +82,13 @@ class PaymentController extends StateController<PaymentUistate> {
         paymentMethodId: state.paymentMethodId.toString(),
         totalAmount: ValueStatic.totalPrice.toString(),
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (data.header?.statusCode == 200 && data.header?.result == true) {
         if (state.paymentMethodSelected == 1) {
           final token = data.body?.token;
           await payWithABAMobile(
-            context: context,
+            context: Get.context!,
             transactionId: transactionId,
             token: token ?? '',
           );
@@ -104,9 +104,9 @@ class PaymentController extends StateController<PaymentUistate> {
             ),
           );
           if (result == '1') {
-            showDialogPaymentComplete(context);
+            showDialogPaymentComplete(Get.context!);
           } else {
-            showDialogPaymentFail(context);
+            showDialogPaymentFail(Get.context!);
           }
         } else if (state.paymentMethodSelected == 3) {
           final token = data.body?.token;
@@ -120,9 +120,9 @@ class PaymentController extends StateController<PaymentUistate> {
             ),
           );
           if (result == '1') {
-            showDialogPaymentComplete(context);
+            showDialogPaymentComplete(Get.context!);
           } else {
-            showDialogPaymentFail(context);
+            showDialogPaymentFail(Get.context!);
           }
         } else if (state.paymentMethodSelected == 4) {
           final token = data.body?.token;
@@ -133,7 +133,7 @@ class PaymentController extends StateController<PaymentUistate> {
             ),
           );
           if (result == '1') {
-            showDialogPaymentComplete(context);
+            showDialogPaymentComplete(Get.context!);
           }
         } else if (state.paymentMethodSelected == 5) {
           final token = data.body?.token ?? '';
@@ -167,9 +167,9 @@ class PaymentController extends StateController<PaymentUistate> {
       ),
     );
     if (result == '1') {
-      showDialogPaymentComplete(context);
+      showDialogPaymentComplete(Get.context!);
     } else {
-      showDialogPaymentFail(context);
+      showDialogPaymentFail(Get.context!);
     }
   }
 
@@ -244,7 +244,7 @@ class PaymentController extends StateController<PaymentUistate> {
     if (result['status'] == 1) {
       Future.delayed(const Duration(seconds: 3), () async {
         await checkTransactionACLEDAComplete(
-          context: context,
+          context: Get.context!,
           transactionId: transactionId,
           token: token,
         );
@@ -253,7 +253,7 @@ class PaymentController extends StateController<PaymentUistate> {
       Future.delayed(const Duration(milliseconds: 1000), () async {
         if (state.loop) {
           await checkPaymentACLEDAComplete(
-            context: context,
+            context: Get.context!,
             transactionId: transactionId,
             token: token,
           );
@@ -268,14 +268,14 @@ class PaymentController extends StateController<PaymentUistate> {
     required String token,
   }) async {
     setLoop(false);
-    Loading().loadingShow(context);
+    Loading().loadingShow();
     final result = await uscase.acledaComplete(
       transactionId: transactionId,
       token: token,
     );
-    Loading().loadingClose(context);
+    Loading().loadingClose();
     if (result['status'] == 1) {
-      showDialogPaymentComplete(context);
+      showDialogPaymentComplete(Get.context!);
     }
   }
 
@@ -306,9 +306,9 @@ class PaymentController extends StateController<PaymentUistate> {
       ),
     );
     if (result == '1') {
-      showDialogPaymentComplete(context);
+      showDialogPaymentComplete(Get.context!);
     } else {
-      showDialogPaymentFail(context);
+      showDialogPaymentFail(Get.context!);
     }
   }
 

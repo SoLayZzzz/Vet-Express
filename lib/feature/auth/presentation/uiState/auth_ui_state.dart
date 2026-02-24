@@ -1,78 +1,49 @@
+import 'package:express_vet/feature/auth/data/model/response/nationality_response.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 class AuthUiState {
-  final bool isLoading;
-  final String? errorMessage;
-  final bool signInPasswordVisible;
-  final String activeLanguage;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxBool signInPasswordVisible = false.obs;
+  final RxString activeLanguage = 'km'.obs;
 
-  final bool signUpPasswordVisible;
-  final bool signUpRePasswordVisible;
-  final String? signUpGender;
-  final String? signUpNationalityValue;
-  final int? signUpNationalityId;
-  final String? signUpImagePath;
+  final RxBool signUpPasswordVisible = false.obs;
+  final RxBool signUpRePasswordVisible = false.obs;
+  final RxString signUpGender = ''.obs;
+  final RxString signUpNationalityValue = ''.obs;
+  final RxInt signUpNationalityId = 0.obs;
+  final RxString signUpImagePath = ''.obs;
 
-  final bool newPasswordVisible;
-  final bool newRePasswordVisible;
+  final RxBool newPasswordVisible = false.obs;
+  final RxBool newRePasswordVisible = false.obs;
 
-  final bool verifyTimeExpired;
-  final bool verifyResend;
-  final int verifyCountResend;
-  final int? verifyIdentify;
+  final RxBool verifyTimeExpired = false.obs;
+  final RxBool verifyResend = false.obs;
+  final RxInt verifyCountResend = 0.obs;
+  final RxInt verifyIdentify = 0.obs;
 
-  const AuthUiState({
-    this.isLoading = false,
-    this.errorMessage,
-    this.signInPasswordVisible = false,
-    this.activeLanguage = 'km',
-    this.signUpPasswordVisible = false,
-    this.signUpRePasswordVisible = false,
-    this.signUpGender,
-    this.signUpNationalityValue,
-    this.signUpNationalityId,
-    this.signUpImagePath,
-    this.newPasswordVisible = false,
-    this.newRePasswordVisible = false,
-    this.verifyTimeExpired = false,
-    this.verifyResend = false,
-    this.verifyCountResend = 0,
-    this.verifyIdentify,
-  });
+  //
+  final signInFormKey = GlobalKey<FormState>();
+  final signUpFormKey = GlobalKey<FormState>();
 
-  AuthUiState copyWith({
-    bool? isLoading,
-    String? errorMessage,
-    bool? signInPasswordVisible,
-    String? activeLanguage,
-    bool? signUpPasswordVisible,
-    bool? signUpRePasswordVisible,
-    String? signUpGender,
-    String? signUpNationalityValue,
-    int? signUpNationalityId,
-    String? signUpImagePath,
-    bool? newPasswordVisible,
-    bool? newRePasswordVisible,
-    bool? verifyTimeExpired,
-    bool? verifyResend,
-    int? verifyCountResend,
-    int? verifyIdentify,
-  }) => AuthUiState(
-    isLoading: isLoading ?? this.isLoading,
-    errorMessage: errorMessage,
-    signInPasswordVisible: signInPasswordVisible ?? this.signInPasswordVisible,
-    activeLanguage: activeLanguage ?? this.activeLanguage,
-    signUpPasswordVisible: signUpPasswordVisible ?? this.signUpPasswordVisible,
-    signUpRePasswordVisible:
-        signUpRePasswordVisible ?? this.signUpRePasswordVisible,
-    signUpGender: signUpGender ?? this.signUpGender,
-    signUpNationalityValue:
-        signUpNationalityValue ?? this.signUpNationalityValue,
-    signUpNationalityId: signUpNationalityId ?? this.signUpNationalityId,
-    signUpImagePath: signUpImagePath ?? this.signUpImagePath,
-    newPasswordVisible: newPasswordVisible ?? this.newPasswordVisible,
-    newRePasswordVisible: newRePasswordVisible ?? this.newRePasswordVisible,
-    verifyTimeExpired: verifyTimeExpired ?? this.verifyTimeExpired,
-    verifyResend: verifyResend ?? this.verifyResend,
-    verifyCountResend: verifyCountResend ?? this.verifyCountResend,
-    verifyIdentify: verifyIdentify ?? this.verifyIdentify,
-  );
+  late TextEditingController signInPhoneController;
+  late TextEditingController signInPasswordController;
+
+  late TextEditingController signUpUsernameController;
+  late TextEditingController signUpPhoneController;
+  late TextEditingController signUpPasswordController;
+  late TextEditingController signUpRePasswordController;
+  late TextEditingController signUpEmailController;
+  late TextEditingController signUpDateOfBirthController;
+  late TextEditingController signUpNationalitySearchController;
+
+  final forgotPasswordFormKey = GlobalKey<FormState>();
+  late TextEditingController forgotPasswordPhoneController;
+
+  final createNewPasswordFormKey = GlobalKey<FormState>();
+  late TextEditingController createNewPasswordController;
+  late TextEditingController createNewRePasswordController;
+
+  Future<NationalityResponse>? nationalityFuture;
 }

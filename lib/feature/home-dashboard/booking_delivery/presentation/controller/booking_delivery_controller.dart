@@ -23,7 +23,7 @@ class BookingDeliveryController
     required BookingDeliveryAddRequestBody body,
     required VoidCallback onSuccess,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final res = await bookingDeliveryUseCase.addBookingDelivery(
@@ -31,7 +31,7 @@ class BookingDeliveryController
         body: body,
       );
 
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (res.header?.statusCode == 200 && res.header?.result == true) {
         alertDialogOneButton(
@@ -44,7 +44,7 @@ class BookingDeliveryController
 
       return res;
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }

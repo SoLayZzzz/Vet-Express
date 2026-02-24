@@ -60,6 +60,9 @@ import '../feature/dash_board/scan_qr/presentation/screen/scan_qr_screen.dart';
 import '../utils/contains.dart';
 import 'app_routes.dart';
 
+import '../feature/auth/presentation/screen/verify_code_screen.dart';
+import '../feature/auth/presentation/screen/new_password_screen.dart';
+
 import '../feature/home-dashboard/ev-charger/presentation/controller/ev_payment_controller.dart';
 import '../feature/home-dashboard/payment/presentaion/ui/payment_screen.dart';
 import '../feature/home-dashboard/payment/presentaion/ui/payment_aba_screen.dart';
@@ -79,6 +82,32 @@ class AppPages {
       name: AppRoutes.home,
       page: () => const DashboardScreen(from: 0),
       binding: AuthBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.verifyCode,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return VerifyCodeScreen(
+          identify: (args?['identify'] as int?) ?? 1,
+          token: (args?['token'] as String?) ?? '',
+          phone: (args?['phone'] as String?) ?? '',
+        );
+      },
+      binding: AuthBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.newPassword,
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return CreateNewPasswordScreen(
+          token: (args?['token'] as String?) ?? '',
+        );
+      },
+      binding: AuthBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),
     GetPage(
       name: AppRoutes.ticketMenu,

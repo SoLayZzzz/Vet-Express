@@ -1114,7 +1114,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         phoneController.text.isNotEmpty &&
         nationalityValue != null) {
       //
-      Loading().loadingShow(context);
+      Loading().loadingShow();
       //
       TravelPackage().confirm(
         context: context,
@@ -1132,7 +1132,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
           if (response.header?.result == true &&
               response.header?.statusCode == 200) {
             //
-            Loading().loadingClose(context);
+            Loading().loadingClose();
             //
             status += 1;
             //
@@ -1143,7 +1143,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         },
         doOnFailed: () {
           //
-          Loading().loadingClose(context);
+          Loading().loadingClose();
         },
       );
     } else {
@@ -1421,7 +1421,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   }
 
   Future<void> processBooking(transactionId) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     var map = <String, dynamic>{};
     map['code'] = transactionId.toString();
@@ -1444,7 +1444,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
       if (response.statusCode == 200) {
         log('This is response booking process ==>>${response.body}');
         var data = PaymentResponse.fromJson(jsonDecode(response.body));
-        Loading().loadingClose(context);
+        Loading().loadingClose();
 
         if (data.header?.statusCode == 200 && data.header?.result == true) {
           if (paymentMethodSelected == 1) {
@@ -1457,7 +1457,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
             log('===> Pay Credit card');
             var token = data.body?.token;
             var result = await Navigator.push(
-              context,
+              Get.context!,
               MaterialPageRoute(
                 builder:
                     (context) => PaymentABAPackageScreen(
@@ -1492,7 +1492,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         throw Exception('Failed to load to server!');
       }
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -1505,7 +1505,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   }
 
   Future<void> uploadImageTravelPackage(File filepath) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     var request = http.MultipartRequest(
       'POST',
@@ -1527,7 +1527,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
       final response = await http.Response.fromStream(result);
 
       if (response.statusCode == 200) {
-        Loading().loadingClose(context);
+        Loading().loadingClose();
         log('This is response image travel package ==>>${response.body}');
         final registerImageResponse = UploadImage.fromJson(
           jsonDecode(response.body),
@@ -1549,14 +1549,14 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         throw Exception('Failed to upload photo');
       }
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
         buttonText: 'ok'.tr,
       );
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       log('An error occurred: $e');
       rethrow;
     }

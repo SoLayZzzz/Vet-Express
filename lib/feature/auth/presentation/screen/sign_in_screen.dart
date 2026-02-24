@@ -54,14 +54,15 @@ class SignInScreen extends GetView<AuthController> {
                 ),
               ),
               Form(
-                key: controller.signInFormKey,
+                key: controller.uiState.value.signInFormKey,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
                       const SizedBox(height: 20),
                       TextFormField(
-                        controller: controller.signInPhoneController,
+                        controller:
+                            controller.uiState.value.signInPhoneController,
                         autofocus: false,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: const TextStyle(
@@ -105,7 +106,8 @@ class SignInScreen extends GetView<AuthController> {
                       Obx(() {
                         final ui = controller.uiState.value;
                         return TextFormField(
-                          controller: controller.signInPasswordController,
+                          controller:
+                              controller.uiState.value.signInPasswordController,
                           autofocus: false,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: const TextStyle(
@@ -123,13 +125,13 @@ class SignInScreen extends GetView<AuthController> {
                           decoration: Style.inputText(
                             'pass'.tr,
                             iconRight:
-                                ui.signInPasswordVisible
+                                ui.signInPasswordVisible.value
                                     ? Ionicons.eye
                                     : Ionicons.eye_off_outline,
                             onPressed:
                                 controller.toggleSignInPasswordVisibility,
                           ),
-                          obscureText: !ui.signInPasswordVisible,
+                          obscureText: !ui.signInPasswordVisible.value,
                         );
                       }),
                       const SizedBox(height: 12),

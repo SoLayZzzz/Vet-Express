@@ -12,7 +12,7 @@ class TicketMenuController extends StateController<TicketMenuUiState> {
   TicketMenuController(this.ticketMenuUseCase);
 
   @override
-  TicketMenuUiState onInitUiState() => const TicketMenuUiState();
+  TicketMenuUiState onInitUiState() => TicketMenuUiState();
 
   @override
   void onInit() {
@@ -23,11 +23,11 @@ class TicketMenuController extends StateController<TicketMenuUiState> {
   void _loadLanguageFromPref() {
     final languagePref = AppPref.getLanguage();
     if (languagePref == Constrains.ENGLISH) {
-      uiState.value = state.copyWith(language: 'en');
+      uiState.value.language.value = 'en';
     } else if (languagePref == Constrains.CHINESE) {
-      uiState.value = state.copyWith(language: 'cn');
+      uiState.value.language.value = 'cn';
     } else {
-      uiState.value = state.copyWith(language: 'kh');
+      uiState.value.language.value = 'kh';
     }
   }
 
@@ -37,7 +37,7 @@ class TicketMenuController extends StateController<TicketMenuUiState> {
   }) {
     return ticketMenuUseCase.destinationsFrom(
       DestinationsFromRequest(
-        lang: state.language,
+        lang: state.language.value,
         type: type,
         searchText: searchText,
       ),
@@ -52,7 +52,7 @@ class TicketMenuController extends StateController<TicketMenuUiState> {
     return ticketMenuUseCase.destinationsTo(
       DestinationsToRequest(
         fromId: fromId,
-        lang: state.language,
+        lang: state.language.value,
         type: type,
         searchText: searchText,
       ),

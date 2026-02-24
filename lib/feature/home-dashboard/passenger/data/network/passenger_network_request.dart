@@ -39,7 +39,7 @@ class PassengerNetworkRequest {
 
       return CarPointResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(Get.context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -65,7 +65,7 @@ class PassengerNetworkRequest {
 
       return CarPointResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(Get.context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -73,7 +73,7 @@ class PassengerNetworkRequest {
       );
       rethrow;
     } catch (_) {
-      Loading().loadingClose(Get.context);
+      Loading().loadingClose();
       rethrow;
     }
   }
@@ -95,7 +95,7 @@ class PassengerNetworkRequest {
 
       return CheckPackageApplyResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(body.context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -121,7 +121,7 @@ class PassengerNetworkRequest {
 
       return ConfirmBookingResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -147,7 +147,7 @@ class PassengerNetworkRequest {
 
       return CancelBookingResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -174,7 +174,7 @@ class PassengerNetworkRequest {
 
       return BookingListModel.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -200,7 +200,7 @@ class PassengerNetworkRequest {
 
       return BookingDetailModel.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -232,7 +232,7 @@ class PassengerNetworkRequest {
 
       return PaymentResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -264,7 +264,7 @@ class PassengerNetworkRequest {
 
       return CheckPromotionCodeResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,

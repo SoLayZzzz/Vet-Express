@@ -40,7 +40,7 @@ class GoodsTransferHistoryNetworkRequest {
       );
       return TransferListResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -64,7 +64,7 @@ class GoodsTransferHistoryNetworkRequest {
       );
       return RequestGoodsTransferResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,

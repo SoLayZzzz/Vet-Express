@@ -50,7 +50,7 @@ class EvChargerNetworkRequest {
       );
       return EvChargerResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -74,7 +74,7 @@ class EvChargerNetworkRequest {
 
       return DestinationEvResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -101,7 +101,7 @@ class EvChargerNetworkRequest {
 
       return EvContactResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -128,7 +128,7 @@ class EvChargerNetworkRequest {
 
       return EvFaqResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -155,7 +155,7 @@ class EvChargerNetworkRequest {
 
       return EvPolicyResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -182,7 +182,7 @@ class EvChargerNetworkRequest {
 
       return EvSlideShowResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -209,7 +209,7 @@ class EvChargerNetworkRequest {
 
       return EvNewsFeedResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -236,7 +236,7 @@ class EvChargerNetworkRequest {
 
       return EvProvinceResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -269,7 +269,7 @@ class EvChargerNetworkRequest {
 
       return EvStationListResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -294,7 +294,7 @@ class EvChargerNetworkRequest {
 
       return SimpleResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -321,7 +321,7 @@ class EvChargerNetworkRequest {
 
       return EvWalletListResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -345,7 +345,7 @@ class EvChargerNetworkRequest {
 
       return EvWalletAmountResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -371,7 +371,7 @@ class EvChargerNetworkRequest {
 
       return EvTopUpResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -396,7 +396,7 @@ class EvChargerNetworkRequest {
 
       return EvTopUpResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -421,7 +421,7 @@ class EvChargerNetworkRequest {
 
       return EvScanQrResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -446,7 +446,7 @@ class EvChargerNetworkRequest {
 
       return SimpleResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,

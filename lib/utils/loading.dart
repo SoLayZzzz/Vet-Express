@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../value_statics.dart';
 import 'app_colors.dart';
 
 class Loading {
-  void loadingShow(context) {
+  void loadingShow() {
     showDialog(
       barrierDismissible: false,
       barrierColor: Colors.white.withValues(alpha: 0.7),
-      //Colors.white.withOpacity(0.7),
-      context: context,
+      context: Get.context!,
       builder: (context) {
         return Center(
           child: SizedBox(
@@ -29,7 +29,7 @@ class Loading {
     );
   }
 
-  void loadingClose(context) {
-    if (Navigator.canPop(context)) Navigator.pop(context);
+  void loadingClose() {
+    if (Navigator.canPop(Get.context!)) Navigator.pop(Get.context!);
   }
 }

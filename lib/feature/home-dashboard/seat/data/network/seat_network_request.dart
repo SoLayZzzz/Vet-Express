@@ -29,7 +29,7 @@ class SeatNetworkRequest {
 
       return Map<dynamic, dynamic>.from(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -56,7 +56,7 @@ class SeatNetworkRequest {
 
       return SeatUnavailableResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,

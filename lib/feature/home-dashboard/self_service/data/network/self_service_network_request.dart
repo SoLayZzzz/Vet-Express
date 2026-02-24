@@ -34,7 +34,7 @@ class SelfServiceNetworkRequest {
       );
       return ProvinceResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -65,7 +65,7 @@ class SelfServiceNetworkRequest {
       );
       return ProvinceResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -87,7 +87,7 @@ class SelfServiceNetworkRequest {
       );
       return UomListResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
@@ -127,7 +127,7 @@ class SelfServiceNetworkRequest {
         );
         return AddGoodsResponse.fromJson(json);
       } on TimeoutException {
-        Loading().loadingClose(context);
+        Loading().loadingClose();
         alertDialogOneButton(
           title: 'timeout'.tr,
           description: 'request_timed_out'.tr,

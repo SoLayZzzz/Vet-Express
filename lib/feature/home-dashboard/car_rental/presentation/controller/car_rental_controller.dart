@@ -33,14 +33,14 @@ class CarRentalController extends StateController<CarRentalUiState> {
     required CarRentalAddRequestBody body,
     required List<Map<String, String>> successDetails,
   }) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final res = await carRentalUseCase.addCarRental(
         context: context,
         body: body,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (res.header?.statusCode == 200 && res.header?.result == true) {
         alertDialogRental(context: context, details: successDetails);
@@ -48,7 +48,7 @@ class CarRentalController extends StateController<CarRentalUiState> {
 
       return res;
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }

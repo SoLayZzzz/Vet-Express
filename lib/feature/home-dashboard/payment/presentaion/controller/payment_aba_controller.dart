@@ -157,12 +157,12 @@ class PaymentAbaController extends GetxController {
           openDeepLinkABA(deepLink);
         } else {
           ScaffoldMessenger.of(
-            context,
+            Get.context!,
           ).showSnackBar(SnackBar(content: Text('something_wrong'.tr)));
         }
       } else {
         ScaffoldMessenger.of(
-          context,
+          Get.context!,
         ).showSnackBar(SnackBar(content: Text('payment_time_out'.tr)));
       }
     } else {
@@ -189,7 +189,7 @@ class PaymentAbaController extends GetxController {
       if (result['status'] == 1) {
         log('Check status transaction == 1');
         checkTransactionABAComplete(
-          context: context,
+          context: Get.context!,
           transactionId: transactionId,
           token: token,
         );
@@ -197,7 +197,7 @@ class PaymentAbaController extends GetxController {
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {
             checkPaymentABAComplete(
-              context: context,
+              context: Get.context!,
               transactionId: transactionId,
               token: token,
             );
@@ -207,7 +207,7 @@ class PaymentAbaController extends GetxController {
     } else {
       if (_loop) {
         checkPaymentABAComplete(
-          context: context,
+          context: Get.context!,
           transactionId: transactionId,
           token: token,
         );
@@ -223,7 +223,7 @@ class PaymentAbaController extends GetxController {
   }) async {
     _loop = false;
 
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     final response = await http.post(
       Uri.parse(
@@ -233,7 +233,7 @@ class PaymentAbaController extends GetxController {
     );
 
     if (!_loop) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       return;
     }
 
@@ -241,7 +241,7 @@ class PaymentAbaController extends GetxController {
       log('This is response check transaction $title ==>>${response.body}');
       Map<dynamic, dynamic> result = jsonDecode(response.body);
       log(result['status']);
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       if (result['status'] == "1") {
         log('Check status transaction $title == 1');
         Get.back(result: '1');
@@ -279,7 +279,7 @@ class PaymentAbaController extends GetxController {
 
         Future.delayed(const Duration(seconds: 3), () {
           checkTransactionACLEDAComplete(
-            context: context,
+            context: Get.context!,
             transactionId: transactionId,
             token: token,
           );
@@ -288,7 +288,7 @@ class PaymentAbaController extends GetxController {
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {
             checkPaymentACLEDAComplete(
-              context: context,
+              context: Get.context!,
               transactionId: transactionId,
               token: token,
             );
@@ -298,7 +298,7 @@ class PaymentAbaController extends GetxController {
     } else {
       if (_loop) {
         checkPaymentACLEDAComplete(
-          context: context,
+          context: Get.context!,
           transactionId: transactionId,
           token: token,
         );
@@ -314,7 +314,7 @@ class PaymentAbaController extends GetxController {
   }) async {
     _loop = false;
 
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     final response = await http.post(
       Uri.parse(
@@ -324,7 +324,7 @@ class PaymentAbaController extends GetxController {
     );
 
     if (!_loop) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       return;
     }
 
@@ -332,7 +332,7 @@ class PaymentAbaController extends GetxController {
       log('This is response check transaction ACLEDA ==>>${response.body}');
       Map<dynamic, dynamic> result = jsonDecode(response.body);
       log(result['status'].toString());
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       if (result['status'] == 1) {
         log('Check status transaction ACLEDA == 1');
         Get.back(result: '1');
@@ -340,7 +340,7 @@ class PaymentAbaController extends GetxController {
     } else {
       if (_loop) {
         checkTransactionACLEDAComplete(
-          context: context,
+          context: Get.context!,
           transactionId: transactionId,
           token: token,
         );

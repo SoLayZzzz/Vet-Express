@@ -87,7 +87,7 @@ class RateScheduleController extends StateController<RateScheduleUiState> {
       fields['note'] = note;
     }
 
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final json = await rateScheduleNetworkRequest.saveRateSchedule(
@@ -95,7 +95,7 @@ class RateScheduleController extends StateController<RateScheduleUiState> {
         fields: fields,
       );
 
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       final body = json['body'];
       final status = body is Map ? body['status'] : null;
@@ -130,7 +130,7 @@ class RateScheduleController extends StateController<RateScheduleUiState> {
         );
       }
     } catch (e) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       log('An error occurred: $e');
       rethrow;
     }

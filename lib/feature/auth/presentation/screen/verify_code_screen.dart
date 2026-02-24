@@ -31,15 +31,15 @@ class VerifyCodeScreen extends GetView<AuthController> {
       await launchUrl(uri);
     } else {
       ScaffoldMessenger.of(
-        context,
+        Get.context!,
       ).showSnackBar(SnackBar(content: Text('can_not_open_telegram'.tr)));
-      Navigator.pop(context);
+      Get.back();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (controller.uiState.value.verifyIdentify != identify) {
+    if (controller.uiState.value.verifyIdentify.value != identify) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.setVerifyIdentify(identify);
       });
@@ -138,7 +138,8 @@ class VerifyCodeScreen extends GetView<AuthController> {
                               identify: identify,
                               token: token,
                               phone: phone,
-                              resend: controller.uiState.value.verifyResend,
+                              resend:
+                                  controller.uiState.value.verifyResend.value,
                               newToken: VerifyCodeScreen.newToken,
                             );
                           },
@@ -149,7 +150,7 @@ class VerifyCodeScreen extends GetView<AuthController> {
                 ),
                 Obx(() {
                   final ui = controller.uiState.value;
-                  if (ui.verifyTimeExpired) return const SizedBox();
+                  if (ui.verifyTimeExpired.value) return const SizedBox();
                   return Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: Row(
@@ -190,7 +191,7 @@ class VerifyCodeScreen extends GetView<AuthController> {
                 }),
                 Obx(() {
                   final ui = controller.uiState.value;
-                  if (!ui.verifyTimeExpired) return const SizedBox();
+                  if (!ui.verifyTimeExpired.value) return const SizedBox();
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -211,10 +212,15 @@ class VerifyCodeScreen extends GetView<AuthController> {
                             phone: phone,
                           );
 
-                          if (controller.uiState.value.verifyCountResend == 0) {
+                          if (controller
+                                  .uiState
+                                  .value
+                                  .verifyCountResend
+                                  .value ==
+                              0) {
                             showDialog(
                               barrierColor: Colors.black26,
-                              context: context,
+                              context: Get.context!,
                               builder: (context) {
                                 return AlertDialogTwine(
                                   title: 'information'.tr,

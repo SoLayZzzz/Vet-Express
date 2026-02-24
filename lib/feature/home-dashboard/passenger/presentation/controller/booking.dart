@@ -116,14 +116,14 @@ class Booking {
     data['packageTravelCode'] = packageTravelCode;
     data['couponCode'] = couponCode;
 
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final response = await _ensureNetworkRequest().confirmBooking(
         context: context,
         fields: data,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (response.header?.statusCode == 200 &&
           response.header?.result == true) {
@@ -186,7 +186,7 @@ class Booking {
     } on TimeoutException {
       rethrow;
     } catch (_) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }
@@ -251,14 +251,14 @@ class Booking {
 
   // For get delete booking
   void cancelBooking(BuildContext context, String transactionID) async {
-    Loading().loadingShow(context);
+    Loading().loadingShow();
 
     try {
       final response = await _ensureNetworkRequest().cancelBooking(
         context: context,
         transactionId: transactionID,
       );
-      Loading().loadingClose(context);
+      Loading().loadingClose();
 
       if (response.header?.statusCode == 200 &&
           response.header?.result == true) {
@@ -276,7 +276,7 @@ class Booking {
     } on TimeoutException {
       rethrow;
     } catch (_) {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       rethrow;
     }
   }

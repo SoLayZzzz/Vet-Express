@@ -4,6 +4,7 @@ class AssetImages {
   // =========================
   // For Setting account screen
   // =========================
+
   static const String img_background_setting =
       'assets/images/image_background_setting.png';
   static const String img_user_profile = "assets/images/img_user_profile.png";
@@ -30,7 +31,7 @@ class AssetImages {
   static const String scan = 'assets/icons/icon_scan.png';
 
   // =========================
-  // For home scree
+  // For home screen
   // =========================
 
   // App Bar

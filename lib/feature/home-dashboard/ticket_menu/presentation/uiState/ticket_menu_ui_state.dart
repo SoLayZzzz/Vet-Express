@@ -1,12 +1,6 @@
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+
 class TicketMenuUiState {
-  final bool isLoading;
-  final String language;
-
-  const TicketMenuUiState({this.isLoading = false, this.language = 'kh'});
-
-  TicketMenuUiState copyWith({bool? isLoading, String? language}) =>
-      TicketMenuUiState(
-        isLoading: isLoading ?? this.isLoading,
-        language: language ?? this.language,
-      );
+  final RxBool isLoading = false.obs;
+  final RxString language = ''.obs;
 }

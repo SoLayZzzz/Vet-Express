@@ -25,7 +25,7 @@ class SignUpScreen extends GetView<AuthController> {
       appBar: AppBarVET().appBar(context, 'create_account'.tr),
       body: SafeArea(
         child: Form(
-          key: controller.signUpFormKey,
+          key: controller.uiState.value.signUpFormKey,
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
@@ -51,7 +51,8 @@ class SignUpScreen extends GetView<AuthController> {
                         ),
                         const SizedBox(height: 5),
                         TextFormField(
-                          controller: controller.signUpUsernameController,
+                          controller:
+                              controller.uiState.value.signUpUsernameController,
                           autofocus: false,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: const TextStyle(fontSize: 14),
@@ -96,7 +97,8 @@ class SignUpScreen extends GetView<AuthController> {
                         ),
                         const SizedBox(height: 5),
                         TextFormField(
-                          controller: controller.signUpPhoneController,
+                          controller:
+                              controller.uiState.value.signUpPhoneController,
                           autofocus: false,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.phone,
@@ -122,7 +124,8 @@ class SignUpScreen extends GetView<AuthController> {
                         Text("email".tr),
                         const SizedBox(height: 5),
                         TextFormField(
-                          controller: controller.signUpEmailController,
+                          controller:
+                              controller.uiState.value.signUpEmailController,
                           autofocus: false,
                           keyboardType: TextInputType.emailAddress,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -160,7 +163,11 @@ class SignUpScreen extends GetView<AuthController> {
                         Obx(() {
                           final ui = controller.uiState.value;
                           return TextFormField(
-                            controller: controller.signUpPasswordController,
+                            controller:
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpPasswordController,
                             autofocus: false,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
@@ -177,13 +184,13 @@ class SignUpScreen extends GetView<AuthController> {
                               'pass'.tr,
                               iconLeft: Ionicons.lock_closed_outline,
                               iconRight:
-                                  ui.signUpPasswordVisible
+                                  ui.signUpPasswordVisible.value
                                       ? Ionicons.eye
                                       : Ionicons.eye_off_outline,
                               onPressed:
                                   controller.toggleSignUpPasswordVisibility,
                             ),
-                            obscureText: !ui.signUpPasswordVisible,
+                            obscureText: !ui.signUpPasswordVisible.value,
                           );
                         }),
                       ],
@@ -211,7 +218,11 @@ class SignUpScreen extends GetView<AuthController> {
                         Obx(() {
                           final ui = controller.uiState.value;
                           return TextFormField(
-                            controller: controller.signUpRePasswordController,
+                            controller:
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpRePasswordController,
                             autofocus: false,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
@@ -219,21 +230,25 @@ class SignUpScreen extends GetView<AuthController> {
                             validator: (String? value) {
                               return CheckInput().checkMatch(
                                 value!,
-                                controller.signUpPasswordController.text,
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpPasswordController
+                                    .text,
                                 'pass_not_match'.tr,
                               );
                             },
                             decoration: Style.inputText(
                               'confirm_pass'.tr,
                               iconRight:
-                                  ui.signUpRePasswordVisible
+                                  ui.signUpRePasswordVisible.value
                                       ? Ionicons.eye
                                       : Ionicons.eye_off_outline,
                               onPressed:
                                   controller.toggleSignUpRePasswordVisibility,
                               iconLeft: Ionicons.lock_closed_outline,
                             ),
-                            obscureText: !ui.signUpRePasswordVisible,
+                            obscureText: !ui.signUpRePasswordVisible.value,
                           );
                         }),
                       ],
@@ -307,7 +322,7 @@ class SignUpScreen extends GetView<AuthController> {
                                               ),
                                         )
                                         .toList(),
-                                value: ui.signUpGender,
+                                value: ui.signUpGender.value,
                                 onChanged: (String? value) {
                                   controller.setSignUpGender(value);
                                 },
@@ -328,7 +343,7 @@ class SignUpScreen extends GetView<AuthController> {
                         Text('nationality'.tr),
                         const SizedBox(height: 5),
                         FutureBuilder<NationalityResponse>(
-                          future: controller.nationalityFuture,
+                          future: controller.uiState.value.nationalityFuture,
                           builder: (context, data) {
                             if (data.hasData) {
                               if ((data.data?.header?.result) == true &&
@@ -386,7 +401,8 @@ class SignUpScreen extends GetView<AuthController> {
                                                     ),
                                                   )
                                                   .toList(),
-                                          value: ui.signUpNationalityValue,
+                                          value:
+                                              ui.signUpNationalityValue.value,
                                           onChanged: (value) {
                                             final nationalityId =
                                                 data.data?.body?.data
@@ -415,6 +431,8 @@ class SignUpScreen extends GetView<AuthController> {
                                           dropdownSearchData: DropdownSearchData(
                                             searchController:
                                                 controller
+                                                    .uiState
+                                                    .value
                                                     .signUpNationalitySearchController,
                                             searchInnerWidgetHeight: 50,
                                             searchInnerWidget: Container(
@@ -430,6 +448,8 @@ class SignUpScreen extends GetView<AuthController> {
                                                 maxLines: null,
                                                 controller:
                                                     controller
+                                                        .uiState
+                                                        .value
                                                         .signUpNationalitySearchController,
                                                 decoration: Style.inputText(
                                                   'search_nation'.tr,
@@ -449,6 +469,8 @@ class SignUpScreen extends GetView<AuthController> {
                                           onMenuStateChange: (isOpen) {
                                             if (!isOpen) {
                                               controller
+                                                  .uiState
+                                                  .value
                                                   .signUpNationalitySearchController
                                                   .clear();
                                             }
@@ -486,24 +508,50 @@ class SignUpScreen extends GetView<AuthController> {
                       context: context,
                       buttonText: 'register'.tr,
                       onPressed: () {
-                        if (controller.signUpFormKey.currentState!.validate()) {
+                        if (controller.uiState.value.signUpFormKey.currentState!
+                            .validate()) {
                           final ui = controller.uiState.value;
                           controller.register(
                             context,
-                            name: controller.signUpUsernameController.text,
+                            name:
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpUsernameController
+                                    .text,
                             password:
-                                controller.signUpPasswordController.text.trim(),
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpPasswordController
+                                    .text
+                                    .trim(),
                             telephone:
-                                controller.signUpPhoneController.text.trim(),
-                            email: controller.signUpEmailController.text,
-                            dob: controller.signUpDateOfBirthController.text,
-                            filename: ui.signUpImagePath ?? '',
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpPhoneController
+                                    .text
+                                    .trim(),
+                            email:
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpEmailController
+                                    .text,
+                            dob:
+                                controller
+                                    .uiState
+                                    .value
+                                    .signUpDateOfBirthController
+                                    .text,
+                            filename: ui.signUpImagePath.value,
                             gender:
-                                ui.signUpGender == null
-                                    ? 0
-                                    : ui.signUpGender == 'male'.tr
+                                ui.signUpGender.value == 'male'.tr
                                     ? 1
-                                    : 2, // male = 1, female = 2
+                                    : ui.signUpGender.value == 'female'.tr
+                                    ? 2
+                                    : 0, // male = 1, female = 2
                             nationalityId: ValueStatic.nationalityId,
                           );
                         }

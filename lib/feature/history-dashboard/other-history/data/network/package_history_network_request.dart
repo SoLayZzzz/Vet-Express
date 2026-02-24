@@ -26,7 +26,7 @@ class PackageHistoryNetworkRequest {
       );
       return BuyTravelPackageListResponse.fromJson(json);
     } on TimeoutException {
-      Loading().loadingClose(context);
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'timeout'.tr,
         description: 'request_timed_out'.tr,
