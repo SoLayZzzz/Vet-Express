@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -129,7 +130,7 @@ class NotificationScreen extends GetView<NotificationsController> {
 
                               if (result == null) {
                                 _notificationsController.loadList(
-                                  context: context,
+                                  context: Get.context!,
                                   page: 1,
                                   rowsPerPage: 100,
                                 );
@@ -178,10 +179,7 @@ class NotificationScreen extends GetView<NotificationsController> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          'assets/images/ic_no_notification.png',
-                          height: 84,
-                        ),
+                        Image.asset(AssetImages.no_notification, height: 84),
                         Text('no_notification'.tr),
                       ],
                     ),

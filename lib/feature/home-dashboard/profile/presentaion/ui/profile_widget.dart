@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -85,7 +86,7 @@ class ProfileWidget extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: const Image(
-        image: AssetImage('assets/images/img_user_profile.png'),
+        image: AssetImage(AssetImages.img_user_profile),
         fit: BoxFit.cover,
       ),
     );
@@ -112,7 +113,7 @@ class ProfileWidget extends StatelessWidget {
                 radius: 40,
                 backgroundColor: AppColors.whiteColor,
                 child: Image.asset(
-                  'assets/images/img_user_profile.png',
+                  AssetImages.img_user_profile,
                   fit: BoxFit.cover,
                 ),
               ),

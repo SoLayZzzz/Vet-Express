@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -326,7 +327,7 @@ class ProfileScreen extends StatelessWidget {
                                 ?.isEmpty ??
                             true
                         ? Image.asset(
-                          'assets/images/img_user_profile.png',
+                          AssetImages.img_user_profile,
                           fit: BoxFit.cover,
                         )
                         : CachedNetworkImage(
@@ -421,11 +422,11 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  ClipRRect placeHolderImg() {
+  Widget placeHolderImg() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: const Image(
-        image: AssetImage('assets/images/img_user_profile.png'),
+        image: AssetImage(AssetImages.img_user_profile),
         fit: BoxFit.cover,
       ),
     );

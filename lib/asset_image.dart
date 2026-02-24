@@ -2,8 +2,14 @@
 
 class AssetImages {
   // =========================
-  // For auth
+  // For Setting account screen
   // =========================
+  static const String img_background_setting =
+      'assets/images/image_background_setting.png';
+  static const String img_user_profile = "assets/images/img_user_profile.png";
+  static const String img_term_condition = "assets/images/term&condition.png";
+  static const String imng_term_condition_logistics =
+      "assets/images/term-condition-logistics.jpg";
 
   // =========================
   // For dash board
@@ -65,6 +71,23 @@ class AssetImages {
       'assets/icons/icon_call_VireakLogistic.png';
   static const String ic_call_vireak_buva_sea =
       'assets/icons/icon_call_buvaSea.png';
+  static const String ic_call_thai_logistics =
+      'assets/icons/Icon_call_ThaiLogistics.png';
+  static const String ic_call_vietnam_logistic =
+      'assets/icons/icon_call_VietnamLogistics.png';
+  static const String ic_call_vehicle_rental =
+      'assets/icons/icon_call_vehicleRental.png';
+  static const String ic_messenger = 'assets/icons/icon_messenger.png';
+  static const String ic_telegram = 'assets/icons/icon_telegram.png';
+  static const String ic_facebook = 'assets/icons/icon_facebook.png';
+  static const String ic_instagram = 'assets/icons/icon_instagram.png';
+  static const String ic_tiktok = 'assets/icons/icon_tiktok.png';
+  static const String ic_youtube = 'assets/icons/icon_youtube.png';
+
+  // =========================
+  // For Notification screen
+  // =========================
+  static const String no_notification = 'assets/images/ic_no_notification.png';
 
   // =========================
   // For ticket menu screen

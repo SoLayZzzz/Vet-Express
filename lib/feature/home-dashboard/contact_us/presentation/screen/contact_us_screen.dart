@@ -39,29 +39,27 @@ class ContactUsScreen extends GetView<ContactUsController> {
                   '081 911 911',
                 ),
                 viewPhone(
-                  // 'assets/icons/icon_call_VireakLogistic.png',
                   AssetImages.ic_call_vireak_logistics,
                   'vetLogistic'.tr,
                   '010 522 522',
                 ),
                 viewPhone(
-                  // 'assets/icons/icon_call_buvaSea.png',
                   AssetImages.ic_call_vireak_buva_sea,
                   'vetBuva'.tr,
                   '015 888 850',
                 ),
                 viewPhone(
-                  'assets/icons/Icon_call_ThaiLogistics.png',
+                  AssetImages.ic_call_thai_logistics,
                   'vetThai'.tr,
                   '012 722 848',
                 ),
                 viewPhone(
-                  'assets/icons/icon_call_VietnamLogistics.png',
+                  AssetImages.ic_call_vietnam_logistic,
                   'vetVN'.tr,
                   '012 322 302',
                 ),
                 viewPhone(
-                  'assets/icons/icon_call_vehicleRental.png',
+                  AssetImages.ic_call_vehicle_rental,
                   'vetRental'.tr,
                   '098 717 717',
                 ),
@@ -75,16 +73,11 @@ class ContactUsScreen extends GetView<ContactUsController> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                view(AssetImages.ic_messenger, 'vetService'.tr, 'fb'.tr, () {
+                  _open('https://m.me/vireakbunthambus/');
+                }),
                 view(
-                  'assets/icons/icon_messenger.png',
-                  'vetService'.tr,
-                  'fb'.tr,
-                  () {
-                    _open('https://m.me/vireakbunthambus/');
-                  },
-                ),
-                view(
-                  'assets/icons/icon_telegram.png',
+                  AssetImages.ic_telegram,
                   'vetBus'.tr,
                   'rental_tele'.tr,
                   () async {
@@ -95,7 +88,7 @@ class ContactUsScreen extends GetView<ContactUsController> {
                   },
                 ),
                 view(
-                  'assets/icons/icon_telegram.png',
+                  AssetImages.ic_telegram,
                   'vetLogistic'.tr,
                   'rental_tele'.tr,
                   () async {
@@ -106,7 +99,7 @@ class ContactUsScreen extends GetView<ContactUsController> {
                   },
                 ),
                 view(
-                  'assets/icons/icon_telegram.png',
+                  AssetImages.ic_telegram,
                   'vetRental'.tr,
                   'rental_tele'.tr,
                   () async {
@@ -127,7 +120,7 @@ class ContactUsScreen extends GetView<ContactUsController> {
                 ),
                 const SizedBox(height: 10),
                 view(
-                  'assets/icons/icon_facebook.png',
+                  AssetImages.ic_facebook,
                   'vetService'.tr,
                   'fb'.tr,
                   () async {
@@ -142,22 +135,15 @@ class ContactUsScreen extends GetView<ContactUsController> {
                     }
                   },
                 ),
+                view(AssetImages.ic_instagram, 'vetService'.tr, 'ig'.tr, () {
+                  Get.to(
+                    () => const WebViewScreen(type: 3, ticketId: ''),
+                    duration: const Duration(milliseconds: Constrains.duration),
+                    transition: Transition.rightToLeft,
+                  );
+                }),
                 view(
-                  'assets/icons/icon_instagram.png',
-                  'vetService'.tr,
-                  'ig'.tr,
-                  () {
-                    Get.to(
-                      () => const WebViewScreen(type: 3, ticketId: ''),
-                      duration: const Duration(
-                        milliseconds: Constrains.duration,
-                      ),
-                      transition: Transition.rightToLeft,
-                    );
-                  },
-                ),
-                view(
-                  'assets/icons/icon_telegram.png',
+                  AssetImages.ic_telegram,
                   'vetService'.tr,
                   'tele'.tr,
                   () async {
@@ -168,7 +154,7 @@ class ContactUsScreen extends GetView<ContactUsController> {
                   },
                 ),
                 view(
-                  'assets/icons/icon_tiktok.png',
+                  AssetImages.ic_tiktok,
                   'vetService'.tr,
                   'tiktok'.tr,
                   () async {
@@ -181,7 +167,7 @@ class ContactUsScreen extends GetView<ContactUsController> {
                   },
                 ),
                 view(
-                  'assets/icons/icon_youtube.png',
+                  AssetImages.ic_youtube,
                   'vetService'.tr,
                   'yt'.tr,
                   () async {

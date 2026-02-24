@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -44,7 +45,7 @@ class SettingScreen extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     Image.asset(
-                      'assets/images/image_background_setting.png',
+                      AssetImages.img_background_setting,
                       fit: BoxFit.cover,
                     ),
                     Container(color: Colors.black.withValues(alpha: 0.1)),
@@ -56,9 +57,7 @@ class SettingScreen extends StatelessWidget {
                             ? CircleAvatar(
                               backgroundColor: const Color(0xFFC6C6C6),
                               radius: 63,
-                              child: Image.asset(
-                                "assets/images/img_user_profile.png",
-                              ),
+                              child: Image.asset(AssetImages.img_user_profile),
                             )
                             : ClipOval(
                               child: CachedNetworkImage(
@@ -186,10 +185,7 @@ class SettingScreen extends StatelessWidget {
       background: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/images/image_background_setting.png',
-            fit: BoxFit.cover,
-          ),
+          Image.asset(AssetImages.img_background_setting, fit: BoxFit.cover),
           Container(color: Colors.black.withValues(alpha: 0.1)),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +195,7 @@ class SettingScreen extends StatelessWidget {
                 backgroundColor: AppColors.backgroundColor,
                 radius: 63,
                 child: Image.asset(
-                  'assets/images/img_user_profile.png',
+                  AssetImages.img_user_profile,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -265,11 +261,11 @@ class SettingScreen extends StatelessWidget {
     ),
   );
 
-  ClipRRect placeHolderImg() {
+  Widget placeHolderImg() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
       child: const Image(
-        image: AssetImage('assets/images/img_user_profile.png'),
+        image: AssetImage(AssetImages.img_user_profile),
         fit: BoxFit.cover,
       ),
     );
