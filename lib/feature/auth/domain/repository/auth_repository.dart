@@ -1,3 +1,4 @@
+import 'package:express_vet/feature/auth/data/model/request/refreshToken_login_request.dart';
 import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
 
 import '../../data/model/request/login_request.dart';
@@ -20,8 +21,9 @@ abstract class AuthRepository {
 
   Future<SimpleResponse> deleteAccount();
 
-  // Migrated endpoints from legacy api/user.dart
   Future<SimpleResponse> register(RegisterRequest request);
+
+  Future<LoginResponse> loginWithRefreshToken(RefreshtokenLoginRequest request);
 
   Future<SimpleResponse> verification(VerificationRequest request);
 

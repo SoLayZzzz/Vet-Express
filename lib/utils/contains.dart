@@ -2,6 +2,7 @@ class Constrains {
   static String TOKEN = 'token';
   static String LOGIN = 'login';
   static String LANGUAGE = 'language';
+  static String REFRESH_TOKEN = 'refresh_token';
 
   // for type of language
   static String KHMER = 'km';

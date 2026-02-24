@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:express_vet/base/endpoint.dart';
+import 'package:express_vet/feature/auth/data/model/request/refreshToken_login_request.dart';
 import 'package:express_vet/feature/auth/data/model/request/register_request.dart';
 import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
 import '../../../../base/network_data_source.dart';
@@ -71,9 +72,20 @@ class AuthNetworkRequest {
   // ===== Migrated legacy api/user.dart methods =====
 
   Future<SimpleResponse> register(RegisterRequest request) async {
+    final fields = <String, String>{
+      if (request.name != null) 'name': request.name!,
+      if (request.password != null) 'password': request.password!,
+      if (request.telephone != null) 'telephone': request.telephone!,
+      if (request.email != null) 'email': request.email!,
+      if (request.dob != null) 'dob': request.dob!,
+      if (request.filename != null) 'filename': request.filename!,
+      if (request.gender != null) 'gender': request.gender!.toString(),
+      if (request.nationalityId != null)
+        'nationalityId': request.nationalityId!.toString(),
+    };
     final json = await netWorkDataSource.postMultipart(
       Endpoint.userRegister,
-      fields: request.toJson(),
+      fields: fields,
       attachAuth: false,
       timeout: const Duration(seconds: Constrains.timeout90),
     );
@@ -223,5 +235,17 @@ class AuthNetworkRequest {
       timeout: const Duration(seconds: Constrains.timeout30),
     );
     return SimpleResponse.fromJson(json);
+  }
+
+  Future<LoginResponse> loginWithRefreshToken(
+    RefreshtokenLoginRequest request,
+  ) async {
+    final json = await netWorkDataSource.postMultipart(
+      Endpoint.authLoginWithRefreshToken,
+      fields: request.toFields(),
+      attachAuth: false,
+      timeout: const Duration(seconds: Constrains.timeout30),
+    );
+    return LoginResponse.fromJson(json);
   }
 }

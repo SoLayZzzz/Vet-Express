@@ -19,6 +19,16 @@ class AppPref {
     return preferences.getString(Constrains.TOKEN);
   }
 
+  // ✅ Set refresh token in SharedPreferences
+  static Future<void> setRefreshToken(String refreshToken) async {
+    await preferences.setString(Constrains.REFRESH_TOKEN, refreshToken);
+  }
+
+  // ✅ Get refresh token from SharedPreferences
+  static String? getRefreshToken() {
+    return preferences.getString(Constrains.REFRESH_TOKEN);
+  }
+
   // ✅ Set login status in SharedPreferences
   static Future<void> setLogin() async {
     await preferences.setBool(Constrains.LOGIN, true);
@@ -42,6 +52,7 @@ class AppPref {
   // ✅ Clear ALL data (token, login, and any other user data)
   static Future<void> clearAllData() async {
     await preferences.remove(Constrains.TOKEN);
+    await preferences.remove(Constrains.REFRESH_TOKEN);
     await preferences.remove(Constrains.LOGIN);
   }
 

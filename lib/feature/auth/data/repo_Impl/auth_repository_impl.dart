@@ -1,3 +1,4 @@
+import 'package:express_vet/feature/auth/data/model/request/refreshToken_login_request.dart';
 import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
 
 import '../../domain/repository/auth_repository.dart';
@@ -104,4 +105,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String type,
     required String phone,
   }) => authNetworkRequest.sendOtpRegister(type: type, phone: phone);
+
+  @override
+  Future<LoginResponse> loginWithRefreshToken(
+    RefreshtokenLoginRequest request,
+  ) => authNetworkRequest.loginWithRefreshToken(request);
 }

@@ -13,6 +13,7 @@ import '../../../../utils/contains.dart';
 import '../../../../utils/loading.dart';
 import '../../data/model/request/login_request.dart';
 import '../../data/model/request/register_request.dart';
+import '../../data/model/request/refreshToken_login_request.dart';
 import '../../domain/uscase/auth_usecase.dart';
 import '../uiState/auth_ui_state.dart';
 import '../../../../routes/app_routes.dart';
@@ -45,6 +46,10 @@ class AuthController extends StateController<AuthUiState> {
     uiState.value.createNewPasswordController.value;
     uiState.value.createNewRePasswordController.value;
     _loadLanguageFromPref();
+
+    if (AppPref.isLoggedIn()) {
+      _loginWithRefreshToken();
+    }
   }
 
   // ===== Auth flow helpers using AuthUseCase =====
@@ -97,6 +102,42 @@ class AuthController extends StateController<AuthUiState> {
       Loading().loadingClose();
       uiState.value.errorMessage.value = e.toString();
     }
+  }
+
+  Future<bool> _loginWithRefreshToken() async {
+    try {
+      final res = await authUseCase.checkToken();
+      if (res.header.result == true && res.header.statusCode == 200) {
+        return true;
+      }
+    } catch (_) {}
+
+    final refreshToken = AppPref.getRefreshToken();
+    if (refreshToken == null || refreshToken.isEmpty) return false;
+    final deviceId = AppPref.getDeviceId() ?? 'VET_Express_DeviceID';
+
+    try {
+      final resp = await authUseCase.loginWithRefreshToken(
+        RefreshtokenLoginRequest(
+          deviceId: deviceId,
+          refreshToken: refreshToken,
+        ),
+      );
+
+      final tokenType = resp.body?.tokenType;
+      final newAccess = resp.body?.accessToken;
+      final newRefresh = resp.body?.refreshToken;
+
+      if (tokenType != null && newAccess != null) {
+        await AppPref.setToken('$tokenType $newAccess');
+        if (newRefresh != null && newRefresh.isNotEmpty) {
+          await AppPref.setRefreshToken(newRefresh);
+        }
+        return true;
+      }
+    } catch (_) {}
+
+    return false;
   }
 
   Future<void> _verification(
@@ -500,6 +541,10 @@ class AuthController extends StateController<AuthUiState> {
       }
 
       await AppPref.setToken('$tokenType $token');
+      final refresh = response.body?.refreshToken;
+      if (refresh != null && refresh.isNotEmpty) {
+        await AppPref.setRefreshToken(refresh);
+      }
 
       final userController = Get.find<UserController>();
       userController.fetchUserMe();

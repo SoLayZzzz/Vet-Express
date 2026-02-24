@@ -1,3 +1,4 @@
+import 'package:express_vet/feature/auth/data/model/request/refreshToken_login_request.dart';
 import 'package:express_vet/feature/auth/data/model/request/register_request.dart';
 import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
 
@@ -17,6 +18,10 @@ class AuthUseCase {
 
   Future<LoginResponse> login(LoginRequest request) =>
       authRepository.login(request);
+
+  Future<LoginResponse> loginWithRefreshToken(
+    RefreshtokenLoginRequest request,
+  ) => authRepository.loginWithRefreshToken(request);
 
   Future<void> logout({required String deviceId}) =>
       authRepository.logout(deviceId: deviceId);

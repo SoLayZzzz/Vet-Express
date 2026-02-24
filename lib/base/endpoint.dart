@@ -4,6 +4,8 @@ class Endpoint {
   static const String authCheckToken = 'auth/checkToken';
   static const String authCheckVersion = 'auth/checkVersion';
   static const String authDeleteAccount = 'auth/deleteAccount';
+  static const String authLoginWithRefreshToken =
+      '/auth/login-with-refresh-token';
 
   static const String userRegister = 'user/register';
   static const String userVerification = 'user/verification';
