@@ -134,11 +134,12 @@ class PaymentController extends StateController<PaymentUistate> {
           );
           if (result == '1') {
             showDialogPaymentComplete(Get.context!);
+          } else {
+            showDialogPaymentFail(Get.context!);
           }
         } else if (state.paymentMethodSelected == 5) {
           final token = data.body?.token ?? '';
           setNewToken(token);
-          // Let the screen show the ACLEDA option dialog (UI). Controller exposes methods for actions.
         }
       } else {
         throw Exception('Failed to load to server!');

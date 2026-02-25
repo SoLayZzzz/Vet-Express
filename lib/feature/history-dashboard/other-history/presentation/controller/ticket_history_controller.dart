@@ -16,9 +16,6 @@ class TicketHistoryController extends StateController<TicketHistoryUiState> {
   @override
   void onReady() {
     super.onReady();
-
-    if (state.futureListBooking != null) return;
-
     final ctx = Get.context;
     if (ctx != null) {
       loadBookingList(context: ctx);
@@ -27,7 +24,9 @@ class TicketHistoryController extends StateController<TicketHistoryUiState> {
 
   void loadBookingList({required BuildContext context}) {
     uiState.value = state.copyWith(
-      futureListBooking: ticketHistoryUseCase.fetchBookingList(context: context),
+      futureListBooking: ticketHistoryUseCase.fetchBookingList(
+        context: context,
+      ),
     );
   }
 }

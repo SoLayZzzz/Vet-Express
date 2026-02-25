@@ -29,27 +29,46 @@ class AuthController extends StateController<AuthUiState> {
   @override
   void onInit() {
     super.onInit();
+    uiState.value.signInPhoneController = TextEditingController();
+    uiState.value.signInPasswordController = TextEditingController();
 
-    uiState.value.signInPhoneController.value;
-    uiState.value.signInPasswordController.value;
+    uiState.value.signUpUsernameController = TextEditingController();
+    uiState.value.signUpPhoneController = TextEditingController();
+    uiState.value.signUpPasswordController = TextEditingController();
+    uiState.value.signUpRePasswordController = TextEditingController();
+    uiState.value.signUpEmailController = TextEditingController();
+    uiState.value.signUpDateOfBirthController = TextEditingController();
+    uiState.value.signUpNationalitySearchController = TextEditingController();
 
-    uiState.value.signUpUsernameController.value;
-    uiState.value.signUpPhoneController.value;
-    uiState.value.signUpPasswordController.value;
-    uiState.value.signUpRePasswordController.value;
-    uiState.value.signUpEmailController.value;
-    uiState.value.signUpDateOfBirthController.value;
-    uiState.value.signUpNationalitySearchController.value;
+    uiState.value.forgotPasswordPhoneController = TextEditingController();
 
-    uiState.value.forgotPasswordPhoneController.value;
-
-    uiState.value.createNewPasswordController.value;
-    uiState.value.createNewRePasswordController.value;
+    uiState.value.createNewPasswordController = TextEditingController();
+    uiState.value.createNewRePasswordController = TextEditingController();
     _loadLanguageFromPref();
 
     if (AppPref.isLoggedIn()) {
       _loginWithRefreshToken();
     }
+  }
+
+  @override
+  void onClose() {
+    uiState.value.signInPhoneController.dispose();
+    uiState.value.signInPasswordController.dispose();
+
+    uiState.value.signUpUsernameController.dispose();
+    uiState.value.signUpPhoneController.dispose();
+    uiState.value.signUpPasswordController.dispose();
+    uiState.value.signUpRePasswordController.dispose();
+    uiState.value.signUpEmailController.dispose();
+    uiState.value.signUpDateOfBirthController.dispose();
+    uiState.value.signUpNationalitySearchController.dispose();
+
+    uiState.value.forgotPasswordPhoneController.dispose();
+
+    uiState.value.createNewPasswordController.dispose();
+    uiState.value.createNewRePasswordController.dispose();
+    super.onClose();
   }
 
   // ===== Auth flow helpers using AuthUseCase =====

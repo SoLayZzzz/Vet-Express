@@ -11,6 +11,7 @@ import '../../home-dashboard/menu/presentation/screen/menu_screen.dart';
 import '../scan_qr/presentation/screen/scan_qr_screen.dart';
 import '../../../routes/app_routes.dart';
 import '../../../utils/contains.dart';
+import 'package:express_vet/feature/history-dashboard/other-history/presentation/controller/ticket_history_controller.dart';
 
 class DashBoardController extends StateController<DashBoardState> {
   @override
@@ -53,6 +54,9 @@ class DashBoardController extends StateController<DashBoardState> {
         );
       } else if (from == 2) {
         uiState.value = state.copyWith(navigated: true);
+        if (Get.isRegistered<TicketHistoryController>()) {
+          Get.delete<TicketHistoryController>(force: true);
+        }
         Get.toNamed(AppRoutes.ticketHistory);
       } else if (from == 5) {
         uiState.value = state.copyWith(navigated: true);

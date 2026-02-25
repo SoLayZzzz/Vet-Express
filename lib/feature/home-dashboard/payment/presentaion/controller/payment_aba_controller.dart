@@ -188,11 +188,9 @@ class PaymentAbaController extends GetxController {
       Map<dynamic, dynamic> result = jsonDecode(response.body);
       if (result['status'] == 1) {
         log('Check status transaction == 1');
-        checkTransactionABAComplete(
-          context: Get.context!,
-          transactionId: transactionId,
-          token: token,
-        );
+        // Immediately finish with success so caller can show completion dialog
+        _loop = false;
+        Get.back(result: '1');
       } else {
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {
@@ -276,14 +274,9 @@ class PaymentAbaController extends GetxController {
       Map<dynamic, dynamic> result = jsonDecode(response.body);
       if (result['status'] == 1) {
         log('Check status transaction == 1');
-
-        Future.delayed(const Duration(seconds: 3), () {
-          checkTransactionACLEDAComplete(
-            context: Get.context!,
-            transactionId: transactionId,
-            token: token,
-          );
-        });
+        // Immediately finish with success so caller can show completion dialog
+        _loop = false;
+        Get.back(result: '1');
       } else {
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {

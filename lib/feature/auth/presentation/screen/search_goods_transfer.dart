@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../dash_board/scan_qr/presentation/binding/scan_qr_binding.dart';
 import '../../../dash_board/scan_qr/presentation/controller/scan_qr_controller.dart';
-import '../../../../utils/alert_dialog.dart';
 import '../../../../utils/app_bar.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/button.dart';
