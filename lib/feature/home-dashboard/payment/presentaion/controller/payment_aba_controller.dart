@@ -186,11 +186,16 @@ class PaymentAbaController extends GetxController {
     if (response.statusCode == 200) {
       log('This is response check payment $title ==>>${response.body}');
       Map<dynamic, dynamic> result = jsonDecode(response.body);
-      if (result['status'] == 1) {
+      final status = '${result['status']}';
+      if (status == '1') {
         log('Check status transaction == 1');
         // Immediately finish with success so caller can show completion dialog
         _loop = false;
         Get.back(result: '1');
+      } else if (status == '0') {
+        log('Check status transaction == 0 (payment failed)');
+        _loop = false;
+        Get.back(result: '0');
       } else {
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {
@@ -272,11 +277,16 @@ class PaymentAbaController extends GetxController {
     if (response.statusCode == 200) {
       log('This is response check payment ACLEDA ==>>${response.body}');
       Map<dynamic, dynamic> result = jsonDecode(response.body);
-      if (result['status'] == 1) {
+      final status = '${result['status']}';
+      if (status == '1') {
         log('Check status transaction == 1');
         // Immediately finish with success so caller can show completion dialog
         _loop = false;
         Get.back(result: '1');
+      } else if (status == '0') {
+        log('Check status transaction == 0 (payment failed)');
+        _loop = false;
+        Get.back(result: '0');
       } else {
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {

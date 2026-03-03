@@ -26,9 +26,7 @@ alertDialogOneButton({
             child: Material(
               color: Colors.transparent,
               child: Column(
-                mainAxisSize:
-                    MainAxisSize
-                        .min, // Ensure the column takes up minimum space
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),

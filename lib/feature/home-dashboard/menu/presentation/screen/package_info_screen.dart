@@ -1423,23 +1423,38 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   Future<void> processBooking(transactionId) async {
     Loading().loadingShow();
 
-    var map = <String, dynamic>{};
-    map['code'] = transactionId.toString();
-    map['paymentMethodId'] = paymentMethodID.toString();
-    map['totalAmount'] = "22.22".toString();
+    final fields = <String, String>{};
+    fields['code'] = transactionId.toString();
+    fields['paymentMethodId'] = paymentMethodID.toString();
+    fields['totalAmount'] = "22.22";
 
-    log(map.toString());
+    log(fields.toString());
 
     try {
-      final response = await http
-          .post(
-            Uri.parse('${BaseUrl.BASE_URL_TICKET}travelPackage/processPayment'),
-            headers: <String, String>{
-              'Authorization': AppPref.getToken() ?? '',
-            },
-            body: map,
-          )
-          .timeout(const Duration(seconds: Constrains.timeout30));
+      Future<http.Response> sendOnce() {
+        return http
+            .post(
+              Uri.parse(
+                '${BaseUrl.BASE_URL_TICKET}travelPackage/processPayment',
+              ),
+              headers: <String, String>{
+                'Authorization': AppPref.getToken() ?? '',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+                'Connection': 'close',
+              },
+              body: fields,
+            )
+            .timeout(const Duration(seconds: Constrains.timeout30));
+      }
+
+      http.Response response;
+      try {
+        response = await sendOnce();
+      } on http.ClientException catch (_) {
+        await Future.delayed(const Duration(milliseconds: 400));
+        response = await sendOnce();
+      }
 
       if (response.statusCode == 200) {
         log('This is response booking process ==>>${response.body}');
@@ -1499,7 +1514,18 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         buttonText: 'ok'.tr,
       );
       rethrow;
+    } on http.ClientException catch (e) {
+      Loading().loadingClose();
+      log('Network client error: $e');
+      alertDialogOneButton(
+        title: 'information'.tr,
+        description: 'payment_not_success'.tr,
+        buttonText: 'ok'.tr,
+      );
+      rethrow;
     } catch (e) {
+      Loading().loadingClose();
+      log('Unexpected error: $e');
       rethrow;
     }
   }

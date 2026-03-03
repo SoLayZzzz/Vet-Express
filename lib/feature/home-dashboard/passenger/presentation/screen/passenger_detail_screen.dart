@@ -374,8 +374,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                           children: [
                             InkWell(
                               onTap: () {
-                                gender.removeAt(index);
-                                gender.insert(index, '1');
+                                // set male
+                                if (index < gender.length) {
+                                  gender[index] = '1';
+                                }
                                 controller.update();
                               },
                               child: Container(
@@ -432,8 +434,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             ),
                             InkWell(
                               onTap: () {
-                                gender.removeAt(index);
-                                gender.insert(index, '2');
+                                // set female
+                                if (index < gender.length) {
+                                  gender[index] = '2';
+                                }
                                 controller.update();
                               },
                               child: Container(
@@ -818,6 +822,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
           controller.createGenderListOneWay(controller.genderOneWay);
           controller.createNationalListOneWay(controller.nationalOneWay);
+          controller.autofillFromUserIfSingle();
           controller.createGenderListTwoWay(controller.genderTwoWay);
           controller.createNationalListTwoWay(controller.nationalTwoWay);
           controller.createDobOneWay(controller.dobOneWay);
@@ -2063,6 +2068,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                       controller
                                                                           .codeController
                                                                           .text = '';
+                                                                      // allow promo button again
+                                                                      controller
+                                                                              .isTravelPackageOk =
+                                                                          false;
                                                                       controller
                                                                           .update();
                                                                     }
@@ -2543,6 +2552,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                               controller
                                                                   .codeController
                                                                   .text = '';
+                                                              // allow promo button again
+                                                              controller
+                                                                      .isTravelPackageOk =
+                                                                  false;
                                                               controller
                                                                   .update();
                                                             }
@@ -3718,180 +3731,137 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                           ],
                         ),
                       ),
-                      Container(
-                        color: AppColors.whiteColor,
-                        width: double.infinity,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
-                          ),
-                          child: globalButton(
-                            context: context,
-                            buttonText: 'process_to_payment'.tr,
-                            buttonColor:
-                                ValueStatic.ticketType == '3'
-                                    ? AppColors.airBusColor
-                                    : AppColors.primaryColor,
-                            onPressed: () {
-                              ///onClick for one way
-                              if (ValueStatic.journeyType == 1) {
-                                ///check condition for only Kampot to Koh Tral
-                                if (ValueStatic.companyTypeOneWay == 4) {
-                                  if (controller.checkData(
-                                        controller.genderOneWay,
-                                      ) ||
-                                      ValueStatic.boardingPointOneWayId == '' ||
-                                      ValueStatic.dropOffPointOneWayId == '' ||
-                                      controller.checkDataNation(
-                                        controller.nationalOneWay,
-                                      ) ||
-                                      controller.check(
-                                        controller.getDobOneWay(
-                                          controller.dobOneWay,
-                                        ),
-                                      ) ||
-                                      controller.check(
-                                        controller.getPassportOneWay(
-                                          controller.passportOneWay,
-                                        ),
-                                      ) ||
-                                      controller.check(
-                                        controller.getNameOneWay(
-                                          controller.nameOneWay,
-                                        ),
-                                      )) {
-                                    alertDialogOneButton(
-                                      title: 'information'.tr,
-                                      description:
-                                          "please_input_require_data".tr,
-                                      buttonText: 'yes'.tr,
-                                    );
-                                  } else {
-                                    _callGetData(context, isConfirm: true);
-                                  }
-                                }
-                                ///normal route
-                                else {
-                                  if (controller.checkData(
-                                        controller.genderOneWay,
-                                      ) ||
-                                      ValueStatic.boardingPointOneWayId == '' ||
-                                      ValueStatic.dropOffPointOneWayId == '' ||
-                                      controller.checkDataNation(
-                                        controller.nationalOneWay,
-                                      )) {
-                                    alertDialogOneButton(
-                                      title: 'information'.tr,
-                                      description:
-                                          "please_input_require_data".tr,
-                                      buttonText: 'yes'.tr,
-                                    );
-                                  } else {
-                                    _callGetData(context, isConfirm: true);
-                                  }
-                                }
-                              }
-                              ///onClick for round trip
-                              else {
-                                ///check condition for only Kampot to Koh Tral
-                                if (ValueStatic.companyTypeTwoWay == 4 &&
-                                    ValueStatic.companyTypeOneWay == 4) {
-                                  final hasError =
-                                      controller.checkData(
-                                        controller.genderOneWay,
-                                      ) ||
-                                      controller.checkData(
-                                        controller.genderTwoWay,
-                                      ) ||
-                                      ValueStatic.boardingPointOneWayId == '' ||
-                                      ValueStatic.dropOffPointOneWayId == '' ||
-                                      ValueStatic.dropOffPointTwoWayId == '' ||
-                                      controller.checkDataNation(
-                                        controller.nationalOneWay,
-                                      ) ||
-                                      controller.checkDataNation(
-                                        controller.nationalTwoWay,
-                                      ) ||
-                                      controller.check(
-                                        controller.getDobOneWay(
-                                          controller.dobOneWay,
-                                        ),
-                                      ) ||
-                                      controller.check(
-                                        controller.getDobTwoWay(
-                                          controller.dobTwoWay,
-                                        ),
-                                      ) ||
-                                      controller.check(
-                                        controller.getPassportOneWay(
-                                          controller.passportOneWay,
-                                        ),
-                                      ) ||
-                                      controller.check(
-                                        controller.getPassportTwoWay(
-                                          controller.passportTwoWay,
-                                        ),
-                                      ) ||
-                                      controller.check(
-                                        controller.getNameOneWay(
-                                          controller.nameOneWay,
-                                        ),
-                                      ) ||
-                                      controller.check(
-                                        controller.getNameTwoWay(
-                                          controller.nameTwoWay,
-                                        ),
-                                      );
-
-                                  if (hasError) {
-                                    alertDialogOneButton(
-                                      title: 'information'.tr,
-                                      description:
-                                          "please_input_require_data".tr,
-                                      buttonText: 'yes'.tr,
-                                    );
-                                  } else {
-                                    _callGetData(context, isConfirm: true);
-                                  }
-                                }
-                                ///normal route
-                                else {
-                                  if (controller.checkData(
-                                        controller.genderOneWay,
-                                      ) ||
-                                      controller.checkDataNation(
-                                        controller.nationalOneWay,
-                                      ) ||
-                                      controller.checkData(
-                                        controller.genderTwoWay,
-                                      ) ||
-                                      controller.checkDataNation(
-                                        controller.nationalTwoWay,
-                                      ) ||
-                                      ValueStatic.boardingPointTwoWayId == '' ||
-                                      ValueStatic.boardingPointOneWayId == '' ||
-                                      ValueStatic.dropOffPointOneWayId == '' ||
-                                      ValueStatic.dropOffPointTwoWayId == '') {
-                                    alertDialogOneButton(
-                                      title: 'information'.tr,
-                                      description:
-                                          "please_input_require_data".tr,
-                                      buttonText: 'yes'.tr,
-                                    );
-                                  } else {
-                                    _callGetData(context, isConfirm: true);
-                                  }
-                                }
-                              }
-                            },
-                          ),
-                        ),
-                      ),
+                      _buildButtonToPaymentScreen(context),
                     ],
                   );
                 },
               );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  _buildButtonToPaymentScreen(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        color: AppColors.whiteColor,
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: globalButton(
+            context: context,
+            buttonText: 'process_to_payment'.tr,
+            buttonColor:
+                ValueStatic.ticketType == '3'
+                    ? AppColors.airBusColor
+                    : AppColors.primaryColor,
+            onPressed: () {
+              ///onClick for one way
+              if (ValueStatic.journeyType == 1) {
+                ///check condition for only Kampot to Koh Tral
+                if (ValueStatic.companyTypeOneWay == 4) {
+                  if (controller.checkData(controller.genderOneWay) ||
+                      ValueStatic.boardingPointOneWayId == '' ||
+                      ValueStatic.dropOffPointOneWayId == '' ||
+                      controller.checkDataNation(controller.nationalOneWay) ||
+                      controller.check(
+                        controller.getDobOneWay(controller.dobOneWay),
+                      ) ||
+                      controller.check(
+                        controller.getPassportOneWay(controller.passportOneWay),
+                      ) ||
+                      controller.check(
+                        controller.getNameOneWay(controller.nameOneWay),
+                      )) {
+                    alertDialogOneButton(
+                      title: 'information'.tr,
+                      description: "please_input_require_data".tr,
+                      buttonText: 'yes'.tr,
+                    );
+                  } else {
+                    _callGetData(context, isConfirm: true);
+                  }
+                }
+                ///normal route
+                else {
+                  if (controller.checkData(controller.genderOneWay) ||
+                      ValueStatic.boardingPointOneWayId == '' ||
+                      ValueStatic.dropOffPointOneWayId == '' ||
+                      controller.checkDataNation(controller.nationalOneWay)) {
+                    alertDialogOneButton(
+                      title: 'information'.tr,
+                      description: "please_input_require_data".tr,
+                      buttonText: 'yes'.tr,
+                    );
+                  } else {
+                    _callGetData(context, isConfirm: true);
+                  }
+                }
+              }
+              ///onClick for round trip
+              else {
+                ///check condition for only Kampot to Koh Tral
+                if (ValueStatic.companyTypeTwoWay == 4 &&
+                    ValueStatic.companyTypeOneWay == 4) {
+                  final hasError =
+                      controller.checkData(controller.genderOneWay) ||
+                      controller.checkData(controller.genderTwoWay) ||
+                      ValueStatic.boardingPointOneWayId == '' ||
+                      ValueStatic.dropOffPointOneWayId == '' ||
+                      ValueStatic.dropOffPointTwoWayId == '' ||
+                      controller.checkDataNation(controller.nationalOneWay) ||
+                      controller.checkDataNation(controller.nationalTwoWay) ||
+                      controller.check(
+                        controller.getDobOneWay(controller.dobOneWay),
+                      ) ||
+                      controller.check(
+                        controller.getDobTwoWay(controller.dobTwoWay),
+                      ) ||
+                      controller.check(
+                        controller.getPassportOneWay(controller.passportOneWay),
+                      ) ||
+                      controller.check(
+                        controller.getPassportTwoWay(controller.passportTwoWay),
+                      ) ||
+                      controller.check(
+                        controller.getNameOneWay(controller.nameOneWay),
+                      ) ||
+                      controller.check(
+                        controller.getNameTwoWay(controller.nameTwoWay),
+                      );
+
+                  if (hasError) {
+                    alertDialogOneButton(
+                      title: 'information'.tr,
+                      description: "please_input_require_data".tr,
+                      buttonText: 'yes'.tr,
+                    );
+                  } else {
+                    _callGetData(context, isConfirm: true);
+                  }
+                }
+                ///normal route
+                else {
+                  if (controller.checkData(controller.genderOneWay) ||
+                      controller.checkDataNation(controller.nationalOneWay) ||
+                      controller.checkData(controller.genderTwoWay) ||
+                      controller.checkDataNation(controller.nationalTwoWay) ||
+                      ValueStatic.boardingPointTwoWayId == '' ||
+                      ValueStatic.boardingPointOneWayId == '' ||
+                      ValueStatic.dropOffPointOneWayId == '' ||
+                      ValueStatic.dropOffPointTwoWayId == '') {
+                    alertDialogOneButton(
+                      title: 'information'.tr,
+                      description: "please_input_require_data".tr,
+                      buttonText: 'yes'.tr,
+                    );
+                  } else {
+                    _callGetData(context, isConfirm: true);
+                  }
+                }
+              }
             },
           ),
         ),

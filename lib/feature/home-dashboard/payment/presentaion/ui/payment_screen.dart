@@ -58,9 +58,9 @@ class _PaymentScreenState extends State<PaymentScreen>
     }
 
     // Load the initial URL
-    _controller.loadRequest(
-      Uri.parse('https://example.com'), // Replace with your URL
-    );
+    // _controller.loadRequest(
+    //   Uri.parse('https://example.com'), // Replace with your URL
+    // );
 
     // Set JavaScript mode
     _controller.setJavaScriptMode(JavaScriptMode.unrestricted);

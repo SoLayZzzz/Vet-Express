@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:express_vet/value_statics.dart';
+import 'package:express_vet/controller/user_controller.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
 import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
@@ -36,6 +37,25 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
   @override
   PassengerUistate onInitUiState() => PassengerUistate();
+
+  Worker? _userWorker;
+
+  @override
+  void onInit() {
+    super.onInit();
+    try {
+      final user = Get.find<UserController>();
+      _userWorker = ever(user.userMeResponse, (_) {
+        applyUserDefaultsToEmptySelections();
+      });
+    } catch (_) {}
+  }
+
+  @override
+  void onClose() {
+    _userWorker?.dispose();
+    super.onClose();
+  }
 
   Future<PassengerDetailInitResult> initPassengerDetail(
     BuildContext context,
@@ -668,6 +688,38 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     }
   }
 
+  void autofillFromUserIfSingle() {
+    try {
+      final user = Get.find<UserController>();
+      if (ValueStatic.journeyType == 1 &&
+          ValueStatic.oneWaySelectedSeat.length == 1) {
+        if (genderOneWay.isEmpty) {
+          genderOneWay.add('0');
+        }
+        final g = user.gender;
+        if (g == 1 || g == 2) {
+          genderOneWay[0] = g.toString();
+        }
+
+        if (nationalOneWay.isEmpty) {
+          nationalOneWay.add(0);
+        }
+        final natId = user.nationalityId;
+        if (natId > 0) {
+          nationalOneWay[0] = natId;
+          if (nationalityIds.isEmpty) {
+            nationalityIds = List<int?>.filled(
+              ValueStatic.oneWaySelectedSeat.length,
+              null,
+            );
+          }
+          nationalityIds[0] = natId;
+        }
+        update();
+      }
+    } catch (_) {}
+  }
+
   void createGenderListTwoWay(List<String> genderTwoWay) {
     for (int i = 0; i < ValueStatic.twoWaySelectedSeat.length; i++) {
       genderTwoWay.add('0');
@@ -702,6 +754,69 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     for (int i = 0; i < ValueStatic.twoWaySelectedSeat.length; i++) {
       nameTwoWay.add(TextEditingController());
     }
+  }
+
+  void applyUserDefaultsToEmptySelections() {
+    try {
+      final user = Get.find<UserController>();
+      final g = user.gender; // 1 male, 2 female
+      final natId = user.nationalityId; // >0 valid
+
+      // One-way gender defaults
+      if (genderOneWay.length == ValueStatic.oneWaySelectedSeat.length) {
+        for (int i = 0; i < genderOneWay.length; i++) {
+          if (genderOneWay[i] == '0' && (g == 1 || g == 2)) {
+            genderOneWay[i] = g.toString();
+          }
+        }
+      }
+
+      // Two-way gender defaults
+      if (genderTwoWay.length == ValueStatic.twoWaySelectedSeat.length) {
+        for (int i = 0; i < genderTwoWay.length; i++) {
+          if (genderTwoWay[i] == '0' && (g == 1 || g == 2)) {
+            genderTwoWay[i] = g.toString();
+          }
+        }
+      }
+
+      // One-way nationality defaults
+      if (nationalOneWay.length == ValueStatic.oneWaySelectedSeat.length) {
+        for (int i = 0; i < nationalOneWay.length; i++) {
+          if (nationalOneWay[i] == 0 && natId > 0) {
+            nationalOneWay[i] = natId;
+          }
+        }
+      }
+      if (nationalityIds.length == ValueStatic.oneWaySelectedSeat.length) {
+        for (int i = 0; i < nationalityIds.length; i++) {
+          final current = nationalityIds[i] ?? 0;
+          if ((current == 0) && natId > 0) {
+            nationalityIds[i] = natId;
+          }
+        }
+      }
+
+      // Two-way nationality defaults
+      if (nationalTwoWay.length == ValueStatic.twoWaySelectedSeat.length) {
+        for (int i = 0; i < nationalTwoWay.length; i++) {
+          if (nationalTwoWay[i] == 0 && natId > 0) {
+            nationalTwoWay[i] = natId;
+          }
+        }
+      }
+      if (nationalityIdsTwoWay.length ==
+          ValueStatic.twoWaySelectedSeat.length) {
+        for (int i = 0; i < nationalityIdsTwoWay.length; i++) {
+          final current = nationalityIdsTwoWay[i] ?? 0;
+          if ((current == 0) && natId > 0) {
+            nationalityIdsTwoWay[i] = natId;
+          }
+        }
+      }
+
+      update();
+    } catch (_) {}
   }
 
   void boardingListOneway(List<String> boardingPointOneway) {

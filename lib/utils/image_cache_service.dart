@@ -12,7 +12,8 @@ class ImageCacheService {
   static final _cacheDir = 'cached_images';
   static final Map<String, String> _memoryCache = {};
   static final Map<String, bool> _preloadedImages = {};
-  static final Map<String, Future<String>> _pathFutures = {}; // Shared future cache
+  static final Map<String, Future<String>> _pathFutures =
+      {}; // Shared future cache
 
   // IMAGE OPTIMIZATION SETTINGS
   static const int _maxWidth = 800;
@@ -20,13 +21,19 @@ class ImageCacheService {
   static const int _quality = 75;
 
   /// Get image - returns local path if cached, otherwise downloads and optimizes
-  static Future<String> getImage(String imageUrl, [String category = 'default']) {
+  static Future<String> getImage(
+    String imageUrl, [
+    String category = 'default',
+  ]) {
     final key = '$category::$imageUrl';
     _pathFutures.putIfAbsent(key, () => _getImageInternal(imageUrl, category));
     return _pathFutures[key]!;
   }
 
-  static Future<String> _getImageInternal(String imageUrl, String category) async {
+  static Future<String> _getImageInternal(
+    String imageUrl,
+    String category,
+  ) async {
     final key = '$category::$imageUrl';
 
     // Check memory cache first
@@ -54,7 +61,10 @@ class ImageCacheService {
     }
 
     // Download, optimize, and cache
-    final optimizedPath = await _downloadOptimizeAndCacheImage(imageUrl, category);
+    final optimizedPath = await _downloadOptimizeAndCacheImage(
+      imageUrl,
+      category,
+    );
     _memoryCache[key] = optimizedPath;
     return optimizedPath;
   }
@@ -64,7 +74,9 @@ class ImageCacheService {
     List<String> imageUrls, [
     String category = 'default',
   ]) async {
-    log('🚀 Pre-caching ${imageUrls.length} images for category "$category" to disk...');
+    log(
+      '🚀 Pre-caching ${imageUrls.length} images for category "$category" to disk...',
+    );
 
     for (final url in imageUrls) {
       _preloadedImages['$category::$url'] = true;
@@ -98,7 +110,9 @@ class ImageCacheService {
     BuildContext context, [
     String category = 'default',
   ]) async {
-    log('🚀 Pre-caching ${imageUrls.length} images to memory for "$category"...');
+    log(
+      '🚀 Pre-caching ${imageUrls.length} images to memory for "$category"...',
+    );
     await Future.wait(
       imageUrls.map((url) async {
         try {
@@ -125,7 +139,10 @@ class ImageCacheService {
   }
 
   /// Pre-load a specific image urgently
-  static Future<void> preloadImageUrgently(String imageUrl, [String category = 'default']) async {
+  static Future<void> preloadImageUrgently(
+    String imageUrl, [
+    String category = 'default',
+  ]) async {
     try {
       final cachedPath = await _getCachedImagePath(imageUrl, category);
       if (cachedPath == null) {
@@ -138,7 +155,10 @@ class ImageCacheService {
   }
 
   /// Download, optimize, and cache image
-  static Future<String> _downloadOptimizeAndCacheImage(String imageUrl, String category) async {
+  static Future<String> _downloadOptimizeAndCacheImage(
+    String imageUrl,
+    String category,
+  ) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final cacheDir = Directory('${directory.path}/$_cacheDir/$category');
@@ -181,7 +201,10 @@ class ImageCacheService {
   }
 
   /// Get cached image path
-  static Future<String?> _getCachedImagePath(String imageUrl, String category) async {
+  static Future<String?> _getCachedImagePath(
+    String imageUrl,
+    String category,
+  ) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final filename = _generateFileName(imageUrl);

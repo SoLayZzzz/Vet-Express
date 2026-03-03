@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';
@@ -281,13 +282,22 @@ class PassengerNetworkRequest {
     required String transactionId,
   }) async {
     try {
+      log(
+        'PassengerNetworkRequest.checkTicketStatus.request transactionId=$transactionId',
+      );
       final json = await networkDataSource.postMultipart(
         Endpoint.ticketBookingCheckTicketStatus,
         fields: <String, String>{'transactionId': transactionId},
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      try {
+        log(
+          'PassengerNetworkRequest.checkTicketStatus.response ${json.toString()}',
+        );
+      } catch (_) {
+        // ignore logging errors
+      }
       return WingResponse.fromJson(json);
     } on TimeoutException {
       alertDialogOneButton(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -32,7 +33,8 @@ class ConnectivityController extends GetxController {
 
   Future<void> _checkConnectivity() async {
     try {
-      final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+      final List<ConnectivityResult> results =
+          await _connectivity.checkConnectivity();
       _updateConnectionStatus(results);
     } catch (e) {
       log('Error checking connectivity: $e');
@@ -40,13 +42,13 @@ class ConnectivityController extends GetxController {
   }
 
   void _updateConnectionStatus(List<ConnectivityResult> results) {
-    bool hasConnection = results.any(
-      (result) =>
-          result == ConnectivityResult.mobile ||
-          result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.ethernet ||
-          result == ConnectivityResult.vpn,
-    );
+    bool hasConnection =
+        results.isNotEmpty &&
+        results.any(
+          (result) =>
+              result != ConnectivityResult.none &&
+              result != ConnectivityResult.bluetooth,
+        );
 
     isConnected.value = hasConnection;
 
@@ -66,27 +68,57 @@ class ConnectivityController extends GetxController {
 
   void _handleDisconnected() {
     if (!isDialogShowing.value) {
-      isDialogShowing.value = true;
+      () async {
+        await Future.delayed(const Duration(milliseconds: 400));
+        final stillOffline = !(await _hasActualConnection());
+        if (!stillOffline) {
+          _handleConnected();
+          return;
+        }
+        isDialogShowing.value = true;
 
-      Get.dialog(
-        PopScope(
-          canPop: false,
-          child: AlertDialogNoInternet(
-            ani: 'assets/gif/no_internet_connection_ani.gif',
-            title: 'connection'.tr,
-            description: "no_internet_connection".tr,
+        Get.dialog(
+          PopScope(
+            canPop: false,
+            child: AlertDialogNoInternet(
+              ani: 'assets/gif/no_internet_connection_ani.gif',
+              title: 'connection'.tr,
+              description: "no_internet_connection".tr,
+            ),
           ),
-        ),
-        barrierColor: Colors.black26,
-        barrierDismissible: false,
-      ).then((_) {
-        isDialogShowing.value = false;
-      });
+          barrierColor: Colors.black26,
+          barrierDismissible: false,
+        ).then((_) {
+          isDialogShowing.value = false;
+        });
+      }();
+    }
+  }
+
+  Future<bool> _hasActualConnection() async {
+    try {
+      final results = await _connectivity.checkConnectivity();
+      final logicalConnected =
+          results.isNotEmpty &&
+          results.any(
+            (r) =>
+                r != ConnectivityResult.none &&
+                r != ConnectivityResult.bluetooth,
+          );
+      if (logicalConnected) return true;
+
+      final lookup = await InternetAddress.lookup(
+        'example.com',
+      ).timeout(const Duration(seconds: 2));
+      return lookup.isNotEmpty && lookup.first.rawAddress.isNotEmpty;
+    } catch (e) {
+      log('Error verifying internet access: $e');
+      return false;
     }
   }
 
   Future<void> recheckConnection() async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 500));
     await _checkConnectivity();
   }
 

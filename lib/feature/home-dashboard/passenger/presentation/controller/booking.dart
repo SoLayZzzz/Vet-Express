@@ -158,7 +158,7 @@ class Booking {
           if (response.body?.msg == 'Data have been saved.') {
             ValueStatic.luckyDraw = luckyDraw;
             Navigator.push(
-              context,
+              Get.context!,
               MaterialPageRoute(
                 builder:
                     (context) => PaymentScreen(
@@ -171,7 +171,7 @@ class Booking {
             showDialog(
               barrierColor: Colors.black26,
               barrierDismissible: false,
-              context: context,
+              context: Get.context!,
               builder: (context) {
                 return dialog(
                   context,
@@ -265,7 +265,7 @@ class Booking {
         if (response.body?.status == 1) {
           ValueStatic().clearDataTicket();
           Navigator.pushAndRemoveUntil(
-            context,
+            Get.context!,
             MaterialPageRoute(
               builder: (context) => const DashboardScreen(from: 0),
             ),

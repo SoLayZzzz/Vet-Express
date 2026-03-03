@@ -4,7 +4,7 @@ import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import '../../../../../controller/profile_controller.dart';
+import '../controller/profile_controller.dart';
 import '../../../../auth/data/model/response/nationality_response.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/button.dart';
@@ -59,6 +59,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildUserProfile(ProfileController controller) {
     return SingleChildScrollView(
+      controller: _scrollController,
       padding: const EdgeInsets.all(15.0),
       child: Form(
         key: controller.formKey,
@@ -399,11 +400,13 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             onTap: () {
-              _scrollController.animateTo(
-                _scrollController.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              }
             },
           ),
         ],

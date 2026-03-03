@@ -1,21 +1,21 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import '../value_statics.dart';
-import '../base/base_url.dart';
-import '../feature/auth/presentation/binding/auth_binding.dart';
-import '../feature/auth/domain/uscase/auth_usecase.dart';
-import '../feature/auth/data/model/response/nationality_response.dart';
-import '../feature/auth/data/model/response/signup_response.dart';
-import '../feature/auth/data/model/response/user_me.dart';
-import '../utils/alert_dialog.dart';
-import '../utils/app_colors.dart';
-import '../utils/check_input.dart';
-import '../utils/loading.dart';
+import '../../../../../value_statics.dart';
+import '../../../../../base/base_url.dart';
+import '../../../../../base/network_data_source.dart';
+import '../../../../auth/presentation/binding/auth_binding.dart';
+import '../../../../auth/domain/uscase/auth_usecase.dart';
+import '../../../../auth/data/model/response/nationality_response.dart';
+import '../../../../auth/data/model/response/user_me.dart';
+import '../../../../../utils/alert_dialog.dart';
+import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/check_input.dart';
+import '../../../../../utils/loading.dart';
+import '../../../profile/data/network/profile_network_request.dart';
+import '../../../../../controller/user_controller.dart';
 
 class ProfileController extends GetxController {
   var userMeResponse = Rxn<UserMeResponse>();
@@ -155,22 +155,28 @@ class ProfileController extends GetxController {
             if (!Get.isRegistered<AuthUseCase>()) {
               AuthBinding().dependencies();
             }
-            await Get.find<AuthUseCase>().profileUpdate(
-              name: nameController.text,
-              telephone:
-                  phoneNumberController.text.isEmpty
-                      ? null
-                      : phoneNumberController.text,
-              email: emailController.text.isEmpty ? null : emailController.text,
-              filename: imagePath.value,
-              gender:
-                  gender.value == 'male'.tr
-                      ? 1
-                      : gender.value == 'female'.tr
-                      ? 2
-                      : 0,
-              nationalityId: selectedNationalityId.toInt(),
-            );
+            Loading().loadingShow();
+            try {
+              await Get.find<AuthUseCase>().profileUpdate(
+                name: nameController.text,
+                telephone:
+                    phoneNumberController.text.isEmpty
+                        ? null
+                        : phoneNumberController.text,
+                email:
+                    emailController.text.isEmpty ? null : emailController.text,
+                filename: imagePath.value,
+                gender:
+                    gender.value == 'male'.tr
+                        ? 1
+                        : gender.value == 'female'.tr
+                        ? 2
+                        : 0,
+                nationalityId: selectedNationalityId.toInt(),
+              );
+            } finally {
+              Loading().loadingClose();
+            }
 
             // Update static values
             ValueStatic.username = nameController.text;
@@ -184,6 +190,13 @@ class ProfileController extends GetxController {
                     : 0;
             ValueStatic.nationalityId = selectedNationalityId.toInt()!;
             ValueStatic.nationalityName = selectedNationality.value!;
+
+            // Refresh global user store so other screens react immediately
+            try {
+              if (Get.isRegistered<UserController>()) {
+                await Get.find<UserController>().fetchUserMe();
+              }
+            } catch (_) {}
           } else {
             if (invalidType == 1) {
               alertDialogOneButton(
@@ -214,44 +227,42 @@ class ProfileController extends GetxController {
 
   Future<void> uploadImageUpdate(File filepath) async {
     Loading().loadingShow();
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse(
-        '${BaseUrl.BASE_URL_UPLOAD_IMAGE}uploads/uploadPhotoUserProfile',
-      ),
-    );
-    request.headers['Content-Type'] = 'multipart/form-data';
-    request.fields['token'] = 'wK4lxDowEfgnaEH2k226FppwAJSflRPG';
-    request.files.add(
-      await http.MultipartFile.fromPath('photo', filepath.path),
-    );
+    try {
+      if (!Get.isRegistered<ProfileNetworkRequest>()) {
+        Get.lazyPut(
+          () => ProfileNetworkRequest(
+            NetworkDataSource(baseUrl: BaseUrl.BASE_URL_UPLOAD_IMAGE),
+          ),
+          fenix: true,
+        );
+      }
 
-    request.send().then((result) async {
-      http.Response.fromStream(result).then((response) async {
-        Loading().loadingClose();
-        if (response.statusCode == 200) {
-          final registerImageResponse = UploadImage.fromJson(
-            jsonDecode(response.body),
+      final registerImageResponse = await Get.find<ProfileNetworkRequest>()
+          .uploadUserProfilePhoto(
+            context: Get.context!,
+            filePath: filepath.path,
           );
-          if (registerImageResponse.img!.isNotEmpty) {
-            imagePath.value = registerImageResponse.img;
-            image.value = filepath;
-          } else {
-            alertDialogOneButton(
-              title: 'Information',
-              description: 'Upload photo failed',
-              buttonText: 'yes'.tr,
-            );
-          }
-        } else {
-          alertDialogOneButton(
-            title: 'Error',
-            description: 'Failed to upload image.',
-            buttonText: 'ok'.tr,
-          );
-        }
-      });
-    });
+      Loading().loadingClose();
+
+      if (registerImageResponse.img != null &&
+          registerImageResponse.img!.isNotEmpty) {
+        imagePath.value = registerImageResponse.img;
+        image.value = filepath;
+      } else {
+        alertDialogOneButton(
+          title: 'Information',
+          description: 'Upload photo failed',
+          buttonText: 'yes'.tr,
+        );
+      }
+    } catch (e) {
+      Loading().loadingClose();
+      alertDialogOneButton(
+        title: 'Error',
+        description: 'Failed to upload image.',
+        buttonText: 'ok'.tr,
+      );
+    }
   }
 
   void showImageSourceOptions() {
