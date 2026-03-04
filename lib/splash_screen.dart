@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -234,7 +235,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Image.asset(
-                    'assets/images/vet_logo.png',
+                    AssetImages.vet_logo,
                     width: 120,
                     height: 120,
                   ),

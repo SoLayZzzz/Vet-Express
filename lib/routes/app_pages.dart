@@ -72,16 +72,25 @@ import '../feature/home-dashboard/payment/presentaion/binding/payment_binding.da
 
 class AppPages {
   static final pages = <GetPage<dynamic>>[
-    GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
     GetPage(
       name: AppRoutes.signIn,
       page: () => const SignInScreen(),
       binding: AuthBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),
     GetPage(
       name: AppRoutes.home,
       page: () => const DashboardScreen(from: 0),
       binding: AuthBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),
     GetPage(
       name: AppRoutes.verifyCode,
@@ -113,6 +122,8 @@ class AppPages {
       name: AppRoutes.ticketMenu,
       page: () => const TicketMenuScreen(),
       binding: TicketMenuBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),
     GetPage(
       name: AppRoutes.selectTicket,

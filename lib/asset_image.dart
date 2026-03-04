@@ -2,6 +2,15 @@
 
 class AssetImages {
   // =========================
+  // App Logo
+  // =========================
+
+  // Logo QA
+  static const String vet_logo_qa = 'assets/images/vet_logo_qa.jpg';
+  // Logo Production
+  static const String vet_logo = 'assets/images/vet_logo.png';
+
+  // =========================
   // For Setting account screen
   // =========================
 
@@ -35,7 +44,6 @@ class AssetImages {
   // =========================
 
   // App Bar
-  static const String vet_logo = 'assets/images/vet_logo.png';
 
   static const String cambodia = 'assets/images/ic_cambodia.png';
   static const String china = 'assets/images/ic_chinese.png';

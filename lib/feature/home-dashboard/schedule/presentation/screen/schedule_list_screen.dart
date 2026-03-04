@@ -42,7 +42,7 @@ class ScheduleListScreen extends StatelessWidget {
             color: AppColors.whiteColor,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
         actions: [

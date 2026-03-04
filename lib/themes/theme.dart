@@ -11,7 +11,9 @@ ThemeData getAppTheme(context) {
   ).copyWith(
     scaffoldBackgroundColor: AppColors.backgroundColor,
     cardColor: AppColors.whiteColor,
-    colorScheme: ThemeData().colorScheme.copyWith(primary: AppColors.primaryColor),
+    colorScheme: ThemeData().colorScheme.copyWith(
+      primary: AppColors.primaryColor,
+    ),
   );
 }
 

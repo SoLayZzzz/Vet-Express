@@ -23,7 +23,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="VET Express"
+        android:label="VET Express QA"
         android:enableOnBackInvokedCallback="true"
         >
         <activity
