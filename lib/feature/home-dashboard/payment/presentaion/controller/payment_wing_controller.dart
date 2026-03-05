@@ -49,6 +49,9 @@ class PaymentWingController extends GetxController {
 
   void init({required BuildContext context}) {
     webViewController = WebViewController();
+    final wingPaymentUrl =
+        "${BaseUrl.PAYMENT_URL}payments/wingNewApiPaymentPro/$transactionId/$token";
+    log('PaymentWingController.loadWingPayment.request url=$wingPaymentUrl');
 
     if (Platform.isAndroid) {
       final androidController =
@@ -60,11 +63,7 @@ class PaymentWingController extends GetxController {
       iosController.setAllowsBackForwardNavigationGestures(true);
     }
 
-    webViewController.loadRequest(
-      Uri.parse(
-        "${BaseUrl.PAYMENT_URL}payments/wingNewApiPaymentPro/$transactionId/$token",
-      ),
-    );
+    webViewController.loadRequest(Uri.parse(wingPaymentUrl));
 
     webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
 
@@ -73,6 +72,7 @@ class PaymentWingController extends GetxController {
         onPageStarted: (String url) {},
         onPageFinished: (String url) {},
         onNavigationRequest: (NavigationRequest request) {
+          log('PaymentWingController.onNavigationRequest url=${request.url}');
           if (request.url.startsWith('https://closewingpayment/')) {
             return NavigationDecision.prevent;
           }
@@ -103,6 +103,9 @@ class PaymentWingController extends GetxController {
 
   Future<void> openDeepLinkWingBank(String deepLink) async {
     final Uri url = Uri.parse(deepLink);
+    log(
+      'PaymentWingController.openDeepLinkWingBank.request deepLink=$deepLink',
+    );
 
     try {
       _showLoadingIfNeeded();

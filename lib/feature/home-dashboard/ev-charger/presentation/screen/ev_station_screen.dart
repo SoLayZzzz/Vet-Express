@@ -40,7 +40,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBarVET().appBar(context, "ev_station".tr),
+      appBar: AppBarVET().appBar(context, "ev_charger".tr),
       body: Stack(
         children: [
           Obx(() {

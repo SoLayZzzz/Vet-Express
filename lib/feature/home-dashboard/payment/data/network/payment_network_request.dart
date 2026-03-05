@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/utils/contains.dart';
@@ -15,13 +16,21 @@ class PaymentNetworkRequest {
     required String paymentMethodId,
     required String totalAmount,
   }) async {
+    final fields = <String, String>{
+      'code': code,
+      'paymentMethodId': paymentMethodId,
+      'totalAmount': totalAmount,
+    };
+    try {
+      log(
+        'PaymentNetworkRequest.processPayment.request '
+        'url=${ticketApi.baseUrl}${Endpoint.ticketBookingProcessPayment} '
+        'fields=$fields',
+      );
+    } catch (_) {}
     final json = await ticketApi.postFormUrlEncoded(
       Endpoint.ticketBookingProcessPayment,
-      fields: <String, String>{
-        'code': code,
-        'paymentMethodId': paymentMethodId,
-        'totalAmount': totalAmount,
-      },
+      fields: fields,
       timeout: const Duration(seconds: Constrains.timeout30),
       attachAuth: true,
     );

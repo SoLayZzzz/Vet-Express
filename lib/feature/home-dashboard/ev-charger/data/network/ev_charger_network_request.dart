@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
@@ -362,9 +363,15 @@ class EvChargerNetworkRequest {
     required double amount,
   }) async {
     try {
+      final body = EvWalletTopUpRequest(amount: amount).toJson();
+      log(
+        'EvChargerNetworkRequest.walletTopUp.request '
+        'url=${evDataSource.baseUrl}${Endpoint.evSaleOrderWalletTopUp} '
+        'body=$body',
+      );
       final json = await evDataSource.postJson(
         Endpoint.evSaleOrderWalletTopUp,
-        body: EvWalletTopUpRequest(amount: amount).toJson(),
+        body: body,
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );

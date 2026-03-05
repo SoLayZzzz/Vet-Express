@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../controller/ev_charger_controller.dart';
+import '../controller/ev_wallet_controller.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../routes/app_routes.dart';
 import 'ev_new_feed_screen.dart';
@@ -296,93 +297,95 @@ class EvChargerScreen extends GetView<EvChargerController> {
       onTap: () {
         Get.toNamed(AppRoutes.evWallet);
       },
-      child: Obx(() {
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "total_balance".tr,
-                    style: const TextStyle(
-                      color: AppColors.greyColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "total_balance".tr,
+                  style: const TextStyle(
+                    color: AppColors.greyColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
-                  const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 20,
-                    color: AppColors.primaryColor,
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 20,
+                  color: AppColors.primaryColor,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            GetX<EvWalletController>(
+              builder: (wallet) {
+                return wallet.isLoadingBalance.value
+                    ? const SizedBox(height: 40)
+                    : Text(
+                      "${wallet.totalBalance.value.toStringAsFixed(2)} KHR",
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.titleColor,
+                      ),
+                    );
+              },
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Get.toNamed(AppRoutes.evTopUp);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              controller.state.isLoadingWalletBalance
-                  ? const SizedBox(height: 40)
-                  : Text(
-                    "${controller.walletBalance.toStringAsFixed(2)} KHR",
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.titleColor,
-                    ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Get.toNamed(AppRoutes.evTopUp);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                  icon: Image.asset(
-                    "assets/icons/icon_ev_topUp.png",
-                    width: 20,
-                    height: 20,
-                  ),
-                  label: Text(
-                    "top_up".tr,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: AppColors.whiteColor,
-                    ),
+                ),
+                icon: Image.asset(
+                  "assets/icons/icon_ev_topUp.png",
+                  width: 20,
+                  height: 20,
+                ),
+                label: Text(
+                  "top_up".tr,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppColors.whiteColor,
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      }),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -390,7 +393,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
     return Row(
       children: [
         Expanded(
-          child: _buildActionButton(Icons.ev_station, "ev_station".tr, () {
+          child: _buildActionButton(Icons.ev_station, "ev_charger".tr, () {
             Get.toNamed(AppRoutes.evAllStations);
           }),
         ),
@@ -469,7 +472,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                 Get.toNamed(AppRoutes.evNewsFeed);
               },
               child: Text(
-                "see_all".tr,
+                "view_all".tr,
                 style: const TextStyle(
                   color: AppColors.primaryColor,
                   decoration: TextDecoration.underline,

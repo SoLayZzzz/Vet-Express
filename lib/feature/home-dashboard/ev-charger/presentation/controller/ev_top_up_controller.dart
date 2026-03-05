@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'ev_wallet_controller.dart';
-import 'ev_payment_controller.dart';
+
 import '../../domain/uscase/ev_charger_usecase.dart';
 import '../../../../../routes/app_routes.dart';
 
@@ -17,6 +17,7 @@ class EvTopUpController extends GetxController {
   final RxDouble selectedAmount = 5000.0.obs;
   final RxString customAmount = ''.obs;
   final List<double> predefinedAmounts = [
+    1000,
     5000,
     10000,
     20000,

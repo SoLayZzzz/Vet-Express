@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/seat/presentation/controller/select_seat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -256,15 +257,9 @@ class SelectSeatScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (label == 'Hostess')
-                  Image.asset(
-                    'assets/images/ic_hostess.png',
-                    height: imageSize,
-                  ),
+                  Image.asset(AssetImages.hostess, height: imageSize),
                 if (label == 'Captain')
-                  Image.asset(
-                    'assets/images/ic_steering.png',
-                    height: imageSize,
-                  ),
+                  Image.asset(AssetImages.steering, height: imageSize),
                 if (label != 'Hostess' && label != 'Captain')
                   FittedBox(
                     fit: BoxFit.scaleDown,
@@ -284,20 +279,24 @@ class SelectSeatScreen extends StatelessWidget {
             ? !controller.checkSelected(label.toString())
                 ? Image.asset(
                   seatType == 2
-                      ? 'assets/images/ic_seat_sleep_free.png'
-                      : 'assets/images/ic_seat_free.png',
+                      ? AssetImages.seat_sleep_free
+                      : AssetImages.seat_free,
                   height: imageSize,
                 )
                 : Image.asset(
                   seatType == 2
-                      ? 'assets/images/ic_seat_sleep_selected.png'
-                      : 'assets/images/ic_seat_select.png',
+                      // ? 'assets/images/ic_seat_sleep_selected.png'
+                      // : 'assets/images/ic_seat_select.png',
+                      ? AssetImages.seat_sleep_selected
+                      : AssetImages.seat_selected,
                   height: imageSize,
                 )
             : Image.asset(
               seatType == 2
-                  ? 'assets/images/ic_seat_sleep_not_free.png'
-                  : 'assets/images/ic_seat_not_free.png',
+                  // ? 'assets/images/ic_seat_sleep_not_free.png'
+                  // : 'assets/images/ic_seat_not_free.png',
+                  ? AssetImages.seat_sleep_not_free
+                  : AssetImages.seat_not_free,
               height: imageSize,
             ),
         FittedBox(

@@ -128,4 +128,20 @@ class AssetImages {
 
   static const String phone = 'assets/icons/phone.png';
   static const String building = 'assets/icons/building.png';
+
+  // =========================
+  // Select Seat screen
+  // =========================
+
+  static const String hostess = 'assets/images/ic_hostess.png';
+  static const String steering = 'assets/images/ic_steering.png';
+
+  static const String seat_free = 'assets/images/ic_seat_free.png';
+  static const String seat_selected = 'assets/images/ic_seat_select.png';
+  static const String seat_not_free = 'assets/images/ic_seat_not_free.png';
+  static const String seat_sleep_free = 'assets/images/ic_seat_sleep_free.png';
+  static const String seat_sleep_selected =
+      'assets/images/ic_seat_sleep_selected.png';
+  static const String seat_sleep_not_free =
+      'assets/images/ic_seat_sleep_not_free.png';
 }
