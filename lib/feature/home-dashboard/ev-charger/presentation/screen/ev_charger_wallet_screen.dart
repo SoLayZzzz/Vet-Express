@@ -1,10 +1,10 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_wallet_list_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import '../controller/ev_wallet_controller.dart';
 import '../../../../../utils/app_colors.dart';
-import '../../../../../utils/contains.dart';
 import '../../../../../routes/app_routes.dart';
 
 class EvWalletScreen extends GetView<EvWalletController> {
@@ -129,11 +129,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
                   ),
                   elevation: 0,
                 ),
-                icon: Image.asset(
-                  "assets/icons/icon_ev_topUp.png",
-                  width: 20,
-                  height: 20,
-                ),
+                icon: Image.asset(AssetImages.ic_topUp, width: 20, height: 20),
                 label: Text(
                   'top_up'.tr,
                   style: const TextStyle(
@@ -186,7 +182,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
       selected: isSelected,
       onSelected: onSelected,
       backgroundColor: Colors.grey[200],
-      selectedColor: AppColors.primaryColor.withOpacity(0.2),
+      selectedColor: AppColors.primaryColor.withValues(alpha: 0.2),
       checkmarkColor: AppColors.primaryColor,
       labelStyle: TextStyle(
         color: isSelected ? AppColors.primaryColor : Colors.grey[700],
@@ -289,7 +285,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

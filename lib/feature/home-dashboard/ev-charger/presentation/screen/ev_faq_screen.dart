@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../controller/ev_faq_controller.dart';
 
 class EvFaqScreen extends GetView<EvFaqController> {
-  EvFaqScreen({super.key});
+  const EvFaqScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

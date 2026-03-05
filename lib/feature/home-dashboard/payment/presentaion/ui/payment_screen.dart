@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
@@ -32,9 +33,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     with WidgetsBindingObserver {
   late final PaymentController controller;
 
-  late WebViewController
-  _controller; // WebViewController for webview_flutter 4.x
-
+  late WebViewController _controller;
   @override
   void initState() {
     super.initState();
@@ -97,8 +96,12 @@ class _PaymentScreenState extends State<PaymentScreen>
   Widget build(BuildContext context) {
     return Obx(() {
       final uiState = controller.state;
-      return WillPopScope(
-        onWillPop: popScreen,
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          popScreen();
+        },
         child: Container(
           color: AppColors.whiteColor,
           child: Scaffold(
@@ -194,442 +197,137 @@ class _PaymentScreenState extends State<PaymentScreen>
                             ),
 
                             //* bank
-                            Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 5,
-                                      paymentMethodSelected: 1,
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color:
-                                            uiState.paymentMethodSelected == 1
-                                                ? ValueStatic.ticketType == '3'
-                                                    ? AppColors.airBusColor
-                                                    : AppColors.primaryColor
-                                                : Colors.grey,
+                            RadioGroup<int>(
+                              groupValue: uiState.paymentMethodSelected,
+                              onChanged: (value) {
+                                _onPaymentGroupChanged(value);
+                              },
+                              child: Column(
+                                children: [
+                                  _buildPaymentOption(
+                                    asset: AssetImages.ic_khqr,
+                                    title: const Text(
+                                      'ABA KHQR',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/ic_khqr.png',
-                                            height: 44,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'ABA KHQR',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 5,
-                                                        ),
-                                                    child: Text(
-                                                      'tap_to_pay_with_KHQR'.tr,
-                                                      style: const TextStyle(
-                                                        fontSize: 10,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Radio(
-                                            value: 1,
-                                            groupValue:
-                                                uiState.paymentMethodSelected,
-                                            fillColor:
-                                                WidgetStateColor.resolveWith(
-                                                  (states) =>
-                                                      ValueStatic.ticketType ==
-                                                              '3'
-                                                          ? AppColors
-                                                              .airBusColor
-                                                          : AppColors
-                                                              .primaryColor,
-                                                ),
-                                            onChanged: (value) {
-                                              controller.selectPaymentMethod(
-                                                paymentMethodId: 5,
-                                                paymentMethodSelected: 1,
-                                              );
-                                            },
-                                          ),
-                                        ],
+                                    subtitleWidget: Text(
+                                      'tap_to_pay_with_KHQR'.tr,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey,
                                       ),
                                     ),
+                                    value: 1,
+                                    isSelected:
+                                        uiState.paymentMethodSelected == 1,
+                                    onTap: () {
+                                      controller.selectPaymentMethod(
+                                        paymentMethodId: 5,
+                                        paymentMethodSelected: 1,
+                                      );
+                                    },
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 6,
-                                      paymentMethodSelected: 2,
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color:
-                                            uiState.paymentMethodSelected == 2
-                                                ? ValueStatic.ticketType == '3'
-                                                    ? AppColors.airBusColor
-                                                    : AppColors.primaryColor
-                                                : Colors.grey,
+                                  _buildPaymentOption(
+                                    asset: AssetImages.ic_big_visa,
+                                    title: const Text(
+                                      'Credit/Debit Card',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/ic_big_visa.png',
-                                            height: 44,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'Credit/Debit Card',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 5,
-                                                        ),
-                                                    child: Image.asset(
-                                                      'assets/images/ic_visa_small.png',
-                                                      height: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Radio(
-                                            value: 2,
-                                            groupValue:
-                                                uiState.paymentMethodSelected,
-                                            fillColor:
-                                                WidgetStateColor.resolveWith(
-                                                  (states) =>
-                                                      ValueStatic.ticketType ==
-                                                              '3'
-                                                          ? AppColors
-                                                              .airBusColor
-                                                          : AppColors
-                                                              .primaryColor,
-                                                ),
-                                            onChanged: (value) {
-                                              controller.selectPaymentMethod(
-                                                paymentMethodId: 6,
-                                                paymentMethodSelected: 2,
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                    subtitleWidget: Image.asset(
+                                      AssetImages.ic_small_visa,
+                                      height: 14,
                                     ),
+                                    value: 2,
+                                    isSelected:
+                                        uiState.paymentMethodSelected == 2,
+                                    onTap: () {
+                                      controller.selectPaymentMethod(
+                                        paymentMethodId: 6,
+                                        paymentMethodSelected: 2,
+                                      );
+                                    },
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 7,
-                                      paymentMethodSelected: 3,
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color:
-                                            uiState.paymentMethodSelected == 3
-                                                ? ValueStatic.ticketType == '3'
-                                                    ? AppColors.airBusColor
-                                                    : AppColors.primaryColor
-                                                : Colors.grey,
+                                  _buildPaymentOption(
+                                    asset: AssetImages.ic_alipay,
+                                    title: const Text(
+                                      'AliPay',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/ic_alipay.png',
-                                            height: 44,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'AliPay',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 5,
-                                                        ),
-                                                    child: Text(
-                                                      'tap_to_pay_with_ALIPAY'
-                                                          .tr,
-                                                      style: const TextStyle(
-                                                        fontSize: 10,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Radio(
-                                            value: 3,
-                                            groupValue:
-                                                uiState.paymentMethodSelected,
-                                            fillColor:
-                                                WidgetStateColor.resolveWith(
-                                                  (states) =>
-                                                      ValueStatic.ticketType ==
-                                                              '3'
-                                                          ? AppColors
-                                                              .airBusColor
-                                                          : AppColors
-                                                              .primaryColor,
-                                                ),
-                                            onChanged: (value) {
-                                              controller.selectPaymentMethod(
-                                                paymentMethodId: 7,
-                                                paymentMethodSelected: 3,
-                                              );
-                                            },
-                                          ),
-                                        ],
+                                    subtitleWidget: Text(
+                                      'tap_to_pay_with_ALIPAY'.tr,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey,
                                       ),
                                     ),
+                                    value: 3,
+                                    isSelected:
+                                        uiState.paymentMethodSelected == 3,
+                                    onTap: () {
+                                      controller.selectPaymentMethod(
+                                        paymentMethodId: 7,
+                                        paymentMethodSelected: 3,
+                                      );
+                                    },
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 4,
-                                      paymentMethodSelected: 4,
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color:
-                                            uiState.paymentMethodSelected == 4
-                                                ? ValueStatic.ticketType == '3'
-                                                    ? AppColors.airBusColor
-                                                    : AppColors.primaryColor
-                                                : Colors.grey,
+                                  _buildPaymentOption(
+                                    asset: AssetImages.ic_wing,
+                                    title: const Text(
+                                      'Wing Bank',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/ic_wing.jpg',
-                                            height: 44,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'Wing Bank',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 5,
-                                                        ),
-                                                    child: Text(
-                                                      'tap_to_pay_wing'.tr,
-                                                      style: const TextStyle(
-                                                        fontSize: 10,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Radio(
-                                            value: 4,
-                                            groupValue:
-                                                uiState.paymentMethodSelected,
-                                            fillColor:
-                                                WidgetStateColor.resolveWith(
-                                                  (states) =>
-                                                      ValueStatic.ticketType ==
-                                                              '3'
-                                                          ? AppColors
-                                                              .airBusColor
-                                                          : AppColors
-                                                              .primaryColor,
-                                                ),
-                                            onChanged: (value) {
-                                              controller.selectPaymentMethod(
-                                                paymentMethodId: 4,
-                                                paymentMethodSelected: 4,
-                                              );
-                                            },
-                                          ),
-                                        ],
+                                    subtitleWidget: Text(
+                                      'tap_to_pay_wing'.tr,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey,
                                       ),
                                     ),
+                                    value: 4,
+                                    isSelected:
+                                        uiState.paymentMethodSelected == 4,
+                                    onTap: () {
+                                      controller.selectPaymentMethod(
+                                        paymentMethodId: 4,
+                                        paymentMethodSelected: 4,
+                                      );
+                                    },
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 8,
-                                      paymentMethodSelected: 5,
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color:
-                                            uiState.paymentMethodSelected == 5
-                                                ? ValueStatic.ticketType == '3'
-                                                    ? AppColors.airBusColor
-                                                    : AppColors.primaryColor
-                                                : Colors.grey,
+                                  _buildPaymentOption(
+                                    asset: AssetImages.ic_acleda,
+                                    title: const Text(
+                                      'ACLEDA',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            'assets/images/ic_acleda.png',
-                                            height: 44,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'ACLEDA',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 5,
-                                                        ),
-                                                    child: Text(
-                                                      'tap_to_pay_acleda'.tr,
-                                                      style: const TextStyle(
-                                                        fontSize: 10,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Radio(
-                                            value: 5,
-                                            groupValue:
-                                                uiState.paymentMethodSelected,
-                                            fillColor:
-                                                WidgetStateColor.resolveWith(
-                                                  (states) =>
-                                                      ValueStatic.ticketType ==
-                                                              '3'
-                                                          ? AppColors
-                                                              .airBusColor
-                                                          : AppColors
-                                                              .primaryColor,
-                                                ),
-                                            onChanged: (value) {
-                                              controller.selectPaymentMethod(
-                                                paymentMethodId: 8,
-                                                paymentMethodSelected: 5,
-                                              );
-                                            },
-                                          ),
-                                        ],
+                                    subtitleWidget: Text(
+                                      'tap_to_pay_acleda'.tr,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey,
                                       ),
                                     ),
+                                    value: 5,
+                                    isSelected:
+                                        uiState.paymentMethodSelected == 5,
+                                    onTap: () {
+                                      controller.selectPaymentMethod(
+                                        paymentMethodId: 8,
+                                        paymentMethodSelected: 5,
+                                      );
+                                    },
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
 
                             //* payment type
@@ -667,8 +365,9 @@ class _PaymentScreenState extends State<PaymentScreen>
 
                             ListView.separated(
                               scrollDirection: Axis.vertical,
-                              physics: const BouncingScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
+                              primary: false,
                               itemCount:
                                   widget
                                       .datas
@@ -817,7 +516,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                               vertical: 8.0,
                                                             ),
                                                         child: Image.asset(
-                                                          "assets/images/img_line.png",
+                                                          AssetImages.line,
                                                         ),
                                                       ),
                                                 ),
@@ -1043,7 +742,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                               vertical: 8.0,
                                                             ),
                                                         child: Image.asset(
-                                                          "assets/images/img_line.png",
+                                                          AssetImages.line,
                                                         ),
                                                       ),
                                                 ),
@@ -1153,6 +852,103 @@ class _PaymentScreenState extends State<PaymentScreen>
     });
   }
 
+  void _onPaymentGroupChanged(int? value) {
+    if (value == null) return;
+    switch (value) {
+      case 1:
+        controller.selectPaymentMethod(
+          paymentMethodId: 5,
+          paymentMethodSelected: 1,
+        );
+        break;
+      case 2:
+        controller.selectPaymentMethod(
+          paymentMethodId: 6,
+          paymentMethodSelected: 2,
+        );
+        break;
+      case 3:
+        controller.selectPaymentMethod(
+          paymentMethodId: 7,
+          paymentMethodSelected: 3,
+        );
+        break;
+      case 4:
+        controller.selectPaymentMethod(
+          paymentMethodId: 4,
+          paymentMethodSelected: 4,
+        );
+        break;
+      case 5:
+        controller.selectPaymentMethod(
+          paymentMethodId: 8,
+          paymentMethodSelected: 5,
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
+  Widget _buildPaymentOption({
+    required String asset,
+    required Widget title,
+    required Widget subtitleWidget,
+    required int value,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(top: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color:
+                isSelected
+                    ? (ValueStatic.ticketType == '3'
+                        ? AppColors.airBusColor
+                        : AppColors.primaryColor)
+                    : Colors.grey,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            children: [
+              Image.asset(asset, height: 44),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      title,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: subtitleWidget,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Radio<int>(
+                value: value,
+                fillColor: WidgetStateColor.resolveWith(
+                  (states) =>
+                      ValueStatic.ticketType == '3'
+                          ? AppColors.airBusColor
+                          : AppColors.primaryColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   view(title, value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -1163,7 +959,7 @@ class _PaymentScreenState extends State<PaymentScreen>
             title,
             style: const TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w500, // Semi-bold for label
+              fontWeight: FontWeight.w500,
               color: AppColors.titleColor,
             ),
           ),
@@ -1180,7 +976,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     );
   }
 
-  Future<bool> popScreen() async {
+  Future<void> popScreen() async {
     alertDialogTwoButton(
       title: "information".tr,
       description: "do_you_want_to_cancel_booking".tr,
@@ -1193,7 +989,6 @@ class _PaymentScreenState extends State<PaymentScreen>
         Booking().cancelBooking(context, widget.id);
       },
     );
-    return false;
   }
 
   Future<void> processBooking(transactionId) async {
@@ -1294,7 +1089,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   child: Row(
                     children: [
                       Image.asset(
-                        'assets/images/acleda_app.png',
+                        AssetImages.acleda_app,
                         width: 54,
                         height: 54,
                       ),
@@ -1345,7 +1140,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   child: Row(
                     children: [
                       Image.asset(
-                        'assets/images/acleda_xpay.png',
+                        AssetImages.acleda_xpay,
                         width: 54,
                         height: 54,
                       ),

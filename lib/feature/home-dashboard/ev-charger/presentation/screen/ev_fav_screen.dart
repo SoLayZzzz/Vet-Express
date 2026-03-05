@@ -6,7 +6,7 @@ import '../controller/ev_station_controller.dart';
 import '../../data/model/response/ev_station_list_response.dart';
 
 class EvFavoriteScreen extends GetView<EvStationController> {
-  EvFavoriteScreen({super.key});
+  const EvFavoriteScreen({super.key});
 
   Future<void> _openMap(String lat, String lng) async {
     final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
@@ -103,7 +103,7 @@ class EvFavoriteScreen extends GetView<EvStationController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 3),

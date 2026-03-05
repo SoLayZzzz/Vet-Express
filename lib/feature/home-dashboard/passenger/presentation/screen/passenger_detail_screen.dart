@@ -1,4 +1,5 @@
 import 'package:date_format_field/date_format_field.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -49,7 +50,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
   Widget _seatDivider() {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
-      child: Image.asset("assets/images/img_line.png"),
+      child: Image.asset(AssetImages.line),
     );
   }
 
@@ -2321,7 +2322,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           Row(
                                             children: [
                                               Image.asset(
-                                                "assets/icons/icon_coupon.png",
+                                                AssetImages.coupon,
                                                 width: 24,
                                                 height: 24,
                                               ),

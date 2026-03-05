@@ -144,4 +144,34 @@ class AssetImages {
       'assets/images/ic_seat_sleep_selected.png';
   static const String seat_sleep_not_free =
       'assets/images/ic_seat_sleep_not_free.png';
+
+  // =========================
+  // Passenger detal screen
+  // =========================
+
+  static const String line = "assets/images/img_line.png";
+  static const String coupon = "assets/icons/icon_coupon.png";
+
+  // =========================
+  // Payment screen
+  // =========================
+
+  static const String ic_khqr = 'assets/images/ic_khqr.png';
+  static const String ic_big_visa = 'assets/images/ic_big_visa.png';
+  static const String ic_small_visa = 'assets/images/ic_visa_small.png';
+  static const String ic_alipay = 'assets/images/ic_alipay.png';
+  static const String ic_wing = 'assets/images/ic_wing.jpg';
+  static const String ic_acleda = 'assets/images/ic_acleda.png';
+  static const String acleda_app = 'assets/images/acleda_app.png';
+  static const String acleda_xpay = 'assets/images/acleda_xpay.png';
+
+  // =========================
+  // EV Charger screen
+  // =========================
+
+  static const String ic_ev_faq = "assets/icons/icon_ev_faq.png";
+  static const String ic_ev_contact = "assets/icons/icon_ev_contact.png";
+  static const String ic_ev_policy = "assets/icons/icon_ev_policy.png";
+  static const String ic_topUp = "assets/icons/icon_ev_topUp.png";
+  static const String ic_aba = "assets/icons/icon_aba.png";
 }

@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/ev_top_up_controller.dart';
@@ -86,7 +87,7 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
                   boxShadow: [
                     if (!isSelected)
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
+                        color: Colors.grey.withValues(alpha: 0.1),
                         blurRadius: 2,
                       ),
                   ],
@@ -170,7 +171,7 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
-                  Image.asset('assets/icons/icon_aba.png', height: 44),
+                  Image.asset(AssetImages.ic_aba, height: 44),
                   const SizedBox(width: 15),
                   Expanded(
                     child: Column(
@@ -195,20 +196,14 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
                       ],
                     ),
                   ),
-                  Radio<int>(
-                    value: 1,
-                    groupValue: controller.paymentMethodId.value,
-                    fillColor: WidgetStateColor.resolveWith(
-                      (states) =>
-                          isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.borderColor,
-                    ),
-                    onChanged:
-                        (value) => controller.selectPaymentMethod(
-                          'ABA Pay',
-                          value ?? 1,
-                        ),
+                  Icon(
+                    isSelected
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off,
+                    color:
+                        isSelected
+                            ? AppColors.primaryColor
+                            : AppColors.borderColor,
                   ),
                 ],
               ),

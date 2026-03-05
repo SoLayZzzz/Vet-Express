@@ -84,77 +84,112 @@ class SelectSeatScreen extends StatelessWidget {
                     future: controller.state.futureSeatLayout,
                     builder: (context, seatData) {
                       if (seatData.hasData) {
-                        List<dynamic> result = json.decode(
-                          seatData.data?['body'][0]['layout'],
-                        );
-                        var colJson = jsonEncode(result[2]['col']);
-                        List<dynamic> col = json.decode(colJson);
-                        int columns = col.length;
+                        final data = seatData.data;
+                        final body = data?['body'];
 
-                        double imageSize = calculateImageSize(context, columns);
+                        if (body is List && body.isNotEmpty) {
+                          final first = body[0];
+                          final layoutStr = first['layout'];
 
-                        final seats = controller.buildSeatListFromLayout(
-                          seatData.data?['body'][0]['layout'],
-                        );
+                          if (layoutStr is String && layoutStr.isNotEmpty) {
+                            int columns = 4;
+                            try {
+                              final List<dynamic> result =
+                                  json.decode(layoutStr) as List<dynamic>;
+                              final dynamic colSection =
+                                  (result.length > 2) ? result[2]['col'] : null;
+                              if (colSection != null) {
+                                final colJson = jsonEncode(colSection);
+                                final List<dynamic> col = json.decode(colJson);
+                                columns = col.length;
+                              }
+                            } catch (_) {
+                              columns = 4;
+                            }
 
-                        return SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width - 30,
-                            ),
-                            child: GridView.count(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              crossAxisCount: columns,
-                              childAspectRatio:
-                                  (1 / (imageSize > 30 ? 1.2 : 2)),
-                              mainAxisSpacing: 0,
-                              crossAxisSpacing: 0,
-                              children: List.generate(seats.length, (index) {
-                                if (seats[index].seatLabel == '') {
-                                  return const SizedBox.shrink();
-                                }
+                            final int seatType =
+                                (first['seatType'] is int)
+                                    ? first['seatType'] as int
+                                    : 1;
 
-                                final int seatType =
-                                    (seatData.data?['body'][0]['seatType'] ?? 1)
-                                        as int;
+                            double imageSize = calculateImageSize(
+                              context,
+                              columns,
+                            );
 
-                                return Center(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      final label =
-                                          seats[index].seatLabel.toString();
-                                      final value =
-                                          seats[index].seatValue.toString();
+                            final seats = controller.buildSeatListFromLayout(
+                              layoutStr,
+                            );
 
-                                      if (label != '' &&
-                                          !controller.checkUnavailable(value) &&
-                                          label != 'Captain' &&
-                                          label != 'Down Stair' &&
-                                          label != 'Up Stair' &&
-                                          label != 'Toilet' &&
-                                          label != 'Hostess' &&
-                                          label != 'Door') {
-                                        controller.toggleSeat(
-                                          seatLabel: label,
-                                          seatValue: value,
-                                        );
-                                      }
-                                    },
-                                    child: _buildSeatCell(
-                                      index: index,
-                                      seatType: seatType,
-                                      imageSize: imageSize,
-                                      controller: controller,
-                                      seat: seats[index],
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-                        );
+                            return SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width - 30,
+                                ),
+                                child: GridView.count(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: columns,
+                                  childAspectRatio:
+                                      (1 / (imageSize > 30 ? 1.2 : 2)),
+                                  mainAxisSpacing: 0,
+                                  crossAxisSpacing: 0,
+                                  children: List.generate(seats.length, (
+                                    index,
+                                  ) {
+                                    if (seats[index].seatLabel == '') {
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    return Center(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          final label =
+                                              seats[index].seatLabel.toString();
+                                          final value =
+                                              seats[index].seatValue.toString();
+
+                                          if (label != '' &&
+                                              !controller.checkUnavailable(
+                                                value,
+                                              ) &&
+                                              label != 'Captain' &&
+                                              label != 'Down Stair' &&
+                                              label != 'Up Stair' &&
+                                              label != 'Toilet' &&
+                                              label != 'Hostess' &&
+                                              label != 'Door') {
+                                            controller.toggleSeat(
+                                              seatLabel: label,
+                                              seatValue: value,
+                                            );
+                                          }
+                                        },
+                                        child: _buildSeatCell(
+                                          index: index,
+                                          seatType: seatType,
+                                          imageSize: imageSize,
+                                          controller: controller,
+                                          seat: seats[index],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                              child: Text('No seat layout available'),
+                            );
+                          }
+                        } else {
+                          return const Center(
+                            child: Text('No seat data available'),
+                          );
+                        }
                       } else if (seatData.hasError) {
                         log('error ${seatData.error}');
                         return Center(
@@ -285,16 +320,12 @@ class SelectSeatScreen extends StatelessWidget {
                 )
                 : Image.asset(
                   seatType == 2
-                      // ? 'assets/images/ic_seat_sleep_selected.png'
-                      // : 'assets/images/ic_seat_select.png',
                       ? AssetImages.seat_sleep_selected
                       : AssetImages.seat_selected,
                   height: imageSize,
                 )
             : Image.asset(
               seatType == 2
-                  // ? 'assets/images/ic_seat_sleep_not_free.png'
-                  // : 'assets/images/ic_seat_not_free.png',
                   ? AssetImages.seat_sleep_not_free
                   : AssetImages.seat_not_free,
               height: imageSize,

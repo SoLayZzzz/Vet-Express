@@ -66,7 +66,7 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                             width: 50,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.7),
+                              color: Colors.black.withValues(alpha: 0.7),
                               borderRadius: BorderRadius.circular(25),
                             ),
                             child: const CircularProgressIndicator(
@@ -87,7 +87,7 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                   ),
                   margin: const EdgeInsets.symmetric(horizontal: 40),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE65100).withOpacity(0.9),
+                    color: const Color(0xFFE65100).withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Row(
@@ -120,7 +120,7 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                             borderRadius: BorderRadius.circular(25),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 blurRadius: 5,
                                 offset: const Offset(0, 3),
                               ),

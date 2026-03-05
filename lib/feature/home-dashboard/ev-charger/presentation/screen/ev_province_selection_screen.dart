@@ -40,7 +40,7 @@ class EvProvinceSelectionScreen extends GetView<EvChargerController> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: AppColors.primaryColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(Icons.location_on, color: AppColors.primaryColor),
@@ -129,7 +129,7 @@ class EvProvinceSelectionScreen extends GetView<EvChargerController> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -54,7 +55,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
           color: AppColors.primaryColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -105,19 +106,19 @@ class EvChargerScreen extends GetView<EvChargerController> {
           onPressed: () {
             Get.toNamed(AppRoutes.evFaq);
           },
-          icon: Image.asset("assets/icons/icon_ev_faq.png"),
+          icon: Image.asset(AssetImages.ic_ev_faq),
         ),
         IconButton(
           onPressed: () {
             showContactBottomSheet();
           },
-          icon: Image.asset("assets/icons/icon_ev_contact.png"),
+          icon: Image.asset(AssetImages.ic_ev_contact),
         ),
         IconButton(
           onPressed: () {
             Get.toNamed(AppRoutes.evPolicy);
           },
-          icon: Image.asset("assets/icons/icon_ev_policy.png"),
+          icon: Image.asset(AssetImages.ic_ev_policy),
         ),
       ],
     );
@@ -285,7 +286,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
             color:
                 controller.state.currentSlideIndex == index
                     ? AppColors.primaryColor
-                    : Colors.grey.withOpacity(0.5),
+                    : Colors.grey.withValues(alpha: 0.5),
           ),
         );
       }),
@@ -309,7 +310,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -368,11 +369,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     vertical: 12,
                   ),
                 ),
-                icon: Image.asset(
-                  "assets/icons/icon_ev_topUp.png",
-                  width: 20,
-                  height: 20,
-                ),
+                icon: Image.asset(AssetImages.ic_topUp, width: 20, height: 20),
                 label: Text(
                   "top_up".tr,
                   style: const TextStyle(
@@ -417,7 +414,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -819,10 +816,13 @@ class EvChargerScreen extends GetView<EvChargerController> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(width: 0.2, color: Colors.grey.withOpacity(0.2)),
+          border: Border.all(
+            width: 0.2,
+            color: Colors.grey.withValues(alpha: 0.2),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),

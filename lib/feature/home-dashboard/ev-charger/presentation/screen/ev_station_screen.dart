@@ -197,8 +197,8 @@ class EvAllStationScreen extends GetView<EvStationController> {
       child: IgnorePointer(
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          color: Colors.black.withOpacity(
-            controller.showFavoriteAnimation.value ? 0.5 : 0.0,
+          color: Colors.black.withValues(
+            alpha: controller.showFavoriteAnimation.value ? 0.5 : 0.0,
           ),
           child: Center(
             child: AnimatedOpacity(
@@ -211,10 +211,15 @@ class EvAllStationScreen extends GetView<EvStationController> {
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.elasticOut,
-                    transform:
-                        Matrix4.identity()..scale(
-                          controller.showFavoriteAnimation.value ? 1.2 : 0.8,
-                        ),
+                    // transform:
+                    //     Matrix4.identity()..scale(
+                    //       controller.showFavoriteAnimation.value ? 1.2 : 0.8,
+                    //     ),
+                    transform: Matrix4.diagonal3Values(
+                      controller.showFavoriteAnimation.value ? 1.2 : 0.8,
+                      controller.showFavoriteAnimation.value ? 1.2 : 0.8,
+                      1.0,
+                    ),
                     child: const Icon(
                       Icons.favorite,
                       color: Colors.red,
@@ -233,7 +238,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -292,7 +297,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -463,7 +468,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 3),
@@ -960,7 +965,9 @@ class ProvinceFilterDialog extends GetView<EvStationController> {
                           style: TextStyle(
                             color:
                                 isSelected
-                                    ? AppColors.primaryColor.withOpacity(0.8)
+                                    ? AppColors.primaryColor.withValues(
+                                      alpha: 0.8,
+                                    )
                                     : Colors.grey,
                           ),
                         ),
@@ -973,7 +980,7 @@ class ProvinceFilterDialog extends GetView<EvStationController> {
                                 : null,
                         tileColor:
                             isSelected
-                                ? AppColors.primaryColor.withOpacity(0.1)
+                                ? AppColors.primaryColor.withValues(alpha: 0.1)
                                 : null,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

@@ -10,8 +10,13 @@ class EvPaymentScreen extends GetView<EvPaymentController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: controller.onWillPop,
+    return PopScope(
+      canPop: false,
+      // onWillPop: controller.onWillPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        controller.onWillPop();
+      },
       child: Scaffold(
         appBar: AppBarVET().appBar(context, 'Payment'),
         body: Obx(() {
@@ -26,7 +31,7 @@ class EvPaymentScreen extends GetView<EvPaymentController> {
                 WebViewWidget(controller: wv),
                 if (controller.isLoading.value)
                   Container(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     child: const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

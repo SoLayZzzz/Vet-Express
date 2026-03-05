@@ -1,13 +1,11 @@
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_html/flutter_html.dart'; // Add this package
-import 'package:url_launcher/url_launcher.dart'; // For links in HTML
-
+import 'package:flutter_html/flutter_html.dart';
 import '../controller/ev_policy_controller.dart';
 
 class EvPolicyScreen extends GetView<EvPolicyController> {
-  EvPolicyScreen({super.key});
+  const EvPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -187,13 +185,5 @@ class EvPolicyScreen extends GetView<EvPolicyController> {
         'li': Style(margin: Margins.only(bottom: 4)),
       },
     );
-  }
-
-  Future<void> _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      Get.snackbar('error'.tr, 'cannot_launch_url'.tr);
-    }
   }
 }
