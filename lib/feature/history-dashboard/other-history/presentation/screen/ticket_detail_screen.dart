@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import 'package:express_vet/feature/location-dashboard/presentation/screen/location_detail_screen.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                             height: 450,
                             width: double.infinity,
                             child: Image.asset(
-                              "assets/images/img_background_car.png",
+                              AssetImages.img_background_car,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -236,8 +237,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                     ?.data![0]
                                                     .journeyType ==
                                                 4
-                                        ? 'assets/images/icon_buva_sea.png'
-                                        : 'assets/images/icon_bus.png',
+                                        ? AssetImages.ic_buva_sea
+                                        : AssetImages.ic_bus,
                                     height: 22,
                                     color: Colors.black38,
                                   ),
@@ -584,7 +585,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                             ),
 
                             // * price
-                            Image.asset("assets/images/img_line.png"),
+                            Image.asset(AssetImages.line),
                             Padding(
                               padding: const EdgeInsets.all(15),
                               child: Column(

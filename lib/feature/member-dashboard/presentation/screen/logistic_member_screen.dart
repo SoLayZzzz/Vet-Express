@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -92,7 +93,7 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                     ),
                                     frontWidget: Center(
                                       child: Image.asset(
-                                        'assets/icons/card_ticket_vip.png',
+                                        AssetImages.ic_card_ticket_vip,
                                         fit: BoxFit.fitHeight,
                                       ),
                                     ),
@@ -100,7 +101,8 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                       alignment: Alignment.center,
                                       children: [
                                         Image.asset(
-                                          'assets/icons/card_ticket_vip_background_logistic.png',
+                                          AssetImages
+                                              .ic_card_ticket_vip_background_logistic,
                                         ),
                                         Row(
                                           mainAxisAlignment:
@@ -676,7 +678,7 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                       WidgetZoom(
                         heroAnimationTag: 'vip_image_tag',
                         zoomWidget: Image.asset(
-                          'assets/images/ic_vet_vip.jpg',
+                          AssetImages.ic_vet_vip,
                           fit: BoxFit.contain,
                         ),
                       ),

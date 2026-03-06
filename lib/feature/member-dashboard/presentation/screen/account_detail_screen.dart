@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/models/saving_point/saving_list_response.dart';
@@ -126,7 +127,7 @@ class AccountDetailScreen extends GetView<MemberShipController> {
                                   child: Row(
                                     children: [
                                       Image.asset(
-                                        'assets/images/ic_card.jpg',
+                                        AssetImages.ic_card,
                                         width: 24,
                                       ),
                                       const SizedBox(width: 14),

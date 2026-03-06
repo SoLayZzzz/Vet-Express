@@ -1224,17 +1224,14 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                           ),
                         ),
                       ),
-                      Radio(
-                        value: 1,
-                        groupValue: paymentMethodSelected,
-                        fillColor: WidgetStateColor.resolveWith(
-                          (states) => AppColors.primaryColor,
-                        ),
-                        onChanged: (value) {
-                          paymentMethodSelected = 1;
-                          paymentMethodID = 5;
-                          setState(() {});
-                        },
+                      Icon(
+                        paymentMethodSelected == 1
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color:
+                            paymentMethodSelected == 1
+                                ? AppColors.primaryColor
+                                : AppColors.borderColor,
                       ),
                     ],
                   ),
@@ -1287,17 +1284,14 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                           ),
                         ),
                       ),
-                      Radio(
-                        value: 2,
-                        groupValue: paymentMethodSelected,
-                        fillColor: WidgetStateColor.resolveWith(
-                          (states) => AppColors.primaryColor,
-                        ),
-                        onChanged: (value) {
-                          paymentMethodSelected = 2;
-                          paymentMethodID = 6;
-                          setState(() {});
-                        },
+                      Icon(
+                        paymentMethodSelected == 2
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color:
+                            paymentMethodSelected == 2
+                                ? AppColors.primaryColor
+                                : AppColors.borderColor,
                       ),
                     ],
                   ),
@@ -1353,7 +1347,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
 
       log('QR Link ${data.checkout_qr_url}');
       var result = await Navigator.push(
-        context,
+        Get.context!,
         MaterialPageRoute(
           builder:
               (context) => PaymentABAPackageScreen(

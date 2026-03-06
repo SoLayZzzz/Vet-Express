@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/location-dashboard/presentation/screen/location_detail_screen.dart';
 import 'package:express_vet/feature/location-dashboard/data/model/response/branch_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
@@ -80,7 +81,7 @@ class _LocationState extends State<LocationSearchScreen> {
                   borderRadius: BorderRadius.circular(6),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -147,8 +148,8 @@ class _LocationState extends State<LocationSearchScreen> {
               children: [
                 Image.asset(
                   branch.type == 1
-                      ? "assets/images/ic_map_branch.png"
-                      : "assets/images/ic_map_agency.png",
+                      ? AssetImages.ic_map_branch
+                      : AssetImages.ic_map_agency,
                   width: 34,
                   height: 34,
                 ),

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -76,7 +77,7 @@ class _TicketMemberScreenState extends State<TicketMemberScreen> {
                             ),
                             frontWidget: Center(
                               child: Image.asset(
-                                'assets/icons/card_ticket_vip.png',
+                                AssetImages.ic_card_ticket_vip,
                                 fit: BoxFit.fitHeight,
                               ),
                             ),
@@ -84,7 +85,7 @@ class _TicketMemberScreenState extends State<TicketMemberScreen> {
                               alignment: Alignment.center,
                               children: [
                                 Image.asset(
-                                  'assets/icons/card_ticket_vip_background.png',
+                                  AssetImages.ic_card_ticket_vip_background,
                                 ),
                                 Row(
                                   mainAxisAlignment:

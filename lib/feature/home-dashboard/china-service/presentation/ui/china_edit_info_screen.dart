@@ -23,7 +23,7 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
     text: 'Phnom Penh, Cambodia',
   );
 
-  String _selectedBranch = 'ជ្រោយចង្វារ PP';
+  final RxString _selectedBranch = 'ជ្រោយចង្វារ PP'.obs;
   final List<String> _branches = ['ជ្រោយចង្វារ PP', 'Branch B', 'Branch C'];
 
   @override
@@ -133,7 +133,7 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
 
   Widget _buildDropdownField() {
     return DropdownButtonFormField<String>(
-      value: _selectedBranch,
+      initialValue: _selectedBranch.value,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -155,9 +155,7 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
             return DropdownMenuItem(value: branch, child: Text(branch));
           }).toList(),
       onChanged: (value) {
-        setState(() {
-          _selectedBranch = value!;
-        });
+        _selectedBranch.value = value!;
       },
     );
   }

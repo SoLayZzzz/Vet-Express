@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -249,7 +250,7 @@ class GoodsTransferHistoryScreen
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/ic_empty.png',
+                        AssetImages.ic_empty,
                         width: 150,
                         height: 150,
                       ),
@@ -374,7 +375,7 @@ class GoodsTransferHistoryScreen
                                         children: [
                                           const SizedBox(height: 20),
                                           Image.asset(
-                                            'assets/images/ic_posting.png',
+                                            AssetImages.ic_posting,
                                             width: 40,
                                             height: 40,
                                           ),
@@ -398,7 +399,7 @@ class GoodsTransferHistoryScreen
                                               ),
                                             ),
                                             Image.asset(
-                                              'assets/icons/icon_tracking_line.png',
+                                              AssetImages.ic_tracking_line,
                                             ),
                                           ],
                                         ),
@@ -407,7 +408,7 @@ class GoodsTransferHistoryScreen
                                         children: [
                                           const SizedBox(height: 20),
                                           Image.asset(
-                                            'assets/images/ic_receive.png',
+                                            AssetImages.ic_receive,
                                             width: 40,
                                             height: 40,
                                           ),
@@ -490,7 +491,7 @@ class GoodsTransferHistoryScreen
                                         Row(
                                           children: [
                                             Image.asset(
-                                              'assets/icons/icon_qty.png',
+                                              AssetImages.ic_qty,
                                               width: 24,
                                             ),
                                             const SizedBox(width: 6),
@@ -563,7 +564,7 @@ class GoodsTransferHistoryScreen
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/ic_empty.png',
+                            AssetImages.ic_empty,
                             width: 150,
                             height: 150,
                           ),

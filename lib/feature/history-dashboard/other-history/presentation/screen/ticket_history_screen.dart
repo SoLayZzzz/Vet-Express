@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -99,22 +100,22 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                                       ?.data?[index]
                                                       .journeyType ==
                                                   1
-                                              ? 'assets/images/vet_logo.png'
+                                              ? AssetImages.vet_logo
                                               : bookingData
                                                       .data
                                                       ?.body
                                                       ?.data?[index]
                                                       .journeyType ==
                                                   2
-                                              ? 'assets/images/ic_buva_sea.png'
+                                              ? AssetImages.buva_sea
                                               : bookingData
                                                       .data
                                                       ?.body
                                                       ?.data?[index]
                                                       .journeyType ==
                                                   3
-                                              ? 'assets/images/vet_air_bus.png'
-                                              : 'assets/images/ic_buva_sea.png',
+                                              ? AssetImages.vet_air_bus_schedule
+                                              : AssetImages.buva_sea,
                                           height: 30,
                                         ),
                                         const SizedBox(width: 10),
@@ -500,7 +501,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/ic_empty.png',
+                        AssetImages.ic_empty,
                         width: 150,
                         height: 150,
                       ),

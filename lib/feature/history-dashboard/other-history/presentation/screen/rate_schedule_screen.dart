@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/models/schedule/total_by_journey_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
@@ -154,10 +155,7 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Image.asset(
-                                    'assets/images/ic_empty.png',
-                                    height: 84,
-                                  ),
+                                  Image.asset(AssetImages.ic_empty, height: 84),
                                   Text('receiving_list_is_empty'.tr),
                                 ],
                               ),

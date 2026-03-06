@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui' as ui;
 
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/location-dashboard/presentation/binding/location_binding.dart';
 import 'package:express_vet/feature/location-dashboard/presentation/controller/location_controller.dart';
 import 'package:express_vet/feature/location-dashboard/data/model/response/branch_response.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -23,12 +26,12 @@ class LocationScreen extends StatefulWidget {
 class LocationScreenState extends State<LocationScreen> {
   final Completer<GoogleMapController> _controller = Completer();
   final Set<Marker> markers = {};
-  late BitmapDescriptor iconBranch;
-  late BitmapDescriptor iconAgency;
-  late LatLng _currentPosition;
+  final Rxn<BitmapDescriptor> iconBranch = Rxn<BitmapDescriptor>();
+  final Rxn<BitmapDescriptor> iconAgency = Rxn<BitmapDescriptor>();
+  final Rxn<LatLng> _currentPosition = Rxn<LatLng>();
 
-  int branch = 0;
-  int agency = 0;
+  final RxInt branch = 0.obs;
+  final RxInt agency = 0.obs;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(11.578036036368854, 104.922274625954),
@@ -38,6 +41,20 @@ class LocationScreenState extends State<LocationScreen> {
   late final LocationController locationController;
   Location location = Location();
   List<Data> _allBranches = [];
+
+  Future<BitmapDescriptor> _bitmapFromAsset(
+    String assetPath, {
+    int targetWidth = 64,
+  }) async {
+    final data = await rootBundle.load(assetPath);
+    final codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: targetWidth,
+    );
+    final fi = await codec.getNextFrame();
+    final bytes = await fi.image.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(bytes!.buffer.asUint8List());
+  }
 
   @override
   void initState() {
@@ -76,17 +93,19 @@ class LocationScreenState extends State<LocationScreen> {
     }
 
     final userLocation = await location.getLocation();
-    setState(() {
-      _currentPosition = LatLng(
-        userLocation.latitude!,
-        userLocation.longitude!,
-      );
-    });
+    _currentPosition.value = LatLng(
+      userLocation.latitude!,
+      userLocation.longitude!,
+    );
   }
 
   Future<void> _navigateToCurrentLocation() async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newLatLngZoom(_currentPosition, 15));
+    if (_currentPosition.value != null) {
+      controller.animateCamera(
+        CameraUpdate.newLatLngZoom(_currentPosition.value!, 15),
+      );
+    }
   }
 
   @override
@@ -111,6 +130,9 @@ class LocationScreenState extends State<LocationScreen> {
 
       _allBranches = uiState.branches;
 
+      final int branchCount = uiState.branches.where((e) => e.type == 1).length;
+      final int agencyCount = uiState.branches.length - branchCount;
+
       return Scaffold(
         appBar: AppBar(
           elevation: 0.2,
@@ -131,16 +153,18 @@ class LocationScreenState extends State<LocationScreen> {
               children: [
                 ///display google map
                 Expanded(
-                  child: GoogleMap(
-                    markers: getMarkers(uiState.branches),
-                    mapType: MapType.normal,
-                    initialCameraPosition: _kGooglePlex,
-                    zoomControlsEnabled: false,
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: false,
-                    onMapCreated: (GoogleMapController controller) {
-                      _controller.complete(controller);
-                    },
+                  child: Obx(
+                    () => GoogleMap(
+                      markers: getMarkers(uiState.branches),
+                      mapType: MapType.normal,
+                      initialCameraPosition: _kGooglePlex,
+                      zoomControlsEnabled: false,
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: false,
+                      onMapCreated: (GoogleMapController controller) {
+                        _controller.complete(controller);
+                      },
+                    ),
                   ),
                 ),
 
@@ -158,22 +182,16 @@ class LocationScreenState extends State<LocationScreen> {
                       children: [
                         Row(
                           children: [
-                            Image.asset(
-                              'assets/images/ic_branch.png',
-                              width: 34,
-                            ),
+                            Image.asset(AssetImages.ic_branch, width: 34),
                             const SizedBox(width: 10),
-                            Text(branch.toString()),
+                            Text(branchCount.toString()),
                           ],
                         ),
                         Row(
                           children: [
-                            Image.asset(
-                              'assets/images/ic_agency.png',
-                              width: 34,
-                            ),
+                            Image.asset(AssetImages.ic_agency, width: 34),
                             const SizedBox(width: 10),
-                            Text(agency.toString()),
+                            Text(agencyCount.toString()),
                           ],
                         ),
                       ],
@@ -240,50 +258,25 @@ class LocationScreenState extends State<LocationScreen> {
   }
 
   getIcons() async {
-    var iconBranch = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
-      "assets/images/ic_map_branch.png",
-    );
-    var iconAgency = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
-      "assets/images/ic_map_agency.png",
-    );
-    setState(() {
-      this.iconBranch = iconBranch;
-      this.iconAgency = iconAgency;
-    });
+    final branchIcon = await _bitmapFromAsset(AssetImages.ic_map_branch);
+    final agencyIcon = await _bitmapFromAsset(AssetImages.ic_map_agency);
+    iconBranch.value = branchIcon;
+    iconAgency.value = agencyIcon;
   }
 
   getIconsIOS() async {
-    var iconBranch = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
-      "assets/images/ic_map_branch_ios.png",
-    );
-    var iconAgency = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
-      "assets/images/ic_map_agency_ios.png",
-    );
-
-    setState(() {
-      this.iconBranch = iconBranch;
-      this.iconAgency = iconAgency;
-    });
+    final branchIcon = await _bitmapFromAsset(AssetImages.ic_map_branch_ios);
+    final agencyIcon = await _bitmapFromAsset(AssetImages.ic_map_agency_ios);
+    iconBranch.value = branchIcon;
+    iconAgency.value = agencyIcon;
   }
 
   Set<Marker> getMarkers(List<Data>? list) {
-    branch = 0;
-    agency = 0;
     markers.clear();
 
     final items = list ?? [];
 
     for (final item in items) {
-      if (item.type == 1) {
-        branch += 1;
-      } else {
-        agency += 1;
-      }
-
       markers.add(
         Marker(
           markerId: MarkerId('${item.nameKh}'),
@@ -292,7 +285,10 @@ class LocationScreenState extends State<LocationScreen> {
             title: (item.nameKh)!.toString(),
             snippet: (item.name)!.toString(),
           ),
-          icon: item.type == 1 ? iconBranch : iconAgency,
+          icon:
+              item.type == 1
+                  ? (iconBranch.value ?? BitmapDescriptor.defaultMarker)
+                  : (iconAgency.value ?? BitmapDescriptor.defaultMarker),
         ),
       );
     }

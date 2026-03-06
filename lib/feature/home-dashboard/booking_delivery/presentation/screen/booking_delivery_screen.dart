@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../../../feature/dash_board/presentation/screen/dashboard_screen.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/app_bar.dart';
@@ -28,7 +28,7 @@ class BookingDeliveryScreen extends StatefulWidget {
 
 class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
   final _formKey = GlobalKey<FormState>();
-  File? _image;
+  final Rxn<File> _image = Rxn<File>();
 
   late final GoodsTransferActionController goodsTransferActionController;
 
@@ -36,9 +36,9 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
   final itemTypeController = TextEditingController();
   final addressController = TextEditingController();
 
-  int itemTypeSelected = 0;
-  int deliverySelected = 0;
-  int pickUpSelected = 0;
+  final RxInt itemTypeSelected = 0.obs;
+  final RxInt deliverySelected = 0.obs;
+  final RxInt pickUpSelected = 0.obs;
 
   @override
   void initState() {
@@ -149,26 +149,24 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  itemTypeSelected = 1;
-                                });
-                              },
-                              child: motoPickUp(itemTypeSelected),
-                            ),
-                            const Spacer(),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  itemTypeSelected = 2;
-                                });
-                              },
-                              child: tuktukPickUp(itemTypeSelected),
-                            ),
-                          ],
+                        Obx(
+                          () => Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  itemTypeSelected.value = 1;
+                                },
+                                child: motoPickUp(itemTypeSelected.value),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  itemTypeSelected.value = 2;
+                                },
+                                child: tuktukPickUp(itemTypeSelected.value),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 20),
                         GestureDetector(
@@ -249,11 +247,9 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                                                                       ImageSource
                                                                           .camera,
                                                                 );
-                                                        setState(() {
-                                                          _image = File(
-                                                            photo!.path,
-                                                          );
-                                                        });
+                                                        _image.value = File(
+                                                          photo!.path,
+                                                        );
                                                       },
                                                       child: Padding(
                                                         padding:
@@ -266,7 +262,8 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                                                                   .center,
                                                           children: [
                                                             Image.asset(
-                                                              'assets/images/ic_camera2.png',
+                                                              AssetImages
+                                                                  .ic_camera2,
                                                               width: 30,
                                                               height: 30,
                                                             ),
@@ -298,11 +295,9 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                                                                       ImageSource
                                                                           .gallery,
                                                                 );
-                                                        setState(() {
-                                                          _image = File(
-                                                            photo!.path,
-                                                          );
-                                                        });
+                                                        _image.value = File(
+                                                          photo!.path,
+                                                        );
                                                       },
                                                       child: Padding(
                                                         padding:
@@ -315,7 +310,8 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                                                                   .center,
                                                           children: [
                                                             Image.asset(
-                                                              'assets/images/ic_gallery.png',
+                                                              AssetImages
+                                                                  .ic_gallery,
                                                               width: 30,
                                                               height: 30,
                                                             ),
@@ -364,30 +360,35 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                               },
                             );
                           },
-                          child: Row(
-                            children: [
-                              if (_image == null)
-                                Image.asset(
-                                  'assets/images/ic_camera.png',
-                                  width: 100,
-                                ),
-                              if (_image != null)
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.file(_image!, width: 100),
-                                ),
-                              const SizedBox(width: 20),
-                              if (_image == null)
-                                Text(
-                                  'take_photo'.tr,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              if (_image != null)
-                                Text(
-                                  'change_photo'.tr,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                            ],
+                          child: Obx(
+                            () => Row(
+                              children: [
+                                if (_image.value == null)
+                                  Image.asset(
+                                    AssetImages.ic_camera,
+                                    width: 100,
+                                  ),
+                                if (_image.value != null)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      _image.value!,
+                                      width: 100,
+                                    ),
+                                  ),
+                                const SizedBox(width: 20),
+                                if (_image.value == null)
+                                  Text(
+                                    'take_photo'.tr,
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                if (_image.value != null)
+                                  Text(
+                                    'change_photo'.tr,
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -407,26 +408,24 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  deliverySelected = 1;
-                                });
-                              },
-                              child: ppDelivery(deliverySelected),
-                            ),
-                            const Spacer(),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  deliverySelected = 2;
-                                });
-                              },
-                              child: provinceDelivery(deliverySelected),
-                            ),
-                          ],
+                        Obx(
+                          () => Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  deliverySelected.value = 1;
+                                },
+                                child: ppDelivery(deliverySelected.value),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  deliverySelected.value = 2;
+                                },
+                                child: provinceDelivery(deliverySelected.value),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 20),
                         Text.rich(
@@ -445,79 +444,78 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () async {
-                                FocusScope.of(context).unfocus();
-                                final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            const BookingDeliveryLiveLocationScreen(),
-                                  ),
-                                );
-                                if (result == '1') {
-                                  pickUpSelected = 1;
-                                } else {
-                                  pickUpSelected = 0;
-                                }
-                                setState(() {});
-                              },
-                              child: liveLocation(pickUpSelected),
-                            ),
-                            const Spacer(),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  pickUpSelected = 2;
-                                });
-                              },
-                              child: manualLocation(pickUpSelected),
-                            ),
-                          ],
+                        Obx(
+                          () => Row(
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  FocusScope.of(context).unfocus();
+                                  final result = await Get.to(
+                                    () =>
+                                        const BookingDeliveryLiveLocationScreen(),
+                                  );
+                                  if (result == '1') {
+                                    pickUpSelected.value = 1;
+                                  } else {
+                                    pickUpSelected.value = 0;
+                                  }
+                                },
+                                child: liveLocation(pickUpSelected.value),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  pickUpSelected.value = 2;
+                                },
+                                child: manualLocation(pickUpSelected.value),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 20),
-                        if (pickUpSelected == 2)
-                          TextFormField(
-                            controller: addressController,
-                            autofocus: false,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            style: const TextStyle(fontSize: 14),
-                            validator: (String? value) {
-                              return CheckInput().checkLength(
-                                value!,
-                                1,
-                                'add_is_req'.tr,
-                                '',
-                              );
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.fromLTRB(
-                                10,
-                                10,
-                                10,
-                                20,
-                              ),
-                              hintText: 'enter_address'.tr,
-                              hintMaxLines: 6,
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: MaterialColor(
-                                    0xFF44459c,
-                                    <int, Color>{},
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
-                                ),
-                              ),
-                            ),
-                          ),
+                        Obx(
+                          () =>
+                              pickUpSelected.value == 2
+                                  ? TextFormField(
+                                    controller: addressController,
+                                    autofocus: false,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: null,
+                                    style: const TextStyle(fontSize: 14),
+                                    validator: (String? value) {
+                                      return CheckInput().checkLength(
+                                        value!,
+                                        1,
+                                        'add_is_req'.tr,
+                                        '',
+                                      );
+                                    },
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.fromLTRB(
+                                        10,
+                                        10,
+                                        10,
+                                        20,
+                                      ),
+                                      hintText: 'enter_address'.tr,
+                                      hintMaxLines: 6,
+                                      border: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: MaterialColor(
+                                            0xFF44459c,
+                                            <int, Color>{},
+                                          ),
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  : const SizedBox.shrink(),
+                        ),
                       ],
                     ),
                   ),
@@ -536,9 +534,9 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                       buttonText: 'booking'.tr,
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (itemTypeSelected == 0 ||
-                              deliverySelected == 0 ||
-                              pickUpSelected == 0) {
+                          if (itemTypeSelected.value == 0 ||
+                              deliverySelected.value == 0 ||
+                              pickUpSelected.value == 0) {
                             alertDialogOneButton(
                               title: 'info'.tr,
                               description: 'plz_com_info'.tr,
@@ -546,20 +544,20 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                             );
                           } else {
                             final senderAddr =
-                                pickUpSelected == 2
+                                pickUpSelected.value == 2
                                     ? addressController.text.toString()
                                     : BookingDeliveryScreen.address.toString();
 
                             goodsTransferActionController.addGoodsTransfer(
                               context: context,
                               body: GoodsTransferAddRequestBody(
-                                filePath: _image?.path,
+                                filePath: _image.value?.path,
                                 itemName: itemTypeController.text.toString(),
                                 lats: BookingDeliveryScreen.lats.toString(),
                                 longs: BookingDeliveryScreen.longs.toString(),
-                                qtyType: itemTypeSelected.toString(),
+                                qtyType: itemTypeSelected.value.toString(),
                                 senderAddr: senderAddr,
-                                serviceType: deliverySelected.toString(),
+                                serviceType: deliverySelected.value.toString(),
                                 telephone: phoneController.text.toString(),
                               ),
                               onSuccess: () {
@@ -604,7 +602,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Image.asset(
-                    'assets/images/ic_check.png',
+                    AssetImages.ic_check,
                     width: 20,
                     color: Colors.green,
                   ),
@@ -658,7 +656,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Image.asset(
-                    'assets/images/ic_check.png',
+                    AssetImages.ic_check,
                     width: 20,
                     color: Colors.green,
                   ),
@@ -710,7 +708,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Image.asset(
-                    'assets/images/ic_check.png',
+                    AssetImages.ic_check,
                     width: 20,
                     color: Colors.green,
                   ),
@@ -762,7 +760,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Image.asset(
-                    'assets/images/ic_check.png',
+                    AssetImages.ic_check,
                     width: 20,
                     color: Colors.green,
                   ),
@@ -813,7 +811,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                   top: 0,
                   right: 0,
                   child: Image.asset(
-                    'assets/images/ic_check.png',
+                    AssetImages.ic_check,
                     width: 24,
                     color: Colors.green,
                   ),
@@ -821,7 +819,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 Column(
                   children: [
                     Image.asset(
-                      'assets/images/ic_delivery_moto.png',
+                      AssetImages.ic_moto,
                       width: 50,
                       color: AppColors.primaryColor,
                     ),
@@ -848,7 +846,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 Column(
                   children: [
                     Image.asset(
-                      'assets/images/ic_delivery_moto.png',
+                      AssetImages.ic_moto,
                       width: 50,
                       color: Colors.grey,
                     ),
@@ -880,7 +878,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                   top: 0,
                   right: 0,
                   child: Image.asset(
-                    'assets/images/ic_check.png',
+                    AssetImages.ic_check,
                     width: 24,
                     color: Colors.green,
                   ),
@@ -888,7 +886,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 Column(
                   children: [
                     Image.asset(
-                      'assets/images/ic_delivery_tuktuk.png',
+                      AssetImages.ic_tuktuk,
                       width: 50,
                       color: AppColors.primaryColor,
                     ),
@@ -915,7 +913,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                 Column(
                   children: [
                     Image.asset(
-                      'assets/images/ic_delivery_tuktuk.png',
+                      AssetImages.ic_tuktuk,
                       width: 50,
                       color: Colors.grey,
                     ),

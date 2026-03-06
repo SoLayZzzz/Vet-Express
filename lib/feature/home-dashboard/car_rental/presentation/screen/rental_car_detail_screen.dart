@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -32,7 +33,7 @@ class RentalCarDetailScreen extends StatefulWidget {
 }
 
 class _RentalCarDetailScreenState extends State<RentalCarDetailScreen> {
-  int _current = 0;
+  final RxInt _current = 0.obs;
   final CarouselSliderController _controller = CarouselSliderController();
 
   @override
@@ -43,130 +44,132 @@ class _RentalCarDetailScreenState extends State<RentalCarDetailScreen> {
         children: [
           SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const SizedBox(height: 20),
-                Column(
-                  children: [
-                    (widget.image.isEmpty)
-                        ? Image.asset(
-                          'assets/images/place_holder.png',
-                          height: MediaQuery.of(context).size.height * 0.12,
-                        )
-                        : CachedNetworkImage(
-                          imageUrl: widget.image,
-                          height: MediaQuery.of(context).size.height * 0.12,
-                          fit: BoxFit.contain,
-                          placeholder:
-                              (context, url) => Image.asset(
-                                'assets/images/place_holder.png',
-                                height:
-                                    MediaQuery.of(context).size.height * 0.12,
-                              ),
-                          errorWidget:
-                              (context, url, error) => Image.asset(
-                                'assets/images/place_holder.png',
-                                height:
-                                    MediaQuery.of(context).size.height * 0.12,
-                              ),
+            child: Obx(
+              () => Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const SizedBox(height: 20),
+                  Column(
+                    children: [
+                      (widget.image.isEmpty)
+                          ? Image.asset(
+                            AssetImages.place_holder,
+                            height: MediaQuery.of(context).size.height * 0.12,
+                          )
+                          : CachedNetworkImage(
+                            imageUrl: widget.image,
+                            height: MediaQuery.of(context).size.height * 0.12,
+                            fit: BoxFit.contain,
+                            placeholder:
+                                (context, url) => Image.asset(
+                                  AssetImages.place_holder,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.12,
+                                ),
+                            errorWidget:
+                                (context, url, error) => Image.asset(
+                                  AssetImages.place_holder,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.12,
+                                ),
+                          ),
+                      Text(
+                        widget.carType,
+                        style: const TextStyle(
+                          color: AppColors.primaryColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
                         ),
-                    Text(
-                      widget.carType,
-                      style: const TextStyle(
-                        color: AppColors.primaryColor,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '${widget.seat} ${'seats'.tr}',
-                      style: const TextStyle(
-                        color: AppColors.primaryColor,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 5),
+                      Text(
+                        '${widget.seat} ${'seats'.tr}',
+                        style: const TextStyle(
+                          color: AppColors.primaryColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                GridView(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    childAspectRatio: 1 / .7,
+                    ],
                   ),
-                  children: <Widget>[
-                    for (int i = 0; i < (widget.listIcon)!.length; i++)
-                      list(
-                        (widget.listIcon?[i].icon).toString(),
-                        (widget.listIcon?[i].name).toString(),
+                  const SizedBox(height: 20),
+                  GridView(
+                    shrinkWrap: true,
+                    physics: const ScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          childAspectRatio: 1 / .7,
+                        ),
+                    children: <Widget>[
+                      for (int i = 0; i < (widget.listIcon)!.length; i++)
+                        list(
+                          (widget.listIcon?[i].icon).toString(),
+                          (widget.listIcon?[i].name).toString(),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.30,
+                    child: CarouselSlider(
+                      carouselController: _controller,
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        autoPlayInterval: const Duration(seconds: 4),
+                        disableCenter: true,
+                        viewportFraction: 1.0,
+                        enlargeCenterPage: false,
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        aspectRatio: 16 / 9,
+                        initialPage: 0,
+                        autoPlayCurve: Curves.fastOutSlowIn,
+                        enableInfiniteScroll: true,
+                        onPageChanged: (index, reason) {
+                          _current.value = index;
+                        },
                       ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.30,
-                  child: CarouselSlider(
-                    carouselController: _controller,
-                    options: CarouselOptions(
-                      autoPlay: true,
-                      autoPlayInterval: const Duration(seconds: 4),
-                      disableCenter: true,
-                      viewportFraction: 1.0,
-                      enlargeCenterPage: false,
-                      height: MediaQuery.of(context).size.height * 0.25,
-                      aspectRatio: 16 / 9,
-                      initialPage: 0,
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enableInfiniteScroll: true,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _current = index;
-                        });
-                      },
-                    ),
-                    items:
-                        widget.listSlide
-                            ?.map(
-                              (item) => Container(
-                                margin: const EdgeInsets.all(5.0),
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.fill,
-                                    width: MediaQuery.of(context).size.width,
-                                    height:
-                                        MediaQuery.of(context).size.height *
-                                        0.40,
-                                    imageUrl: item.photo.toString(),
-                                    placeholder:
-                                        (context, url) => placeHolder(),
-                                    errorWidget:
-                                        (context, url, error) => placeHolder(),
+                      items:
+                          widget.listSlide
+                              ?.map(
+                                (item) => Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10.0),
+                                    ),
+                                    child: CachedNetworkImage(
+                                      fit: BoxFit.fill,
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                          0.40,
+                                      imageUrl: item.photo.toString(),
+                                      placeholder:
+                                          (context, url) => placeHolder(),
+                                      errorWidget:
+                                          (context, url, error) =>
+                                              placeHolder(),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                            .toList(),
+                              )
+                              .toList(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                AnimatedSmoothIndicator(
-                  activeIndex: _current,
-                  count: (widget.listSlide)!.length,
-                  effect: const WormEffect(
-                    activeDotColor: AppColors.primaryColor,
-                    dotHeight: 10,
-                    dotWidth: 10,
+                  const SizedBox(height: 10),
+                  AnimatedSmoothIndicator(
+                    activeIndex: _current.value,
+                    count: (widget.listSlide)!.length,
+                    effect: const WormEffect(
+                      activeDotColor: AppColors.primaryColor,
+                      dotHeight: 10,
+                      dotWidth: 10,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -225,7 +228,7 @@ class _RentalCarDetailScreenState extends State<RentalCarDetailScreen> {
                   (context, url) => const SizedBox(height: 30, width: 30),
               errorWidget:
                   (context, url, error) => Image.asset(
-                    'assets/images/place_holder.png',
+                    AssetImages.place_holder,
                     height: 30,
                     width: 30,
                     fit: BoxFit.contain,

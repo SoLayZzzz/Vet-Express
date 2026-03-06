@@ -123,9 +123,7 @@ class AssetImages {
   static const String vet_air_bus_schedule = 'assets/images/vet_air_bus.png';
   static const String departure = 'assets/images/ic_departure.png';
   static const String arrive = 'assets/images/ic_arrival.png';
-
   static const String no_schedule = 'assets/images/ic_no_shcedule.png';
-
   static const String phone = 'assets/icons/phone.png';
   static const String building = 'assets/icons/building.png';
 
@@ -135,7 +133,6 @@ class AssetImages {
 
   static const String hostess = 'assets/images/ic_hostess.png';
   static const String steering = 'assets/images/ic_steering.png';
-
   static const String seat_free = 'assets/images/ic_seat_free.png';
   static const String seat_selected = 'assets/images/ic_seat_select.png';
   static const String seat_not_free = 'assets/images/ic_seat_not_free.png';
@@ -174,4 +171,72 @@ class AssetImages {
   static const String ic_ev_policy = "assets/icons/icon_ev_policy.png";
   static const String ic_topUp = "assets/icons/icon_ev_topUp.png";
   static const String ic_aba = "assets/icons/icon_aba.png";
+
+  // =========================
+  // Rental Car screen
+  // =========================
+
+  static const String ic_empty = "assets/images/ic_empty.png";
+
+  // =========================
+  // Booking screen
+  // =========================
+
+  static const String ic_tuktuk = "assets/images/ic_delivery_tuktuk.png";
+  static const String ic_check = "assets/images/ic_check.png";
+  static const String ic_moto = "assets/images/ic_delivery_moto.png";
+  static const String ic_camera = "assets/images/ic_camera.png";
+  static const String ic_gallery = "assets/images/ic_gallery.png";
+  static const String ic_camera2 = "assets/images/ic_camera2.png";
+
+  // =========================
+  // Ticket History Dashboard
+  // =========================
+
+  static const String ic_tracking = "assets/images/image_tracking.png";
+  static const String ic_ticket = "assets/icons/icon_ticket.png";
+  static const String ic_language = "assets/icons/icon_luggage.png";
+  static const String ic_parcel = "assets/icons/icon_parcel.png";
+  static const String ic_posting = "assets/images/ic_posting.png";
+  static const String ic_tracking_line = "assets/icons/icon_tracking_line.png";
+  static const String ic_receive = "assets/images/ic_receive.png";
+  static const String ic_qty = "assets/icons/icon_qty.png";
+  static const String img_background_car =
+      "assets/images/img_background_car.png";
+  static const String ic_buva_sea = "assets/images/icon_buva_sea.png";
+  static const String ic_bus = "assets/images/icon_bus.png";
+  static const String ic_card = "assets/images/ic_card.jpg";
+  static const String ic_card_ticket_vip = "assets/icons/card_ticket_vip.png";
+  static const String ic_card_ticket_vip_background_logistic =
+      "assets/icons/card_ticket_vip_background_logistic.png";
+  static const String ic_vet_vip = "assets/images/ic_vet_vip.jpg";
+  static const String ic_card_ticket_vip_background =
+      "assets/icons/card_ticket_vip_background.png";
+
+  // =========================
+  // Location Dashboard
+  // =========================
+
+  static const String ic_branch = "assets/images/ic_branch.png";
+  static const String ic_agency = "assets/images/ic_agency.png";
+
+  static const String ic_map_branch = "assets/images/ic_map_branch.png";
+  static const String ic_map_agency = "assets/images/ic_map_agency.png";
+  static const String ic_map_branch_ios = "assets/images/ic_map_branch_ios.png";
+  static const String ic_map_agency_ios = "assets/images/ic_map_agency_ios.png";
+
+  // =========================
+  // Scan QR
+  // =========================
+
+  static const String ic_tracking_parcel =
+      "assets/icons/icon_tracking_parcel.png";
+  static const String ic_ticket_green = "assets/icons/icon_tick_green.png";
+  static const String ic_ticket_orange = "assets/icons/icon_tick_orange.png";
+  static const String ic_shipping = "assets/images/ic_shipping.png";
+  static const String ic_arrive = "assets/images/ic_arrive.png";
+  static const String ic_delivery_to_customer =
+      "assets/images/ic_delivery_to_customer.png";
+  static const String ic_call_to_customer =
+      "assets/images/ic_call_to_customer.png";
 }

@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -145,19 +146,19 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                               ),
                             ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12.0),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12.0,
+                              ),
                               child: Text(
                                 Get.locale.toString() == 'km_KH'
                                     ? (models.packageNameKh?.isNotEmpty == true
                                         ? models.packageNameKh!
                                         : models.packageName ?? '')
                                     : Get.locale.toString() == 'zh_CN'
-                                        ? (models.packageNameCn?.isNotEmpty ==
-                                                true
-                                            ? models.packageNameCn!
-                                            : models.packageName ?? '')
-                                        : models.packageName ?? '',
+                                    ? (models.packageNameCn?.isNotEmpty == true
+                                        ? models.packageNameCn!
+                                        : models.packageName ?? '')
+                                    : models.packageName ?? '',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -203,21 +204,21 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                                         ? models.termConditionKh!
                                         : models.termCondition ?? '')
                                     : Get.locale.toString() == 'zh_CN'
-                                        ? (models.termConditionCn != null &&
-                                                models.termConditionCn!
-                                                    .isNotEmpty
-                                            ? models.termConditionCn!
-                                            : models.termCondition ?? '')
-                                        : models.termCondition ?? '',
+                                    ? (models.termConditionCn != null &&
+                                            models.termConditionCn!.isNotEmpty
+                                        ? models.termConditionCn!
+                                        : models.termCondition ?? '')
+                                    : models.termCondition ?? '',
                               ),
                           ],
                         ),
                       );
                     },
-                    separatorBuilder: (_, __) => const Padding(
-                      padding: EdgeInsets.only(bottom: 8.0),
-                      child: Divider(thickness: 1),
-                    ),
+                    separatorBuilder:
+                        (_, __) => const Padding(
+                          padding: EdgeInsets.only(bottom: 8.0),
+                          child: Divider(thickness: 1),
+                        ),
                   );
                 } else if (snapshot.data!.body!.isEmpty) {
                   return SizedBox(
@@ -226,7 +227,7 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset("assets/images/ic_travel_package.png"),
+                        Image.asset(AssetImages.travel_package),
                         const SizedBox(height: 10),
                         Text(
                           "data_not_found".tr,
@@ -245,8 +246,10 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                 child: SizedBox(
                   height: 50.0,
                   width: 50.0,
-                  child:
-                      CircularProgressIndicator(value: null, strokeWidth: 5.0),
+                  child: CircularProgressIndicator(
+                    value: null,
+                    strokeWidth: 5.0,
+                  ),
                 ),
               );
             },
@@ -311,7 +314,7 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
       width: 130.0,
       child: ClipOval(
         child: Image(
-          image: AssetImage('assets/images/place_holder.png'),
+          image: AssetImage(AssetImages.place_holder),
           fit: BoxFit.cover,
         ),
       ),

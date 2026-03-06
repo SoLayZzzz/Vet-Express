@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,28 +27,28 @@ class TrackingScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.asset("assets/images/image_tracking.png"),
+            Image.asset(AssetImages.ic_tracking),
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: [
                   view(
-                    "assets/icons/icon_ticket.png",
+                    AssetImages.ic_ticket,
                     'ticket_history_new_1'.tr,
                     onTap: () {
                       Get.toNamed(AppRoutes.ticketHistory);
                     },
                   ),
                   view(
-                    "assets/icons/icon_luggage.png",
+                    AssetImages.ic_language,
                     'travel_package_history'.tr,
                     onTap: () {
                       Get.toNamed(AppRoutes.packageHistory);
                     },
                   ),
                   view(
-                    "assets/icons/icon_parcel.png",
+                    AssetImages.ic_parcel,
                     'goods_transfer_new'.tr,
                     onTap: () {
                       Get.toNamed(AppRoutes.goodsTransferHistory);

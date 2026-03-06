@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/utils/app_bar.dart';
@@ -122,7 +123,7 @@ class _GoodsInformationNoTokenScreenState
                                 Expanded(
                                   flex: 1,
                                   child: Image.asset(
-                                    'assets/icons/icon_tracking_parcel.png',
+                                    AssetImages.ic_tracking_parcel,
                                   ),
                                 ),
                               ],
@@ -169,8 +170,8 @@ class _GoodsInformationNoTokenScreenState
                                   children: [
                                     Image.asset(
                                       index == 0
-                                          ? 'assets/icons/icon_tick_green.png'
-                                          : 'assets/icons/icon_tick_orange.png',
+                                          ? AssetImages.ic_ticket_green
+                                          : AssetImages.ic_ticket_orange,
                                       height: 24,
                                     ),
                                     Container(
@@ -200,7 +201,7 @@ class _GoodsInformationNoTokenScreenState
                                               .status)! ==
                                           1)
                                         display(
-                                          'assets/images/ic_posting.png',
+                                          AssetImages.ic_posting,
                                           'posting',
                                           'at',
                                           (transferData
@@ -230,7 +231,7 @@ class _GoodsInformationNoTokenScreenState
                                               .status)! ==
                                           2)
                                         display(
-                                          'assets/images/ic_shipping.png',
+                                          AssetImages.ic_shipping,
                                           'shipping',
                                           'from',
                                           (transferData
@@ -259,7 +260,7 @@ class _GoodsInformationNoTokenScreenState
                                               .status)! ==
                                           3)
                                         display(
-                                          'assets/images/ic_arrive.png',
+                                          AssetImages.ic_arrive,
                                           'arrival',
                                           'at',
                                           (transferData
@@ -288,7 +289,7 @@ class _GoodsInformationNoTokenScreenState
                                               .status)! ==
                                           4)
                                         display(
-                                          'assets/images/ic_receive.png',
+                                          AssetImages.ic_receive,
                                           'received',
                                           '',
                                           (transferData
@@ -317,7 +318,7 @@ class _GoodsInformationNoTokenScreenState
                                               .status)! ==
                                           5)
                                         display(
-                                          'assets/images/ic_arrive.png',
+                                          AssetImages.ic_arrive,
                                           'transit',
                                           'at',
                                           (transferData
@@ -346,7 +347,7 @@ class _GoodsInformationNoTokenScreenState
                                               .status)! ==
                                           6)
                                         display(
-                                          'assets/images/ic_delivery_to_customer.png',
+                                          AssetImages.ic_delivery_to_customer,
                                           'delivery',
                                           '',
                                           (transferData
@@ -375,7 +376,7 @@ class _GoodsInformationNoTokenScreenState
                                               .status)! ==
                                           7)
                                         display(
-                                          'assets/images/ic_call_to_customer.png',
+                                          AssetImages.ic_call_to_customer,
                                           'call',
                                           '',
                                           (transferData

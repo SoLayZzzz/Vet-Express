@@ -3,14 +3,12 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/button.dart';
-
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/check_input.dart';
 import 'package:express_vet/utils/style.dart';
 import 'package:express_vet/routes/app_routes.dart';
-
 import '../controller/self_service_controller.dart';
 
 class SelfServiceScreen extends GetView<SelfServiceController> {
@@ -93,7 +91,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                         );
                       },
                       decoration: Style.inputText(
-                        '010522522',
+                        '0123456789',
                         iconLeft: Ionicons.call_outline,
                       ),
                     ),

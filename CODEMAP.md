@@ -1,4 +1,4 @@
-# Kyte POS – Code Map
+# VET Express – Code Map
 
 This document gives a quick, human-friendly overview of the project structure, key modules, main screens, controllers, and data models. Use it as a starting point when navigating the codebase.
 

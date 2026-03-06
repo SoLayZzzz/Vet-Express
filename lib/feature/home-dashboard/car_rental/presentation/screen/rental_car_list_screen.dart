@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:readmore/readmore.dart';
@@ -105,10 +106,7 @@ class _RentalCarListScreenState extends State<RentalCarListScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/icons/icon_telegram.png',
-                            height: 28,
-                          ),
+                          Image.asset(AssetImages.ic_telegram, height: 28),
                           const SizedBox(width: 15),
                           const Text(
                             'Telegram',
@@ -156,10 +154,7 @@ class _RentalCarListScreenState extends State<RentalCarListScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.network(
-                                  'assets/images/ic_empty.png',
-                                  height: 84,
-                                ),
+                                Image.asset(AssetImages.ic_empty, height: 84),
                                 Text('no_data'.tr),
                               ],
                             ),
@@ -251,7 +246,7 @@ class _RentalCarListScreenState extends State<RentalCarListScreen> {
       height: 80.0,
       width: 140.0,
       child: Image(
-        image: AssetImage('assets/images/place_holder.png'),
+        image: AssetImage(AssetImages.place_holder),
         fit: BoxFit.cover,
       ),
     );
