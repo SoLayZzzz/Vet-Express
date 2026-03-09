@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _init() async {
     await _initializeDeviceInfo();
-    await checkVersionUpdate(context);
+    await checkVersionUpdate(Get.context!);
 
     await _loadData();
   }

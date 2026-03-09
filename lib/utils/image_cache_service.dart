@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -125,7 +126,7 @@ class ImageCacheService {
           }
           await precacheImage(
             provider,
-            context,
+            Get.context!,
             onError: (exception, stackTrace) {
               log('❌ Memory precache error for $url: $exception');
             },

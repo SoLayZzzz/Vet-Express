@@ -100,546 +100,9 @@ class ScheduleListScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           const SizedBox(height: 60),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  AssetImages.location_schedule,
-                                  width: 24,
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  controller.state.titleRoute,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          _buildLocationFromTo(controller),
                           const SizedBox(height: 6),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: scheduleData.data!.body?.length ?? 0,
-                            itemBuilder: (BuildContext context, int index) {
-                              if (controller.state.isBack) {
-                                ValueStatic.seatPriceBack =
-                                    (scheduleData.data!.body?[index].price)
-                                        .toString();
-                              } else {
-                                ValueStatic.seatPriceGo =
-                                    (scheduleData.data!.body?[index].price)
-                                        .toString();
-                              }
-
-                              return scheduleData.data!.body?[index].status == 2
-                                  ? SizedBox.shrink()
-                                  : Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.whiteColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: AppColors.borderColor,
-                                        width: 0.5,
-                                      ),
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (scheduleData
-                                                .data!
-                                                .body?[index]
-                                                .status ==
-                                            1) {
-                                          controller.openSelectSeat(
-                                            scheduleData.data!.body![index],
-                                          );
-                                        } else if (scheduleData
-                                                .data!
-                                                .body?[index]
-                                                .status ==
-                                            2) {
-                                          alertDialogSchedule(
-                                            title: 'info'.tr,
-                                            description: 'bus_left'.tr,
-                                            buttonText: 'ok'.tr,
-                                          );
-                                        } else if (scheduleData
-                                                .data!
-                                                .body?[index]
-                                                .status ==
-                                            3) {
-                                          alertDialogSchedule(
-                                            title: 'info'.tr,
-                                            description: 'bus_full'.tr,
-                                            buttonText: 'ok'.tr,
-                                          );
-                                        } else {
-                                          return;
-                                        }
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(12),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Image.asset(
-                                                      scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .journeyType ==
-                                                              1
-                                                          ? AssetImages.vet_logo
-                                                          : scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .journeyType ==
-                                                              2
-                                                          ? AssetImages.buva_sea
-                                                          : scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .journeyType ==
-                                                              3
-                                                          ? AssetImages
-                                                              .vet_air_bus_schedule
-                                                          : AssetImages
-                                                              .buva_sea,
-                                                      height: 30,
-                                                    ),
-                                                    const SizedBox(width: 10),
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            (scheduleData
-                                                                    .data!
-                                                                    .body?[index]
-                                                                    .transportationType)
-                                                                .toString(),
-                                                            style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize: 14,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              color:
-                                                                  AppColors
-                                                                      .titleColor,
-                                                            ),
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child: Text.rich(
-                                                                  TextSpan(
-                                                                    style: const TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color:
-                                                                          AppColors
-                                                                              .textColor,
-                                                                    ),
-                                                                    text:
-                                                                        (scheduleData.data!.body?[index].scheduleType)
-                                                                            .toString(),
-                                                                    children: <
-                                                                      TextSpan
-                                                                    >[
-                                                                      if ((scheduleData.data!.body?[index].nationRoad).toString() !=
-                                                                              '' &&
-                                                                          (scheduleData.data!.body?[index].nationRoad).toString() !=
-                                                                              'null')
-                                                                        TextSpan(
-                                                                          text:
-                                                                              ' - ${(scheduleData.data!.body?[index].nationRoad).toString()}',
-                                                                        ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    scheduleData
-                                                                .data!
-                                                                .body?[index]
-                                                                .status ==
-                                                            1
-                                                        ? Row(
-                                                          children: [
-                                                            Text(
-                                                              (((scheduleData
-                                                                          .data!
-                                                                          .body?[index]
-                                                                          .totalSeat)! -
-                                                                      (scheduleData
-                                                                          .data!
-                                                                          .body?[index]
-                                                                          .seatAvailable)!))
-                                                                  .toString(),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: const TextStyle(
-                                                                color:
-                                                                    AppColors
-                                                                        .primaryColor,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              '/${(scheduleData.data!.body?[index].totalSeat).toString()} ${'seats'.tr}',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: const TextStyle(
-                                                                color:
-                                                                    AppColors
-                                                                        .greyColor,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )
-                                                        : Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                right: 8.0,
-                                                                bottom: 10,
-                                                              ),
-                                                          child: Text(
-                                                            scheduleData
-                                                                        .data!
-                                                                        .body?[index]
-                                                                        .status ==
-                                                                    3
-                                                                ? 'full'.tr
-                                                                : scheduleData
-                                                                        .data!
-                                                                        .body?[index]
-                                                                        .status ==
-                                                                    4
-                                                                ? 'unavailable'
-                                                                    .tr
-                                                                : 'left'.tr,
-                                                            textAlign:
-                                                                TextAlign
-                                                                    .center,
-                                                            style: const TextStyle(
-                                                              color:
-                                                                  AppColors
-                                                                      .primaryColor,
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 20),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      DateFormat(
-                                                        'HH:mm',
-                                                      ).format(
-                                                        DateFormat(
-                                                          'HH:mm',
-                                                        ).parse(
-                                                          (scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .departure)
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 14,
-                                                      ),
-                                                    ),
-                                                    Image.asset(
-                                                      AssetImages.departure,
-                                                      width: 70,
-                                                    ),
-                                                    Text(
-                                                      '${DateFormat('HH:mm').format(DateFormat('HH:mm').parse((scheduleData.data!.body?[index].duration).toString()))}h',
-                                                      style: const TextStyle(
-                                                        color:
-                                                            AppColors
-                                                                .secondaryColor,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                    Image.asset(
-                                                      AssetImages.arrive,
-                                                      width: 70,
-                                                    ),
-                                                    Text(
-                                                      DateFormat(
-                                                        'HH:mm',
-                                                      ).format(
-                                                        DateFormat(
-                                                          'HH:mm',
-                                                        ).parse(
-                                                          (scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .arrival)
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 14,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 8),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 1,
-                                            color: Colors.grey[300],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(12),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                gotoRateReview(
-                                                  controller,
-                                                  scheduleData,
-                                                  index,
-                                                ),
-                                                InkWell(
-                                                  onTap: () async {
-                                                    controller
-                                                        .applySelectedScheduleData(
-                                                          scheduleData
-                                                              .data!
-                                                              .body![index],
-                                                        );
-
-                                                    final args =
-                                                        Get.arguments
-                                                            as Map<
-                                                              dynamic,
-                                                              dynamic
-                                                            >?;
-                                                    final flowId =
-                                                        (args?['flowId']
-                                                            as String?) ??
-                                                        '';
-
-                                                    await gotoScheduleDetail(
-                                                      scheduleData,
-                                                      index,
-                                                      controller,
-                                                      flowId,
-                                                    );
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Ionicons
-                                                            .information_circle_outline,
-                                                        size: 20,
-                                                        color:
-                                                            scheduleData
-                                                                        .data!
-                                                                        .body?[index]
-                                                                        .journeyType !=
-                                                                    3
-                                                                ? AppColors
-                                                                    .primaryColor
-                                                                : AppColors
-                                                                    .airBusColor,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Text(
-                                                        'trip_info'.tr,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              scheduleData
-                                                                          .data!
-                                                                          .body?[index]
-                                                                          .journeyType !=
-                                                                      3
-                                                                  ? AppColors
-                                                                      .primaryColor
-                                                                  : AppColors
-                                                                      .airBusColor,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Visibility(
-                                                      visible:
-                                                          (scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .priceOriginal !=
-                                                              ''),
-                                                      child: Text(
-                                                        '\$${(scheduleData.data!.body?[index].priceOriginal)}',
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          color:
-                                                              AppColors
-                                                                  .borderColor,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    if (scheduleData
-                                                            .data!
-                                                            .body?[index]
-                                                            .priceOriginal !=
-                                                        '')
-                                                      const SizedBox(width: 10),
-                                                    Visibility(
-                                                      visible:
-                                                          (scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .priceOriginal ==
-                                                              ''),
-                                                      child: Text(
-                                                        '\$${(scheduleData.data!.body?[index].price)!.toStringAsFixed(2)}',
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          color:
-                                                              AppColors
-                                                                  .borderColor,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    if (scheduleData
-                                                            .data!
-                                                            .body?[index]
-                                                            .priceOriginal ==
-                                                        '')
-                                                      const SizedBox(width: 10),
-                                                    Visibility(
-                                                      visible:
-                                                          (scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .priceOriginal ==
-                                                              ''),
-                                                      child: Text(
-                                                        "\$${(double.parse(controller.state.isBack ? ValueStatic.seatPriceBack : ValueStatic.seatPriceGo) - (double.parse((double.parse(controller.state.isBack ? ValueStatic.seatPriceBack : ValueStatic.seatPriceGo) * 0.05).toStringAsFixed(2)))).toStringAsFixed(2)}",
-                                                        textAlign:
-                                                            TextAlign.right,
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          color:
-                                                              scheduleData
-                                                                          .data!
-                                                                          .body?[index]
-                                                                          .journeyType !=
-                                                                      3
-                                                                  ? AppColors
-                                                                      .primaryColor
-                                                                  : AppColors
-                                                                      .airBusColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Visibility(
-                                                      visible:
-                                                          (scheduleData
-                                                                  .data!
-                                                                  .body?[index]
-                                                                  .priceOriginal !=
-                                                              ''),
-                                                      child: Text(
-                                                        '\$${(scheduleData.data!.body?[index].price)!.toStringAsFixed(2)}',
-                                                        textAlign:
-                                                            TextAlign.right,
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          color:
-                                                              scheduleData
-                                                                          .data!
-                                                                          .body?[index]
-                                                                          .journeyType !=
-                                                                      3
-                                                                  ? AppColors
-                                                                      .primaryColor
-                                                                  : AppColors
-                                                                      .airBusColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                            },
-                          ),
+                          _buildScheduleList(scheduleData, controller),
                         ],
                       ),
                     );
@@ -671,37 +134,387 @@ class ScheduleListScreen extends StatelessWidget {
               },
             ),
           ),
-          Column(
-            children: [
-              Container(
-                height: 45,
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    Container(width: 15),
-                    Text(
-                      'departure_time'.tr,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const Spacer(),
-                    Text(
-                      'estimate_time'.tr,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const Spacer(),
-                    Text(
-                      'estimate_arrival'.tr,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Container(width: 15),
-                  ],
+          _buildTabbarDuration(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScheduleList(
+    AsyncSnapshot<ScheduleResponse> scheduleData,
+    ScheduleListController controller,
+  ) {
+    final body = scheduleData.data!.body;
+    final itemCount = body?.length ?? 0;
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: itemCount,
+      itemBuilder: (BuildContext context, int index) {
+        final item = body![index];
+
+        if (controller.state.isBack) {
+          ValueStatic.seatPriceBack = (item.price).toString();
+        } else {
+          ValueStatic.seatPriceGo = (item.price).toString();
+        }
+
+        if (item.status == 2) {
+          return const SizedBox.shrink();
+        }
+
+        final bool isAvailable = item.status == 1;
+        final bool isFull = item.status == 3;
+        final bool isUnavailable = item.status == 4;
+        final String brandAsset =
+            item.journeyType == 1
+                ? AssetImages.vet_logo
+                : item.journeyType == 2
+                ? AssetImages.buva_sea
+                : item.journeyType == 3
+                ? AssetImages.vet_air_bus_schedule
+                : AssetImages.buva_sea;
+        final Color accentColor =
+            item.journeyType != 3
+                ? AppColors.primaryColor
+                : AppColors.airBusColor;
+
+        final String scheduleTypeText = (item.scheduleType).toString();
+        final String nationRoadText = (item.nationRoad).toString();
+        final bool hasNationRoad =
+            nationRoadText != '' && nationRoadText != 'null';
+
+        final String departureText = DateFormat(
+          'HH:mm',
+        ).format(DateFormat('HH:mm').parse((item.departure).toString()));
+        final String durationText = DateFormat(
+          'HH:mm',
+        ).format(DateFormat('HH:mm').parse((item.duration).toString()));
+        final String arrivalText = DateFormat(
+          'HH:mm',
+        ).format(DateFormat('HH:mm').parse((item.arrival).toString()));
+
+        final int usedSeats = ((item.totalSeat)! - (item.seatAvailable)!);
+        final String totalSeatText = (item.totalSeat).toString();
+
+        final bool hasOriginalPrice = (item.priceOriginal != '');
+        final String priceOriginalText = '${item.priceOriginal}';
+        final String priceText = '\$${(item.price)!.toStringAsFixed(2)}';
+        final double selectedSeatPrice = double.parse(
+          controller.state.isBack
+              ? ValueStatic.seatPriceBack
+              : ValueStatic.seatPriceGo,
+        );
+        final double discountValue = double.parse(
+          (selectedSeatPrice * 0.05).toStringAsFixed(2),
+        );
+        final String discountedPriceText =
+            "\$${(selectedSeatPrice - discountValue).toStringAsFixed(2)}";
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.whiteColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.borderColor, width: 0.5),
+          ),
+          child: InkWell(
+            onTap: () {
+              if (isAvailable) {
+                controller.openSelectSeat(item);
+              } else if (item.status == 2) {
+                alertDialogSchedule(
+                  title: 'info'.tr,
+                  description: 'bus_left'.tr,
+                  buttonText: 'ok'.tr,
+                );
+              } else if (isFull) {
+                alertDialogSchedule(
+                  title: 'info'.tr,
+                  description: 'bus_full'.tr,
+                  buttonText: 'ok'.tr,
+                );
+              } else {
+                return;
+              }
+            },
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.asset(brandAsset, height: 30),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  (item.transportationType).toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    overflow: TextOverflow.ellipsis,
+                                    color: AppColors.titleColor,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text.rich(
+                                        TextSpan(
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppColors.textColor,
+                                          ),
+                                          text: scheduleTypeText,
+                                          children: <TextSpan>[
+                                            if (hasNationRoad)
+                                              TextSpan(
+                                                text: ' - $nationRoadText',
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          isAvailable
+                              ? Row(
+                                children: [
+                                  Text(
+                                    usedSeats.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: AppColors.primaryColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    '/$totalSeatText ${'seats'.tr}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: AppColors.greyColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              )
+                              : Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 8.0,
+                                  bottom: 10,
+                                ),
+                                child: Text(
+                                  isFull
+                                      ? 'full'.tr
+                                      : isUnavailable
+                                      ? 'unavailable'.tr
+                                      : 'left'.tr,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            departureText,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Image.asset(AssetImages.departure, width: 70),
+                          Text(
+                            '${durationText}h',
+                            style: const TextStyle(
+                              color: AppColors.secondaryColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Image.asset(AssetImages.arrive, width: 70),
+                          Text(
+                            arrivalText,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
-              ),
-              Container(height: 1, color: Colors.grey),
-            ],
+                Container(height: 1, color: Colors.grey[300]),
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      gotoRateReview(controller, scheduleData, index),
+                      InkWell(
+                        onTap: () async {
+                          controller.applySelectedScheduleData(item);
+
+                          final args = Get.arguments as Map<dynamic, dynamic>?;
+                          final flowId = (args?['flowId'] as String?) ?? '';
+
+                          await gotoScheduleDetail(
+                            scheduleData,
+                            index,
+                            controller,
+                            flowId,
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Ionicons.information_circle_outline,
+                              size: 20,
+                              color: accentColor,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              'trip_info'.tr,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: accentColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Visibility(
+                            visible: hasOriginalPrice,
+                            child: Text(
+                              '\$$priceOriginalText',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.borderColor,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                          ),
+                          if (hasOriginalPrice) const SizedBox(width: 10),
+                          Visibility(
+                            visible: !hasOriginalPrice,
+                            child: Text(
+                              priceText,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.borderColor,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                          ),
+                          if (!hasOriginalPrice) const SizedBox(width: 10),
+                          Visibility(
+                            visible: !hasOriginalPrice,
+                            child: Text(
+                              discountedPriceText,
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: accentColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: hasOriginalPrice,
+                            child: Text(
+                              '\$${(item.price)!.toStringAsFixed(2)}',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: accentColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLocationFromTo(ScheduleListController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 15),
+      child: Row(
+        children: [
+          Image.asset(AssetImages.location_schedule, width: 24),
+          const SizedBox(width: 10),
+          Text(
+            controller.state.titleRoute,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTabbarDuration() {
+    return Column(
+      children: [
+        Container(
+          height: 45,
+          color: Colors.white,
+          child: Row(
+            children: [
+              Container(width: 15),
+              Text(
+                'departure_time'.tr,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const Spacer(),
+              Text(
+                'estimate_time'.tr,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const Spacer(),
+              Text(
+                'estimate_arrival'.tr,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              Container(width: 15),
+            ],
+          ),
+        ),
+        Container(height: 1, color: Colors.grey),
+      ],
     );
   }
 

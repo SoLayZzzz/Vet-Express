@@ -2,7 +2,6 @@ import 'package:express_vet/feature/home-dashboard/schedule/data/model/request/s
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../../base/state_controller.dart';
 import '../../data/model/response/schedule_response.dart';
 import '../../../../../routes/app_routes.dart';
@@ -32,6 +31,23 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
 
   void init({required bool isBack, required BuildContext context}) {
     final currentDate = _computeCurrentDate(isBack);
+
+    if (isBack && _isBackDateBeforeGoDate()) {
+      final adjusted = _firstAllowedBackDate();
+      final formatted = DateFormat('yyyy-MM-dd').format(adjusted);
+      ValueStatic.backDate = formatted;
+
+      uiState.value = state.copyWith(
+        isBack: isBack,
+        currentDate: formatted,
+        titleRoute: _computeTitleRoute(isBack),
+        futureSchedule: _buildFutureSchedule(context: context, isBack: isBack),
+      );
+
+      _notifyInvalidBackDateAndPick(context);
+      return;
+    }
+
     uiState.value = state.copyWith(
       isBack: isBack,
       currentDate: currentDate,
@@ -70,6 +86,18 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
           : '${ValueStatic.desfrom} - ${ValueStatic.desTo}';
 
   Future<void> pickDate(BuildContext context) async {
+    final now = DateTime.now();
+    final fmt = DateFormat('yyyy-MM-dd');
+    var initial = fmt.parse(state.currentDate);
+
+    DateTime firstDate = now;
+    if (state.isBack) {
+      final go =
+          ValueStatic.goDate.isNotEmpty ? fmt.parse(ValueStatic.goDate) : now;
+      firstDate = go.isAfter(now) ? go : now;
+      if (initial.isBefore(firstDate)) initial = firstDate;
+    }
+
     final pickedDate = await showDatePicker(
       context: context,
       locale:
@@ -78,9 +106,9 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
               : Get.locale.toString() == 'en_US'
               ? const Locale('en', 'US')
               : const Locale('zh', 'CN'),
-      initialDate: DateFormat('yyyy-MM-dd').parse(state.currentDate),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 90)),
+      initialDate: initial,
+      firstDate: firstDate,
+      lastDate: now.add(const Duration(days: 90)),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -124,6 +152,35 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
         isBack: state.isBack,
       ),
     );
+  }
+
+  bool _isBackDateBeforeGoDate() {
+    if (ValueStatic.goDate.isEmpty || ValueStatic.backDate.isEmpty)
+      return false;
+    final fmt = DateFormat('yyyy-MM-dd');
+    final go = fmt.parse(ValueStatic.goDate);
+    final back = fmt.parse(ValueStatic.backDate);
+    return back.isBefore(go);
+  }
+
+  DateTime _firstAllowedBackDate() {
+    final now = DateTime.now();
+    final fmt = DateFormat('yyyy-MM-dd');
+    final go =
+        ValueStatic.goDate.isNotEmpty ? fmt.parse(ValueStatic.goDate) : now;
+    return go.isAfter(now) ? go : now;
+  }
+
+  void _notifyInvalidBackDateAndPick(BuildContext context) {
+    Get.snackbar(
+      'info'.tr,
+      'please_select_back_date'.tr,
+      snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 2),
+    );
+    Future.microtask(() {
+      pickDate(context);
+    });
   }
 
   void applySelectedScheduleData(ScheduleResponseBody data) {
