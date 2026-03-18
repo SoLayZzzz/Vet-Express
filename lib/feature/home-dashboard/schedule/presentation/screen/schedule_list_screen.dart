@@ -29,6 +29,8 @@ class ScheduleListScreen extends StatelessWidget {
       controller = Get.find<ScheduleListController>(tag: tag);
     }
 
+    final bool useDiscount = true;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -70,80 +72,101 @@ class ScheduleListScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          Obx(
-            () => FutureBuilder<ScheduleResponse>(
-              future: controller.state.futureSchedule,
-              builder: (context, scheduleData) {
-                if (scheduleData.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: SizedBox(
-                      height: 50.0,
-                      width: 50.0,
-                      child: CircularProgressIndicator(
-                        value: null,
-                        color:
-                            ValueStatic.ticketType == '3'
-                                ? AppColors.airBusColor
-                                : AppColors.primaryColor,
-                        strokeWidth: 5.0,
-                      ),
-                    ),
-                  );
-                }
-                if (scheduleData.hasData &&
-                    scheduleData.data!.header!.result == true &&
-                    scheduleData.data!.header!.statusCode == 200) {
-                  if ((scheduleData.data?.body ?? []).isNotEmpty) {
-                    return SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const SizedBox(height: 60),
-                          _buildLocationFromTo(controller),
-                          const SizedBox(height: 6),
-                          _buildScheduleList(scheduleData, controller),
-                        ],
-                      ),
-                    );
-                  }
-                  if ((scheduleData.data?.body ?? []).isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            AssetImages.no_schedule,
-                            width: 100,
-                            color:
-                                ValueStatic.ticketType == '3'
-                                    ? AppColors.airBusColor
-                                    : AppColors.primaryColor,
-                          ),
-                          Text('no_data'.tr),
-                        ],
-                      ),
-                    );
-                  }
-                } else if (scheduleData.hasError) {
-                  log('error ${scheduleData.error}');
-                  return Center(child: Text('Error: ${scheduleData.error}'));
-                }
-
-                return Container();
-              },
-            ),
-          ),
+          _buildBodyNoDiscount(controller),
+          // _buildBodyHaveDiscount(controller),
           _buildTabbarDuration(),
         ],
       ),
     );
   }
 
+  Widget _buildBodyHaveDiscount(ScheduleListController controller) {
+    return _buildBody(controller, applyFivePercentDiscount: true);
+  }
+
+  Widget _buildBodyNoDiscount(ScheduleListController controller) {
+    return _buildBody(controller, applyFivePercentDiscount: false);
+  }
+
+  Widget _buildBody(
+    ScheduleListController controller, {
+    required bool applyFivePercentDiscount,
+  }) {
+    return Obx(
+      () => FutureBuilder<ScheduleResponse>(
+        future: controller.state.futureSchedule,
+        builder: (context, scheduleData) {
+          if (scheduleData.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: SizedBox(
+                height: 50.0,
+                width: 50.0,
+                child: CircularProgressIndicator(
+                  value: null,
+                  color:
+                      ValueStatic.ticketType == '3'
+                          ? AppColors.airBusColor
+                          : AppColors.primaryColor,
+                  strokeWidth: 5.0,
+                ),
+              ),
+            );
+          }
+          if (scheduleData.hasData &&
+              scheduleData.data!.header!.result == true &&
+              scheduleData.data!.header!.statusCode == 200) {
+            if ((scheduleData.data?.body ?? []).isNotEmpty) {
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const SizedBox(height: 60),
+                    _buildLocationFromTo(controller),
+                    const SizedBox(height: 6),
+                    _buildScheduleList(
+                      scheduleData,
+                      controller,
+                      applyFivePercentDiscount: applyFivePercentDiscount,
+                    ),
+                  ],
+                ),
+              );
+            }
+            if ((scheduleData.data?.body ?? []).isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AssetImages.no_schedule,
+                      width: 100,
+                      color:
+                          ValueStatic.ticketType == '3'
+                              ? AppColors.airBusColor
+                              : AppColors.primaryColor,
+                    ),
+                    Text('no_data'.tr),
+                  ],
+                ),
+              );
+            }
+          } else if (scheduleData.hasError) {
+            log('error ${scheduleData.error}');
+            return Center(child: Text('Error: ${scheduleData.error}'));
+          }
+
+          return Container();
+        },
+      ),
+    );
+  }
+
   Widget _buildScheduleList(
     AsyncSnapshot<ScheduleResponse> scheduleData,
-    ScheduleListController controller,
-  ) {
+    ScheduleListController controller, {
+    required bool applyFivePercentDiscount,
+  }) {
     final body = scheduleData.data!.body;
     final itemCount = body?.length ?? 0;
 
@@ -422,7 +445,8 @@ class ScheduleListScreen extends StatelessWidget {
                           ),
                           if (hasOriginalPrice) const SizedBox(width: 10),
                           Visibility(
-                            visible: !hasOriginalPrice,
+                            visible:
+                                !hasOriginalPrice && applyFivePercentDiscount,
                             child: Text(
                               priceText,
                               style: const TextStyle(
@@ -432,11 +456,26 @@ class ScheduleListScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (!hasOriginalPrice) const SizedBox(width: 10),
+                          if (!hasOriginalPrice && applyFivePercentDiscount)
+                            const SizedBox(width: 10),
                           Visibility(
-                            visible: !hasOriginalPrice,
+                            visible:
+                                !hasOriginalPrice && applyFivePercentDiscount,
                             child: Text(
                               discountedPriceText,
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: accentColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible:
+                                !hasOriginalPrice && !applyFivePercentDiscount,
+                            child: Text(
+                              priceText,
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                 fontSize: 16,
