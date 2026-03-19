@@ -83,6 +83,9 @@ class PassengerNetworkRequest {
     CheckBookingPackageRequest body,
   ) async {
     try {
+      Get.log(
+        '[Package] checkPackageApply -> code: ${body.code}, journeyId: ${body.journeyId}, travelDate: ${body.travelDate}',
+      );
       final json = await networkDataSource.postFormUrlEncoded(
         Endpoint.ticketBookingCheckPackageApply,
         fields: <String, String>{
@@ -93,8 +96,16 @@ class PassengerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
-      return CheckPackageApplyResponse.fromJson(json);
+      final res = CheckPackageApplyResponse.fromJson(json);
+      Get.log(
+        '[Package] checkPackageApply <- status: '
+        'header.statusCode=${res.header?.statusCode}, '
+        'header.result=${res.header?.result}, '
+        'body.status=${res.body?.status}, '
+        'body.msg=${res.body?.msg}, '
+        'body.discount=${res.body?.discount}',
+      );
+      return res;
     } on TimeoutException {
       Loading().loadingClose();
       alertDialogOneButton(
@@ -113,14 +124,18 @@ class PassengerNetworkRequest {
     required Map<String, String> fields,
   }) async {
     try {
+      Get.log('[Booking] confirmBooking -> fields: $fields');
       final json = await networkDataSource.postFormUrlEncoded(
         Endpoint.ticketBookingConfirm,
         fields: fields,
         timeout: const Duration(seconds: Constrains.timeout180),
         attachAuth: true,
       );
-
-      return ConfirmBookingResponse.fromJson(json);
+      final res = ConfirmBookingResponse.fromJson(json);
+      Get.log(
+        '[Booking] confirmBooking <- status: \\n+        header.statusCode=${res.header?.statusCode}, \\n+        header.result=${res.header?.result}, \\n+        body.status=${res.body?.status}, \\n+        body.msg=${res.body?.msg}, \\n+        body.transactionId=${res.body?.transactionId}',
+      );
+      return res;
     } on TimeoutException {
       Loading().loadingClose();
       alertDialogOneButton(

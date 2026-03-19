@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:express_vet/feature/home-dashboard/payment/presentaion/controller/payment_aba_controller.dart';
+import 'package:express_vet/feature/home-dashboard/payment/presentaion/controller/payment_aba_package_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -829,7 +829,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                             1,
                             10,
                             5,
-                          ), // Match nationality padding
+                          ),
                           border: Style.outlineInputBorder(),
                           enabledBorder: Style.outlineInputBorder(),
                           focusedBorder: Style.outlineInputBorder(),
@@ -1356,15 +1356,16 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                 title: 'ABA KHQR',
                 type: 1,
                 url: data.checkout_qr_url ?? '',
+                deeplink: data.abapayDeeplink ?? '',
               ),
         ),
       );
       // Ensure payment controller stops polling after returning
-      if (Get.isRegistered<PaymentAbaController>()) {
+      if (Get.isRegistered<PaymentAbaPackageController>()) {
         try {
-          Get.find<PaymentAbaController>().stop();
+          Get.find<PaymentAbaPackageController>().stop();
         } catch (_) {}
-        Get.delete<PaymentAbaController>(force: true);
+        Get.delete<PaymentAbaPackageController>(force: true);
       }
       if (result == "1") {
         /// Payment ABA KHQR success
@@ -1475,16 +1476,17 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                       title: 'Credit/Debit Card',
                       type: 2,
                       url: '',
+                      deeplink: '',
                     ),
               ),
             );
 
             // Ensure payment controller stops polling after returning
-            if (Get.isRegistered<PaymentAbaController>()) {
+            if (Get.isRegistered<PaymentAbaPackageController>()) {
               try {
-                Get.find<PaymentAbaController>().stop();
+                Get.find<PaymentAbaPackageController>().stop();
               } catch (_) {}
-              Get.delete<PaymentAbaController>(force: true);
+              Get.delete<PaymentAbaPackageController>(force: true);
             }
 
             log('Result $result');

@@ -20,13 +20,14 @@ class SeatNetworkRequest {
     required String journeyId,
   }) async {
     try {
+      Get.log('[Seat] getSeatLayout -> date: $date, journeyId: $journeyId');
       final json = await netWorkDataSource.postFormUrlEncoded(
         Endpoint.ticketSeatLayout,
         fields: <String, String>{'date': date, 'journey': journeyId},
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      Get.log('[Seat] getSeatLayout <- response received');
       return Map<dynamic, dynamic>.from(json);
     } on TimeoutException {
       Loading().loadingClose();
@@ -47,13 +48,14 @@ class SeatNetworkRequest {
     required String journeyId,
   }) async {
     try {
+      Get.log('[Seat] getUnavailable -> date: $date, journeyId: $journeyId');
       final json = await netWorkDataSource.postFormUrlEncoded(
         Endpoint.ticketSeatUnavailable,
         fields: <String, String>{'date': date, 'journey': journeyId},
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      Get.log('[Seat] getUnavailable <- response received');
       return SeatUnavailableResponse.fromJson(json);
     } on TimeoutException {
       Loading().loadingClose();

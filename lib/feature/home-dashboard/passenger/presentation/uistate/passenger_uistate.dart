@@ -1,4 +1,8 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+
+import 'package:express_vet/feature/auth/data/model/response/nationality_response.dart';
+import 'package:express_vet/models/boarding_point.dart';
 
 class PassengerUistate {
   final RxBool luckyDraw = false.obs;
@@ -15,18 +19,60 @@ class PassengerUistate {
   final RxInt status = 0.obs;
   final RxString balance = ''.obs;
 
-  final RxString selectedBoardingPointOneWay = ''.obs;
+  final RxString selectedBoardingPointOneWay = 'select_boarding'.tr.obs;
   final RxString selectedBoardingPointAddressOneWay = ''.obs;
-  final int isSelectedIndexBoardingOneWay = -1;
-  final int isSelectedIndexDropOffOneWay = -1;
+  final RxInt isSelectedIndexBoardingOneWay = (-1).obs;
+  final RxInt isSelectedIndexDropOffOneWay = (-1).obs;
 
-  final RxString selectBoardingPointTwoWay = ''.obs;
+  final RxString selectBoardingPointTwoWay = 'select_boarding'.tr.obs;
   final RxString selectBoardingPointAddressTwoWay = ''.obs;
-  final int isSelectIndexBoardingTwoWay = -1;
-  final int isSelectIndexDropOffTwoWay = -1;
+  final RxInt isSelectIndexBoardingTwoWay = (-1).obs;
+  final RxInt isSelectIndexDropOffTwoWay = (-1).obs;
 
-  final RxString selectedDropPointOneWay = ''.obs;
+  final RxString selectedDropPointOneWay = 'select_drop'.tr.obs;
   final RxString selectedDropPointAddressOneWay = ''.obs;
-  final RxString selectDropPointTwoWay = ''.obs;
+  final RxString selectDropPointTwoWay = 'select_drop'.tr.obs;
   final RxString selectDropPointAddressTwoWay = ''.obs;
+
+  List<String> boardingPointOneway = [];
+  List<String> dropOffPointOneway = [];
+  List<String> boardingPointTwoWay = [];
+  List<String> dropOffPointTwoWay = [];
+
+  List<int?> nationalityIds = [];
+  List<int?> nationalityIdsTwoWay = [];
+
+  BuildContext? checkPackageContext;
+  String checkPackageCode = '';
+  String checkPackageJourneyId = '';
+  String checkPackageTravelDate = '';
+
+  Future<void>? initialLoadFuture;
+
+  Future<CarPointResponse>? futureBoardingPointOneWay;
+  Future<CarPointResponse>? futureDropOffPointOneWay;
+  Future<CarPointResponse>? futureBoardingPointTwoWay;
+  Future<CarPointResponse>? futureDropOffPointTwoWay;
+  Future<NationalityResponse>? futureNationality;
+
+  final phoneNumberController = TextEditingController();
+  final emailController = TextEditingController();
+  final usernameController = TextEditingController();
+  final codeController = TextEditingController();
+  final couponController = TextEditingController();
+  final nationalityController = TextEditingController();
+
+  List<String> genderOneWay = [];
+  List<int> nationalOneWay = [];
+  List<TextEditingController> dobOneWay = [];
+  List<TextEditingController> dobOneWayList = [];
+  List<TextEditingController> passportOneWay = [];
+  List<TextEditingController> nameOneWay = [];
+
+  List<String> genderTwoWay = [];
+  List<int> nationalTwoWay = [];
+  List<TextEditingController> dobTwoWay = [];
+  List<TextEditingController> dobTwoWayList = [];
+  List<TextEditingController> passportTwoWay = [];
+  List<TextEditingController> nameTwoWay = [];
 }

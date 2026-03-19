@@ -1,4 +1,4 @@
-import 'package:express_vet/feature/home-dashboard/payment/presentaion/controller/payment_aba_controller.dart';
+import 'package:express_vet/feature/home-dashboard/payment/presentaion/controller/payment_aba_package_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -11,6 +11,7 @@ class PaymentABAPackageScreen extends StatefulWidget {
   final String token;
   final String title;
   final String url;
+  final String deeplink;
   final int type;
 
   const PaymentABAPackageScreen({
@@ -20,6 +21,7 @@ class PaymentABAPackageScreen extends StatefulWidget {
     required this.type,
     required this.title,
     required this.url,
+    this.deeplink = '',
   });
 
   @override
@@ -28,24 +30,24 @@ class PaymentABAPackageScreen extends StatefulWidget {
 }
 
 class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
-  late final PaymentAbaController controller;
+  late final PaymentAbaPackageController controller;
 
   @override
   void initState() {
     super.initState();
-    if (Get.isRegistered<PaymentAbaController>()) {
+    if (Get.isRegistered<PaymentAbaPackageController>()) {
       try {
-        Get.find<PaymentAbaController>().stop();
+        Get.find<PaymentAbaPackageController>().stop();
       } catch (_) {}
-      Get.delete<PaymentAbaController>();
+      Get.delete<PaymentAbaPackageController>();
     }
     controller = Get.put(
-      PaymentAbaController(
+      PaymentAbaPackageController(
         transactionId: widget.transactionId,
         token: widget.token,
         title: widget.title,
         url: widget.url,
-        deeplink: '',
+        deeplink: widget.deeplink,
         type: widget.type,
       ),
     );
@@ -57,8 +59,8 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
     try {
       controller.stop();
     } catch (_) {}
-    if (Get.isRegistered<PaymentAbaController>()) {
-      Get.delete<PaymentAbaController>(force: true);
+    if (Get.isRegistered<PaymentAbaPackageController>()) {
+      Get.delete<PaymentAbaPackageController>(force: true);
     }
     super.dispose();
   }
@@ -70,8 +72,8 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
         try {
           controller.stop();
         } catch (_) {}
-        if (Get.isRegistered<PaymentAbaController>()) {
-          Get.delete<PaymentAbaController>(force: true);
+        if (Get.isRegistered<PaymentAbaPackageController>()) {
+          Get.delete<PaymentAbaPackageController>(force: true);
         }
         return true;
       },
@@ -91,8 +93,8 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
               try {
                 controller.stop();
               } catch (_) {}
-              if (Get.isRegistered<PaymentAbaController>()) {
-                Get.delete<PaymentAbaController>(force: true);
+              if (Get.isRegistered<PaymentAbaPackageController>()) {
+                Get.delete<PaymentAbaPackageController>(force: true);
               }
               Navigator.pop(context);
             },

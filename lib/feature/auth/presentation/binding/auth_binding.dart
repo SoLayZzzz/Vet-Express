@@ -28,7 +28,7 @@ class AuthBinding implements Bindings {
       );
     }
     if (!Get.isRegistered<AuthController>()) {
-      Get.lazyPut(() => AuthController(Get.find<AuthUseCase>()), fenix: true);
+      Get.put(AuthController(Get.find<AuthUseCase>()), permanent: true);
     }
   }
 }

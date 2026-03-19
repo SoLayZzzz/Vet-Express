@@ -36,6 +36,38 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   PassengerDetailController(this.passerngerUscase);
 
   bool forceZeroDiscount = false;
+  bool packageOnlyDiscountMode = false;
+
+  void onPassengerDetailScreenEnter() {
+    updateTotals();
+  }
+
+  void onPassengerDetailScreenExit() {
+    state.initialLoadFuture = null;
+    state.isLoaded.value = false;
+
+    state.isTravelPackage.value = false;
+    state.isTravelPackageOk.value = false;
+    state.isNoPackage.value = false;
+    state.msgPackage.value = '';
+    state.checkPackageContext = null;
+    state.checkPackageCode = '';
+    state.checkPackageJourneyId = '';
+    state.checkPackageTravelDate = '';
+
+    state.status.value = 0;
+    state.balance.value = '';
+    state.couponController.text = '';
+
+    ValueStatic.travelPackageDis = 0;
+    ValueStatic.totalPriceDiscount = 0;
+    ValueStatic.luckyDrawValue = 0;
+    ValueStatic.seatPriceGoDiscount = false;
+    ValueStatic.seatPriceBackDiscount = false;
+
+    forceZeroDiscount = false;
+    packageOnlyDiscountMode = false;
+  }
 
   @override
   PassengerUistate onInitUiState() => PassengerUistate();
@@ -65,25 +97,25 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   Future<PassengerDetailInitResult> initPassengerDetail(
     BuildContext context,
   ) async {
-    futureBoardingPointOneWay = passerngerUscase.getBoardingPoint(
+    state.futureBoardingPointOneWay = passerngerUscase.getBoardingPoint(
       context: context,
       date: ValueStatic.goDate,
       journeyId: ValueStatic.journeyIdGo.toString(),
     );
-    futureDropOffPointOneWay = passerngerUscase.getDropOffPoint(
+    state.futureDropOffPointOneWay = passerngerUscase.getDropOffPoint(
       context: context,
       journeyId: ValueStatic.journeyIdGo.toString(),
     );
 
-    futureBoardingPointTwoWay = null;
-    futureDropOffPointTwoWay = null;
+    state.futureBoardingPointTwoWay = null;
+    state.futureDropOffPointTwoWay = null;
     if (ValueStatic.journeyType == 2) {
-      futureBoardingPointTwoWay = passerngerUscase.getBoardingPoint(
+      state.futureBoardingPointTwoWay = passerngerUscase.getBoardingPoint(
         context: context,
         date: ValueStatic.backDate,
         journeyId: ValueStatic.journeyIdBack.toString(),
       );
-      futureDropOffPointTwoWay = passerngerUscase.getDropOffPoint(
+      state.futureDropOffPointTwoWay = passerngerUscase.getDropOffPoint(
         context: context,
         journeyId: ValueStatic.journeyIdBack.toString(),
       );
@@ -94,156 +126,32 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     if (!Get.isRegistered<AuthUseCase>()) {
       AuthBinding().dependencies();
     }
-    futureNationality = Get.find<AuthUseCase>().nationalityListTicket();
+    state.futureNationality = Get.find<AuthUseCase>().nationalityListTicket();
 
-    await Future.wait([
-      futureBoardingPointOneWay,
-      futureDropOffPointOneWay,
-      if (futureBoardingPointTwoWay != null) futureBoardingPointTwoWay!,
-      if (futureDropOffPointTwoWay != null) futureDropOffPointTwoWay!,
-      futureNationality,
-    ]);
+    final futures = <Future<dynamic>>[
+      state.futureBoardingPointOneWay!,
+      state.futureDropOffPointOneWay!,
+      state.futureNationality!,
+    ];
+    if (state.futureBoardingPointTwoWay != null) {
+      futures.add(state.futureBoardingPointTwoWay!);
+    }
+    if (state.futureDropOffPointTwoWay != null) {
+      futures.add(state.futureDropOffPointTwoWay!);
+    }
+    await Future.wait(futures);
 
     return PassengerDetailInitResult(
-      futureBoardingPointOneWay: futureBoardingPointOneWay,
-      futureDropOffPointOneWay: futureDropOffPointOneWay,
-      futureBoardingPointTwoWay: futureBoardingPointTwoWay,
-      futureDropOffPointTwoWay: futureDropOffPointTwoWay,
-      futureNationality: futureNationality,
+      futureBoardingPointOneWay: state.futureBoardingPointOneWay!,
+      futureDropOffPointOneWay: state.futureDropOffPointOneWay!,
+      futureBoardingPointTwoWay: state.futureBoardingPointTwoWay,
+      futureDropOffPointTwoWay: state.futureDropOffPointTwoWay,
+      futureNationality: state.futureNationality!,
     );
   }
 
-  BuildContext? checkPackageContext;
-  String checkPackageCode = '';
-  String checkPackageJourneyId = '';
-  String checkPackageTravelDate = '';
-
-  Future<void>? initialLoadFuture;
-
-  // Futures for boarding, drop-off points and nationality
-  late Future<CarPointResponse> futureBoardingPointOneWay;
-  late Future<CarPointResponse> futureDropOffPointOneWay;
-  Future<CarPointResponse>? futureBoardingPointTwoWay;
-  Future<CarPointResponse>? futureDropOffPointTwoWay;
-
-  late Future<NationalityResponse> futureNationality;
-
-  // Text controllers for contact/package info
-  final phoneNumberController = TextEditingController();
-  final emailController = TextEditingController();
-  final usernameController = TextEditingController();
-  final codeController = TextEditingController();
-  final couponController = TextEditingController();
-  final nationalityController = TextEditingController();
-
-  // One-way passenger info
-  List<String> genderOneWay = [];
-  List<int> nationalOneWay = [];
-  List<TextEditingController> dobOneWay = [];
-  List<TextEditingController> dobOneWayList = [];
-  List<TextEditingController> passportOneWay = [];
-  List<TextEditingController> nameOneWay = [];
-
-  // Round-trip passenger info
-  List<String> genderTwoWay = [];
-  List<int> nationalTwoWay = [];
-  List<TextEditingController> dobTwoWay = [];
-  List<TextEditingController> dobTwoWayList = [];
-  List<TextEditingController> passportTwoWay = [];
-  List<TextEditingController> nameTwoWay = [];
-
-  // Destination selections
-  List<String> boardingPointOneway = [];
-  List<String> dropOffPointOneway = [];
-  List<String> boardingPointTwoWay = [];
-  List<String> dropOffPointTwoWay = [];
-
-  // Nationality selections
-  List<int?> nationalityIds = List.filled(
-    ValueStatic.oneWaySelectedSeat.length,
-    null,
-  );
-  List<int?> nationalityIdsTwoWay = List.filled(
-    ValueStatic.twoWaySelectedSeat.length,
-    null,
-  );
-
-  // Boarding / drop-off UI labels and selected indexes
-  String selectedBoardingPointOneWay = 'select_boarding'.tr;
-  String selectedBoardingPointAddressOneWay = '';
-  int isSelectedIndexBoardingOneWay = -1;
-  int isSelectedIndexDropOffOneWay = -1;
-  String selectBoardingPointTwoWay = 'select_boarding'.tr;
-  String selectBoardingPointAddressTwoWay = '';
-  int isSelectIndexBoardingTwoWay = -1;
-  int isSelectIndexDropOffTwoWay = -1;
-  String selectedDropPointOneWay = 'select_drop'.tr;
-  String selectedDropPointAddressOneWay = '';
-  String selectDropPointTwoWay = 'select_drop'.tr;
-  String selectDropPointAddressTwoWay = '';
-
-  //* lucky draw tick or un_tick
-  bool get luckyDraw => state.luckyDraw.value;
-  set luckyDraw(bool value) {
-    state.luckyDraw.value = value;
-  }
-
-  //* tick or un_tick apply package
-  bool get isTravelPackage => state.isTravelPackage.value;
-  set isTravelPackage(bool value) {
-    state.isTravelPackage.value = value;
-  }
-
-  bool get isLoaded => state.isLoaded.value;
-  set isLoaded(bool value) {
-    state.isLoaded.value = value;
-  }
-
-  bool get isTravelPackageOk => state.isTravelPackageOk.value;
-  set isTravelPackageOk(bool value) {
-    state.isTravelPackageOk.value = value;
-  }
-
-  //* check phone number change or not change
-  bool get isPhone => state.isPhone.value;
-  set isPhone(bool value) {
-    state.isPhone.value = value;
-  }
-
-  //* check this acc has package or not
-  bool get isNoPackage => state.isNoPackage.value;
-  set isNoPackage(bool value) {
-    state.isNoPackage.value = value;
-  }
-
-  String get msgPackage => state.msgPackage.value;
-  set msgPackage(String value) {
-    state.msgPackage.value = value;
-  }
-
-  int get packageTypeOneWay => state.packageTypeOneWay.value;
-  set packageTypeOneWay(int value) {
-    state.packageTypeOneWay.value = value;
-  }
-
-  int get packageTypeTwoWay => state.packageTypeTwoWay.value;
-  set packageTypeTwoWay(int value) {
-    state.packageTypeTwoWay.value = value;
-  }
-
-  /// coupon code
-  int get status => state.status.value;
-  set status(int value) {
-    state.status.value = value;
-  }
-
-  String get balance => state.balance.value;
-  set balance(String value) {
-    state.balance.value = value;
-  }
-
   Future<bool> checkPackageApply() async {
-    final ctx = checkPackageContext;
+    final ctx = uiState.value.checkPackageContext;
     if (ctx == null) {
       state.isTravelPackageOk.value = false;
       state.msgPackage.value = '';
@@ -251,9 +159,9 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     }
     final body = CheckBookingPackageRequest(
       context: ctx,
-      code: checkPackageCode,
-      journeyId: checkPackageJourneyId,
-      travelDate: checkPackageTravelDate,
+      code: uiState.value.checkPackageCode,
+      journeyId: uiState.value.checkPackageJourneyId,
+      travelDate: uiState.value.checkPackageTravelDate,
     );
 
     final res = await passerngerUscase.checkPackageApply(body);
@@ -262,6 +170,12 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       final ok = (res.body?.status ?? 0) == 1;
       if (ok) {
         ValueStatic.travelPackageDis = res.body?.discount ?? 0;
+        final _subTotal = double.tryParse(ValueStatic.totalPrice) ?? 0.0;
+        final _discountAmt = getTravelPackageDiscountAmount(_subTotal);
+        debugPrint(
+          '[Package] apply ok: discount='
+          '${ValueStatic.travelPackageDis}% -> amount=$_discountAmt on subTotal=$_subTotal',
+        );
         state.msgPackage.value = '';
         state.isTravelPackageOk.value = true;
         return true;
@@ -347,6 +261,17 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     return totalPrice;
   }
 
+  double getTravelPackageDiscountAmount(double subTotal) {
+    if (ValueStatic.travelPackageDis <= 0 || subTotal <= 0) {
+      return 0.0;
+    }
+
+    final percent = ValueStatic.travelPackageDis.toDouble();
+    final rawDiscount = subTotal * (percent / 100.0);
+    final appliedDiscount = rawDiscount > subTotal ? subTotal : rawDiscount;
+    return double.parse(appliedDiscount.toStringAsFixed(2));
+  }
+
   double setDiscountTwoWay(List<double> seatPrice, List<double> seatPriceBack) {
     double disCountGo;
     double disCountBack;
@@ -430,12 +355,21 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       final totalAmount = getTotalAmount(seatPrice);
       double totalDiscount = 0;
       if (!forceZeroDiscount) {
-        if (ValueStatic.seatPriceGoDiscount) {
+        if (state.isTravelPackage.value &&
+            state.isTravelPackageOk.value &&
+            ValueStatic.travelPackageDis > 0) {
+          totalDiscount = getTravelPackageDiscountAmount(totalAmount);
+          debugPrint(
+            'Applying travel package discount: ${ValueStatic.travelPackageDis}% -> $totalDiscount',
+          );
+        } else if (ValueStatic.seatPriceGoDiscount) {
           totalDiscount = 0;
+          debugPrint('No standard 5% discount (seatPriceGoDiscount=true)');
         } else {
           totalDiscount = double.parse(
             (getTotalAmount(seatPrice) * 0.05).toStringAsFixed(2),
           );
+          debugPrint('Applying standard 5% discount -> $totalDiscount');
         }
       }
       final totalSeat = ValueStatic.oneWaySelectedSeat.length.toString();
@@ -535,6 +469,10 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       final totalDiscount =
           forceZeroDiscount
               ? 0.0
+              : (state.isTravelPackage.value &&
+                  state.isTravelPackageOk.value &&
+                  ValueStatic.travelPackageDis > 0)
+              ? getTravelPackageDiscountAmount(totalAmount + totalAmountBack)
               : setDiscountTwoWay(seatPrice, seatPriceBack());
       ValueStatic.totalPriceDiscount = totalDiscount;
 
@@ -737,27 +675,27 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       final user = Get.find<UserController>();
       if (ValueStatic.journeyType == 1 &&
           ValueStatic.oneWaySelectedSeat.length == 1) {
-        if (genderOneWay.isEmpty) {
-          genderOneWay.add('0');
+        if (state.genderOneWay.isEmpty) {
+          state.genderOneWay.add('0');
         }
         final g = user.gender;
         if (g == 1 || g == 2) {
-          genderOneWay[0] = g.toString();
+          state.genderOneWay[0] = g.toString();
         }
 
-        if (nationalOneWay.isEmpty) {
-          nationalOneWay.add(0);
+        if (state.nationalOneWay.isEmpty) {
+          state.nationalOneWay.add(0);
         }
         final natId = user.nationalityId;
         if (natId > 0) {
-          nationalOneWay[0] = natId;
-          if (nationalityIds.isEmpty) {
-            nationalityIds = List<int?>.filled(
+          state.nationalOneWay[0] = natId;
+          if (state.nationalityIds.isEmpty) {
+            state.nationalityIds = List<int?>.filled(
               ValueStatic.oneWaySelectedSeat.length,
               null,
             );
           }
-          nationalityIds[0] = natId;
+          state.nationalityIds[0] = natId;
         }
         update();
       }
@@ -831,29 +769,29 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
       if (displayName.isNotEmpty) {
         ValueStatic.username = displayName;
-        if (!onlyIfEmpty || usernameController.text.isEmpty) {
-          usernameController.text = displayName;
+        if (!onlyIfEmpty || state.usernameController.text.isEmpty) {
+          state.usernameController.text = displayName;
         }
       } else if (!onlyIfEmpty && ValueStatic.username.isNotEmpty) {
-        usernameController.text = ValueStatic.username;
+        state.usernameController.text = ValueStatic.username;
       }
 
       if (phone.isNotEmpty) {
         ValueStatic.phone = phone;
-        if (!onlyIfEmpty || phoneNumberController.text.isEmpty) {
-          phoneNumberController.text = phone;
+        if (!onlyIfEmpty || state.phoneNumberController.text.isEmpty) {
+          state.phoneNumberController.text = phone;
         }
       } else if (!onlyIfEmpty && ValueStatic.phone.isNotEmpty) {
-        phoneNumberController.text = ValueStatic.phone;
+        state.phoneNumberController.text = ValueStatic.phone;
       }
 
       if (email.isNotEmpty) {
         ValueStatic.email = email;
-        if (!onlyIfEmpty || emailController.text.isEmpty) {
-          emailController.text = email;
+        if (!onlyIfEmpty || state.emailController.text.isEmpty) {
+          state.emailController.text = email;
         }
       } else if (!onlyIfEmpty && ValueStatic.email.isNotEmpty) {
-        emailController.text = ValueStatic.email;
+        state.emailController.text = ValueStatic.email;
       }
 
       if (dob.isNotEmpty) {
@@ -870,36 +808,41 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       }
     } catch (_) {
       if (!onlyIfEmpty) {
-        if (usernameController.text.isEmpty &&
+        if (state.usernameController.text.isEmpty &&
             ValueStatic.username.isNotEmpty) {
-          usernameController.text = ValueStatic.username;
+          state.usernameController.text = ValueStatic.username;
         }
-        if (phoneNumberController.text.isEmpty &&
+        if (state.phoneNumberController.text.isEmpty &&
             ValueStatic.phone.isNotEmpty) {
-          phoneNumberController.text = ValueStatic.phone;
+          state.phoneNumberController.text = ValueStatic.phone;
         }
-        if (emailController.text.isEmpty && ValueStatic.email.isNotEmpty) {
-          emailController.text = ValueStatic.email;
+        if (state.emailController.text.isEmpty &&
+            ValueStatic.email.isNotEmpty) {
+          state.emailController.text = ValueStatic.email;
         }
       }
     }
   }
 
   void _ensurePassengerSelectionSlots() {
-    createGenderListOneWay(genderOneWay);
-    createNationalListOneWay(nationalOneWay);
-    createGenderListTwoWay(genderTwoWay);
-    createNationalListTwoWay(nationalTwoWay);
+    createGenderListOneWay(state.genderOneWay);
+    createNationalListOneWay(state.nationalOneWay);
+    createGenderListTwoWay(state.genderTwoWay);
+    createNationalListTwoWay(state.nationalTwoWay);
 
-    nationalityIds = List<int?>.generate(
+    final oldNationalityIds = state.nationalityIds;
+    state.nationalityIds = List<int?>.generate(
       ValueStatic.oneWaySelectedSeat.length,
-      (index) => index < nationalityIds.length ? nationalityIds[index] : null,
+      (index) =>
+          index < oldNationalityIds.length ? oldNationalityIds[index] : null,
     );
-    nationalityIdsTwoWay = List<int?>.generate(
+
+    final oldNationalityIdsTwoWay = state.nationalityIdsTwoWay;
+    state.nationalityIdsTwoWay = List<int?>.generate(
       ValueStatic.twoWaySelectedSeat.length,
       (index) =>
-          index < nationalityIdsTwoWay.length
-              ? nationalityIdsTwoWay[index]
+          index < oldNationalityIdsTwoWay.length
+              ? oldNationalityIdsTwoWay[index]
               : null,
     );
   }
@@ -913,33 +856,37 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       syncUserProfileToForm();
       _ensurePassengerSelectionSlots();
 
-      if (genderOneWay.isNotEmpty &&
+      if (state.genderOneWay.isNotEmpty &&
           (g == 1 || g == 2) &&
-          genderOneWay[0] == '0') {
-        genderOneWay[0] = g.toString();
+          state.genderOneWay[0] == '0') {
+        state.genderOneWay[0] = g.toString();
       }
-      if (nationalOneWay.isNotEmpty && natId > 0 && nationalOneWay[0] == 0) {
-        nationalOneWay[0] = natId;
+      if (state.nationalOneWay.isNotEmpty &&
+          natId > 0 &&
+          state.nationalOneWay[0] == 0) {
+        state.nationalOneWay[0] = natId;
       }
-      if (nationalityIds.isNotEmpty && natId > 0) {
-        final current = nationalityIds[0] ?? 0;
+      if (state.nationalityIds.isNotEmpty && natId > 0) {
+        final current = state.nationalityIds[0] ?? 0;
         if (current == 0) {
-          nationalityIds[0] = natId;
+          state.nationalityIds[0] = natId;
         }
       }
 
-      if (genderTwoWay.isNotEmpty &&
+      if (state.genderTwoWay.isNotEmpty &&
           (g == 1 || g == 2) &&
-          genderTwoWay[0] == '0') {
-        genderTwoWay[0] = g.toString();
+          state.genderTwoWay[0] == '0') {
+        state.genderTwoWay[0] = g.toString();
       }
-      if (nationalTwoWay.isNotEmpty && natId > 0 && nationalTwoWay[0] == 0) {
-        nationalTwoWay[0] = natId;
+      if (state.nationalTwoWay.isNotEmpty &&
+          natId > 0 &&
+          state.nationalTwoWay[0] == 0) {
+        state.nationalTwoWay[0] = natId;
       }
-      if (nationalityIdsTwoWay.isNotEmpty && natId > 0) {
-        final current = nationalityIdsTwoWay[0] ?? 0;
+      if (state.nationalityIdsTwoWay.isNotEmpty && natId > 0) {
+        final current = state.nationalityIdsTwoWay[0] ?? 0;
         if (current == 0) {
-          nationalityIdsTwoWay[0] = natId;
+          state.nationalityIdsTwoWay[0] = natId;
         }
       }
 
@@ -1000,35 +947,35 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
   void disposeResources({required FocusNode inputFocusNode}) {
     inputFocusNode.dispose();
-    phoneNumberController.dispose();
-    emailController.dispose();
-    usernameController.dispose();
-    codeController.dispose();
-    couponController.dispose();
-    nationalityController.dispose();
+    state.phoneNumberController.dispose();
+    state.emailController.dispose();
+    state.usernameController.dispose();
+    state.codeController.dispose();
+    state.couponController.dispose();
+    state.nationalityController.dispose();
 
-    for (final c in dobOneWay) {
+    for (final c in state.dobOneWay) {
       c.dispose();
     }
-    for (final c in dobOneWayList) {
+    for (final c in state.dobOneWayList) {
       c.dispose();
     }
-    for (final c in passportOneWay) {
+    for (final c in state.passportOneWay) {
       c.dispose();
     }
-    for (final c in nameOneWay) {
+    for (final c in state.nameOneWay) {
       c.dispose();
     }
-    for (final c in dobTwoWay) {
+    for (final c in state.dobTwoWay) {
       c.dispose();
     }
-    for (final c in dobTwoWayList) {
+    for (final c in state.dobTwoWayList) {
       c.dispose();
     }
-    for (final c in passportTwoWay) {
+    for (final c in state.passportTwoWay) {
       c.dispose();
     }
-    for (final c in nameTwoWay) {
+    for (final c in state.nameTwoWay) {
       c.dispose();
     }
   }

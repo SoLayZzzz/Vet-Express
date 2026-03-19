@@ -570,6 +570,9 @@ class AuthController extends StateController<AuthUiState> {
 
       await AppPref.setLogin();
 
+      uiState.value.signInPhoneController.clear();
+      uiState.value.signInPasswordController.clear();
+
       Get.offAllNamed(AppRoutes.home);
     } on Exception catch (e) {
       Loading().loadingClose();

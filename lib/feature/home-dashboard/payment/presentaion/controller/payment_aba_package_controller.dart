@@ -22,6 +22,7 @@ class PaymentAbaPackageController extends GetxController {
   final String token;
   final String title;
   final String url;
+  final String deeplink;
   final int type;
 
   PaymentAbaPackageController({
@@ -29,6 +30,7 @@ class PaymentAbaPackageController extends GetxController {
     required this.token,
     required this.title,
     required this.url,
+    required this.deeplink,
     required this.type,
   });
 
@@ -71,7 +73,19 @@ class PaymentAbaPackageController extends GetxController {
     webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
 
     if (type == 1) {
-      payWithABAMobile(
+      if (deeplink.isNotEmpty) {
+        Future.microtask(() async {
+          await openDeepLinkABA(deeplink);
+        });
+      }
+      if ((url).isEmpty) {
+        payWithABAMobile(
+          context: context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }
+      checkPaymentABAComplete(
         context: context,
         transactionId: transactionId,
         token: token,
@@ -171,10 +185,13 @@ class PaymentAbaPackageController extends GetxController {
     if (response.statusCode == 200) {
       log('This is response check payment $title ==>>${response.body}');
       Map<dynamic, dynamic> result = jsonDecode(response.body);
-      if (result['status'] == 1) {
+      final status = '${result['status']}';
+      if (status == '1') {
         log('Check status transaction $title == 1');
+        _loop = false;
         Get.back(result: '1');
       } else {
+        log('Check status transaction $title == $status (payment pending)');
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {
             checkPaymentABAComplete(

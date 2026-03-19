@@ -12,7 +12,6 @@ import 'utils/locale.dart';
 import 'utils/one_signal_init.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'utils/translate.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';

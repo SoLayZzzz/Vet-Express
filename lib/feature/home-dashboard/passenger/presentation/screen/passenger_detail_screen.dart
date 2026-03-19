@@ -25,7 +25,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.initialLoadFuture ??= controller
+    if (controller.state.initialLoadFuture == null) {
+      controller.onPassengerDetailScreenEnter();
+    }
+    controller.state.initialLoadFuture ??= controller
         .initPassengerDetail(context)
         .then((res) {
           _buildres();
@@ -49,23 +52,23 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
   _buildres() {
     controller.syncUserProfileToForm(onlyIfEmpty: false);
 
-    controller.createGenderListOneWay(controller.genderOneWay);
-    controller.createNationalListOneWay(controller.nationalOneWay);
-    controller.createGenderListTwoWay(controller.genderTwoWay);
-    controller.createNationalListTwoWay(controller.nationalTwoWay);
-    controller.createDobOneWay(controller.dobOneWay);
-    controller.createDobOneWayList(controller.dobOneWayList);
-    controller.createPassportOneWay(controller.passportOneWay);
-    controller.createNameOneWay(controller.nameOneWay);
-    controller.createDobTwoWay(controller.dobTwoWay);
-    controller.createDobTwoWayList(controller.dobTwoWayList);
-    controller.createPassportTwoWay(controller.passportTwoWay);
-    controller.createNameTwoWay(controller.nameTwoWay);
+    controller.createGenderListOneWay(controller.state.genderOneWay);
+    controller.createNationalListOneWay(controller.state.nationalOneWay);
+    controller.createGenderListTwoWay(controller.state.genderTwoWay);
+    controller.createNationalListTwoWay(controller.state.nationalTwoWay);
+    controller.createDobOneWay(controller.state.dobOneWay);
+    controller.createDobOneWayList(controller.state.dobOneWayList);
+    controller.createPassportOneWay(controller.state.passportOneWay);
+    controller.createNameOneWay(controller.state.nameOneWay);
+    controller.createDobTwoWay(controller.state.dobTwoWay);
+    controller.createDobTwoWayList(controller.state.dobTwoWayList);
+    controller.createPassportTwoWay(controller.state.passportTwoWay);
+    controller.createNameTwoWay(controller.state.nameTwoWay);
 
-    controller.boardingListOneway(controller.boardingPointOneway);
-    controller.dropOffListOneway(controller.dropOffPointOneway);
-    controller.boardingListTwoWay(controller.boardingPointTwoWay);
-    controller.dropOffListTwoWay(controller.dropOffPointTwoWay);
+    controller.boardingListOneway(controller.state.boardingPointOneway);
+    controller.dropOffListOneway(controller.state.dropOffPointOneway);
+    controller.boardingListTwoWay(controller.state.boardingPointTwoWay);
+    controller.dropOffListTwoWay(controller.state.dropOffPointTwoWay);
     controller.applyUserDefaultsToEmptySelections();
   }
 
@@ -73,22 +76,22 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     controller.getData(
       context: context,
       isConfirm: isConfirm,
-      luckyDraw: controller.luckyDraw,
-      genderOneWay: controller.genderOneWay,
-      nationalOneWay: controller.nationalOneWay,
-      genderTwoWay: controller.genderTwoWay,
-      nationalTwoWay: controller.nationalTwoWay,
-      dobOneWayControllers: controller.dobOneWay,
-      dobTwoWayControllers: controller.dobTwoWay,
-      passportOneWayControllers: controller.passportOneWay,
-      passportTwoWayControllers: controller.passportTwoWay,
-      nameOneWayControllers: controller.nameOneWay,
-      nameTwoWayControllers: controller.nameTwoWay,
-      packageCode: controller.codeController.text,
-      couponCode: controller.couponController.text,
-      isLoaded: controller.isLoaded,
+      luckyDraw: controller.state.luckyDraw.value,
+      genderOneWay: controller.state.genderOneWay,
+      nationalOneWay: controller.state.nationalOneWay,
+      genderTwoWay: controller.state.genderTwoWay,
+      nationalTwoWay: controller.state.nationalTwoWay,
+      dobOneWayControllers: controller.state.dobOneWay,
+      dobTwoWayControllers: controller.state.dobTwoWay,
+      passportOneWayControllers: controller.state.passportOneWay,
+      passportTwoWayControllers: controller.state.passportTwoWay,
+      nameOneWayControllers: controller.state.nameOneWay,
+      nameTwoWayControllers: controller.state.nameTwoWay,
+      packageCode: controller.state.codeController.text,
+      couponCode: controller.state.couponController.text,
+      isLoaded: controller.state.isLoaded.value,
       markLoaded: () {
-        controller.isLoaded = true;
+        controller.state.isLoaded.value = true;
       },
     );
   }
@@ -574,7 +577,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                       Expanded(
                         flex: 2,
                         child: FutureBuilder<NationalityResponse>(
-                          future: controller.futureNationality,
+                          future: controller.state.futureNationality,
                           builder: (context, data) {
                             if (data.hasData) {
                               if ((data.data?.header?.result) == true &&
@@ -663,6 +666,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             dropdownSearchData: DropdownSearchData(
                                               searchController:
                                                   controller
+                                                      .state
                                                       .nationalityController,
                                               searchInnerWidgetHeight: 50,
                                               searchInnerWidget: Container(
@@ -678,6 +682,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                   maxLines: null,
                                                   controller:
                                                       controller
+                                                          .state
                                                           .nationalityController,
                                                   decoration: InputDecoration(
                                                     isDense: true,
@@ -714,7 +719,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                             onMenuStateChange: (isOpen) {
                                               if (!isOpen) {
-                                                controller.nationalityController
+                                                controller
+                                                    .state
+                                                    .nationalityController
                                                     .clear();
                                               }
                                             },
@@ -864,12 +871,16 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
   FutureBuilder<void> _buildPassengerHaveDiscount() {
     controller.forceZeroDiscount = false;
+    controller.packageOnlyDiscountMode = false;
     return _buildPassenger(enableDiscount: true);
   }
 
   FutureBuilder<void> _buildPassengerNoDiscount() {
-    controller.forceZeroDiscount = true;
-    return _buildPassenger(enableDiscount: true, forceZeroDiscount: true);
+    controller.forceZeroDiscount = false;
+    controller.packageOnlyDiscountMode = false;
+    ValueStatic.seatPriceGoDiscount = true;
+    ValueStatic.seatPriceBackDiscount = true;
+    return _buildPassenger(enableDiscount: true);
   }
 
   FutureBuilder<void> _buildPassenger({
@@ -877,7 +888,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     bool forceZeroDiscount = false,
   }) {
     return FutureBuilder<void>(
-      future: controller.initialLoadFuture,
+      future: controller.state.initialLoadFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return Center(
@@ -894,6 +905,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
         return GetBuilder<PassengerDetailController>(
           dispose: (_) {
+            controller.onPassengerDetailScreenExit();
             controller.disposeResources(inputFocusNode: inputFocusNode);
           },
           builder: (_) {
@@ -928,7 +940,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   bottom: 10.0,
                                 ),
                                 child: TextField(
-                                  controller: controller.usernameController,
+                                  controller:
+                                      controller.state.usernameController,
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: AppColors.textColor,
@@ -942,7 +955,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10.0),
                                 child: TextField(
-                                  controller: controller.phoneNumberController,
+                                  controller:
+                                      controller.state.phoneNumberController,
                                   keyboardType: TextInputType.number,
                                   style: const TextStyle(
                                     fontSize: 14,
@@ -950,13 +964,19 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   ),
                                   onChanged: (value) {
                                     if (value != ValueStatic.phone) {
-                                      controller.isPhone = true;
-                                      controller.isTravelPackageOk = false;
-                                      controller.isTravelPackage = false;
-                                      controller.codeController.text.isEmpty;
+                                      controller.state.isPhone.value = true;
+                                      controller.state.isTravelPackageOk.value =
+                                          false;
+                                      controller.state.isTravelPackage.value =
+                                          false;
+                                      controller
+                                          .state
+                                          .codeController
+                                          .text
+                                          .isEmpty;
                                       controller.update();
                                     } else {
-                                      controller.isPhone = false;
+                                      controller.state.isPhone.value = false;
                                       controller.update();
                                     }
                                   },
@@ -1025,7 +1045,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                 //* boarding point
                                 FutureBuilder<boarding.CarPointResponse>(
-                                  future: controller.futureBoardingPointOneWay,
+                                  future:
+                                      controller
+                                          .state
+                                          .futureBoardingPointOneWay,
                                   builder: (context, data) {
                                     if (data.hasData) {
                                       if ((data.data?.header?.result) == true &&
@@ -1089,42 +1112,57 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                 items: data.data?.body ?? [],
                                                 selectedIndex:
                                                     controller
-                                                        .isSelectedIndexBoardingOneWay,
+                                                        .state
+                                                        .isSelectedIndexBoardingOneWay
+                                                        .value,
                                                 onSelectedIndexChanged: (
                                                   value,
                                                 ) {
                                                   controller
-                                                          .isSelectedIndexBoardingOneWay =
-                                                      value;
+                                                      .state
+                                                      .isSelectedIndexBoardingOneWay
+                                                      .value = value;
                                                 },
                                                 selectedName:
                                                     controller
-                                                        .selectedBoardingPointOneWay,
+                                                        .state
+                                                        .selectedBoardingPointOneWay
+                                                        .value,
                                                 onSelectedNameChanged: (value) {
                                                   controller
-                                                          .selectedBoardingPointOneWay =
-                                                      value;
+                                                      .state
+                                                      .selectedBoardingPointOneWay
+                                                      .value = value;
                                                 },
                                                 selectedAddress:
                                                     controller
-                                                        .selectedBoardingPointAddressOneWay,
+                                                        .state
+                                                        .selectedBoardingPointAddressOneWay
+                                                        .value,
                                                 onSelectedAddressChanged: (
                                                   value,
                                                 ) {
                                                   controller
-                                                          .selectedBoardingPointAddressOneWay =
-                                                      value;
+                                                      .state
+                                                      .selectedBoardingPointAddressOneWay
+                                                      .value = value;
                                                 },
                                                 defaultName:
                                                     'select_boarding'.tr,
                                                 onClearSelection: () {
                                                   controller
-                                                      .isSelectedIndexBoardingOneWay = -1;
+                                                      .state
+                                                      .isSelectedIndexBoardingOneWay
+                                                      .value = -1;
                                                   controller
-                                                          .selectedBoardingPointOneWay =
-                                                      'select_boarding'.tr;
+                                                      .state
+                                                      .selectedBoardingPointOneWay
+                                                      .value = 'select_boarding'
+                                                          .tr;
                                                   controller
-                                                      .selectedBoardingPointAddressOneWay = '';
+                                                      .state
+                                                      .selectedBoardingPointAddressOneWay
+                                                      .value = '';
                                                   ValueStatic
                                                       .boardingPointOneWayId = '';
                                                 },
@@ -1154,7 +1192,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                 //* drop off point
                                 FutureBuilder<boarding.CarPointResponse>(
-                                  future: controller.futureDropOffPointOneWay,
+                                  future:
+                                      controller.state.futureDropOffPointOneWay,
                                   builder: (context, data) {
                                     if (data.hasData) {
                                       if ((data.data?.header?.result) == true &&
@@ -1220,41 +1259,55 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                 items: data.data?.body ?? [],
                                                 selectedIndex:
                                                     controller
-                                                        .isSelectedIndexDropOffOneWay,
+                                                        .state
+                                                        .isSelectedIndexDropOffOneWay
+                                                        .value,
                                                 onSelectedIndexChanged: (
                                                   value,
                                                 ) {
                                                   controller
-                                                          .isSelectedIndexDropOffOneWay =
-                                                      value;
+                                                      .state
+                                                      .isSelectedIndexDropOffOneWay
+                                                      .value = value;
                                                 },
                                                 selectedName:
                                                     controller
-                                                        .selectedDropPointOneWay,
+                                                        .state
+                                                        .selectedDropPointOneWay
+                                                        .value,
                                                 onSelectedNameChanged: (value) {
                                                   controller
-                                                          .selectedDropPointOneWay =
-                                                      value;
+                                                      .state
+                                                      .selectedDropPointOneWay
+                                                      .value = value;
                                                 },
                                                 selectedAddress:
                                                     controller
-                                                        .selectedDropPointAddressOneWay,
+                                                        .state
+                                                        .selectedDropPointAddressOneWay
+                                                        .value,
                                                 onSelectedAddressChanged: (
                                                   value,
                                                 ) {
                                                   controller
-                                                          .selectedDropPointAddressOneWay =
-                                                      value;
+                                                      .state
+                                                      .selectedDropPointAddressOneWay
+                                                      .value = value;
                                                 },
                                                 defaultName: 'select_drop'.tr,
                                                 onClearSelection: () {
                                                   controller
-                                                      .isSelectedIndexDropOffOneWay = -1;
+                                                      .state
+                                                      .isSelectedIndexDropOffOneWay
+                                                      .value = -1;
                                                   controller
-                                                          .selectedDropPointOneWay =
-                                                      'select_drop'.tr;
+                                                      .state
+                                                      .selectedDropPointOneWay
+                                                      .value = 'select_drop'.tr;
                                                   controller
-                                                      .selectedDropPointAddressOneWay = '';
+                                                      .state
+                                                      .selectedDropPointAddressOneWay
+                                                      .value = '';
                                                   ValueStatic
                                                       .dropOffPointOneWayId = '';
                                                 },
@@ -1300,13 +1353,15 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             context: context,
                             selectedSeats: ValueStatic.oneWaySelectedSeat,
                             companyType: ValueStatic.companyTypeOneWay,
-                            nameControllers: controller.nameOneWay,
-                            gender: controller.genderOneWay,
-                            nationalityIds: controller.nationalityIds,
-                            national: controller.nationalOneWay,
-                            dobDisplayControllers: controller.dobOneWayList,
-                            dobValueControllers: controller.dobOneWay,
-                            passportControllers: controller.passportOneWay,
+                            nameControllers: controller.state.nameOneWay,
+                            gender: controller.state.genderOneWay,
+                            nationalityIds: controller.state.nationalityIds,
+                            national: controller.state.nationalOneWay,
+                            dobDisplayControllers:
+                                controller.state.dobOneWayList,
+                            dobValueControllers: controller.state.dobOneWay,
+                            passportControllers:
+                                controller.state.passportOneWay,
                           ),
                         ]),
                       ),
@@ -1364,7 +1419,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   //* boarding point two way
                                   FutureBuilder<boarding.CarPointResponse>(
                                     future:
-                                        controller.futureBoardingPointTwoWay,
+                                        controller
+                                            .state
+                                            .futureBoardingPointTwoWay,
                                     builder: (context, data) {
                                       if (data.hasData) {
                                         if ((data.data?.header?.result) ==
@@ -1501,46 +1558,61 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                 [],
                                                             selectedIndex:
                                                                 controller
-                                                                    .isSelectIndexBoardingTwoWay,
+                                                                    .state
+                                                                    .isSelectIndexBoardingTwoWay
+                                                                    .value,
                                                             onSelectedIndexChanged: (
                                                               value,
                                                             ) {
                                                               controller
-                                                                      .isSelectIndexBoardingTwoWay =
-                                                                  value;
+                                                                  .state
+                                                                  .isSelectIndexBoardingTwoWay
+                                                                  .value = value;
                                                             },
                                                             selectedName:
                                                                 controller
-                                                                    .selectBoardingPointTwoWay,
+                                                                    .state
+                                                                    .selectBoardingPointTwoWay
+                                                                    .value,
                                                             onSelectedNameChanged: (
                                                               value,
                                                             ) {
                                                               controller
-                                                                      .selectBoardingPointTwoWay =
-                                                                  value;
+                                                                  .state
+                                                                  .selectBoardingPointTwoWay
+                                                                  .value = value;
                                                             },
                                                             selectedAddress:
                                                                 controller
-                                                                    .selectBoardingPointAddressTwoWay,
+                                                                    .state
+                                                                    .selectBoardingPointAddressTwoWay
+                                                                    .value,
                                                             onSelectedAddressChanged: (
                                                               value,
                                                             ) {
                                                               controller
-                                                                      .selectBoardingPointAddressTwoWay =
-                                                                  value;
+                                                                  .state
+                                                                  .selectBoardingPointAddressTwoWay
+                                                                  .value = value;
                                                             },
                                                             defaultName:
                                                                 'select_boarding'
                                                                     .tr,
                                                             onClearSelection: () {
                                                               controller
-                                                                  .isSelectIndexBoardingTwoWay = -1;
+                                                                  .state
+                                                                  .isSelectIndexBoardingTwoWay
+                                                                  .value = -1;
                                                               controller
-                                                                      .selectBoardingPointTwoWay =
+                                                                      .state
+                                                                      .selectBoardingPointTwoWay
+                                                                      .value =
                                                                   'select_boarding'
                                                                       .tr;
                                                               controller
-                                                                  .selectBoardingPointAddressTwoWay = '';
+                                                                  .state
+                                                                  .selectBoardingPointAddressTwoWay
+                                                                  .value = '';
                                                               ValueStatic
                                                                   .boardingPointTwoWayId = '';
                                                             },
@@ -1605,7 +1677,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                   //* drop off two way
                                   FutureBuilder<boarding.CarPointResponse>(
-                                    future: controller.futureDropOffPointTwoWay,
+                                    future:
+                                        controller
+                                            .state
+                                            .futureDropOffPointTwoWay,
                                     builder: (context, data) {
                                       if (data.hasData) {
                                         if ((data.data?.header?.result) ==
@@ -1743,46 +1818,61 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                 [],
                                                             selectedIndex:
                                                                 controller
-                                                                    .isSelectIndexDropOffTwoWay,
+                                                                    .state
+                                                                    .isSelectIndexDropOffTwoWay
+                                                                    .value,
                                                             onSelectedIndexChanged: (
                                                               value,
                                                             ) {
                                                               controller
-                                                                      .isSelectIndexDropOffTwoWay =
-                                                                  value;
+                                                                  .state
+                                                                  .isSelectIndexDropOffTwoWay
+                                                                  .value = value;
                                                             },
                                                             selectedName:
                                                                 controller
-                                                                    .selectDropPointTwoWay,
+                                                                    .state
+                                                                    .selectDropPointTwoWay
+                                                                    .value,
                                                             onSelectedNameChanged: (
                                                               value,
                                                             ) {
                                                               controller
-                                                                      .selectDropPointTwoWay =
-                                                                  value;
+                                                                  .state
+                                                                  .selectDropPointTwoWay
+                                                                  .value = value;
                                                             },
                                                             selectedAddress:
                                                                 controller
-                                                                    .selectDropPointAddressTwoWay,
+                                                                    .state
+                                                                    .selectDropPointAddressTwoWay
+                                                                    .value,
                                                             onSelectedAddressChanged: (
                                                               value,
                                                             ) {
                                                               controller
-                                                                      .selectDropPointAddressTwoWay =
-                                                                  value;
+                                                                  .state
+                                                                  .selectDropPointAddressTwoWay
+                                                                  .value = value;
                                                             },
                                                             defaultName:
                                                                 'select_drop'
                                                                     .tr,
                                                             onClearSelection: () {
                                                               controller
-                                                                  .isSelectIndexDropOffTwoWay = -1;
+                                                                  .state
+                                                                  .isSelectIndexDropOffTwoWay
+                                                                  .value = -1;
                                                               controller
-                                                                      .selectDropPointTwoWay =
+                                                                      .state
+                                                                      .selectDropPointTwoWay
+                                                                      .value =
                                                                   'select_drop'
                                                                       .tr;
                                                               controller
-                                                                  .selectDropPointAddressTwoWay = '';
+                                                                  .state
+                                                                  .selectDropPointAddressTwoWay
+                                                                  .value = '';
                                                               ValueStatic
                                                                   .dropOffPointTwoWayId = '';
                                                             },
@@ -1866,13 +1956,16 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               context: context,
                               selectedSeats: ValueStatic.twoWaySelectedSeat,
                               companyType: ValueStatic.companyTypeTwoWay,
-                              nameControllers: controller.nameTwoWay,
-                              gender: controller.genderTwoWay,
-                              nationalityIds: controller.nationalityIdsTwoWay,
-                              national: controller.nationalTwoWay,
-                              dobDisplayControllers: controller.dobTwoWayList,
-                              dobValueControllers: controller.dobTwoWay,
-                              passportControllers: controller.passportTwoWay,
+                              nameControllers: controller.state.nameTwoWay,
+                              gender: controller.state.genderTwoWay,
+                              nationalityIds:
+                                  controller.state.nationalityIdsTwoWay,
+                              national: controller.state.nationalTwoWay,
+                              dobDisplayControllers:
+                                  controller.state.dobTwoWayList,
+                              dobValueControllers: controller.state.dobTwoWay,
+                              passportControllers:
+                                  controller.state.passportTwoWay,
                             ),
                           ]),
                         ),
@@ -1912,7 +2005,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               // * check the phone number
                               if (enableDiscount)
                                 if (ValueStatic.phone ==
-                                    controller.phoneNumberController.text)
+                                    controller.state.phoneNumberController.text)
                                   ///one way
                                   if (ValueStatic.journeyType == 1)
                                     ///check the number of seat one way(can apply only when user book one seat)
@@ -1957,9 +2050,14 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                       ),
                                                       value:
                                                           controller
-                                                              .isTravelPackage,
+                                                              .state
+                                                              .isTravelPackage
+                                                              .value,
                                                       onChanged:
-                                                          (controller.status ==
+                                                          (controller
+                                                                      .state
+                                                                      .status
+                                                                      .value ==
                                                                   1)
                                                               ? null // disable checkbox when promo code applied
                                                               : (value) async {
@@ -1967,8 +2065,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                 if (value !=
                                                                     null) {
                                                                   controller
-                                                                          .isTravelPackage =
-                                                                      value;
+                                                                      .state
+                                                                      .isTravelPackage
+                                                                      .value = value;
                                                                   controller
                                                                       .update();
                                                                 }
@@ -1977,12 +2076,14 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                 if (value ==
                                                                     false) {
                                                                   controller
+                                                                      .state
                                                                       .codeController
                                                                       .text = '';
                                                                   // allow promo button again
                                                                   controller
-                                                                          .isTravelPackageOk =
-                                                                      false;
+                                                                      .state
+                                                                      .isTravelPackageOk
+                                                                      .value = false;
                                                                   controller
                                                                       .update();
                                                                 }
@@ -1990,7 +2091,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                 ///user apply with the same phone number
                                                                 if (value! &&
                                                                     !controller
-                                                                        .isPhone) {
+                                                                        .state
+                                                                        .isPhone
+                                                                        .value) {
                                                                   ///check user have travel package or not
                                                                   final travelPackage =
                                                                       await TravelPackage()
@@ -2004,8 +2107,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                       .isEmpty) {
                                                                     ///when user don't have travel package, set isNoPackage = true;
                                                                     controller
-                                                                            .isNoPackage =
-                                                                        true;
+                                                                        .state
+                                                                        .isNoPackage
+                                                                        .value = true;
                                                                     controller
                                                                         .update();
 
@@ -2026,8 +2130,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                         );
 
                                                                         ///when user don't have travel package, set isTravelPackage = false; then un_tick the checkbox
-                                                                        controller.isTravelPackage =
-                                                                            false;
+                                                                        controller
+                                                                            .state
+                                                                            .isTravelPackage
+                                                                            .value = false;
                                                                         controller
                                                                             .update();
                                                                       },
@@ -2037,8 +2143,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                   else {
                                                                     ///when user have travel package, set isNoPackage = false;
                                                                     controller
-                                                                            .isNoPackage =
-                                                                        false;
+                                                                        .state
+                                                                        .isNoPackage
+                                                                        .value = false;
                                                                     controller
                                                                         .update();
 
@@ -2049,18 +2156,19 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                             .body?[0]
                                                                             .packageCode;
                                                                     controller
-                                                                            .codeController
-                                                                            .text =
-                                                                        packageCoded!;
+                                                                        .state
+                                                                        .codeController
+                                                                        .text = packageCoded!;
 
                                                                     ///set the first index package code to inputCodeController
                                                                     controller
-                                                                            .codeController
-                                                                            .text =
-                                                                        packageCoded;
+                                                                        .state
+                                                                        .codeController
+                                                                        .text = packageCoded;
                                                                     controller
-                                                                            .packageTypeOneWay =
-                                                                        travelPackage
+                                                                        .state
+                                                                        .packageTypeOneWay
+                                                                        .value = travelPackage
                                                                             .body![0]
                                                                             .type!;
                                                                     controller
@@ -2068,7 +2176,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                                                     if (ValueStatic.vehicleTypeOneWay ==
                                                                             2 &&
-                                                                        controller.packageTypeOneWay ==
+                                                                        controller.state.packageTypeOneWay.value ==
                                                                             2) {
                                                                       alertDialogTravelPackage(
                                                                         title:
@@ -2084,10 +2192,13 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                                                           ///when user don't have travel package, set isTravelPackage = false; then un_tick the checkbox
                                                                           controller
+                                                                              .state
                                                                               .codeController
                                                                               .text = '';
-                                                                          controller.isTravelPackage =
-                                                                              false;
+                                                                          controller
+                                                                              .state
+                                                                              .isTravelPackage
+                                                                              .value = false;
                                                                           controller
                                                                               .update();
                                                                         },
@@ -2095,20 +2206,21 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                     } else {
                                                                       ///check travel package apply available or unavailable
                                                                       controller
-                                                                              .checkPackageContext =
-                                                                          context;
+                                                                          .state
+                                                                          .checkPackageContext = context;
                                                                       controller
-                                                                              .checkPackageCode =
-                                                                          controller
+                                                                          .state
+                                                                          .checkPackageCode = controller
+                                                                              .state
                                                                               .codeController
                                                                               .text;
                                                                       controller
-                                                                              .checkPackageJourneyId =
-                                                                          ValueStatic
+                                                                          .state
+                                                                          .checkPackageJourneyId = ValueStatic
                                                                               .journeyIdGo;
                                                                       controller
-                                                                              .checkPackageTravelDate =
-                                                                          ValueStatic
+                                                                          .state
+                                                                          .checkPackageTravelDate = ValueStatic
                                                                               .goDate;
                                                                       final ok =
                                                                           await controller
@@ -2117,13 +2229,18 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                       ///travel package code is ok
                                                                       if (ok) {
                                                                         ///save that this travel package code that apply is OK, set isTravelPackageOk = true;
-                                                                        controller.isTravelPackageOk =
-                                                                            true;
+                                                                        controller
+                                                                            .state
+                                                                            .isTravelPackageOk
+                                                                            .value = true;
 
                                                                         // disable promo code
                                                                         controller
-                                                                            .status = 0;
+                                                                            .state
+                                                                            .status
+                                                                            .value = 0;
                                                                         controller
+                                                                            .state
                                                                             .couponController
                                                                             .text = '';
                                                                         controller
@@ -2133,8 +2250,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                       else {
                                                                         ///save when this travel package code that apply is unavailable, set isTravelPackageOk = false;
                                                                         ///(sometime package code is expired, invalid, or already apply in this date)
-                                                                        controller.isTravelPackageOk =
-                                                                            false;
+                                                                        controller
+                                                                            .state
+                                                                            .isTravelPackageOk
+                                                                            .value = false;
                                                                         controller
                                                                             .update();
 
@@ -2152,7 +2271,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                             );
 
                                                                             ///when user apply code and the code is unavailable, set isTravelPackage = false; then un_tick the checkbox
-                                                                            controller.isTravelPackage =
+                                                                            controller.state.isTravelPackage.value =
                                                                                 false;
                                                                             controller.update();
                                                                           },
@@ -2177,15 +2296,22 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             const SizedBox(height: 20),
 
                                             ///apply package code with same phone number
-                                            if (controller.isTravelPackage &&
-                                                !controller.isPhone)
+                                            if (controller
+                                                    .state
+                                                    .isTravelPackage
+                                                    .value &&
+                                                !controller.state.isPhone.value)
                                               ///user have package and show the package code in the text_field(view only)
-                                              if (!controller.isNoPackage)
+                                              if (!controller
+                                                  .state
+                                                  .isNoPackage
+                                                  .value)
                                                 Column(
                                                   children: [
                                                     TextFormField(
                                                       controller:
                                                           controller
+                                                              .state
                                                               .codeController,
                                                       autofocus: false,
                                                       enabled: false,
@@ -2249,7 +2375,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         : const SizedBox.shrink(),
 
                               //* coupon code
-                              if (enableDiscount)
+                              if (enableDiscount &&
+                                  !controller.packageOnlyDiscountMode)
                                 if (ValueStatic.journeyType == 1)
                                   Column(
                                     crossAxisAlignment:
@@ -2275,8 +2402,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           const Spacer(),
 
                                           ///when status ==0 and isTravelPackageOk == false, it will show the button
-                                          (controller.status == 0 &&
-                                                  !controller.isTravelPackageOk)
+                                          (controller.state.status.value == 0 &&
+                                                  !controller
+                                                      .state
+                                                      .isTravelPackageOk
+                                                      .value)
                                               ? TextButton(
                                                 onPressed: () async {
                                                   final result = await Get.to(
@@ -2297,20 +2427,31 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                                   if (result != null) {
                                                     controller
+                                                        .state
                                                         .couponController
                                                         .text = result['code'];
-                                                    controller.status =
+                                                    controller
+                                                            .state
+                                                            .status
+                                                            .value =
                                                         result['status'];
-                                                    controller.balance =
+                                                    controller
+                                                            .state
+                                                            .balance
+                                                            .value =
                                                         result['balance'];
 
                                                     // ✅ force disable travel package
                                                     controller
-                                                            .isTravelPackageOk =
-                                                        false;
-                                                    controller.isTravelPackage =
-                                                        false;
+                                                        .state
+                                                        .isTravelPackageOk
+                                                        .value = false;
                                                     controller
+                                                        .state
+                                                        .isTravelPackage
+                                                        .value = false;
+                                                    controller
+                                                        .state
                                                         .codeController
                                                         .text = '';
                                                     controller.update();
@@ -2329,10 +2470,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         ],
                                       ),
                                       const SizedBox(height: 10),
-                                      controller.status == 1
+                                      controller.state.status.value == 1
                                           ? TextFormField(
                                             controller:
-                                                controller.couponController,
+                                                controller
+                                                    .state
+                                                    .couponController,
                                             autofocus: false,
                                             enabled: false,
                                             autovalidateMode:
@@ -2373,10 +2516,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                           )
                                           : SizedBox.shrink(),
-                                      controller.status == 1
+                                      controller.state.status.value == 1
                                           ? SizedBox(height: 12)
                                           : SizedBox.shrink(),
-                                      controller.status == 1
+                                      controller.state.status.value == 1
                                           ? RichText(
                                             text: TextSpan(
                                               style: TextStyle(
@@ -2389,7 +2532,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                      " \$${controller.balance} ",
+                                                      " \$${controller.state.balance.value} ",
                                                 ),
                                                 TextSpan(text: "more".tr),
                                               ],
@@ -2397,7 +2540,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           )
                                           : SizedBox.shrink(),
 
-                                      controller.status == 1
+                                      controller.state.status.value == 1
                                           ? SizedBox(height: 6)
                                           : SizedBox.shrink(),
 
@@ -2408,7 +2551,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               // * travel package
                               // * check the phone number
                               if (ValueStatic.phone ==
-                                  controller.phoneNumberController.text)
+                                  controller.state.phoneNumberController.text)
                                 ///round trip
                                 if (ValueStatic.journeyType == 2)
                                   ///check the number of seat round trip(can apply only when user book one seat for one way and one seat for two way)
@@ -2450,27 +2593,35 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                     ),
                                                     value:
                                                         controller
-                                                            .isTravelPackage,
+                                                            .state
+                                                            .isTravelPackage
+                                                            .value,
                                                     onChanged: (value) async {
                                                       if (value != null) {
                                                         controller
-                                                                .isTravelPackage =
-                                                            value;
+                                                            .state
+                                                            .isTravelPackage
+                                                            .value = value;
                                                         controller.update();
                                                       }
                                                       if (value == false) {
                                                         controller
+                                                            .state
                                                             .codeController
                                                             .text = '';
                                                         // allow promo button again
                                                         controller
-                                                                .isTravelPackageOk =
-                                                            false;
+                                                            .state
+                                                            .isTravelPackageOk
+                                                            .value = false;
                                                         controller.update();
                                                       }
 
                                                       if (value! &&
-                                                          !controller.isPhone) {
+                                                          !controller
+                                                              .state
+                                                              .isPhone
+                                                              .value) {
                                                         final travelPackage =
                                                             await TravelPackage()
                                                                 .getBuyList(
@@ -2481,8 +2632,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                             .body!
                                                             .isEmpty) {
                                                           controller
-                                                                  .isNoPackage =
-                                                              true;
+                                                              .state
+                                                              .isNoPackage
+                                                              .value = true;
                                                           controller.update();
                                                           alertDialogTravelPackage(
                                                             title:
@@ -2497,8 +2649,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                 context,
                                                               );
                                                               controller
-                                                                      .isTravelPackage =
-                                                                  false;
+                                                                  .state
+                                                                  .isTravelPackage
+                                                                  .value = false;
                                                               controller
                                                                   .update();
                                                             },
@@ -2508,8 +2661,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                         else {
                                                           ///when user have travel package, set isNoPackage = false;
                                                           controller
-                                                                  .isNoPackage =
-                                                              false;
+                                                              .state
+                                                              .isNoPackage
+                                                              .value = false;
                                                           controller.update();
 
                                                           ///get the first index package code
@@ -2518,18 +2672,21 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                   .body?[0]
                                                                   .packageCode;
                                                           controller
+                                                                  .state
                                                                   .codeController
                                                                   .text =
                                                               packageCoded!;
 
                                                           ///set the first index package code to inputCodeController
                                                           controller
+                                                                  .state
                                                                   .codeController
                                                                   .text =
                                                               packageCoded;
                                                           controller
-                                                                  .packageTypeTwoWay =
-                                                              travelPackage
+                                                              .state
+                                                              .packageTypeTwoWay
+                                                              .value = travelPackage
                                                                   .body![0]
                                                                   .type!
                                                                   .toInt();
@@ -2540,7 +2697,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                       .vehicleTypeOneWay ==
                                                                   2 &&
                                                               controller
-                                                                      .packageTypeTwoWay ==
+                                                                      .state
+                                                                      .packageTypeTwoWay
+                                                                      .value ==
                                                                   2 &&
                                                               ValueStatic
                                                                       .vehicleTypeTwoWay ==
@@ -2560,29 +2719,36 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                                                 ///when user don't have travel package, set isTravelPackage = false; then un_tick the checkbox
                                                                 controller
+                                                                    .state
                                                                     .codeController
                                                                     .text = '';
                                                                 controller
-                                                                        .isTravelPackage =
-                                                                    false;
+                                                                    .state
+                                                                    .isTravelPackage
+                                                                    .value = false;
                                                                 controller
                                                                     .update();
                                                               },
                                                             );
                                                           } else {
                                                             controller
+                                                                    .state
                                                                     .checkPackageContext =
                                                                 context;
                                                             controller
+                                                                    .state
                                                                     .checkPackageCode =
                                                                 controller
+                                                                    .state
                                                                     .codeController
                                                                     .text;
                                                             controller
+                                                                    .state
                                                                     .checkPackageJourneyId =
                                                                 ValueStatic
                                                                     .journeyIdGo;
                                                             controller
+                                                                    .state
                                                                     .checkPackageTravelDate =
                                                                 ValueStatic
                                                                     .goDate;
@@ -2592,14 +2758,16 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                                             if (ok) {
                                                               controller
-                                                                      .isTravelPackageOk =
-                                                                  true;
+                                                                  .state
+                                                                  .isTravelPackageOk
+                                                                  .value = true;
                                                               controller
                                                                   .update();
                                                             } else {
                                                               controller
-                                                                      .isTravelPackageOk =
-                                                                  false;
+                                                                  .state
+                                                                  .isTravelPackageOk
+                                                                  .value = false;
                                                               controller
                                                                   .update();
 
@@ -2619,8 +2787,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                                     context,
                                                                   );
                                                                   controller
-                                                                          .isTravelPackage =
-                                                                      false;
+                                                                      .state
+                                                                      .isTravelPackage
+                                                                      .value = false;
                                                                   controller
                                                                       .update();
                                                                 },
@@ -2645,15 +2814,22 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           const SizedBox(height: 20),
 
                                           ///user apply package code with same phone number
-                                          if (controller.isTravelPackage &&
-                                              !controller.isPhone)
+                                          if (controller
+                                                  .state
+                                                  .isTravelPackage
+                                                  .value &&
+                                              !controller.state.isPhone.value)
                                             ///user have package and show the package code in the text_field(view only)
-                                            if (!controller.isNoPackage)
+                                            if (!controller
+                                                .state
+                                                .isNoPackage
+                                                .value)
                                               Column(
                                                 children: [
                                                   TextFormField(
                                                     controller:
                                                         controller
+                                                            .state
                                                             .codeController,
                                                     autofocus: false,
                                                     enabled: false,
@@ -2724,18 +2900,25 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         (ValueStatic.totalPriceGo +
                                             ValueStatic.totalPriceBack);
                                     final lucky =
-                                        controller.luckyDraw
+                                        controller.state.luckyDraw.value
                                             ? ValueStatic.luckyDrawValue
                                             : 0;
 
                                     final discount =
                                         forceZeroDiscount
                                             ? 0.0
-                                            : (controller.isTravelPackage &&
-                                                controller.isTravelPackageOk)
-                                            ? (subTotal *
-                                                (ValueStatic.travelPackageDis /
-                                                    100))
+                                            : (controller
+                                                    .state
+                                                    .isTravelPackage
+                                                    .value &&
+                                                controller
+                                                    .state
+                                                    .isTravelPackageOk
+                                                    .value)
+                                            ? controller
+                                                .getTravelPackageDiscountAmount(
+                                                  subTotal,
+                                                )
                                             : ((!ValueStatic.seatPriceGoDiscount
                                                     ? (ValueStatic
                                                             .totalPriceGo *
@@ -2774,9 +2957,14 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           Row(
                                             children: [
                                               Text(
-                                                (controller.isTravelPackage &&
+                                                (controller
+                                                            .state
+                                                            .isTravelPackage
+                                                            .value &&
                                                         controller
-                                                            .isTravelPackageOk)
+                                                            .state
+                                                            .isTravelPackageOk
+                                                            .value)
                                                     ? 'discount_travel'.tr
                                                     : 'discount'.tr,
                                                 style: const TextStyle(
@@ -2825,16 +3013,22 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         0;
                                     final discount = 0.0;
                                     final lucky =
-                                        controller.luckyDraw
+                                        controller.state.luckyDraw.value
                                             ? ValueStatic.luckyDrawValue
                                             : 0;
                                     final total = subTotal + lucky;
 
                                     final discountLabel =
-                                        controller.status == 1
+                                        controller.state.status.value == 1
                                             ? 'dis_coupon'.tr
-                                            : (controller.isTravelPackage &&
-                                                controller.isTravelPackageOk)
+                                            : (controller
+                                                    .state
+                                                    .isTravelPackage
+                                                    .value &&
+                                                controller
+                                                    .state
+                                                    .isTravelPackageOk
+                                                    .value)
                                             ? 'discount_travel'.tr
                                             : 'discount'.tr;
 
@@ -2871,9 +3065,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               ),
                                             ],
                                           ),
-                                        if (controller.luckyDraw)
+                                        if (controller.state.luckyDraw.value)
                                           const SizedBox(height: 10),
-                                        if (controller.luckyDraw)
+                                        if (controller.state.luckyDraw.value)
                                           Row(
                                             children: [
                                               Text('lucky_draw'.tr),
@@ -2911,7 +3105,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               // * value of one way with coupon code
                               if (enableDiscount &&
                                   ValueStatic.journeyType == 1 &&
-                                  controller.status == 1 &&
+                                  controller.state.status.value == 1 &&
+                                  !controller.packageOnlyDiscountMode &&
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
@@ -2969,8 +3164,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               // * value of one way with travel package same phone number
                               if (enableDiscount &&
                                   ValueStatic.journeyType == 1 &&
-                                  controller.isPhone == false &&
-                                  controller.status == 0 &&
+                                  controller.state.isPhone.value == false &&
+                                  controller.state.status.value == 0 &&
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
@@ -2986,8 +3181,17 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         Text('\$${ValueStatic.totalPrice}'),
                                       ],
                                     ),
-                                    if (controller.isTravelPackage == true &&
-                                        controller.isTravelPackageOk == true)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            true &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            true &&
+                                        ValueStatic.travelPackageDis > 0)
                                       Column(
                                         children: [
                                           const SizedBox(height: 10),
@@ -2996,13 +3200,17 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               Text('discount_travel'.tr),
                                               const Spacer(),
                                               Text(
-                                                "\$${((double.parse(ValueStatic.totalPrice) * (ValueStatic.travelPackageDis / 100))).toStringAsFixed(2)}",
+                                                "\$${controller.getTravelPackageDiscountAmount(double.tryParse(ValueStatic.totalPrice) ?? 0.0).toStringAsFixed(2)}",
                                               ),
                                             ],
                                           ),
                                         ],
                                       ),
-                                    if (controller.isTravelPackage == false)
+                                    if (controller
+                                            .state
+                                            .isTravelPackage
+                                            .value ==
+                                        false)
                                       if (ValueStatic.seatPriceGoDiscount ==
                                           false)
                                         Column(
@@ -3027,8 +3235,13 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                           ],
                                         ),
-                                    if (controller.isTravelPackage == true)
-                                      if (controller.isNoPackage == true)
+                                    if (controller
+                                            .state
+                                            .isTravelPackage
+                                            .value ==
+                                        true)
+                                      if (controller.state.isNoPackage.value ==
+                                          true)
                                         if (ValueStatic.seatPriceGoDiscount ==
                                             false)
                                           Column(
@@ -3051,10 +3264,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               ),
                                             ],
                                           ),
-                                    controller.luckyDraw
+                                    controller.state.luckyDraw.value
                                         ? const SizedBox(height: 10)
                                         : const SizedBox(),
-                                    controller.luckyDraw
+                                    controller.state.luckyDraw.value
                                         ? Row(
                                           children: [
                                             Text('lucky_draw'.tr),
@@ -3068,7 +3281,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         )
                                         : const SizedBox(),
                                     const SizedBox(height: 8),
-                                    if (controller.isTravelPackage == false)
+                                    if (controller
+                                            .state
+                                            .isTravelPackage
+                                            .value ==
+                                        false)
                                       Row(
                                         children: [
                                           Text(
@@ -3092,8 +3309,16 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                         ],
                                       ),
-                                    if (controller.isTravelPackage == true &&
-                                        controller.isTravelPackageOk == true)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            true &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            true)
                                       Row(
                                         children: [
                                           Text(
@@ -3105,7 +3330,30 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           ),
                                           const Spacer(),
                                           Text(
-                                            "\$${(double.parse(ValueStatic.totalPrice) - (double.parse(ValueStatic.totalPrice) * (ValueStatic.travelPackageDis / 100))).toStringAsFixed(2)}",
+                                            (() {
+                                              final subTotal =
+                                                  double.tryParse(
+                                                    ValueStatic.totalPrice,
+                                                  ) ??
+                                                  0.0;
+                                              final lucky =
+                                                  controller
+                                                          .state
+                                                          .luckyDraw
+                                                          .value
+                                                      ? ValueStatic
+                                                          .luckyDrawValue
+                                                      : 0.0;
+                                              final discount = controller
+                                                  .getTravelPackageDiscountAmount(
+                                                    subTotal,
+                                                  );
+                                              final total = double.parse(
+                                                (subTotal - discount + lucky)
+                                                    .toStringAsFixed(2),
+                                              );
+                                              return '\$${total.toStringAsFixed(2)}';
+                                            })(),
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -3113,9 +3361,18 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           ),
                                         ],
                                       ),
-                                    if (controller.isTravelPackage == true &&
-                                        controller.isNoPackage == true &&
-                                        controller.isTravelPackageOk == false)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            true &&
+                                        controller.state.isNoPackage.value ==
+                                            true &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            false)
                                       Row(
                                         children: [
                                           Text(
@@ -3139,9 +3396,18 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                         ],
                                       ),
-                                    if (controller.isTravelPackage == true &&
-                                        controller.isTravelPackageOk == false &&
-                                        controller.isNoPackage == false)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            true &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            false &&
+                                        controller.state.isNoPackage.value ==
+                                            false)
                                       Row(
                                         children: [
                                           Text(
@@ -3171,8 +3437,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               // * value of one way with travel package different phone number
                               if (enableDiscount &&
                                   ValueStatic.journeyType == 1 &&
-                                  controller.isPhone == true &&
-                                  controller.status == 0 &&
+                                  controller.state.isPhone.value == true &&
+                                  controller.state.status.value == 0 &&
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
@@ -3188,9 +3454,17 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         Text('\$${ValueStatic.totalPrice}'),
                                       ],
                                     ),
-                                    if (controller.isTravelPackage == true &&
-                                        controller.isPhone &&
-                                        controller.isTravelPackageOk == false)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            true &&
+                                        controller.state.isPhone.value &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            false)
                                       Column(
                                         children: [
                                           if (ValueStatic.seatPriceGoDiscount ==
@@ -3275,11 +3549,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               ],
                                             ),
 
-                                          controller.luckyDraw
+                                          controller.state.luckyDraw.value
                                               ? const SizedBox(height: 10)
                                               : const SizedBox(),
 
-                                          controller.luckyDraw
+                                          controller.state.luckyDraw.value
                                               ? Row(
                                                 children: [
                                                   Text('lucky_draw'.tr),
@@ -3353,8 +3627,17 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           ),
                                         ],
                                       ),
-                                    if (controller.isTravelPackage == true &&
-                                        controller.isTravelPackageOk == true)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            true &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            true &&
+                                        ValueStatic.travelPackageDis > 0)
                                       Column(
                                         children: [
                                           const SizedBox(height: 10),
@@ -3363,14 +3646,79 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               Text('discount_travel'.tr),
                                               const Spacer(),
                                               Text(
-                                                "\$${((double.parse(ValueStatic.totalPrice) * (ValueStatic.travelPackageDis / 100))).toStringAsFixed(2)}",
+                                                "\$${controller.getTravelPackageDiscountAmount(double.tryParse(ValueStatic.totalPrice) ?? 0.0).toStringAsFixed(2)}",
+                                              ),
+                                            ],
+                                          ),
+                                          if (controller.state.luckyDraw.value)
+                                            const SizedBox(height: 10),
+                                          if (controller.state.luckyDraw.value)
+                                            Row(
+                                              children: [
+                                                Text('lucky_draw'.tr),
+                                                const Spacer(),
+                                                Text(
+                                                  '\$${ValueStatic.luckyDrawValue.toStringAsFixed(2)}',
+                                                ),
+                                              ],
+                                            ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'total_price'.tr,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const Spacer(),
+                                              Text(
+                                                (() {
+                                                  final subTotal =
+                                                      double.tryParse(
+                                                        ValueStatic.totalPrice,
+                                                      ) ??
+                                                      0.0;
+                                                  final lucky =
+                                                      controller
+                                                              .state
+                                                              .luckyDraw
+                                                              .value
+                                                          ? ValueStatic
+                                                              .luckyDrawValue
+                                                          : 0.0;
+                                                  final discount = controller
+                                                      .getTravelPackageDiscountAmount(
+                                                        subTotal,
+                                                      );
+                                                  final total = double.parse(
+                                                    (subTotal -
+                                                            discount +
+                                                            lucky)
+                                                        .toStringAsFixed(2),
+                                                  );
+                                                  return '\$${total.toStringAsFixed(2)}';
+                                                })(),
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ],
                                           ),
                                         ],
                                       ),
-                                    if (controller.isTravelPackage == true &&
-                                        controller.isTravelPackageOk == false)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            true &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            false)
                                       if (ValueStatic.seatPriceGoDiscount ==
                                               true &&
                                           ValueStatic.seatPriceBackDiscount ==
@@ -3397,8 +3745,16 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                           ],
                                         ),
-                                    if (controller.isTravelPackage == false &&
-                                        controller.isTravelPackageOk == true)
+                                    if (controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            false &&
+                                        controller
+                                                .state
+                                                .isTravelPackageOk
+                                                .value ==
+                                            true)
                                       if (ValueStatic.seatPriceGoDiscount ==
                                               false &&
                                           ValueStatic.seatPriceBackDiscount ==
@@ -3425,8 +3781,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                           ],
                                         ),
-                                    if (controller.isPhone &&
-                                        controller.isTravelPackage == false)
+                                    if (controller.state.isPhone.value &&
+                                        controller
+                                                .state
+                                                .isTravelPackage
+                                                .value ==
+                                            false)
                                       Column(
                                         children: [
                                           if (ValueStatic.seatPriceGoDiscount ==
@@ -3511,11 +3871,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               ],
                                             ),
 
-                                          controller.luckyDraw
+                                          controller.state.luckyDraw.value
                                               ? const SizedBox(height: 10)
                                               : const SizedBox(),
 
-                                          controller.luckyDraw
+                                          controller.state.luckyDraw.value
                                               ? Row(
                                                 children: [
                                                   Text('lucky_draw'.tr),
@@ -3667,18 +4027,22 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
               if (ValueStatic.journeyType == 1) {
                 ///check condition for only Kampot to Koh Tral
                 if (ValueStatic.companyTypeOneWay == 4) {
-                  if (controller.checkData(controller.genderOneWay) ||
+                  if (controller.checkData(controller.state.genderOneWay) ||
                       ValueStatic.boardingPointOneWayId == '' ||
                       ValueStatic.dropOffPointOneWayId == '' ||
-                      controller.checkDataNation(controller.nationalOneWay) ||
-                      controller.check(
-                        controller.getDobOneWay(controller.dobOneWay),
+                      controller.checkDataNation(
+                        controller.state.nationalOneWay,
                       ) ||
                       controller.check(
-                        controller.getPassportOneWay(controller.passportOneWay),
+                        controller.getDobOneWay(controller.state.dobOneWay),
                       ) ||
                       controller.check(
-                        controller.getNameOneWay(controller.nameOneWay),
+                        controller.getPassportOneWay(
+                          controller.state.passportOneWay,
+                        ),
+                      ) ||
+                      controller.check(
+                        controller.getNameOneWay(controller.state.nameOneWay),
                       )) {
                     alertDialogOneButton(
                       title: 'information'.tr,
@@ -3691,10 +4055,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                 }
                 ///normal route
                 else {
-                  if (controller.checkData(controller.genderOneWay) ||
+                  if (controller.checkData(controller.state.genderOneWay) ||
                       ValueStatic.boardingPointOneWayId == '' ||
                       ValueStatic.dropOffPointOneWayId == '' ||
-                      controller.checkDataNation(controller.nationalOneWay)) {
+                      controller.checkDataNation(
+                        controller.state.nationalOneWay,
+                      )) {
                     alertDialogOneButton(
                       title: 'information'.tr,
                       description: "please_input_require_data".tr,
@@ -3711,30 +4077,38 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                 if (ValueStatic.companyTypeTwoWay == 4 &&
                     ValueStatic.companyTypeOneWay == 4) {
                   final hasError =
-                      controller.checkData(controller.genderOneWay) ||
-                      controller.checkData(controller.genderTwoWay) ||
+                      controller.checkData(controller.state.genderOneWay) ||
+                      controller.checkData(controller.state.genderTwoWay) ||
                       ValueStatic.boardingPointOneWayId == '' ||
                       ValueStatic.dropOffPointOneWayId == '' ||
                       ValueStatic.dropOffPointTwoWayId == '' ||
-                      controller.checkDataNation(controller.nationalOneWay) ||
-                      controller.checkDataNation(controller.nationalTwoWay) ||
-                      controller.check(
-                        controller.getDobOneWay(controller.dobOneWay),
+                      controller.checkDataNation(
+                        controller.state.nationalOneWay,
+                      ) ||
+                      controller.checkDataNation(
+                        controller.state.nationalTwoWay,
                       ) ||
                       controller.check(
-                        controller.getDobTwoWay(controller.dobTwoWay),
+                        controller.getDobOneWay(controller.state.dobOneWay),
                       ) ||
                       controller.check(
-                        controller.getPassportOneWay(controller.passportOneWay),
+                        controller.getDobTwoWay(controller.state.dobTwoWay),
                       ) ||
                       controller.check(
-                        controller.getPassportTwoWay(controller.passportTwoWay),
+                        controller.getPassportOneWay(
+                          controller.state.passportOneWay,
+                        ),
                       ) ||
                       controller.check(
-                        controller.getNameOneWay(controller.nameOneWay),
+                        controller.getPassportTwoWay(
+                          controller.state.passportTwoWay,
+                        ),
                       ) ||
                       controller.check(
-                        controller.getNameTwoWay(controller.nameTwoWay),
+                        controller.getNameOneWay(controller.state.nameOneWay),
+                      ) ||
+                      controller.check(
+                        controller.getNameTwoWay(controller.state.nameTwoWay),
                       );
 
                   if (hasError) {
@@ -3749,10 +4123,14 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                 }
                 ///normal route
                 else {
-                  if (controller.checkData(controller.genderOneWay) ||
-                      controller.checkDataNation(controller.nationalOneWay) ||
-                      controller.checkData(controller.genderTwoWay) ||
-                      controller.checkDataNation(controller.nationalTwoWay) ||
+                  if (controller.checkData(controller.state.genderOneWay) ||
+                      controller.checkDataNation(
+                        controller.state.nationalOneWay,
+                      ) ||
+                      controller.checkData(controller.state.genderTwoWay) ||
+                      controller.checkDataNation(
+                        controller.state.nationalTwoWay,
+                      ) ||
                       ValueStatic.boardingPointTwoWayId == '' ||
                       ValueStatic.boardingPointOneWayId == '' ||
                       ValueStatic.dropOffPointOneWayId == '' ||
