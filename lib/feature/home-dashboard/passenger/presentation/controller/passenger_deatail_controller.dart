@@ -35,6 +35,8 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
   PassengerDetailController(this.passerngerUscase);
 
+  bool forceZeroDiscount = false;
+
   @override
   PassengerUistate onInitUiState() => PassengerUistate();
 
@@ -45,6 +47,9 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     super.onInit();
     try {
       final user = Get.find<UserController>();
+      if (user.userMeResponse.value == null && !user.isLoading.value) {
+        user.fetchUserMe();
+      }
       _userWorker = ever(user.userMeResponse, (_) {
         applyUserDefaultsToEmptySelections();
       });
@@ -381,7 +386,15 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     required List<String> nameTwoWay,
     required String packageCode,
     required String couponCode,
+    bool forceZeroDiscount = false,
   }) {
+    debugPrint('--- Confirm Booking Started ---');
+    debugPrint(
+      'isConfirm: $isConfirm, luckyDraw: $luckyDraw, journeyType: ${ValueStatic.journeyType}',
+    );
+
+    final effectivePackageCode = forceZeroDiscount ? '' : packageCode;
+    final effectiveCouponCode = forceZeroDiscount ? '' : couponCode;
     ValueStatic.luckyDrawValue =
         luckyDraw
             ? ValueStatic.journeyType == 2
@@ -391,6 +404,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
                 : 0.25 * ValueStatic.oneWaySelectedSeat.length
             : 0;
 
+    debugPrint('luckyDrawValue calculated: ${ValueStatic.luckyDrawValue}');
     if (!isConfirm) return;
 
     if (ValueStatic.journeyType == 1) {
@@ -415,12 +429,14 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
       final totalAmount = getTotalAmount(seatPrice);
       double totalDiscount = 0;
-      if (ValueStatic.seatPriceGoDiscount) {
-        totalDiscount = 0;
-      } else {
-        totalDiscount = double.parse(
-          (getTotalAmount(seatPrice) * 0.05).toStringAsFixed(2),
-        );
+      if (!forceZeroDiscount) {
+        if (ValueStatic.seatPriceGoDiscount) {
+          totalDiscount = 0;
+        } else {
+          totalDiscount = double.parse(
+            (getTotalAmount(seatPrice) * 0.05).toStringAsFixed(2),
+          );
+        }
       }
       final totalSeat = ValueStatic.oneWaySelectedSeat.length.toString();
 
@@ -428,6 +444,10 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
       final seatDob = dobOneWay;
       final seatPassport = passportOneWay;
+
+      debugPrint(
+        'One-Way Data: seats: $seatNum, total: $totalAmount, discount: $totalDiscount',
+      );
 
       Booking().confirmBooking(
         context,
@@ -451,8 +471,8 @@ class PassengerDetailController extends StateController<PassengerUistate> {
         seatNationallyId,
         ValueStatic.national,
         luckyDraw,
-        packageCode,
-        couponCode,
+        effectivePackageCode,
+        effectiveCouponCode,
         seatDob: seatDob,
         seatPassport: seatPassport,
       );
@@ -512,7 +532,10 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       ValueStatic.totalPriceGo = totalAmount;
       ValueStatic.totalPriceBack = totalAmountBack;
 
-      final totalDiscount = setDiscountTwoWay(seatPrice, seatPriceBack());
+      final totalDiscount =
+          forceZeroDiscount
+              ? 0.0
+              : setDiscountTwoWay(seatPrice, seatPriceBack());
       ValueStatic.totalPriceDiscount = totalDiscount;
 
       final totalSeat =
@@ -528,6 +551,11 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       final seatPassport = <String>[];
       seatPassport.addAll(passportOneWay);
       seatPassport.addAll(passportTwoWay);
+
+      debugPrint(
+        'Two-Way Data: totalSeats: $totalSeat, totalAmount: ${ValueStatic.totalPrice}, discount: $totalDiscount',
+      );
+      debugPrint('Seat Names: $seatName');
 
       Booking().confirmBooking(
         context,
@@ -551,12 +579,13 @@ class PassengerDetailController extends StateController<PassengerUistate> {
         seatNationality,
         ValueStatic.national,
         luckyDraw,
-        packageCode,
-        couponCode,
+        effectivePackageCode,
+        effectiveCouponCode,
         seatDob: seatDob,
         seatPassport: seatPassport,
       );
     }
+    debugPrint('--- Confirm Booking Method Execution Finished ---');
   }
 
   List<String> getDobOneWay(List<TextEditingController> controllers) {
@@ -642,6 +671,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       nameTwoWay: getNameTwoWay(nameTwoWayControllers),
       packageCode: packageCode,
       couponCode: couponCode,
+      forceZeroDiscount: forceZeroDiscount,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -653,13 +683,27 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   }
 
   void createGenderListOneWay(List<String> genderOneWay) {
-    for (int i = 0; i < ValueStatic.oneWaySelectedSeat.length; i++) {
+    while (genderOneWay.length > ValueStatic.oneWaySelectedSeat.length) {
+      genderOneWay.removeLast();
+    }
+    for (
+      int i = genderOneWay.length;
+      i < ValueStatic.oneWaySelectedSeat.length;
+      i++
+    ) {
       genderOneWay.add('0');
     }
   }
 
   void createNationalListOneWay(List<int> nationalOneWay) {
-    for (int i = 0; i < ValueStatic.oneWaySelectedSeat.length; i++) {
+    while (nationalOneWay.length > ValueStatic.oneWaySelectedSeat.length) {
+      nationalOneWay.removeLast();
+    }
+    for (
+      int i = nationalOneWay.length;
+      i < ValueStatic.oneWaySelectedSeat.length;
+      i++
+    ) {
       nationalOneWay.add(0);
     }
   }
@@ -721,13 +765,27 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   }
 
   void createGenderListTwoWay(List<String> genderTwoWay) {
-    for (int i = 0; i < ValueStatic.twoWaySelectedSeat.length; i++) {
+    while (genderTwoWay.length > ValueStatic.twoWaySelectedSeat.length) {
+      genderTwoWay.removeLast();
+    }
+    for (
+      int i = genderTwoWay.length;
+      i < ValueStatic.twoWaySelectedSeat.length;
+      i++
+    ) {
       genderTwoWay.add('0');
     }
   }
 
   void createNationalListTwoWay(List<int> nationalTwoWay) {
-    for (int i = 0; i < ValueStatic.twoWaySelectedSeat.length; i++) {
+    while (nationalTwoWay.length > ValueStatic.twoWaySelectedSeat.length) {
+      nationalTwoWay.removeLast();
+    }
+    for (
+      int i = nationalTwoWay.length;
+      i < ValueStatic.twoWaySelectedSeat.length;
+      i++
+    ) {
       nationalTwoWay.add(0);
     }
   }
@@ -756,62 +814,132 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     }
   }
 
+  void syncUserProfileToForm({bool onlyIfEmpty = true}) {
+    try {
+      final user = Get.find<UserController>();
+      final body = user.userMeResponse.value?.body;
+      final displayName =
+          (body?.name?.trim().isNotEmpty ?? false)
+              ? body!.name!.trim()
+              : (body?.username ?? '').trim();
+      final phone = (body?.telephone ?? '').trim();
+      final email = (body?.email ?? '').trim();
+      final dob = (body?.dob ?? '').trim();
+      final gender = body?.gender ?? 0;
+      final nationalityId = body?.nationalityId ?? 0;
+      final nationalityName = (body?.nationalityName ?? '').trim();
+
+      if (displayName.isNotEmpty) {
+        ValueStatic.username = displayName;
+        if (!onlyIfEmpty || usernameController.text.isEmpty) {
+          usernameController.text = displayName;
+        }
+      } else if (!onlyIfEmpty && ValueStatic.username.isNotEmpty) {
+        usernameController.text = ValueStatic.username;
+      }
+
+      if (phone.isNotEmpty) {
+        ValueStatic.phone = phone;
+        if (!onlyIfEmpty || phoneNumberController.text.isEmpty) {
+          phoneNumberController.text = phone;
+        }
+      } else if (!onlyIfEmpty && ValueStatic.phone.isNotEmpty) {
+        phoneNumberController.text = ValueStatic.phone;
+      }
+
+      if (email.isNotEmpty) {
+        ValueStatic.email = email;
+        if (!onlyIfEmpty || emailController.text.isEmpty) {
+          emailController.text = email;
+        }
+      } else if (!onlyIfEmpty && ValueStatic.email.isNotEmpty) {
+        emailController.text = ValueStatic.email;
+      }
+
+      if (dob.isNotEmpty) {
+        ValueStatic.dob = dob;
+      }
+      if (gender > 0) {
+        ValueStatic.gender = gender;
+      }
+      if (nationalityId > 0) {
+        ValueStatic.nationalityId = nationalityId;
+      }
+      if (nationalityName.isNotEmpty) {
+        ValueStatic.nationalityName = nationalityName;
+      }
+    } catch (_) {
+      if (!onlyIfEmpty) {
+        if (usernameController.text.isEmpty &&
+            ValueStatic.username.isNotEmpty) {
+          usernameController.text = ValueStatic.username;
+        }
+        if (phoneNumberController.text.isEmpty &&
+            ValueStatic.phone.isNotEmpty) {
+          phoneNumberController.text = ValueStatic.phone;
+        }
+        if (emailController.text.isEmpty && ValueStatic.email.isNotEmpty) {
+          emailController.text = ValueStatic.email;
+        }
+      }
+    }
+  }
+
+  void _ensurePassengerSelectionSlots() {
+    createGenderListOneWay(genderOneWay);
+    createNationalListOneWay(nationalOneWay);
+    createGenderListTwoWay(genderTwoWay);
+    createNationalListTwoWay(nationalTwoWay);
+
+    nationalityIds = List<int?>.generate(
+      ValueStatic.oneWaySelectedSeat.length,
+      (index) => index < nationalityIds.length ? nationalityIds[index] : null,
+    );
+    nationalityIdsTwoWay = List<int?>.generate(
+      ValueStatic.twoWaySelectedSeat.length,
+      (index) =>
+          index < nationalityIdsTwoWay.length
+              ? nationalityIdsTwoWay[index]
+              : null,
+    );
+  }
+
   void applyUserDefaultsToEmptySelections() {
     try {
       final user = Get.find<UserController>();
       final g = user.gender; // 1 male, 2 female
       final natId = user.nationalityId; // >0 valid
 
-      // One-way gender defaults
-      if (genderOneWay.length == ValueStatic.oneWaySelectedSeat.length) {
-        for (int i = 0; i < genderOneWay.length; i++) {
-          if (genderOneWay[i] == '0' && (g == 1 || g == 2)) {
-            genderOneWay[i] = g.toString();
-          }
+      syncUserProfileToForm();
+      _ensurePassengerSelectionSlots();
+
+      if (genderOneWay.isNotEmpty &&
+          (g == 1 || g == 2) &&
+          genderOneWay[0] == '0') {
+        genderOneWay[0] = g.toString();
+      }
+      if (nationalOneWay.isNotEmpty && natId > 0 && nationalOneWay[0] == 0) {
+        nationalOneWay[0] = natId;
+      }
+      if (nationalityIds.isNotEmpty && natId > 0) {
+        final current = nationalityIds[0] ?? 0;
+        if (current == 0) {
+          nationalityIds[0] = natId;
         }
       }
 
-      // Two-way gender defaults
-      if (genderTwoWay.length == ValueStatic.twoWaySelectedSeat.length) {
-        for (int i = 0; i < genderTwoWay.length; i++) {
-          if (genderTwoWay[i] == '0' && (g == 1 || g == 2)) {
-            genderTwoWay[i] = g.toString();
-          }
-        }
+      if (genderTwoWay.isNotEmpty &&
+          (g == 1 || g == 2) &&
+          genderTwoWay[0] == '0') {
+        genderTwoWay[0] = g.toString();
       }
-
-      // One-way nationality defaults
-      if (nationalOneWay.length == ValueStatic.oneWaySelectedSeat.length) {
-        for (int i = 0; i < nationalOneWay.length; i++) {
-          if (nationalOneWay[i] == 0 && natId > 0) {
-            nationalOneWay[i] = natId;
-          }
-        }
+      if (nationalTwoWay.isNotEmpty && natId > 0 && nationalTwoWay[0] == 0) {
+        nationalTwoWay[0] = natId;
       }
-      if (nationalityIds.length == ValueStatic.oneWaySelectedSeat.length) {
-        for (int i = 0; i < nationalityIds.length; i++) {
-          final current = nationalityIds[i] ?? 0;
-          if ((current == 0) && natId > 0) {
-            nationalityIds[i] = natId;
-          }
-        }
-      }
-
-      // Two-way nationality defaults
-      if (nationalTwoWay.length == ValueStatic.twoWaySelectedSeat.length) {
-        for (int i = 0; i < nationalTwoWay.length; i++) {
-          if (nationalTwoWay[i] == 0 && natId > 0) {
-            nationalTwoWay[i] = natId;
-          }
-        }
-      }
-      if (nationalityIdsTwoWay.length ==
-          ValueStatic.twoWaySelectedSeat.length) {
-        for (int i = 0; i < nationalityIdsTwoWay.length; i++) {
-          final current = nationalityIdsTwoWay[i] ?? 0;
-          if ((current == 0) && natId > 0) {
-            nationalityIdsTwoWay[i] = natId;
-          }
+      if (nationalityIdsTwoWay.isNotEmpty && natId > 0) {
+        final current = nationalityIdsTwoWay[0] ?? 0;
+        if (current == 0) {
+          nationalityIdsTwoWay[0] = natId;
         }
       }
 

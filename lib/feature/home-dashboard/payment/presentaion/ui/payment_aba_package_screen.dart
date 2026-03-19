@@ -45,6 +45,7 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
         token: widget.token,
         title: widget.title,
         url: widget.url,
+        deeplink: '',
         type: widget.type,
       ),
     );

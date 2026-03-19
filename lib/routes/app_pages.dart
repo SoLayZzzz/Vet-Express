@@ -289,6 +289,7 @@ class AppPages {
           url: (args?['url'] as String?) ?? '',
         );
       },
+      binding: PaymentBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),
@@ -304,6 +305,7 @@ class AppPages {
           url: (args?['url'] as String?) ?? '',
         );
       },
+      binding: PaymentBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

@@ -537,10 +537,17 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                         "sub_total".tr,
                                                         "${widget.datas.body!.orderPaymentLists![index].grandTotal} \$",
                                                       ),
-                                                      view(
-                                                        "discount".tr,
-                                                        "${widget.datas.body!.orderPaymentLists![index].discount} \$",
-                                                      ),
+                                                      if (_hasVisibleAmount(
+                                                        widget
+                                                            .datas
+                                                            .body!
+                                                            .orderPaymentLists![index]
+                                                            .discount,
+                                                      ))
+                                                        view(
+                                                          "discount".tr,
+                                                          "${widget.datas.body!.orderPaymentLists![index].discount} \$",
+                                                        ),
                                                       view(
                                                         index == 0
                                                             ? "total_going".tr
@@ -763,10 +770,17 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                         "sub_total".tr,
                                                         "${widget.datas.body!.orderPaymentLists![index].grandTotal} \$",
                                                       ),
-                                                      view(
-                                                        "discount".tr,
-                                                        "${widget.datas.body!.orderPaymentLists![index].discount} \$",
-                                                      ),
+                                                      if (_hasVisibleAmount(
+                                                        widget
+                                                            .datas
+                                                            .body!
+                                                            .orderPaymentLists![index]
+                                                            .discount,
+                                                      ))
+                                                        view(
+                                                          "discount".tr,
+                                                          "${widget.datas.body!.orderPaymentLists![index].discount} \$",
+                                                        ),
                                                       view(
                                                         "total_ticket_price".tr,
                                                         "${widget.datas.body!.orderPaymentLists![index].total} \$",
@@ -974,6 +988,12 @@ class _PaymentScreenState extends State<PaymentScreen>
         ],
       ),
     );
+  }
+
+  bool _hasVisibleAmount(dynamic value) {
+    if (value == null) return false;
+    final amount = double.tryParse(value.toString()) ?? 0;
+    return amount > 0;
   }
 
   Future<void> popScreen() async {

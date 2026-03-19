@@ -18,13 +18,25 @@ class ABAPayResponse {
   });
 
   ABAPayResponse.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    info = json['info'];
-    qrCode = json['qr_code'];
-    abapayDeeplink = json['abapay_deeplink'];
-    appStore = json['app_store'];
-    playStore = json['play_store'];
-    checkout_qr_url = json['checkout_qr_url'];
+    final dynamic body = json['body'];
+    final dynamic data = json['data'];
+    final dynamic result = json['result'];
+    final Map<String, dynamic> payload =
+        body is Map<String, dynamic>
+            ? body
+            : data is Map<String, dynamic>
+            ? data
+            : result is Map<String, dynamic>
+            ? result
+            : json;
+
+    status = payload['status'];
+    info = payload['info'];
+    qrCode = payload['qr_code'];
+    abapayDeeplink = payload['abapay_deeplink'];
+    appStore = payload['app_store'];
+    playStore = payload['play_store'];
+    checkout_qr_url = payload['checkout_qr_url'];
   }
 
   Map<String, dynamic> toJson() {

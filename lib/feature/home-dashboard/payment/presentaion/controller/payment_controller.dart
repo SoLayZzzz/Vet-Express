@@ -225,6 +225,7 @@ class PaymentController extends StateController<PaymentUistate> {
         title: 'ABA KHQR',
         type: 1,
         url: data.checkout_qr_url ?? '',
+        deeplink: data.abapayDeeplink ?? '',
       ),
     );
     log('PaymentController.ABA_KHQR.result=$result');

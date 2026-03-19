@@ -40,20 +40,17 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
       },
       child: Scaffold(
         appBar: AppBarVET().appBar(context, 'passenger'.tr),
-        // body: SafeArea(child: _buildPassengerNoDiscount()),
-        body: SafeArea(child: _buildPassengerHaveDiscount()),
+        body: SafeArea(child: _buildPassengerNoDiscount()),
+        // body: SafeArea(child: _buildPassengerHaveDiscount()),
       ),
     );
   }
 
   _buildres() {
-    controller.phoneNumberController.text = ValueStatic.phone;
-    controller.usernameController.text = ValueStatic.username;
-    controller.emailController.text = ValueStatic.email;
+    controller.syncUserProfileToForm(onlyIfEmpty: false);
 
     controller.createGenderListOneWay(controller.genderOneWay);
     controller.createNationalListOneWay(controller.nationalOneWay);
-    controller.autofillFromUserIfSingle();
     controller.createGenderListTwoWay(controller.genderTwoWay);
     controller.createNationalListTwoWay(controller.nationalTwoWay);
     controller.createDobOneWay(controller.dobOneWay);
@@ -69,6 +66,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     controller.dropOffListOneway(controller.dropOffPointOneway);
     controller.boardingListTwoWay(controller.boardingPointTwoWay);
     controller.dropOffListTwoWay(controller.dropOffPointTwoWay);
+    controller.applyUserDefaultsToEmptySelections();
   }
 
   void _callGetData(BuildContext context, {required bool isConfirm}) {
@@ -100,6 +98,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
       padding: const EdgeInsets.only(top: 10.0),
       child: Image.asset(AssetImages.line),
     );
+  }
+
+  bool _shouldShowAmount(num value) {
+    return value > 0;
   }
 
   Future<void> _showPointSelectionDialog({
@@ -861,10 +863,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
   }
 
   FutureBuilder<void> _buildPassengerHaveDiscount() {
+    controller.forceZeroDiscount = false;
     return _buildPassenger(enableDiscount: true);
   }
 
   FutureBuilder<void> _buildPassengerNoDiscount() {
+    controller.forceZeroDiscount = true;
     return _buildPassenger(enableDiscount: true, forceZeroDiscount: true);
   }
 
@@ -2764,25 +2768,27 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              (controller.isTravelPackage &&
-                                                      controller
-                                                          .isTravelPackageOk)
-                                                  ? 'discount_travel'.tr
-                                                  : 'discount'.tr,
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
+                                        if (_shouldShowAmount(discount))
+                                          const SizedBox(height: 10),
+                                        if (_shouldShowAmount(discount))
+                                          Row(
+                                            children: [
+                                              Text(
+                                                (controller.isTravelPackage &&
+                                                        controller
+                                                            .isTravelPackageOk)
+                                                    ? 'discount_travel'.tr
+                                                    : 'discount'.tr,
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
                                               ),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              '\$${discount.toStringAsFixed(2)}',
-                                            ),
-                                          ],
-                                        ),
+                                              const Spacer(),
+                                              Text(
+                                                '\$${discount.toStringAsFixed(2)}',
+                                              ),
+                                            ],
+                                          ),
                                         const SizedBox(height: 10),
                                         Row(
                                           children: [
@@ -2848,21 +2854,23 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              discountLabel,
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
+                                        if (_shouldShowAmount(discount))
+                                          const SizedBox(height: 10),
+                                        if (_shouldShowAmount(discount))
+                                          Row(
+                                            children: [
+                                              Text(
+                                                discountLabel,
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
                                               ),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              '\$${discount.toStringAsFixed(2)}',
-                                            ),
-                                          ],
-                                        ),
+                                              const Spacer(),
+                                              Text(
+                                                '\$${discount.toStringAsFixed(2)}',
+                                              ),
+                                            ],
+                                          ),
                                         if (controller.luckyDraw)
                                           const SizedBox(height: 10),
                                         if (controller.luckyDraw)

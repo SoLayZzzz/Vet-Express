@@ -23,6 +23,7 @@ class PaymentAbaController extends GetxController {
   final String token;
   final String title;
   final String url;
+  final String deeplink;
   final int type;
 
   PaymentAbaController({
@@ -30,6 +31,7 @@ class PaymentAbaController extends GetxController {
     required this.token,
     required this.title,
     required this.url,
+    required this.deeplink,
     required this.type,
   });
 
@@ -73,6 +75,11 @@ class PaymentAbaController extends GetxController {
 
     if (type == 1) {
       // ABA KHQR
+      if (deeplink.isNotEmpty) {
+        Future.microtask(() async {
+          await openDeepLinkABA(deeplink);
+        });
+      }
       if ((url).isEmpty) {
         // Only call backend to get deeplink/qr when URL not provided by caller
         payWithABAMobile(
@@ -113,6 +120,11 @@ class PaymentAbaController extends GetxController {
         log('Invalid or empty ABA deep link: $deepLink');
         return;
       }
+      final canOpen = await canLaunchUrl(uri);
+      if (!canOpen) {
+        log('ABA app is not available for deep link: $deepLink');
+        return;
+      }
       await launchUrl(uri, mode: LaunchMode.externalApplication);
       log("launching... deep link");
     } catch (e) {
@@ -148,14 +160,27 @@ class PaymentAbaController extends GetxController {
     );
 
     if (response.statusCode == 200) {
+      final Map<String, dynamic> responseMap = jsonDecode(response.body);
+      var data = ABAPayResponse.fromJson(responseMap);
       log('This is response ABA Payment 2 ==>>${response.body}');
-      var data = ABAPayResponse.fromJson(jsonDecode(response.body));
-
+      final checkoutUrl =
+          (responseMap['checkout_qr_url'] ?? data.checkout_qr_url ?? '')
+              .toString();
+      log("======>> Check out url: === $checkoutUrl");
       if (data.status == 1) {
+        if (checkoutUrl.isNotEmpty) {
+          final uri = Uri.tryParse(checkoutUrl);
+
+          if (uri != null && uri.hasScheme) {
+            log("======----->> Check out url - uri: === $uri");
+            webViewController.loadRequest(uri);
+          }
+        }
+
         final deepLink = data.abapayDeeplink ?? '';
         if (deepLink.isNotEmpty) {
           openDeepLinkABA(deepLink);
-        } else {
+        } else if (checkoutUrl.isEmpty) {
           ScaffoldMessenger.of(
             Get.context!,
           ).showSnackBar(SnackBar(content: Text('something_wrong'.tr)));
@@ -192,11 +217,8 @@ class PaymentAbaController extends GetxController {
         // Immediately finish with success so caller can show completion dialog
         _loop = false;
         Get.back(result: '1');
-      } else if (status == '0') {
-        log('Check status transaction == 0 (payment failed)');
-        _loop = false;
-        Get.back(result: '0');
       } else {
+        log('Check status transaction == $status (payment pending)');
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (_loop) {
             checkPaymentABAComplete(
