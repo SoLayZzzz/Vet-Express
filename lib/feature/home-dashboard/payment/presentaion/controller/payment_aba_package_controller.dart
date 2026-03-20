@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -17,6 +18,17 @@ import '../../../../../utils/app_pref.dart';
 class PaymentAbaPackageController extends GetxController {
   bool _loop = true;
   bool _initialized = false;
+
+  void _scheduleRetry(
+    VoidCallback callback, {
+    Duration delay = const Duration(milliseconds: 1000),
+  }) {
+    Future.delayed(delay, () {
+      if (_loop) {
+        callback();
+      }
+    });
+  }
 
   final String transactionId;
   final String token;
@@ -44,6 +56,20 @@ class PaymentAbaPackageController extends GetxController {
 
   void stop() {
     _loop = false;
+  }
+
+  void resumePolling({
+    required BuildContext context,
+    required String transactionId,
+    required String token,
+  }) {
+    if (_loop) return;
+    _loop = true;
+    checkPaymentABAComplete(
+      context: context,
+      transactionId: transactionId,
+      token: token,
+    );
   }
 
   void init({required BuildContext context}) {
@@ -151,11 +177,13 @@ class PaymentAbaPackageController extends GetxController {
             openDeepLinkABA(deepLink);
           }
         } else {
+          if (!context.mounted) return;
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('something_wrong'.tr)));
         }
       } else {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('payment_time_out'.tr)));
@@ -171,46 +199,90 @@ class PaymentAbaPackageController extends GetxController {
     required String token,
   }) async {
     if (!_loop) return;
-    log(
-      '${BaseUrl.PAYMENT_URL}payments/checkTravelPackageStatus/$transactionId',
-    );
-
-    final response = await http.post(
-      Uri.parse(
+    try {
+      log(
         '${BaseUrl.PAYMENT_URL}payments/checkTravelPackageStatus/$transactionId',
-      ),
-      headers: <String, String>{'Authorization': AppPref.getToken() ?? ''},
-    );
+      );
 
-    if (response.statusCode == 200) {
-      log('This is response check payment $title ==>>${response.body}');
-      Map<dynamic, dynamic> result = jsonDecode(response.body);
-      final status = '${result['status']}';
-      if (status == '1') {
-        log('Check status transaction $title == 1');
-        _loop = false;
-        Get.back(result: '1');
-      } else {
-        log('Check status transaction $title == $status (payment pending)');
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          if (_loop) {
+      final response = await http
+          .post(
+            Uri.parse(
+              '${BaseUrl.PAYMENT_URL}payments/checkTravelPackageStatus/$transactionId',
+            ),
+            headers: <String, String>{
+              'Authorization': AppPref.getToken() ?? '',
+            },
+          )
+          .timeout(const Duration(seconds: 20));
+
+      if (!_loop) return;
+
+      if (response.statusCode == 200) {
+        log('This is response check payment $title ==>>${response.body}');
+        Map<dynamic, dynamic> result = jsonDecode(response.body);
+        final status = '${result['status']}';
+        if (status == '1') {
+          log('Check status transaction $title == 1');
+          _loop = false;
+          Get.back(result: '1');
+        } else {
+          log('Check status transaction $title == $status (payment pending)');
+          _scheduleRetry(() {
             checkPaymentABAComplete(
-              context: context,
+              context: Get.context ?? context,
               transactionId: transactionId,
               token: token,
             );
-          }
+          });
+        }
+      } else {
+        log(
+          'Check travel package payment request failed (${response.statusCode}). Retrying...',
+        );
+        _scheduleRetry(() {
+          checkPaymentABAComplete(
+            context: Get.context ?? context,
+            transactionId: transactionId,
+            token: token,
+          );
         });
       }
-    } else {
-      if (_loop) {
+    } on SocketException catch (e) {
+      log('Network error while checking travel package payment status: $e');
+      _scheduleRetry(() {
         checkPaymentABAComplete(
-          context: context,
+          context: Get.context ?? context,
           transactionId: transactionId,
           token: token,
         );
-      }
-      throw Exception('Failed to load to server!');
+      }, delay: const Duration(seconds: 2));
+    } on http.ClientException catch (e) {
+      log('HTTP client error while checking travel package payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
+    } on TimeoutException catch (e) {
+      log('Timeout while checking travel package payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
+    } catch (e) {
+      log('Unexpected error while checking travel package payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
     }
   }
 }

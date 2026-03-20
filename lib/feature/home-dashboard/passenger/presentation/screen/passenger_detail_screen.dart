@@ -886,6 +886,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
   FutureBuilder<void> _buildPassenger({
     required bool enableDiscount,
     bool forceZeroDiscount = false,
+    bool hideGrandTotalUntilPackageApplied = false,
   }) {
     return FutureBuilder<void>(
       future: controller.state.initialLoadFuture,
@@ -909,6 +910,14 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
             controller.disposeResources(inputFocusNode: inputFocusNode);
           },
           builder: (_) {
+            final shouldShowGrandTotal =
+                !hideGrandTotalUntilPackageApplied ||
+                (controller.state.isTravelPackage.value &&
+                    controller.state.isTravelPackageOk.value);
+            final shouldShowSubTotal =
+                (controller.state.isTravelPackage.value &&
+                    controller.state.isTravelPackageOk.value) ||
+                controller.state.status.value == 1;
             return Column(
               children: [
                 Expanded(
@@ -2937,20 +2946,21 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                     return Column(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'sub_total'.tr,
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
+                                        if (shouldShowSubTotal)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'sub_total'.tr,
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
                                               ),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              '\$${subTotal.toStringAsFixed(2)}',
-                                            ),
-                                          ],
-                                        ),
+                                              const Spacer(),
+                                              Text(
+                                                '\$${subTotal.toStringAsFixed(2)}',
+                                              ),
+                                            ],
+                                          ),
                                         if (_shouldShowAmount(discount))
                                           const SizedBox(height: 10),
                                         if (_shouldShowAmount(discount))
@@ -2977,26 +2987,28 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               ),
                                             ],
                                           ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'total_price'.tr,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                        if (shouldShowGrandTotal)
+                                          const SizedBox(height: 10),
+                                        if (shouldShowGrandTotal)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'total_price'.tr,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              '\$${total.toStringAsFixed(2)}',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                              const Spacer(),
+                                              Text(
+                                                '\$${total.toStringAsFixed(2)}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
+                                            ],
+                                          ),
                                       ],
                                     );
                                   },
@@ -3034,20 +3046,21 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                     return Column(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'sub_total'.tr,
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
+                                        if (shouldShowSubTotal)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'sub_total'.tr,
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
                                               ),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              '\$${subTotal.toStringAsFixed(2)}',
-                                            ),
-                                          ],
-                                        ),
+                                              const Spacer(),
+                                              Text(
+                                                '\$${subTotal.toStringAsFixed(2)}',
+                                              ),
+                                            ],
+                                          ),
                                         if (_shouldShowAmount(discount))
                                           const SizedBox(height: 10),
                                         if (_shouldShowAmount(discount))
@@ -3077,26 +3090,28 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               ),
                                             ],
                                           ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'total_price'.tr,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                        if (shouldShowGrandTotal)
+                                          const SizedBox(height: 10),
+                                        if (shouldShowGrandTotal)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'total_price'.tr,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              '\$${total.toStringAsFixed(2)}',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                              const Spacer(),
+                                              Text(
+                                                '\$${total.toStringAsFixed(2)}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
+                                            ],
+                                          ),
                                       ],
                                     );
                                   },
@@ -3110,22 +3125,23 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'sub_total'.tr,
-                                          style: const TextStyle(
-                                            color: AppColors.textColor,
+                                    if (shouldShowSubTotal)
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'sub_total'.tr,
+                                            style: const TextStyle(
+                                              color: AppColors.textColor,
+                                            ),
                                           ),
-                                        ),
-                                        const Spacer(),
-                                        Text(
-                                          ValueStatic.seatPriceGoDiscount
-                                              ? '\$${(double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}'
-                                              : '\$${(double.parse(ValueStatic.totalPrice) * 0.95).toStringAsFixed(2)}',
-                                        ),
-                                      ],
-                                    ),
+                                          const Spacer(),
+                                          Text(
+                                            ValueStatic.seatPriceGoDiscount
+                                                ? '\$${(double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}'
+                                                : '\$${(double.parse(ValueStatic.totalPrice) * 0.95).toStringAsFixed(2)}',
+                                          ),
+                                        ],
+                                      ),
                                     const SizedBox(height: 10),
                                     Row(
                                       children: [
@@ -3144,20 +3160,21 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                       ],
                                     ),
                                     const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'total_price'.tr,
-                                          style: const TextStyle(
-                                            color: AppColors.textColor,
+                                    if (shouldShowGrandTotal)
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'total_price'.tr,
+                                            style: const TextStyle(
+                                              color: AppColors.textColor,
+                                            ),
                                           ),
-                                        ),
-                                        const Spacer(),
-                                        Text(
-                                          '\$${(double.parse(ValueStatic.totalPrice) - double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}',
-                                        ),
-                                      ],
-                                    ),
+                                          const Spacer(),
+                                          Text(
+                                            '\$${(double.parse(ValueStatic.totalPrice) - double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}',
+                                          ),
+                                        ],
+                                      ),
                                   ],
                                 ),
 
@@ -3169,18 +3186,19 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'sub_total'.tr,
-                                          style: const TextStyle(
-                                            color: AppColors.textColor,
+                                    if (shouldShowSubTotal)
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'sub_total'.tr,
+                                            style: const TextStyle(
+                                              color: AppColors.textColor,
+                                            ),
                                           ),
-                                        ),
-                                        const Spacer(),
-                                        Text('\$${ValueStatic.totalPrice}'),
-                                      ],
-                                    ),
+                                          const Spacer(),
+                                          Text('\$${ValueStatic.totalPrice}'),
+                                        ],
+                                      ),
                                     if (controller
                                                 .state
                                                 .isTravelPackage
@@ -3286,29 +3304,32 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             .isTravelPackage
                                             .value ==
                                         false)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'total_price'.tr,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          if (ValueStatic.totalPrice.isNotEmpty)
+                                      if (shouldShowGrandTotal)
+                                        Row(
+                                          children: [
                                             Text(
-                                              ValueStatic.seatPriceGoDiscount ==
-                                                      true
-                                                  ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2))).toStringAsFixed(2)}"
-                                                  : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                              'total_price'.tr,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                        ],
-                                      ),
+                                            const Spacer(),
+                                            if (ValueStatic
+                                                .totalPrice
+                                                .isNotEmpty)
+                                              Text(
+                                                ValueStatic.seatPriceGoDiscount ==
+                                                        true
+                                                    ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2))).toStringAsFixed(2)}"
+                                                    : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                     if (controller
                                                 .state
                                                 .isTravelPackage
@@ -3373,29 +3394,32 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                 .isTravelPackageOk
                                                 .value ==
                                             false)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'total_price'.tr,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          if (ValueStatic.totalPrice.isNotEmpty)
+                                      if (shouldShowGrandTotal)
+                                        Row(
+                                          children: [
                                             Text(
-                                              ValueStatic.seatPriceGoDiscount ==
-                                                      true
-                                                  ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2)))}"
-                                                  : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                              'total_price'.tr,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                        ],
-                                      ),
+                                            const Spacer(),
+                                            if (ValueStatic
+                                                .totalPrice
+                                                .isNotEmpty)
+                                              Text(
+                                                ValueStatic.seatPriceGoDiscount ==
+                                                        true
+                                                    ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2)))}"
+                                                    : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                     if (controller
                                                 .state
                                                 .isTravelPackage
@@ -3408,29 +3432,32 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             false &&
                                         controller.state.isNoPackage.value ==
                                             false)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'total_price'.tr,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          if (ValueStatic.totalPrice.isNotEmpty)
+                                      if (shouldShowGrandTotal)
+                                        Row(
+                                          children: [
                                             Text(
-                                              ValueStatic.seatPriceGoDiscount ==
-                                                      true
-                                                  ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2)))}"
-                                                  : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                              'total_price'.tr,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                        ],
-                                      ),
+                                            const Spacer(),
+                                            if (ValueStatic
+                                                .totalPrice
+                                                .isNotEmpty)
+                                              Text(
+                                                ValueStatic.seatPriceGoDiscount ==
+                                                        true
+                                                    ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2)))}"
+                                                    : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                   ],
                                 ),
 
@@ -3442,18 +3469,19 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'sub_total'.tr,
-                                          style: const TextStyle(
-                                            color: AppColors.textColor,
+                                    if (shouldShowSubTotal)
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'sub_total'.tr,
+                                            style: const TextStyle(
+                                              color: AppColors.textColor,
+                                            ),
                                           ),
-                                        ),
-                                        const Spacer(),
-                                        Text('\$${ValueStatic.totalPrice}'),
-                                      ],
-                                    ),
+                                          const Spacer(),
+                                          Text('\$${ValueStatic.totalPrice}'),
+                                        ],
+                                      ),
                                     if (controller
                                                 .state
                                                 .isTravelPackage
@@ -3568,63 +3596,133 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               : const SizedBox(),
 
                                           const SizedBox(height: 8),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'total_price'.tr,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                          if (controller
+                                                      .state
+                                                      .isTravelPackage
+                                                      .value ==
+                                                  true &&
+                                              controller
+                                                      .state
+                                                      .isTravelPackageOk
+                                                      .value ==
+                                                  true)
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'total_price'.tr,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
+                                                const Spacer(),
+                                                Text(
+                                                  (() {
+                                                    final subTotal =
+                                                        double.tryParse(
+                                                          ValueStatic
+                                                              .totalPrice,
+                                                        ) ??
+                                                        0.0;
+                                                    final lucky =
+                                                        controller
+                                                                .state
+                                                                .luckyDraw
+                                                                .value
+                                                            ? ValueStatic
+                                                                .luckyDrawValue
+                                                            : 0.0;
+                                                    final discount = controller
+                                                        .getTravelPackageDiscountAmount(
+                                                          subTotal,
+                                                        );
+                                                    final total = double.parse(
+                                                      (subTotal -
+                                                              discount +
+                                                              lucky)
+                                                          .toStringAsFixed(2),
+                                                    );
+                                                    return '\$${total.toStringAsFixed(2)}';
+                                                  })(),
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          if (controller
+                                                      .state
+                                                      .isTravelPackage
+                                                      .value ==
+                                                  true &&
+                                              controller
+                                                      .state
+                                                      .isTravelPackageOk
+                                                      .value ==
+                                                  false)
+                                            if (shouldShowGrandTotal)
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    'total_price'.tr,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const Spacer(),
+
+                                                  // * when go don't have dis and back have dis
+                                                  if (ValueStatic
+                                                              .seatPriceGoDiscount ==
+                                                          true &&
+                                                      ValueStatic
+                                                              .seatPriceBackDiscount ==
+                                                          false)
+                                                    Text(
+                                                      "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+
+                                                  // * when go have dis and back have dis
+                                                  if (ValueStatic
+                                                              .seatPriceGoDiscount ==
+                                                          false &&
+                                                      ValueStatic
+                                                              .seatPriceBackDiscount ==
+                                                          false)
+                                                    Text(
+                                                      "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+
+                                                  // * when go have dis and back don't have dis
+                                                  if (ValueStatic
+                                                              .seatPriceGoDiscount ==
+                                                          false &&
+                                                      ValueStatic
+                                                              .seatPriceBackDiscount ==
+                                                          true)
+                                                    Text(
+                                                      "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                ],
                                               ),
-                                              const Spacer(),
-
-                                              // * when go don't have dis and back have dis
-                                              if (ValueStatic
-                                                          .seatPriceGoDiscount ==
-                                                      true &&
-                                                  ValueStatic
-                                                          .seatPriceBackDiscount ==
-                                                      false)
-                                                Text(
-                                                  "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-
-                                              // * when go have dis and back have dis
-                                              if (ValueStatic
-                                                          .seatPriceGoDiscount ==
-                                                      false &&
-                                                  ValueStatic
-                                                          .seatPriceBackDiscount ==
-                                                      false)
-                                                Text(
-                                                  "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-
-                                              // * when go have dis and back don't have dis
-                                              if (ValueStatic
-                                                          .seatPriceGoDiscount ==
-                                                      false &&
-                                                  ValueStatic
-                                                          .seatPriceBackDiscount ==
-                                                      true)
-                                                Text(
-                                                  "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
                                         ],
                                       ),
                                     if (controller
@@ -3889,64 +3987,69 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               )
                                               : const SizedBox(),
 
-                                          const SizedBox(height: 8),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'total_price'.tr,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const Spacer(),
-
-                                              // * when go don't have dis and back have dis
-                                              if (ValueStatic
-                                                          .seatPriceGoDiscount ==
-                                                      true &&
-                                                  ValueStatic
-                                                          .seatPriceBackDiscount ==
-                                                      false)
+                                          if (shouldShowGrandTotal)
+                                            const SizedBox(height: 8),
+                                          if (shouldShowGrandTotal)
+                                            Row(
+                                              children: [
                                                 Text(
-                                                  "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                  'total_price'.tr,
                                                   style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
+                                                const Spacer(),
 
-                                              // * when go have dis and back have dis
-                                              if (ValueStatic
-                                                          .seatPriceGoDiscount ==
-                                                      false &&
-                                                  ValueStatic
-                                                          .seatPriceBackDiscount ==
-                                                      false)
-                                                Text(
-                                                  "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
+                                                // * when go don't have dis and back have dis
+                                                if (ValueStatic
+                                                            .seatPriceGoDiscount ==
+                                                        true &&
+                                                    ValueStatic
+                                                            .seatPriceBackDiscount ==
+                                                        false)
+                                                  Text(
+                                                    "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
-                                                ),
 
-                                              // * when go have dis and back don't have dis
-                                              if (ValueStatic
-                                                          .seatPriceGoDiscount ==
-                                                      false &&
-                                                  ValueStatic
-                                                          .seatPriceBackDiscount ==
-                                                      true)
-                                                Text(
-                                                  "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
+                                                // * when go have dis and back have dis
+                                                if (ValueStatic
+                                                            .seatPriceGoDiscount ==
+                                                        false &&
+                                                    ValueStatic
+                                                            .seatPriceBackDiscount ==
+                                                        false)
+                                                  Text(
+                                                    "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
-                                                ),
-                                            ],
-                                          ),
+
+                                                // * when go have dis and back don't have dis
+                                                if (ValueStatic
+                                                            .seatPriceGoDiscount ==
+                                                        false &&
+                                                    ValueStatic
+                                                            .seatPriceBackDiscount ==
+                                                        true)
+                                                  Text(
+                                                    "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
                                         ],
                                       ),
                                   ],

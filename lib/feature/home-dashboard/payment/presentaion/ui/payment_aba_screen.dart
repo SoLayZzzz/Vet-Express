@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -37,6 +38,7 @@ class PaymentABAScreenState extends State<PaymentABAScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (Get.isRegistered<PaymentAbaController>()) {
       try {
         Get.find<PaymentAbaController>().stop();
@@ -59,7 +61,31 @@ class PaymentABAScreenState extends State<PaymentABAScreen>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    log(
+      'PaymentABAScreen.lifecycle state=$state, type=${widget.type}, transactionId=${widget.transactionId}',
+    );
+    if (widget.type != 1) return;
+    if (state == AppLifecycleState.resumed) {
+      log(
+        'PaymentABAScreen.resume trigger checkTransactionABAComplete transactionId=${widget.transactionId}',
+      );
+      controller.checkTransactionABAComplete(
+        context: context,
+        transactionId: widget.transactionId,
+        token: widget.token,
+      );
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      controller.stop();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     try {
       controller.stop();
     } catch (_) {}

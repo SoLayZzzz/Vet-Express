@@ -29,12 +29,14 @@ class PaymentABAPackageScreen extends StatefulWidget {
       _PaymentABAPackageScreenState();
 }
 
-class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
+class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen>
+    with WidgetsBindingObserver {
   late final PaymentAbaPackageController controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (Get.isRegistered<PaymentAbaPackageController>()) {
       try {
         Get.find<PaymentAbaPackageController>().stop();
@@ -55,7 +57,24 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      controller.resumePolling(
+        context: context,
+        transactionId: widget.transactionId,
+        token: widget.token,
+      );
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      controller.stop();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     try {
       controller.stop();
     } catch (_) {}

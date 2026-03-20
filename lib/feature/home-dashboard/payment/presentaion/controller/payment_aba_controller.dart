@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -18,6 +19,17 @@ import '../../../../../utils/loading.dart';
 class PaymentAbaController extends GetxController {
   bool _loop = true;
   bool _initialized = false;
+
+  void _scheduleRetry(
+    VoidCallback callback, {
+    Duration delay = const Duration(milliseconds: 1000),
+  }) {
+    Future.delayed(delay, () {
+      if (_loop) {
+        callback();
+      }
+    });
+  }
 
   final String transactionId;
   final String token;
@@ -201,43 +213,86 @@ class PaymentAbaController extends GetxController {
     required String token,
   }) async {
     if (!_loop) return;
-    final response = await http.post(
-      Uri.parse(
-        '${BaseUrl.PAYMENT_URL}payments/checkAbaTransaction/$transactionId',
-      ),
-      headers: <String, String>{'Authorization': AppPref.getToken() ?? ''},
-    );
+    try {
+      final response = await http
+          .post(
+            Uri.parse(
+              '${BaseUrl.PAYMENT_URL}payments/checkAbaTransaction/$transactionId',
+            ),
+            headers: <String, String>{
+              'Authorization': AppPref.getToken() ?? '',
+            },
+          )
+          .timeout(const Duration(seconds: 20));
 
-    if (response.statusCode == 200) {
-      log('This is response check payment $title ==>>${response.body}');
-      Map<dynamic, dynamic> result = jsonDecode(response.body);
-      final status = '${result['status']}';
-      if (status == '1') {
-        log('Check status transaction == 1');
-        // Immediately finish with success so caller can show completion dialog
-        _loop = false;
-        Get.back(result: '1');
-      } else {
-        log('Check status transaction == $status (payment pending)');
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          if (_loop) {
+      if (!_loop) return;
+
+      if (response.statusCode == 200) {
+        log('This is response check payment $title ==>>${response.body}');
+        Map<dynamic, dynamic> result = jsonDecode(response.body);
+        final status = '${result['status']}';
+        if (status == '1') {
+          log('Check status transaction == 1');
+          _loop = false;
+          Get.back(result: '1');
+        } else {
+          log('Check status transaction == $status (payment pending)');
+          _scheduleRetry(() {
             checkPaymentABAComplete(
-              context: Get.context!,
+              context: Get.context ?? context,
               transactionId: transactionId,
               token: token,
             );
-          }
+          });
+        }
+      } else {
+        log(
+          'Check payment request failed (${response.statusCode}). Retrying...',
+        );
+        _scheduleRetry(() {
+          checkPaymentABAComplete(
+            context: Get.context ?? context,
+            transactionId: transactionId,
+            token: token,
+          );
         });
       }
-    } else {
-      if (_loop) {
+    } on SocketException catch (e) {
+      log('Network error while checking payment status: $e');
+      _scheduleRetry(() {
         checkPaymentABAComplete(
-          context: Get.context!,
+          context: Get.context ?? context,
           transactionId: transactionId,
           token: token,
         );
-      }
-      throw Exception('Failed to load to server!');
+      }, delay: const Duration(seconds: 2));
+    } on http.ClientException catch (e) {
+      log('HTTP client error while checking payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
+    } on TimeoutException catch (e) {
+      log('Timeout while checking payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
+    } catch (e) {
+      log('Unexpected error while checking payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
     }
   }
 
@@ -246,40 +301,76 @@ class PaymentAbaController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
-    _loop = false;
-
+    final requestUrl =
+        '${BaseUrl.PAYMENT_URL}payments/checkTerminalPaymentComplete/$transactionId/$token';
+    log(
+      'PaymentAbaController.checkTransactionABAComplete.request '
+      'transactionId=$transactionId, tokenLen=${token.length}, url=$requestUrl',
+    );
     Loading().loadingShow();
 
-    final response = await http.post(
-      Uri.parse(
-        '${BaseUrl.PAYMENT_URL}payments/checkTerminalPaymentComplete/$transactionId/$token',
-      ),
-      headers: <String, String>{'Authorization': AppPref.getToken() ?? ''},
-    );
+    try {
+      final response = await http
+          .post(
+            Uri.parse(requestUrl),
+            headers: <String, String>{
+              'Authorization': AppPref.getToken() ?? '',
+            },
+          )
+          .timeout(const Duration(seconds: 20));
 
-    if (!_loop) {
-      Loading().loadingClose();
-      return;
-    }
-
-    if (response.statusCode == 200) {
-      log('This is response check transaction $title ==>>${response.body}');
-      Map<dynamic, dynamic> result = jsonDecode(response.body);
-      log(result['status']);
-      Loading().loadingClose();
-      if (result['status'] == "1") {
-        log('Check status transaction $title == 1');
-        Get.back(result: '1');
-      }
-    } else {
-      if (_loop) {
-        checkTransactionABAComplete(
-          context: context,
-          transactionId: transactionId,
-          token: token,
+      if (response.statusCode == 200) {
+        Map<dynamic, dynamic> result = jsonDecode(response.body);
+        final normalizedResponse = jsonEncode(<String, dynamic>{
+          'transactionCode': result['transactionCode'] ?? transactionId,
+          'status': '${result['status']}',
+        });
+        log(
+          'PaymentAbaController.checkTransactionABAComplete.response '
+          'statusCode=${response.statusCode}, status=${result['status']}',
+        );
+        log(
+          'This is response check transaction $title ==>>\n      $normalizedResponse',
+        );
+        log(
+          'PaymentAbaController.checkTransactionABAComplete.status=${result['status']}',
+        );
+        Loading().loadingClose();
+        if (result['status'] == "1") {
+          log('Check status transaction $title == 1');
+          Get.back(result: '1');
+        }
+      } else {
+        Loading().loadingClose();
+        log(
+          'PaymentAbaController.checkTransactionABAComplete.failed '
+          'statusCode=${response.statusCode}, body=${response.body}',
         );
       }
-      throw Exception('Failed to load to server!');
+    } on SocketException catch (e) {
+      Loading().loadingClose();
+      log(
+        'PaymentAbaController.checkTransactionABAComplete.networkError '
+        'transactionId=$transactionId, error=$e',
+      );
+    } on http.ClientException catch (e) {
+      Loading().loadingClose();
+      log(
+        'PaymentAbaController.checkTransactionABAComplete.httpClientError '
+        'transactionId=$transactionId, error=$e',
+      );
+    } on TimeoutException catch (e) {
+      Loading().loadingClose();
+      log(
+        'PaymentAbaController.checkTransactionABAComplete.timeout '
+        'transactionId=$transactionId, error=$e',
+      );
+    } catch (e) {
+      Loading().loadingClose();
+      log(
+        'PaymentAbaController.checkTransactionABAComplete.unexpectedError '
+        'transactionId=$transactionId, error=$e',
+      );
     }
   }
 
@@ -289,46 +380,89 @@ class PaymentAbaController extends GetxController {
     required String token,
   }) async {
     if (!_loop) return;
-    final response = await http.post(
-      Uri.parse(
-        '${BaseUrl.PAYMENT_URL}payments/acledaCheckStatus/$transactionId',
-      ),
-      headers: <String, String>{'Authorization': AppPref.getToken() ?? ''},
-    );
+    try {
+      final response = await http
+          .post(
+            Uri.parse(
+              '${BaseUrl.PAYMENT_URL}payments/acledaCheckStatus/$transactionId',
+            ),
+            headers: <String, String>{
+              'Authorization': AppPref.getToken() ?? '',
+            },
+          )
+          .timeout(const Duration(seconds: 20));
 
-    if (response.statusCode == 200) {
-      log('This is response check payment ACLEDA ==>>${response.body}');
-      Map<dynamic, dynamic> result = jsonDecode(response.body);
-      final status = '${result['status']}';
-      if (status == '1') {
-        log('Check status transaction == 1');
-        // Immediately finish with success so caller can show completion dialog
-        _loop = false;
-        Get.back(result: '1');
-      } else if (status == '0') {
-        log('Check status transaction == 0 (payment failed)');
-        _loop = false;
-        Get.back(result: '0');
-      } else {
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          if (_loop) {
+      if (!_loop) return;
+
+      if (response.statusCode == 200) {
+        log('This is response check payment ACLEDA ==>>${response.body}');
+        Map<dynamic, dynamic> result = jsonDecode(response.body);
+        final status = '${result['status']}';
+        if (status == '1') {
+          log('Check status transaction == 1');
+          _loop = false;
+          Get.back(result: '1');
+        } else if (status == '0') {
+          log('Check status transaction == 0 (payment failed)');
+          _loop = false;
+          Get.back(result: '0');
+        } else {
+          _scheduleRetry(() {
             checkPaymentACLEDAComplete(
-              context: Get.context!,
+              context: Get.context ?? context,
               transactionId: transactionId,
               token: token,
             );
-          }
+          });
+        }
+      } else {
+        log(
+          'Check ACLEDA payment request failed (${response.statusCode}). Retrying...',
+        );
+        _scheduleRetry(() {
+          checkPaymentACLEDAComplete(
+            context: Get.context ?? context,
+            transactionId: transactionId,
+            token: token,
+          );
         });
       }
-    } else {
-      if (_loop) {
+    } on SocketException catch (e) {
+      log('Network error while checking ACLEDA payment status: $e');
+      _scheduleRetry(() {
         checkPaymentACLEDAComplete(
-          context: Get.context!,
+          context: Get.context ?? context,
           transactionId: transactionId,
           token: token,
         );
-      }
-      throw Exception('Failed to load to server!');
+      }, delay: const Duration(seconds: 2));
+    } on http.ClientException catch (e) {
+      log('HTTP client error while checking ACLEDA payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentACLEDAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
+    } on TimeoutException catch (e) {
+      log('Timeout while checking ACLEDA payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentACLEDAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
+    } catch (e) {
+      log('Unexpected error while checking ACLEDA payment status: $e');
+      _scheduleRetry(() {
+        checkPaymentACLEDAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
     }
   }
 
@@ -337,40 +471,47 @@ class PaymentAbaController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
-    _loop = false;
-
     Loading().loadingShow();
 
-    final response = await http.post(
-      Uri.parse(
-        '${BaseUrl.PAYMENT_URL}payments/acledaComplete/$transactionId/$token',
-      ),
-      headers: <String, String>{'Authorization': AppPref.getToken() ?? ''},
-    );
+    try {
+      final response = await http
+          .post(
+            Uri.parse(
+              '${BaseUrl.PAYMENT_URL}payments/acledaComplete/$transactionId/$token',
+            ),
+            headers: <String, String>{
+              'Authorization': AppPref.getToken() ?? '',
+            },
+          )
+          .timeout(const Duration(seconds: 20));
 
-    if (!_loop) {
-      Loading().loadingClose();
-      return;
-    }
-
-    if (response.statusCode == 200) {
-      log('This is response check transaction ACLEDA ==>>${response.body}');
-      Map<dynamic, dynamic> result = jsonDecode(response.body);
-      log(result['status'].toString());
-      Loading().loadingClose();
-      if (result['status'] == 1) {
-        log('Check status transaction ACLEDA == 1');
-        Get.back(result: '1');
-      }
-    } else {
-      if (_loop) {
-        checkTransactionACLEDAComplete(
-          context: Get.context!,
-          transactionId: transactionId,
-          token: token,
+      if (response.statusCode == 200) {
+        log('This is response check transaction ACLEDA ==>>${response.body}');
+        Map<dynamic, dynamic> result = jsonDecode(response.body);
+        log(result['status'].toString());
+        Loading().loadingClose();
+        if (result['status'] == 1) {
+          log('Check status transaction ACLEDA == 1');
+          Get.back(result: '1');
+        }
+      } else {
+        Loading().loadingClose();
+        log(
+          'Check ACLEDA transaction request failed (${response.statusCode}).',
         );
       }
-      throw Exception('Failed to load to server!');
+    } on SocketException catch (e) {
+      Loading().loadingClose();
+      log('Network error while checking ACLEDA transaction status: $e');
+    } on http.ClientException catch (e) {
+      Loading().loadingClose();
+      log('HTTP client error while checking ACLEDA transaction status: $e');
+    } on TimeoutException catch (e) {
+      Loading().loadingClose();
+      log('Timeout while checking ACLEDA transaction status: $e');
+    } catch (e) {
+      Loading().loadingClose();
+      log('Unexpected error while checking ACLEDA transaction status: $e');
     }
   }
 }
