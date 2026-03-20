@@ -93,8 +93,12 @@ class PaymentABAScreenState extends State<PaymentABAScreen>
   }
 
   @override
-  Widget build(BuildContext context) => WillPopScope(
-    onWillPop: popScreen,
+  Widget build(BuildContext context) => PopScope(
+    canPop: false,
+    onPopInvokedWithResult: (didPop, result) {
+      if (didPop) return;
+      popScreen();
+    },
     child: Scaffold(
       appBar: AppBarVET().appBar(context, widget.title),
       body:
@@ -145,8 +149,7 @@ class PaymentABAScreenState extends State<PaymentABAScreen>
     ),
   );
 
-  Future<bool> popScreen() async {
+  void popScreen() {
     Get.back();
-    return false;
   }
 }

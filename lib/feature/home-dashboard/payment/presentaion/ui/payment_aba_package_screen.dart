@@ -32,6 +32,7 @@ class PaymentABAPackageScreen extends StatefulWidget {
 class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen>
     with WidgetsBindingObserver {
   late final PaymentAbaPackageController controller;
+  bool _canPop = false;
 
   @override
   void initState() {
@@ -86,15 +87,11 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        try {
-          controller.stop();
-        } catch (_) {}
-        if (Get.isRegistered<PaymentAbaPackageController>()) {
-          Get.delete<PaymentAbaPackageController>(force: true);
-        }
-        return true;
+    return PopScope(
+      canPop: _canPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handlePop(result);
       },
       child: Scaffold(
         appBar: AppBar(
@@ -109,13 +106,7 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen>
               color: AppColors.whiteColor,
             ),
             onPressed: () {
-              try {
-                controller.stop();
-              } catch (_) {}
-              if (Get.isRegistered<PaymentAbaPackageController>()) {
-                Get.delete<PaymentAbaPackageController>(force: true);
-              }
-              Navigator.pop(context);
+              _handlePop(null);
             },
           ),
           centerTitle: true,
@@ -131,5 +122,24 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen>
         body: WebViewWidget(controller: controller.webViewController),
       ),
     );
+  }
+
+  void _handlePop(dynamic result) {
+    try {
+      controller.stop();
+    } catch (_) {}
+    if (Get.isRegistered<PaymentAbaPackageController>()) {
+      Get.delete<PaymentAbaPackageController>(force: true);
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _canPop = true;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Navigator.pop(context, result);
+    });
   }
 }

@@ -152,18 +152,22 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                         Obx(
                           () => Row(
                             children: [
-                              InkWell(
-                                onTap: () {
-                                  itemTypeSelected.value = 1;
-                                },
-                                child: motoPickUp(itemTypeSelected.value),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    itemTypeSelected.value = 1;
+                                  },
+                                  child: motoPickUp(itemTypeSelected.value),
+                                ),
                               ),
-                              const Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  itemTypeSelected.value = 2;
-                                },
-                                child: tuktukPickUp(itemTypeSelected.value),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    itemTypeSelected.value = 2;
+                                  },
+                                  child: tuktukPickUp(itemTypeSelected.value),
+                                ),
                               ),
                             ],
                           ),
@@ -411,18 +415,22 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                         Obx(
                           () => Row(
                             children: [
-                              InkWell(
-                                onTap: () {
-                                  deliverySelected.value = 1;
-                                },
-                                child: ppDelivery(deliverySelected.value),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    deliverySelected.value = 1;
+                                  },
+                                  child: ppDelivery(deliverySelected.value),
+                                ),
                               ),
-                              const Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  deliverySelected.value = 2;
-                                },
-                                child: provinceDelivery(deliverySelected.value),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    deliverySelected.value = 2;
+                                  },
+                                  child: provinceDelivery(deliverySelected.value),
+                                ),
                               ),
                             ],
                           ),
@@ -447,27 +455,31 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                         Obx(
                           () => Row(
                             children: [
-                              InkWell(
-                                onTap: () async {
-                                  FocusScope.of(context).unfocus();
-                                  final result = await Get.to(
-                                    () =>
-                                        const BookingDeliveryLiveLocationScreen(),
-                                  );
-                                  if (result == '1') {
-                                    pickUpSelected.value = 1;
-                                  } else {
-                                    pickUpSelected.value = 0;
-                                  }
-                                },
-                                child: liveLocation(pickUpSelected.value),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () async {
+                                    FocusScope.of(context).unfocus();
+                                    final result = await Get.to(
+                                      () =>
+                                          const BookingDeliveryLiveLocationScreen(),
+                                    );
+                                    if (result == '1') {
+                                      pickUpSelected.value = 1;
+                                    } else {
+                                      pickUpSelected.value = 0;
+                                    }
+                                  },
+                                  child: liveLocation(pickUpSelected.value),
+                                ),
                               ),
-                              const Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  pickUpSelected.value = 2;
-                                },
-                                child: manualLocation(pickUpSelected.value),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    pickUpSelected.value = 2;
+                                  },
+                                  child: manualLocation(pickUpSelected.value),
+                                ),
                               ),
                             ],
                           ),
@@ -589,7 +601,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
   Container liveLocation(int selected) {
     return selected == 1
         ? Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: AppColors.primaryColor),
@@ -622,7 +634,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
           ),
         )
         : Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.grey),
@@ -643,7 +655,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
   Container manualLocation(int selected) {
     return selected == 2
         ? Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: AppColors.primaryColor),
@@ -675,7 +687,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
           ),
         )
         : Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.grey),
@@ -695,7 +707,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
   Container ppDelivery(int selected) {
     return selected == 1
         ? Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: AppColors.primaryColor),
@@ -727,7 +739,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
           ),
         )
         : Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.grey),
@@ -747,7 +759,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
   Container provinceDelivery(int selected) {
     return selected == 2
         ? Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: AppColors.primaryColor),
@@ -779,7 +791,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
           ),
         )
         : Container(
-          width: MediaQuery.of(context).size.width / 2.5,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.grey),
@@ -816,19 +828,22 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                     color: Colors.green,
                   ),
                 ),
-                Column(
-                  children: [
-                    Image.asset(
-                      AssetImages.ic_moto,
-                      width: 50,
-                      color: AppColors.primaryColor,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'small_moto'.tr,
-                      style: const TextStyle(color: AppColors.primaryColor),
-                    ),
-                  ],
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        AssetImages.ic_moto,
+                        width: 50,
+                        color: AppColors.primaryColor,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'small_moto'.tr,
+                        style: const TextStyle(color: AppColors.primaryColor),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -843,19 +858,22 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
             padding: const EdgeInsets.all(10.0),
             child: Stack(
               children: [
-                Column(
-                  children: [
-                    Image.asset(
-                      AssetImages.ic_moto,
-                      width: 50,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'small_moto'.tr,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        AssetImages.ic_moto,
+                        width: 50,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'small_moto'.tr,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -883,19 +901,22 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                     color: Colors.green,
                   ),
                 ),
-                Column(
-                  children: [
-                    Image.asset(
-                      AssetImages.ic_tuktuk,
-                      width: 50,
-                      color: AppColors.primaryColor,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'big_tuk_tuk'.tr,
-                      style: const TextStyle(color: AppColors.primaryColor),
-                    ),
-                  ],
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        AssetImages.ic_tuktuk,
+                        width: 50,
+                        color: AppColors.primaryColor,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'big_tuk_tuk'.tr,
+                        style: const TextStyle(color: AppColors.primaryColor),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -910,19 +931,22 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
             padding: const EdgeInsets.all(10.0),
             child: Stack(
               children: [
-                Column(
-                  children: [
-                    Image.asset(
-                      AssetImages.ic_tuktuk,
-                      width: 50,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'big_tuk_tuk'.tr,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        AssetImages.ic_tuktuk,
+                        width: 50,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'big_tuk_tuk'.tr,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
