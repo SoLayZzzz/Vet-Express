@@ -288,33 +288,33 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                       ),
                                     );
                                   }
-                                  if (selectData.hasError) {
-                                    return Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.whiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: AppColors.borderColor,
-                                          width: 0.5,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: const [
-                                          Icon(
-                                            Ionicons.information_circle,
-                                            color: Colors.redAccent,
-                                          ),
-                                          SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              'Failed to load saving point',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
+                                  // if (selectData.hasError) {
+                                  //   return Container(
+                                  //     padding: const EdgeInsets.all(16),
+                                  //     decoration: BoxDecoration(
+                                  //       color: AppColors.whiteColor,
+                                  //       borderRadius: BorderRadius.circular(10),
+                                  //       border: Border.all(
+                                  //         color: AppColors.borderColor,
+                                  //         width: 0.5,
+                                  //       ),
+                                  //     ),
+                                  //     child: Row(
+                                  //       children: const [
+                                  //         Icon(
+                                  //           Ionicons.information_circle,
+                                  //           color: Colors.redAccent,
+                                  //         ),
+                                  //         SizedBox(width: 10),
+                                  //         Expanded(
+                                  //           child: Text(
+                                  //             'Failed to load saving point',
+                                  //           ),
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   );
+                                  // }
                                   if (selectData.hasData) {
                                     if (selectData.data!.header?.statusCode ==
                                             200 &&

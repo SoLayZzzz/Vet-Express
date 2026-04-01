@@ -20,6 +20,8 @@ class PaymentWingController extends GetxController {
   late final WebViewController webViewController;
   bool _active = true;
   bool _isLoadingShown = false;
+  int _pollCount = 0;
+  static const int _maxPollCount = 240;
 
   PassengerNetworkRequest _ensureNetworkRequest() {
     if (!Get.isRegistered<PassengerNetworkRequest>()) {
@@ -53,6 +55,8 @@ class PaymentWingController extends GetxController {
         "${BaseUrl.PAYMENT_URL}payments/wingNewApiPaymentPro/$transactionId/$token";
     log('PaymentWingController.loadWingPayment.request url=$wingPaymentUrl');
 
+    _showLoadingIfNeeded();
+
     if (Platform.isAndroid) {
       final androidController =
           webViewController.platform as AndroidWebViewController;
@@ -69,11 +73,25 @@ class PaymentWingController extends GetxController {
 
     webViewController.setNavigationDelegate(
       NavigationDelegate(
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {},
+        onPageStarted: (String url) {
+          log('PaymentWingController.onPageStarted url=$url');
+          _showLoadingIfNeeded();
+        },
+        onPageFinished: (String url) {
+          log('PaymentWingController.onPageFinished url=$url');
+          _hideLoadingIfShown();
+        },
+        onWebResourceError: (WebResourceError error) {
+          log(
+            'PaymentWingController.onWebResourceError '
+            'code=${error.errorCode} desc=${error.description}',
+          );
+          _hideLoadingIfShown();
+        },
         onNavigationRequest: (NavigationRequest request) {
           log('PaymentWingController.onNavigationRequest url=${request.url}');
           if (request.url.startsWith('https://closewingpayment/')) {
+            _hideLoadingIfShown();
             return NavigationDecision.prevent;
           }
           if (request.url.startsWith('wingbankapp://payment?')) {
@@ -98,6 +116,7 @@ class PaymentWingController extends GetxController {
   @override
   void onClose() {
     _active = false;
+    _hideLoadingIfShown();
     super.onClose();
   }
 
@@ -134,7 +153,18 @@ class PaymentWingController extends GetxController {
     required String transactionId,
   }) async {
     if (!_active) return;
-    _showLoadingIfNeeded();
+    _pollCount++;
+    if (_pollCount > _maxPollCount) {
+      log(
+        'PaymentWingController.checkTicketStatus.stop polling (max reached) '
+        'transactionId=$transactionId',
+      );
+      _hideLoadingIfShown();
+      if (_active) {
+        Get.back(result: '0');
+      }
+      return;
+    }
     try {
       log(
         'PaymentWingController.checkTicketStatus.request transactionId=$transactionId',
@@ -144,40 +174,58 @@ class PaymentWingController extends GetxController {
         transactionId: transactionId.toString(),
       );
 
-      if (wingResponse.header?.statusCode == 200 &&
-          wingResponse.header?.result == true) {
+      if (wingResponse.header?.statusCode == 200) {
         final status = '${wingResponse.body?.data?[0].status ?? ''}';
         log(
           'PaymentWingController.checkTicketStatus.response '
           'statusCode=${wingResponse.header?.statusCode}, '
           'result=${wingResponse.header?.result}, status=$status',
         );
+
         if (status == '1') {
           _hideLoadingIfShown();
-          Get.back(result: '1');
-        } else {
-          log(
-            'PaymentWingController.checkTicketStatus.pending -> poll again in 2s',
-          );
-          Future.delayed(const Duration(seconds: 2), () {
-            if (_active) {
-              checkPaymentWingComplete(
-                context: context,
-                transactionId: transactionId,
-              );
-            }
-          });
+          if (_active) {
+            Get.back(result: '1');
+          }
+          return;
         }
+
+        // Wing commonly returns status=0 while payment is still pending/awaiting user action.
+        // Only treat explicit non-success states as failure.
+        if (status == '2' || status == '-1') {
+          _hideLoadingIfShown();
+          if (_active) {
+            Get.back(result: '0');
+          }
+          return;
+        }
+
+        log(
+          'PaymentWingController.checkTicketStatus.pending -> poll again in 2s',
+        );
+        Future.delayed(const Duration(seconds: 2), () {
+          if (_active) {
+            checkPaymentWingComplete(
+              context: context,
+              transactionId: transactionId,
+            );
+          }
+        });
       }
     } catch (_) {
       log(
         'PaymentWingController.checkTicketStatus.error for transactionId=$transactionId',
       );
+      _hideLoadingIfShown();
       if (_active) {
-        checkPaymentWingComplete(
-          context: context,
-          transactionId: transactionId,
-        );
+        Future.delayed(const Duration(seconds: 2), () {
+          if (_active) {
+            checkPaymentWingComplete(
+              context: context,
+              transactionId: transactionId,
+            );
+          }
+        });
       }
     }
   }

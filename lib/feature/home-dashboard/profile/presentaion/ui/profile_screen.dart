@@ -22,6 +22,7 @@ class ProfileScreen extends StatelessWidget {
     final ProfileController controller = Get.put(ProfileController());
 
     return Scaffold(
+      bottomNavigationBar: _buildSaveButton(controller),
       appBar: AppBar(
         elevation: 0.2,
         backgroundColor:
@@ -106,7 +107,7 @@ class ProfileScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 40),
-            _buildSaveButton(controller),
+            // _buildSaveButton(controller),
           ],
         ),
       ),
@@ -415,12 +416,16 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildSaveButton(ProfileController controller) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: globalButton(
-        context: Get.context!,
-        buttonText: 'save'.tr,
-        onPressed: controller.updateProfile,
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        color: AppColors.whiteColor,
+        width: double.infinity,
+        child: globalButton(
+          context: Get.context!,
+          buttonText: 'save'.tr,
+          onPressed: controller.updateProfile,
+        ),
       ),
     );
   }

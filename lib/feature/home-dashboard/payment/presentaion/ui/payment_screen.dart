@@ -96,6 +96,36 @@ class _PaymentScreenState extends State<PaymentScreen>
   Widget build(BuildContext context) {
     return Obx(() {
       final uiState = controller.state;
+      final orderPayments =
+          widget.datas.body?.orderPaymentLists ?? <OrderPaymentList>[];
+      final paymentMethods =
+          widget.datas.body?.paymentMethods ?? <PaymentMethod>[];
+      final grandTotalAll = orderPayments.fold<double>(
+        0.0,
+        (sum, item) => sum + _parseAmount(item.grandTotal),
+      );
+      final selectedDiscountAmount = _getSelectedPaymentDiscountAmount(
+        paymentMethods: paymentMethods,
+        paymentMethodId: uiState.paymentMethodId,
+      );
+      final selectedPaymentMethodName = _getSelectedPaymentMethodName(
+        paymentMethods: paymentMethods,
+        paymentMethodId: uiState.paymentMethodId,
+      );
+      final selectedServiceFeeAmount = _getSelectedPaymentServiceFeeAmount(
+        paymentMethods: paymentMethods,
+        paymentMethodId: uiState.paymentMethodId,
+      );
+      final travelPackageDiscountAll = _getTravelPackageDiscountAll(
+        orderPayments: orderPayments,
+        grandTotalAll: grandTotalAll,
+      );
+      final totalPayableAll = _nonNegative(
+        grandTotalAll -
+            travelPackageDiscountAll -
+            selectedDiscountAmount +
+            selectedServiceFeeAmount,
+      );
       return PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
@@ -409,14 +439,14 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                          FontWeight.bold,
                                                       color:
                                                           AppColors.textColor,
                                                     ),
                                                   ),
                                                   const Spacer(),
                                                   Text(
-                                                    "\$${(double.parse(widget.datas.body!.orderPaymentLists![0].total ?? '0') + double.parse(widget.datas.body!.orderPaymentLists![1].total ?? '0')).toStringAsFixed(2)}",
+                                                    "\$${totalPayableAll.toStringAsFixed(2)}",
                                                     style: const TextStyle(
                                                       fontSize: 16,
                                                       fontWeight:
@@ -537,17 +567,6 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                         "sub_total".tr,
                                                         "${widget.datas.body!.orderPaymentLists![index].grandTotal} \$",
                                                       ),
-                                                      if (_hasVisibleAmount(
-                                                        widget
-                                                            .datas
-                                                            .body!
-                                                            .orderPaymentLists![index]
-                                                            .discount,
-                                                      ))
-                                                        view(
-                                                          "discount".tr,
-                                                          "${widget.datas.body!.orderPaymentLists![index].discount} \$",
-                                                        ),
                                                       view(
                                                         index == 0
                                                             ? "total_going".tr
@@ -564,6 +583,45 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                       const Divider(
                                                         thickness: 1,
                                                       ),
+                                                      if (_hasVisibleAmount(
+                                                        travelPackageDiscountAll,
+                                                      ))
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 6.0,
+                                                              ),
+                                                          child: view(
+                                                            'Discount (Apply travel package)',
+                                                            "${travelPackageDiscountAll.toStringAsFixed(2)} \$",
+                                                          ),
+                                                        ),
+                                                      if (_hasVisibleAmount(
+                                                        selectedDiscountAmount,
+                                                      ))
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 6.0,
+                                                              ),
+                                                          child: view(
+                                                            "${"discount".tr}($selectedPaymentMethodName)",
+                                                            "${selectedDiscountAmount.toStringAsFixed(2)} \$",
+                                                          ),
+                                                        ),
+                                                      if (_hasVisibleAmount(
+                                                        selectedServiceFeeAmount,
+                                                      ))
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 6.0,
+                                                              ),
+                                                          child: view(
+                                                            "service_fee".tr,
+                                                            "${selectedServiceFeeAmount.toStringAsFixed(2)} \$",
+                                                          ),
+                                                        ),
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets.symmetric(
@@ -577,7 +635,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                                 fontSize: 16,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .w500, // Semi-bold for label
+                                                                        .bold,
                                                                 color:
                                                                     AppColors
                                                                         .textColor,
@@ -585,7 +643,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                             ),
                                                             const Spacer(),
                                                             Text(
-                                                              "\$${(double.parse(widget.datas.body!.orderPaymentLists![0].total ?? '0') + double.parse(widget.datas.body!.orderPaymentLists![1].total ?? '0')).toStringAsFixed(2)}",
+                                                              "\$${totalPayableAll.toStringAsFixed(2)}",
                                                               style: const TextStyle(
                                                                 fontSize: 16,
                                                                 fontWeight:
@@ -642,15 +700,13 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                   "total_amount".tr,
                                                   style: TextStyle(
                                                     fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight
-                                                            .w500, // Semi-bold for label
+                                                    fontWeight: FontWeight.bold,
                                                     color: AppColors.titleColor,
                                                   ),
                                                 ),
                                                 const Spacer(),
                                                 Text(
-                                                  "\$${(double.parse(widget.datas.body!.orderPaymentLists![index].total ?? '0')).toStringAsFixed(2)}",
+                                                  "\$${_nonNegative(_parseAmount(widget.datas.body!.orderPaymentLists![index].grandTotal) - _getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]) - selectedDiscountAmount + selectedServiceFeeAmount).toStringAsFixed(2)}",
                                                   style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w400,
@@ -771,19 +827,34 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                         "${widget.datas.body!.orderPaymentLists![index].grandTotal} \$",
                                                       ),
                                                       if (_hasVisibleAmount(
-                                                        widget
-                                                            .datas
-                                                            .body!
-                                                            .orderPaymentLists![index]
-                                                            .discount,
+                                                        _getTravelPackageDiscountItem(
+                                                          widget
+                                                              .datas
+                                                              .body!
+                                                              .orderPaymentLists![index],
+                                                        ),
                                                       ))
                                                         view(
-                                                          "discount".tr,
-                                                          "${widget.datas.body!.orderPaymentLists![index].discount} \$",
+                                                          'Discount (Apply travel package)',
+                                                          "${_getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]).toStringAsFixed(2)} \$",
+                                                        ),
+                                                      if (_hasVisibleAmount(
+                                                        selectedDiscountAmount,
+                                                      ))
+                                                        view(
+                                                          "${"discount".tr} ($selectedPaymentMethodName)",
+                                                          "${selectedDiscountAmount.toStringAsFixed(2)} \$",
+                                                        ),
+                                                      if (_hasVisibleAmount(
+                                                        selectedServiceFeeAmount,
+                                                      ))
+                                                        view(
+                                                          "service_fee".tr,
+                                                          "${selectedServiceFeeAmount.toStringAsFixed(2)} \$",
                                                         ),
                                                       view(
                                                         "total_ticket_price".tr,
-                                                        "${widget.datas.body!.orderPaymentLists![index].total} \$",
+                                                        "${_nonNegative(_parseAmount(widget.datas.body!.orderPaymentLists![index].grandTotal) - _getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]) - selectedDiscountAmount + selectedServiceFeeAmount).toStringAsFixed(2)} \$",
                                                       ),
                                                     ],
                                                   ),
@@ -804,8 +875,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:
-                                                            FontWeight
-                                                                .w500, // Semi-bold for label
+                                                            FontWeight.bold,
                                                         color:
                                                             AppColors
                                                                 .titleColor,
@@ -813,7 +883,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                     ),
                                                     const Spacer(),
                                                     Text(
-                                                      "\$${(double.parse(widget.datas.body!.orderPaymentLists![index].total ?? '0')).toStringAsFixed(2)}",
+                                                      "\$${_nonNegative(_parseAmount(widget.datas.body!.orderPaymentLists![index].grandTotal) - _getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]) - selectedDiscountAmount + selectedServiceFeeAmount).toStringAsFixed(2)}",
                                                       style: const TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:
@@ -994,6 +1064,106 @@ class _PaymentScreenState extends State<PaymentScreen>
     if (value == null) return false;
     final amount = double.tryParse(value.toString()) ?? 0;
     return amount > 0;
+  }
+
+  double _parseAmount(dynamic value) {
+    if (value == null) return 0.0;
+    return double.tryParse(value.toString()) ?? 0.0;
+  }
+
+  double _nonNegative(double value) {
+    if (value < 0) return 0.0;
+    return value;
+  }
+
+  double _getTravelPackageDiscountAll({
+    required List<OrderPaymentList> orderPayments,
+    required double grandTotalAll,
+  }) {
+    final explicit = orderPayments.fold<double>(
+      0.0,
+      (sum, item) => sum + _parseAmount(item.disTravel),
+    );
+    if (explicit > 0) return explicit;
+
+    final percent = ValueStatic.travelPackageDis.toDouble();
+    if (percent > 0 && grandTotalAll > 0) {
+      final rawDiscount = grandTotalAll * (percent / 100.0);
+      final appliedDiscount =
+          rawDiscount > grandTotalAll ? grandTotalAll : rawDiscount;
+      return double.parse(appliedDiscount.toStringAsFixed(2));
+    }
+
+    final computedFromTotals = orderPayments.fold<double>(0.0, (sum, item) {
+      final grandTotal = _parseAmount(item.grandTotal);
+      final totalAfterDiscount = _parseAmount(item.total);
+      final diff = grandTotal - totalAfterDiscount;
+      return sum + (diff > 0 ? diff : 0.0);
+    });
+    if (computedFromTotals > 0) {
+      return double.parse(computedFromTotals.toStringAsFixed(2));
+    }
+    return 0.0;
+  }
+
+  double _getTravelPackageDiscountItem(OrderPaymentList item) {
+    final explicit = _parseAmount(item.disTravel);
+    if (explicit > 0) return explicit;
+
+    final percent = ValueStatic.travelPackageDis.toDouble();
+    final grandTotal = _parseAmount(item.grandTotal);
+    if (percent > 0 && grandTotal > 0) {
+      final rawDiscount = grandTotal * (percent / 100.0);
+      final appliedDiscount =
+          rawDiscount > grandTotal ? grandTotal : rawDiscount;
+      return double.parse(appliedDiscount.toStringAsFixed(2));
+    }
+
+    // Fallback for some flows (e.g. Buvasea) where travel discount isn't
+    // provided in disTravel and percent isn't set, but totals reflect it.
+    final totalAfterDiscount = _parseAmount(item.total);
+    final diff = grandTotal - totalAfterDiscount;
+    if (diff > 0) {
+      return double.parse(diff.toStringAsFixed(2));
+    }
+    return 0.0;
+  }
+
+  double _getSelectedPaymentDiscountAmount({
+    required List<PaymentMethod> paymentMethods,
+    required int paymentMethodId,
+  }) {
+    for (final method in paymentMethods) {
+      if (method.id == paymentMethodId) {
+        return _parseAmount(method.discountAmount);
+      }
+    }
+    return 0.0;
+  }
+
+  String _getSelectedPaymentMethodName({
+    required List<PaymentMethod> paymentMethods,
+    required int paymentMethodId,
+  }) {
+    for (final method in paymentMethods) {
+      if (method.id == paymentMethodId) {
+        final name = method.name?.trim() ?? '';
+        return name.isEmpty ? '-' : name;
+      }
+    }
+    return '-';
+  }
+
+  double _getSelectedPaymentServiceFeeAmount({
+    required List<PaymentMethod> paymentMethods,
+    required int paymentMethodId,
+  }) {
+    for (final method in paymentMethods) {
+      if (method.id == paymentMethodId) {
+        return _parseAmount(method.serviceFeeAmount);
+      }
+    }
+    return 0.0;
   }
 
   Future<void> popScreen() async {

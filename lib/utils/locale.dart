@@ -511,6 +511,7 @@ class LocaleString extends Translations {
         'fare_summary': "(Fare Summary)",
         'total_going': "Total going",
         'total_return': "Total return",
+        'service_fee': "Service Fee",
 
         //schedule_list_one_way
         'remaining_seat': 'Remaining Seat',
@@ -1492,6 +1493,7 @@ class LocaleString extends Translations {
         'fare_summary': "(សង្ខេបតម្លៃសំបុត្រ)",
         'total_going': "តម្លៃសរុបទៅ",
         'total_return': "តម្លៃសរុបត្រលប់",
+        'service_fee': "ថ្លៃសេវា",
 
         //schedule_list_one_way
         'remaining_seat': 'កៅអីដែលនៅសល់',
@@ -2540,6 +2542,7 @@ class LocaleString extends Translations {
         'name_pro': '全名',
         'select_boarding': "选择登机点",
         'select_drop': "Select drop off point",
+        'service_fee': "服务费",
 
         //user detail
         "apply_package": "申请旅行套餐代码",

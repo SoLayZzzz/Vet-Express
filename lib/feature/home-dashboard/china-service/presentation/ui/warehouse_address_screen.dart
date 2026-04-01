@@ -237,7 +237,11 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
 
       return Column(
         children: [
-          _buildCopyableField('warehouse_name'.tr, warehouse.name ?? ''),
+          _buildCopyableField(
+            'warehouse_name'.tr,
+            // warehouse.name ?? ''
+            'Vet Livhong',
+          ),
           _buildCopyableField('customer_code'.tr, customer.code ?? ''),
           _buildCopyableField('warehouse_phone'.tr, warehouse.telephone ?? ''),
           _buildCopyableField(

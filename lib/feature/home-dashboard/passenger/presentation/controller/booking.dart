@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../payment/presentaion/ui/payment_screen.dart';
@@ -116,6 +117,11 @@ class Booking {
     data['packageTravelCode'] = packageTravelCode;
     data['couponCode'] = couponCode;
 
+    try {
+      final pretty = const JsonEncoder.withIndent('  ').convert(data);
+      debugPrint('[Booking] confirmBooking.requestFields ->\n$pretty');
+    } catch (_) {}
+
     Loading().loadingShow();
 
     try {
@@ -124,6 +130,13 @@ class Booking {
         fields: data,
       );
       Loading().loadingClose();
+
+      try {
+        final pretty = const JsonEncoder.withIndent(
+          '  ',
+        ).convert(response.toJson());
+        debugPrint('[Booking] confirmBooking.responseParsed ->\n$pretty');
+      } catch (_) {}
 
       if (response.header?.statusCode == 200 &&
           response.header?.result == true) {

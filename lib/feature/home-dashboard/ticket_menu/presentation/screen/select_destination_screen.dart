@@ -35,11 +35,21 @@ class SelectDestinationScreen extends GetView<SelectDestinationController> {
             height: 45,
             color: Colors.white,
             child: TextField(
+              cursorColor:
+                  ValueStatic.ticketType == '3'
+                      ? AppColors.airBusColor
+                      : AppColors.primaryColor,
               onChanged: controller.load,
               decoration: InputDecoration(
                 hintText: 'search_ticket'.tr,
                 contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                suffixIcon: const Icon(Icons.search),
+                suffixIcon: Icon(
+                  Icons.search,
+                  color:
+                      ValueStatic.ticketType == '3'
+                          ? AppColors.airBusColor
+                          : AppColors.primaryColor,
+                ),
                 border: InputBorder.none,
               ),
             ),

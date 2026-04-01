@@ -118,15 +118,30 @@ class PaymentController extends StateController<PaymentUistate> {
       );
       Loading().loadingClose();
 
+      final rawToken = data.body?.token;
+      final token = (rawToken ?? '').trim();
+      final hasUsableToken = token.isNotEmpty && token.toLowerCase() != 'null';
+
       log(
         'PaymentController.processBooking.response '
         'statusCode=${data.header?.statusCode}, '
         'result=${data.header?.result}, '
         'bodyStatus=${data.body?.status}, '
-        'hasToken=${data.body?.token != null}',
+        'hasToken=$hasUsableToken, '
+        'msg=${data.body?.msg}',
       );
 
-      if (data.header?.statusCode == 200 && data.header?.result == true) {
+      final isSuccessHeader =
+          data.header?.statusCode == 200 && data.header?.result == true;
+
+      // Wing sometimes returns result=false but still includes a token that must be used
+      // to continue in the Wing web payment flow.
+      final shouldProceedWing =
+          state.paymentMethodSelected == 4 &&
+          data.header?.statusCode == 200 &&
+          hasUsableToken;
+
+      if (isSuccessHeader || shouldProceedWing) {
         if (state.paymentMethodSelected == 1) {
           final token = data.body?.token;
           log(
@@ -173,7 +188,7 @@ class PaymentController extends StateController<PaymentUistate> {
             showDialogPaymentFail(context, transactionId);
           }
         } else if (state.paymentMethodSelected == 4) {
-          final token = data.body?.token;
+          final token = (data.body?.token ?? '').trim();
           final result = await Get.to(
             () => PaymentWingScreen(
               transactionId: transactionId,
@@ -194,10 +209,22 @@ class PaymentController extends StateController<PaymentUistate> {
           setNewToken(token);
         }
       } else {
-        throw Exception('Failed to load to server!');
+        alertDialogOneButton(
+          title: 'information'.tr,
+          description: data.body?.msg ?? 'Failed to load to server!',
+          buttonText: 'ok'.tr,
+        );
       }
-    } catch (_) {
-      rethrow;
+    } catch (e) {
+      try {
+        Loading().loadingClose();
+      } catch (_) {}
+      log('PaymentController.processBooking.error $e');
+      alertDialogOneButton(
+        title: 'information'.tr,
+        description: 'Failed to load to server!',
+        buttonText: 'ok'.tr,
+      );
     }
   }
 
@@ -462,3 +489,5 @@ class PaymentController extends StateController<PaymentUistate> {
     _cancelBookingSilently(context, transactionId);
   }
 }
+
+// https://qacl.udaya-tech.com/0430_CamTicket/payments/wingNewApiPaymentPro/VTCK-iCeZgcqETUvwmw9/UxIVUCILfrEVEYnxUGJOEVQnUXDEX1VDqLQ

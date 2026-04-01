@@ -30,6 +30,7 @@ class Body {
   String? transactionId;
   List<OrderPaymentList>? orderPaymentLists;
   List<ConfirmBookingInformation>? confirmBookingInformation;
+  List<PaymentMethod>? paymentMethods;
   int? status;
 
   Body({
@@ -37,6 +38,7 @@ class Body {
     this.transactionId,
     this.orderPaymentLists,
     this.confirmBookingInformation,
+    this.paymentMethods,
     this.status,
   });
 
@@ -59,6 +61,12 @@ class Body {
                 (x) => ConfirmBookingInformation.fromJson(x),
               ),
             ),
+    paymentMethods:
+        json["paymentMethods"] == null
+            ? []
+            : List<PaymentMethod>.from(
+              json["paymentMethods"]!.map((x) => PaymentMethod.fromJson(x)),
+            ),
     status: json["status"],
   );
 
@@ -75,6 +83,10 @@ class Body {
             : List<dynamic>.from(
               confirmBookingInformation!.map((x) => x.toJson()),
             ),
+    "paymentMethods":
+        paymentMethods == null
+            ? []
+            : List<dynamic>.from(paymentMethods!.map((x) => x.toJson())),
     "status": status,
   };
 }
@@ -123,6 +135,7 @@ class BookingSeatDetailList {
   String? gender;
   String? seatNumber;
   String? price;
+  String? discount;
   String? nationality;
   String? nationalityName;
   String? passport;
@@ -133,6 +146,7 @@ class BookingSeatDetailList {
     this.gender,
     this.seatNumber,
     this.price,
+    this.discount,
     this.nationality,
     this.nationalityName,
     this.passport,
@@ -145,6 +159,7 @@ class BookingSeatDetailList {
         gender: json["gender"],
         seatNumber: json["seatNumber"],
         price: json["price"],
+        discount: json["discount"],
         nationality: json["nationality"],
         nationalityName: json["nationalityName"],
         passport: json["passport"],
@@ -156,6 +171,7 @@ class BookingSeatDetailList {
     "gender": gender,
     "seatNumber": seatNumber,
     "price": price,
+    "discount": discount,
     "nationality": nationality,
     "nationalityName": nationalityName,
     "passport": passport,
@@ -201,5 +217,45 @@ class OrderPaymentList {
     "disTravel": disTravel,
     "luckyTicket": luckyTicket,
     "total": total,
+  };
+}
+
+class PaymentMethod {
+  int? id;
+  String? name;
+  int? discountPercent;
+  String? discountAmount;
+  int? serviceFeePercent;
+  String? serviceFeeAmount;
+  int? disUse;
+
+  PaymentMethod({
+    this.id,
+    this.name,
+    this.discountPercent,
+    this.discountAmount,
+    this.serviceFeePercent,
+    this.serviceFeeAmount,
+    this.disUse,
+  });
+
+  factory PaymentMethod.fromJson(Map<String, dynamic> json) => PaymentMethod(
+    id: (json["id"] as num?)?.toInt(),
+    name: json["name"],
+    discountPercent: (json["discountPercent"] as num?)?.toInt(),
+    discountAmount: json["discountAmount"],
+    serviceFeePercent: (json["serviceFeePercent"] as num?)?.toInt(),
+    serviceFeeAmount: json["serviceFeeAmount"],
+    disUse: (json["disUse"] as num?)?.toInt(),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "discountPercent": discountPercent,
+    "discountAmount": discountAmount,
+    "serviceFeePercent": serviceFeePercent,
+    "serviceFeeAmount": serviceFeeAmount,
+    "disUse": disUse,
   };
 }
