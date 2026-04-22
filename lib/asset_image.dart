@@ -11,6 +11,13 @@ class AssetImages {
   static const String vet_logo = 'assets/images/vet_logo.png';
 
   // =========================
+  // For Login screen
+  // =========================
+
+  static const String ic_forgot_password =
+      'assets/images/ic_forgot_password.png';
+
+  // =========================
   // For Setting account screen
   // =========================
 

@@ -9,11 +9,17 @@ plugins {
 
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+val keystorePropertiesFileAlt = file("key.properties")
+val activeKeystorePropertiesFile = when {
+    keystorePropertiesFile.exists() -> keystorePropertiesFile
+    keystorePropertiesFileAlt.exists() -> keystorePropertiesFileAlt
+    else -> keystorePropertiesFile
+}
+if (activeKeystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(activeKeystorePropertiesFile))
 }
 
-val hasReleaseSigningConfig = keystorePropertiesFile.exists() &&
+val hasReleaseSigningConfig = activeKeystorePropertiesFile.exists() &&
     listOf(
         "keyAlias",
         "keyPassword",
@@ -70,6 +76,19 @@ android {
         }
         getByName("debug") {
             isMinifyEnabled = false
+        }
+    }
+}
+tasks.matching { task ->
+    task.name.equals("assembleRelease", ignoreCase = true) ||
+        task.name.equals("bundleRelease", ignoreCase = true)
+}.configureEach {
+    doFirst {
+        if (!hasReleaseSigningConfig) {
+            throw GradleException(
+                "Missing release signing config. Create android/key.properties (or android/app/key.properties) with " +
+                    "keyAlias, keyPassword, storeFile, storePassword, and ensure the keystore file exists."
+            )
         }
     }
 }

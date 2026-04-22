@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/button.dart';
@@ -32,7 +33,7 @@ class CreateNewPasswordScreen extends GetView<AuthController> {
                 children: [
                   const Center(
                     child: Image(
-                      image: AssetImage('assets/images/ic_forgot_password.png'),
+                      image: AssetImage(AssetImages.ic_forgot_password),
                       color: AppColors.primaryColor,
                       height: 200,
                     ),

@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,8 @@ class ForgotPasswordScreen extends GetView<AuthController> {
                 children: [
                   const Center(
                     child: Image(
-                      image: AssetImage('assets/images/ic_forgot_password.png'),
+
+                      image: AssetImage(AssetImages.ic_forgot_password),
                       color: AppColors.primaryColor,
                       height: 200,
                     ),

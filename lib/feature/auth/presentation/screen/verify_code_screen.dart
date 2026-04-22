@@ -1,3 +1,4 @@
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/utils/alert_dialog_twine.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/app_colors.dart';
@@ -12,11 +13,8 @@ import '../controller/auth_controller.dart';
 class VerifyCodeScreen extends GetView<AuthController> {
   final String token;
   final String phone;
-  final int
-  identify; // identify using for noted that data is from Ex: identify = 1 is from sign Up or identify = 2 is for forgot password. identify = 3 is for forgot password by telegram
-
-  static String newToken =
-      ''; // new Token is for resend code and get new token for request login
+  final int identify;
+  static String newToken = '';
 
   const VerifyCodeScreen({
     super.key,
@@ -75,13 +73,15 @@ class VerifyCodeScreen extends GetView<AuthController> {
                             identify >= 3
                                 ? const Image(
                                   image: AssetImage(
-                                    'assets/icons/icon_telegram.png',
+                                    // 'assets/icons/icon_telegram.png',
+                                    AssetImages.ic_telegram
                                   ),
                                   height: 150,
                                 )
                                 : const Image(
                                   image: AssetImage(
-                                    'assets/images/ic_forgot_password.png',
+                                    // 'assets/images/ic_forgot_password.png',
+                                    AssetImages.ic_forgot_password
                                   ),
                                   color: AppColors.primaryColor,
                                   height: 150,
