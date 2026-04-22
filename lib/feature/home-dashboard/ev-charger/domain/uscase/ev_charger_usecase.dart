@@ -151,8 +151,13 @@ class EvChargerUseCase {
   Future<EvTopUpResponse> walletTopUp({
     required dynamic context,
     required double amount,
+    required int paymentMethod,
   }) {
-    return repository.walletTopUp(context: context, amount: amount);
+    return repository.walletTopUp(
+      context: context,
+      amount: amount,
+      paymentMethod: paymentMethod,
+    );
   }
 
   Future<EvTopUpResponse> walletTopUpStatus({

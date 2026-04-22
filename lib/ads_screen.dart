@@ -99,7 +99,7 @@ class _AdsScreenState extends State<AdsScreen>
 
     return Scaffold(
       body: Container(
-        color: Colors.black,
+        color: AppColors.backgroundColor,
         child: SafeArea(
           child: Stack(
             children: [

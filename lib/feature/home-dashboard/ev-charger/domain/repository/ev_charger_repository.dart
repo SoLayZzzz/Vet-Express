@@ -83,6 +83,7 @@ abstract class EvChargerRepository {
   Future<EvTopUpResponse> walletTopUp({
     required dynamic context,
     required double amount,
+    required int paymentMethod,
   });
 
   Future<EvTopUpResponse> walletTopUpStatus({

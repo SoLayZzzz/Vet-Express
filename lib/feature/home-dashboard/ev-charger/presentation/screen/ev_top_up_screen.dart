@@ -154,61 +154,126 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
   Widget _buildKHQRPaymentOption() {
     return GetBuilder<EvTopUpController>(
       builder: (controller) {
-        final isSelected = controller.paymentMethodId.value == 1;
-        return GestureDetector(
-          onTap: () => controller.selectPaymentMethod('ABA Pay', 1),
-          child: Container(
-            margin: const EdgeInsets.only(top: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                color:
-                    isSelected ? AppColors.primaryColor : AppColors.borderColor,
-                width: isSelected ? 1.5 : 1,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  Image.asset(AssetImages.ic_aba, height: 44),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'ABA KHQR',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.titleColor,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'tap_to_pay_with_KHQR'.tr,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: AppColors.textColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    isSelected
-                        ? Icons.radio_button_checked
-                        : Icons.radio_button_off,
+        final isSelectedABA = controller.paymentMethodId.value == 1;
+        final isSelectedACLEDA = controller.paymentMethodId.value == 2;
+
+        return Column(
+          children: [
+            GestureDetector(
+              onTap: () => controller.selectPaymentMethod('ABA Pay', 1),
+              child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
                     color:
-                        isSelected
+                        isSelectedABA
                             ? AppColors.primaryColor
                             : AppColors.borderColor,
+                    width: isSelectedABA ? 1.5 : 1,
                   ),
-                ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Image.asset(AssetImages.ic_aba, height: 44),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ABA KHQR',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.titleColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'tap_to_pay_with_KHQR'.tr,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        isSelectedABA
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color:
+                            isSelectedABA
+                                ? AppColors.primaryColor
+                                : AppColors.borderColor,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+            GestureDetector(
+              onTap: () => controller.selectPaymentMethod('ACLEDA', 2),
+              child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                    color:
+                        isSelectedACLEDA
+                            ? AppColors.primaryColor
+                            : AppColors.borderColor,
+                    width: isSelectedACLEDA ? 1.5 : 1,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Image.asset(AssetImages.ic_acleda, height: 44),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ACLEDA',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.titleColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'tap_to_pay_acleda'.tr,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: AppColors.textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        isSelectedACLEDA
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color:
+                            isSelectedACLEDA
+                                ? AppColors.primaryColor
+                                : AppColors.borderColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -224,7 +289,14 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
             onPressed:
                 controller.isLoading.value
                     ? null
-                    : () => controller.performTopUp(),
+                    : () {
+                      debugPrint(
+                        'EvTopUpScreen.TopUpButton.tap amount=${controller.finalAmount}, '
+                        'paymentMethodId=${controller.paymentMethodId.value}, '
+                        'paymentMethodName=${controller.selectedPaymentMethod.value}',
+                      );
+                      controller.performTopUp();
+                    },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
               foregroundColor: Colors.white,

@@ -22,6 +22,7 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
     final TicketMenuFormController formController =
         Get.find<TicketMenuFormController>();
 
+
     return Scaffold(
       appBar: AppBarVET().appBar(context, controller.appBarTitle),
       body: SafeArea(

@@ -165,8 +165,13 @@ class EvChargerRepositoryImpl implements EvChargerRepository {
   Future<EvTopUpResponse> walletTopUp({
     required dynamic context,
     required double amount,
+    required int paymentMethod,
   }) {
-    return networkRequest.walletTopUp(context: context, amount: amount);
+    return networkRequest.walletTopUp(
+      context: context,
+      amount: amount,
+      paymentMethod: paymentMethod,
+    );
   }
 
   @override

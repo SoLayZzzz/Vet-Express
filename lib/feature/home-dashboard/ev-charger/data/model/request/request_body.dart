@@ -57,10 +57,12 @@ class EvStationListRequest {
 
 class EvWalletTopUpRequest {
   final double amount;
+  final int paymentMethod;
 
-  const EvWalletTopUpRequest({required this.amount});
+  const EvWalletTopUpRequest({required this.amount, required this.paymentMethod});
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'amount': amount,
+        'paymentMethod': paymentMethod,
       };
 }

@@ -12,6 +12,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
+import 'component/payment_option_card.dart';
 import '../binding/payment_binding.dart';
 import '../controller/payment_controller.dart';
 import '../../../passenger/presentation/controller/booking.dart';
@@ -234,7 +235,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                               },
                               child: Column(
                                 children: [
-                                  _buildPaymentOption(
+                                  PaymentOptionCard(
                                     asset: AssetImages.ic_khqr,
                                     title: const Text(
                                       'ABA KHQR',
@@ -259,7 +260,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                       );
                                     },
                                   ),
-                                  _buildPaymentOption(
+                                  PaymentOptionCard(
                                     asset: AssetImages.ic_big_visa,
                                     title: const Text(
                                       'Credit/Debit Card',
@@ -281,7 +282,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                       );
                                     },
                                   ),
-                                  _buildPaymentOption(
+                                  PaymentOptionCard(
                                     asset: AssetImages.ic_alipay,
                                     title: const Text(
                                       'AliPay',
@@ -306,7 +307,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                       );
                                     },
                                   ),
-                                  _buildPaymentOption(
+                                  PaymentOptionCard(
                                     asset: AssetImages.ic_wing,
                                     title: const Text(
                                       'Wing Bank',
@@ -331,7 +332,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                       );
                                     },
                                   ),
-                                  _buildPaymentOption(
+                                  PaymentOptionCard(
                                     asset: AssetImages.ic_acleda,
                                     title: const Text(
                                       'ACLEDA',
@@ -972,65 +973,6 @@ class _PaymentScreenState extends State<PaymentScreen>
       default:
         break;
     }
-  }
-
-  Widget _buildPaymentOption({
-    required String asset,
-    required Widget title,
-    required Widget subtitleWidget,
-    required int value,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(top: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(
-            color:
-                isSelected
-                    ? (ValueStatic.ticketType == '3'
-                        ? AppColors.airBusColor
-                        : AppColors.primaryColor)
-                    : Colors.grey,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            children: [
-              Image.asset(asset, height: 44),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      title,
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: subtitleWidget,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Radio<int>(
-                value: value,
-                fillColor: WidgetStateColor.resolveWith(
-                  (states) =>
-                      ValueStatic.ticketType == '3'
-                          ? AppColors.airBusColor
-                          : AppColors.primaryColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   view(title, value) {

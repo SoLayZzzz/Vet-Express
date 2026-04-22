@@ -43,7 +43,7 @@ dependencies:
   flutter_font_icons: ^2.2.7
   dropdown_button2: ^2.3.9
   google_maps_flutter: ^2.11.0
-  mobile_scanner: ^6.0.7
+  mobile_scanner: ^7.2.0
   flutter_flip_card: ^0.0.6
   date_format_field: ^0.1.0
   intl: ^0.20.2

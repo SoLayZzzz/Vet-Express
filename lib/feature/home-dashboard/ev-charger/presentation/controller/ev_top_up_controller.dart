@@ -107,33 +107,60 @@ class EvTopUpController extends GetxController {
     errorMessage.value = '';
 
     try {
+      debugPrint(
+        'EvTopUpController.performTopUp.request amount=$finalAmount, '
+        'paymentMethodId=${paymentMethodId.value}, '
+        'paymentMethodName=${selectedPaymentMethod.value}',
+      );
+
       // Send amount in cents (API expects cents)
       final amountInCents = (finalAmount);
       final response = await useCase.walletTopUp(
         context: Get.context!,
         amount: amountInCents.toDouble(),
+        paymentMethod: paymentMethodId.value,
+      );
+
+      debugPrint('EvTopUpController.performTopUp.fullResponse $response');
+
+      debugPrint(
+        'EvTopUpController.performTopUp.response '
+        'statusCode=${response.header?.statusCode}, '
+        'status=${response.body?.status}, '
+        'message=${response.body?.message}',
       );
 
       if (response.header?.statusCode == 200 && response.body?.status == true) {
         final data = response.body!.data;
 
+        debugPrint(
+          'EvTopUpController.performTopUp.data '
+          'transactionId=${data?.transactionId}, '
+          'hasDeepLink=${((data?.deeplink ?? '').isNotEmpty)}, '
+          'hasCheckoutQrUrl=${((data?.checkoutQrUrl ?? '').isNotEmpty)}',
+        );
+
         // Store transaction info for status checking
         currentTransactionId.value = data?.transactionId ?? '';
         currentTopUpAmount.value = finalAmount;
 
-        // Check if we have a checkout URL for payment
-        if (data?.deeplink != null &&
-            data!.deeplink!.isNotEmpty &&
-            data.checkoutQrUrl != null &&
-            data.checkoutQrUrl!.isNotEmpty) {
+        // Check if we have payment info for navigation
+        if (((data?.deeplink ?? '').isNotEmpty) ||
+            ((data?.checkoutQrUrl ?? '').isNotEmpty)) {
           // Navigate to payment screen with checkout URL and transaction ID
           Get.toNamed(
             AppRoutes.evPayment,
 
             arguments: {
-              'deepLink': data.deeplink!,
-              'checkoutQrUrl': data.checkoutQrUrl!,
+              'deepLink': data?.deeplink ?? '',
+              'checkoutQrUrl': data?.checkoutQrUrl ?? '',
             },
+          );
+
+          debugPrint(
+            'EvTopUpController.performTopUp.navigate EvPayment '
+            'deepLink=${data?.deeplink}, '
+            'checkoutQrUrl=${data?.checkoutQrUrl}',
           );
 
           // Start checking payment status when payment screen closes
@@ -194,6 +221,10 @@ class EvTopUpController extends GetxController {
       final response = await useCase.walletTopUpStatus(
         context: Get.context!,
         transactionId: currentTransactionId.value,
+      );
+
+      debugPrint(
+        'EvTopUpController._checkPaymentStatus.fullResponse $response',
       );
 
       if (response.header?.statusCode == 200 && response.body?.status == true) {
@@ -345,5 +376,8 @@ class EvTopUpController extends GetxController {
     selectedPaymentMethod.value = method;
     paymentMethodId.value = id;
     update();
+
+    print("Selected payment method: $method");
+    print("Payment method ID: $id");
   }
 }

@@ -361,9 +361,12 @@ class EvChargerNetworkRequest {
   Future<EvTopUpResponse> walletTopUp({
     required dynamic context,
     required double amount,
+    required int paymentMethod,
   }) async {
     try {
-      final body = EvWalletTopUpRequest(amount: amount).toJson();
+      final body =
+          EvWalletTopUpRequest(amount: amount, paymentMethod: paymentMethod)
+              .toJson();
       log(
         'EvChargerNetworkRequest.walletTopUp.request '
         'url=${evDataSource.baseUrl}${Endpoint.evSaleOrderWalletTopUp} '
@@ -375,8 +378,18 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      final parsed = EvTopUpResponse.fromJson(json);
+      log(
+        'EvChargerNetworkRequest.walletTopUp.response '
+        'statusCode=${parsed.header?.statusCode}, '
+        'status=${parsed.body?.status}, '
+        'message=${parsed.body?.message}, '
+        'transactionId=${parsed.body?.data?.transactionId}, '
+        'hasDeepLink=${((parsed.body?.data?.deeplink ?? '').isNotEmpty)}, '
+        'hasCheckoutQrUrl=${((parsed.body?.data?.checkoutQrUrl ?? '').isNotEmpty)}',
+      );
 
-      return EvTopUpResponse.fromJson(json);
+      return parsed;
     } on TimeoutException {
       Loading().loadingClose();
       alertDialogOneButton(
@@ -395,13 +408,25 @@ class EvChargerNetworkRequest {
     required String transactionId,
   }) async {
     try {
+      log(
+        'EvChargerNetworkRequest.walletTopUpStatus.request '
+        'url=${evDataSource.baseUrl}${Endpoint.evSaleOrderWalletTopUpStatus(transactionId)}',
+      );
       final json = await evDataSource.postJson(
         Endpoint.evSaleOrderWalletTopUpStatus(transactionId),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      final parsed = EvTopUpResponse.fromJson(json);
+      log(
+        'EvChargerNetworkRequest.walletTopUpStatus.response '
+        'statusCode=${parsed.header?.statusCode}, '
+        'status=${parsed.body?.status}, '
+        'message=${parsed.body?.message}, '
+        'paymentStatus=${parsed.body?.data?.paymentStatus}',
+      );
 
-      return EvTopUpResponse.fromJson(json);
+      return parsed;
     } on TimeoutException {
       Loading().loadingClose();
       alertDialogOneButton(
