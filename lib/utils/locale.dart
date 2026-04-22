@@ -14,6 +14,8 @@ class LocaleString extends Translations {
         'timeout': "Warning!",
         'request_timed_out': "Connection Timeout, Please try again",
         'an_error_occurred': "Something went wrong. Please try again.",
+        'camera_permission_error':
+            'Camera permission is required. Please allow camera access to continue.',
 
         //ev new version
         'total_balance': "Total Balance",
@@ -987,6 +989,8 @@ class LocaleString extends Translations {
         'timeout': "ក្រើនរម្លឹក!",
         'request_timed_out': "អស់ពេលក្នុងការតភ្ជាប់ សូមព្យាយាមម្តងទៀត",
         'an_error_occurred': "Something went wrong. Please try again.",
+        'camera_permission_error':
+            'ត្រូវការអនុញ្ញាតកាមេរ៉ា។ សូមអនុញ្ញាតការចូលប្រើកាមេរ៉ាដើម្បីបន្ត។',
 
         //access china address
         'access_address_china': 'អាសយដ្ឋានប្រទេសចិន',
@@ -1936,6 +1940,8 @@ class LocaleString extends Translations {
         'timeout': "警告!",
         'request_timed_out': "连接超时，请重试",
         'an_error_occurred': "Something went wrong. Please try again.",
+        'camera_permission_error':
+            '需要相机权限。请允许相机访问以继续。',
         'no_package': "您没有行程套餐",
 
         //access china address

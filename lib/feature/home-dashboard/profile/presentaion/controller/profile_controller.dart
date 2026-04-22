@@ -26,6 +26,15 @@ class ProfileController extends GetxController {
   var emailController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+  final canSave = false.obs;
+
+  String _initialName = '';
+  String _initialPhone = '';
+  String _initialEmail = '';
+  int _initialGenderCode = 0;
+  int _initialNationalityId = 0;
+  bool _hasInitialSnapshot = false;
+
   //check userName == phone or email
   var isEmailReadOnly = false.obs;
   var isTelephoneReadOnly = false.obs;
@@ -41,8 +50,58 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    nameController.addListener(_recomputeCanSave);
+    phoneNumberController.addListener(_recomputeCanSave);
+    emailController.addListener(_recomputeCanSave);
+
+    ever<String?>(gender, (_) => _recomputeCanSave());
+    ever<int?>(selectedNationalityId, (_) => _recomputeCanSave());
+    ever<File?>(image, (_) => _recomputeCanSave());
+
     fetchUserMe();
     fetchNationalities();
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    phoneNumberController.dispose();
+    emailController.dispose();
+    super.onClose();
+  }
+
+  int _currentGenderCode() {
+    if (gender.value == 'male'.tr) return 1;
+    if (gender.value == 'female'.tr) return 2;
+    return 0;
+  }
+
+  void _captureInitialSnapshot() {
+    _initialName = nameController.text.trim();
+    _initialPhone = phoneNumberController.text.trim();
+    _initialEmail = emailController.text.trim();
+    _initialGenderCode = _currentGenderCode();
+    _initialNationalityId = selectedNationalityId.value ?? 0;
+    _hasInitialSnapshot = true;
+    canSave.value = false;
+  }
+
+  void _recomputeCanSave() {
+    if (!_hasInitialSnapshot) {
+      canSave.value = false;
+      return;
+    }
+
+    final hasChanged =
+        nameController.text.trim() != _initialName ||
+        phoneNumberController.text.trim() != _initialPhone ||
+        emailController.text.trim() != _initialEmail ||
+        _currentGenderCode() != _initialGenderCode ||
+        (selectedNationalityId.value ?? 0) != _initialNationalityId ||
+        image.value != null;
+
+    canSave.value = hasChanged;
   }
 
   void fetchNationalities() async {
@@ -104,6 +163,8 @@ class ProfileController extends GetxController {
       if (emailController.text == 'null') {
         emailController.clear();
       }
+
+      _captureInitialSnapshot();
     } catch (e) {
       log('Error fetching user data: $e');
     }
@@ -197,6 +258,9 @@ class ProfileController extends GetxController {
                 await Get.find<UserController>().fetchUserMe();
               }
             } catch (_) {}
+
+            image.value = null;
+            _captureInitialSnapshot();
           } else {
             if (invalidType == 1) {
               alertDialogOneButton(

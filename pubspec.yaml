@@ -59,6 +59,7 @@ dependencies:
   flutter_html:
   uuid: ^4.5.1
   widget_zoom: ^0.0.4
+  permission_handler: ^11.3.1
 
 #  component:
 #    git:

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../screen/goods_information_no_token_screen.dart';
 import '../../../../home-dashboard/notifications/presentation/screen/goods_information_screen.dart';
@@ -24,25 +25,23 @@ class ScanQrController extends StateController<ScanQrUiState>
 
   ScanQrController(this.scanQrUseCase);
 
-  MobileScannerController? scannerController;
+  late final MobileScannerController scannerController;
 
   bool _isDisposed = false;
   bool _initialized = false;
+  bool _didRetryStart = false;
+  bool _isStarting = false;
+  bool _isPermissionDialogOpen = false;
 
   @override
   ScanQrUiState onInitUiState() => const ScanQrUiState();
 
-  void setScanFrom(int scanFrom) {
-    uiState.value = state.copyWith(scanFrom: scanFrom);
-  }
-
-  void onScreenVisible() {
-    if (_initialized) return;
-    _initialized = true;
-
-    WidgetsBinding.instance.addObserver(this);
+  @override
+  void onInit() {
+    super.onInit();
 
     scannerController = MobileScannerController(
+      autoStart: false,
       detectionSpeed: DetectionSpeed.normal,
       detectionTimeoutMs: 500,
       formats: [BarcodeFormat.qrCode],
@@ -51,18 +50,71 @@ class ScanQrController extends StateController<ScanQrUiState>
       facing: CameraFacing.back,
       torchEnabled: false,
     );
+  }
 
-    startScanning();
+  void setScanFrom(int scanFrom) {
+    uiState.value = state.copyWith(scanFrom: scanFrom);
+  }
+
+  void onScreenVisible() {
+    if (!_initialized) {
+      _initialized = true;
+      WidgetsBinding.instance.addObserver(this);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_isDisposed) return;
+      ensureCameraPermission().then((allowed) {
+        if (_isDisposed) return;
+        if (allowed) startScanning();
+      });
+    });
   }
 
   Future<void> startScanning() async {
+    if (_isDisposed) return;
+    if (state.isScanning) return;
+    if (_isStarting) return;
+    _isStarting = true;
     try {
-      await scannerController?.stop();
-      await scannerController?.start();
+      final allowed = await ensureCameraPermission();
+      if (!allowed) {
+        uiState.value = state.copyWith(isScanning: false);
+        return;
+      }
+      await scannerController.start();
+      _didRetryStart = false;
       uiState.value = state.copyWith(isScanning: true);
+    } on MobileScannerException catch (e) {
+      final message = e.toString().toLowerCase();
+      log('Error starting scanner: $e');
+
+      if (message.contains('controllerinitializing')) {
+        return;
+      }
+
+      if (message.contains('controllernotattached')) {
+        if (_didRetryStart) return;
+        _didRetryStart = true;
+
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (_isDisposed) return;
+          startScanning();
+        });
+        return;
+      }
+
+      if (message.contains('permission')) {
+        uiState.value = state.copyWith(isScanning: false);
+        await _displayPermissionDialog(
+          'information'.tr,
+          'camera_permission_error'.tr,
+        );
+      }
     } catch (e) {
       log('Error starting scanner: $e');
-      _displayDialog('information'.tr, 'camera_permission_error'.tr);
+    } finally {
+      _isStarting = false;
     }
   }
 
@@ -72,8 +124,8 @@ class ScanQrController extends StateController<ScanQrUiState>
     _isDisposed = true;
 
     scannerController
-        ?.stop()
-        .then((_) => scannerController?.dispose())
+        .stop()
+        .then((_) => scannerController.dispose())
         .catchError((_) {});
 
     super.onClose();
@@ -86,21 +138,18 @@ class ScanQrController extends StateController<ScanQrUiState>
     switch (appState) {
       case AppLifecycleState.resumed:
         if (!state.isScanning) {
-          scannerController
-              ?.start()
-              .then((_) {
-                uiState.value = state.copyWith(isScanning: true);
-              })
-              .catchError((e) {
-                log('Error resuming scanner: $e');
-              });
+          ensureCameraPermission().then((allowed) {
+            if (_isDisposed) return;
+            if (allowed) startScanning();
+          });
         }
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
         scannerController
-            ?.stop()
+            .stop()
             .then((_) {
               uiState.value = state.copyWith(isScanning: false);
             })
@@ -108,14 +157,12 @@ class ScanQrController extends StateController<ScanQrUiState>
               log('Error stopping scanner: $e');
             });
         break;
-      case AppLifecycleState.hidden:
-        throw UnimplementedError();
     }
   }
 
   Future<void> toggleFlash() async {
     try {
-      await scannerController?.toggleTorch();
+      await scannerController.toggleTorch();
       uiState.value = state.copyWith(flash: !state.flash);
     } catch (e) {
       log('Error toggling torch: $e');
@@ -133,7 +180,7 @@ class ScanQrController extends StateController<ScanQrUiState>
     if (barcodes.isEmpty) return;
 
     uiState.value = state.copyWith(isScanning: false);
-    await scannerController?.stop();
+    await scannerController.stop();
 
     final code = barcodes.first.rawValue;
     if (code != null) {
@@ -214,9 +261,53 @@ class ScanQrController extends StateController<ScanQrUiState>
     await startScanning();
   }
 
+  Future<void> _displayPermissionDialog(String title, String description) async {
+    if (_isPermissionDialogOpen) return;
+    _isPermissionDialogOpen = true;
+
+    final completer = Completer<void>();
+
+    alertDialogTwoButton(
+      title: title,
+      description: description,
+      buttonText1: 'cancel'.tr,
+      buttonText2: 'setting'.tr,
+      onButtonPressed1: () {
+        Get.back();
+        if (!completer.isCompleted) completer.complete();
+      },
+      onButtonPressed2: () async {
+        await openAppSettings();
+        Get.back();
+        if (!completer.isCompleted) completer.complete();
+      },
+    );
+
+    await completer.future;
+    _isPermissionDialogOpen = false;
+  }
+
+  Future<bool> ensureCameraPermission() async {
+    try {
+      final status = await Permission.camera.status;
+      if (status.isGranted) return true;
+
+      if (status.isDenied || status.isLimited) {
+        final req = await Permission.camera.request();
+        if (req.isGranted) return true;
+      }
+
+      await _displayPermissionDialog('information'.tr, 'camera_permission_error'.tr);
+      return false;
+    } catch (e) {
+      log('ensureCameraPermission error: $e');
+      return false;
+    }
+  }
+
   Future<void> cropImage(BuildContext context) async {
     try {
-      await scannerController?.stop();
+      await scannerController.stop();
 
       final XFile? photo = await ImagePicker().pickImage(
         source: ImageSource.gallery,
@@ -250,7 +341,7 @@ class ScanQrController extends StateController<ScanQrUiState>
 
       if (croppedFile != null) {
         try {
-          final capture = await scannerController?.analyzeImage(
+          final capture = await scannerController.analyzeImage(
             croppedFile.path,
           );
           if (capture != null && capture.barcodes.isNotEmpty) {

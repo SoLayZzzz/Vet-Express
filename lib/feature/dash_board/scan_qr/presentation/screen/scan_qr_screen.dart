@@ -162,15 +162,12 @@ class ScanQrScreen extends GetView<ScanQrController> {
 
     return Stack(
       children: [
-        if (scanner != null)
-          MobileScanner(
-            controller: scanner,
-            onDetect:
-                (capture) =>
-                    controller.handleBarcodeDetection(context, capture),
-          )
-        else
-          const SizedBox.shrink(),
+        MobileScanner(
+          controller: scanner,
+          onDetect:
+              (capture) =>
+                  controller.handleBarcodeDetection(context, capture),
+        ),
         QRScannerOverlay(
           overlayColor: Colors.black87,
           borderColor: AppColors.primaryColor,

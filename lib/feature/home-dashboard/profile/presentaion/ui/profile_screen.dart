@@ -421,10 +421,19 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         color: AppColors.whiteColor,
         width: double.infinity,
-        child: globalButton(
-          context: Get.context!,
-          buttonText: 'save'.tr,
-          onPressed: controller.updateProfile,
+        child: Obx(
+          () => globalButton(
+            context: Get.context!,
+            buttonText: 'save'.tr,
+            buttonColor:
+                controller.canSave.value
+                    ? AppColors.primaryColor
+                    : AppColors.greyColor,
+            onPressed:
+                controller.canSave.value
+                    ? controller.updateProfile
+                    : () {},
+          ),
         ),
       ),
     );
