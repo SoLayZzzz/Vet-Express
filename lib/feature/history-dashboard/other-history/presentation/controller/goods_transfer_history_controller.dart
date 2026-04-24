@@ -48,6 +48,16 @@ class GoodsTransferHistoryController
     }
   }
 
+  var expandedIndex = (-1).obs;
+
+  void toggleExpansion(int index) {
+    if (expandedIndex.value == index) {
+      expandedIndex.value = -1; // Close if already open
+    } else {
+      expandedIndex.value = index; // Open the selected one
+    }
+  }
+
   void loadTransferList({required BuildContext context, required int type}) {
     final future = goodsTransferHistoryUseCase.fetchTransferList(
       context: context,

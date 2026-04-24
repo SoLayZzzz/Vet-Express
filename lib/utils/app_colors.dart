@@ -15,4 +15,5 @@ class AppColors {
   static const greyColor = Color(0xFF808080);
   static const seeMoreColor = Color(0xFF007BFF);
   static const greenColor = Color(0xFF28A745);
+  static const deepBlue = Color(0xFFF0F2F5);
 }

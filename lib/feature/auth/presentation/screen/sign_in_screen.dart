@@ -16,8 +16,22 @@ import 'forgot_password_screen.dart';
 import 'search_goods_transfer.dart';
 import 'sign_up_screen.dart';
 
-class SignInScreen extends GetView<AuthController> {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  late final AuthController controller;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<AuthController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +68,7 @@ class SignInScreen extends GetView<AuthController> {
                 ),
               ),
               Form(
-                key: controller.uiState.value.signInFormKey,
+                key: _formKey,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -190,7 +204,19 @@ class SignInScreen extends GetView<AuthController> {
                         context: context,
                         buttonText: 'login'.tr,
                         onPressed: () {
-                          controller.submitLogin(context);
+                          final valid =
+                              _formKey.currentState?.validate() ?? false;
+                          if (!valid) return;
+
+                          controller.login(
+                            context,
+                            username: controller
+                                .uiState.value.signInPhoneController.text
+                                .trim(),
+                            password: controller
+                                .uiState.value.signInPasswordController.text
+                                .trim(),
+                          );
                         },
                       ),
                       const SizedBox(height: 20),

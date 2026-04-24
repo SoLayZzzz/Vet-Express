@@ -93,6 +93,13 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/images/vet_logo_qa.jpg
+  # image_path: assets/images/vet_logo_qa.jpg
+  image_path: assets/images/VET_Express_logo.png
   remove_alpha_ios: true
   adaptive_icon_background: "#FFFFFF"
+
+
+#  // Logo QA
+#   static const String vet_logo_qa = 'assets/images/vet_logo_qa.jpg';
+#   // Logo Production
+#   static const String vet_logo = 'assets/images/vet_logo.png';

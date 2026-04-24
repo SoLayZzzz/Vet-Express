@@ -78,6 +78,23 @@ android {
             isMinifyEnabled = false
         }
     }
+
+    // Define flavors so QA and Prod can be installed side-by-side
+    flavorDimensions += "env"
+    productFlavors {
+        create("qa") {
+            dimension = "env"
+            applicationIdSuffix = ".qa"
+            versionNameSuffix = "-qa"
+            manifestPlaceholders["appName"] = "VET Express QA"
+            manifestPlaceholders["deeplinkScheme"] = "vetappqa"
+        }
+        create("prod") {
+            dimension = "env"
+            manifestPlaceholders["appName"] = "VET Express"
+            manifestPlaceholders["deeplinkScheme"] = "vetapp"
+        }
+    }
 }
 tasks.matching { task ->
     task.name.equals("assembleRelease", ignoreCase = true) ||

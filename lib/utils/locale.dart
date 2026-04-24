@@ -2415,7 +2415,7 @@ class LocaleString extends Translations {
         "receiving": "接收中",
         "vet_self_service": "VET自助服务",
         "item_price": "物品价格",
-        'qty': "Qty",
+        'qty': "数量",
         "view_qr_code": "查看QR码",
         "search_tracking_code": "搜索跟踪码",
         "code_is_required": "需要代码",

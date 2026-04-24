@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>VET Express QA</string>
+	<string>$(APP_DISPLAY_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -31,7 +31,7 @@
 			<string>payment</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>vetapp</string>
+				<string>$(DEEPLINK_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
@@ -40,6 +40,7 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>vetapp</string>
+		<string>vetappqa</string>
 		<string>vtenh</string>
 		<string>abamobilebank</string>
 		<string>wingbankuat</string>

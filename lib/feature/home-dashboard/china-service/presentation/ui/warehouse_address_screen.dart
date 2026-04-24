@@ -100,14 +100,14 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                         color: AppColors.primaryColor,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.chinaEditInfo),
-                      child: const Icon(
-                        MaterialCommunityIcons.square_edit_outline,
-                        color: Colors.grey,
-                        size: 22,
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () => Get.toNamed(AppRoutes.chinaEditInfo),
+                    //   child: const Icon(
+                    //     MaterialCommunityIcons.square_edit_outline,
+                    //     color: Colors.grey,
+                    //     size: 22,
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 12),

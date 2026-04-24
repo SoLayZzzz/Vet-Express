@@ -10,16 +10,36 @@ class BaseUrl {
   // static String PAYMENT_URL = 'http://192.168.2.132:8035/0430_CamTicket/';
 
   // QA
-  static String BASE_URL = 'https://qacltom.udaya-tech.com/UtLogVET/';
-  static String BASE_URL_TICKET =
-      'https://qacltom.udaya-tech.com/vetExpressTicketApiQA/';
-  static String BASE_URL_EV =
-      'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
-  static String BASE_URL_SLIDE_IMAGE =
-      'https://qacltom.udaya-tech.com/UtLogVET/slide_photo/';
-  static String PAYMENT_URL = 'https://qacl.udaya-tech.com/0430_CamTicket/';
-  static String BASE_URL_UPLOAD_IMAGE =
-      'https://qacl.udaya-tech.com/0412_VETOc_Web/';
+  //   static String BASE_URL = 'https://qacltom.udaya-tech.com/UtLogVET/';
+  // static String BASE_URL_TICKET =
+  //     'https://qacltom.udaya-tech.com/vetExpressTicketApiQA/';
+  // static String BASE_URL_EV =
+  //     'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
+  // static String BASE_URL_SLIDE_IMAGE =
+  //     'https://qacltom.udaya-tech.com/UtLogVET/slide_photo/';
+  // static String PAYMENT_URL = 'https://qacl.udaya-tech.com/0430_CamTicket/';
+  // static String BASE_URL_UPLOAD_IMAGE =
+  //     'https://qacl.udaya-tech.com/0412_VETOc_Web/';
+  
+  static const String _flavor = String.fromEnvironment('FLAVOR', defaultValue: 'qa');
+  static final String BASE_URL = _flavor == 'prod'
+      ? 'https://tomapicaps.utlog.net/vetAppApi/'
+      : 'https://qacltom.udaya-tech.com/UtLogVET/';
+  static final String BASE_URL_TICKET = _flavor == 'prod'
+      ? 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'
+      : 'https://qacltom.udaya-tech.com/vetExpressTicketApiQA/';
+  static final String BASE_URL_EV = _flavor == 'prod'
+      ? 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'
+      : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
+  static final String BASE_URL_SLIDE_IMAGE = _flavor == 'prod'
+      ? 'https://oc.utlog.net/public/slide_photo/'
+      : 'https://qacltom.udaya-tech.com/UtLogVET/slide_photo/';
+  static final String PAYMENT_URL = _flavor == 'prod'
+      ? 'https://vetticket.utlog.net/'
+      : 'https://qacl.udaya-tech.com/0430_CamTicket/';
+  static final String BASE_URL_UPLOAD_IMAGE = _flavor == 'prod'
+      ? 'https://oc.utlog.net/'
+      : 'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
   // Production
   // static String BASE_URL = 'https://tomapicaps.utlog.net/vetAppApi/'; //logistic

@@ -23,7 +23,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="VET Express QA"
+        android:label="${appName}"
         android:enableOnBackInvokedCallback="true"
         >
         <activity
@@ -63,7 +63,7 @@
                 <data
                     android:host="payment"
                     android:pathPrefix='/'
-                    android:scheme="vetapp" />
+                    android:scheme="${deeplinkScheme}" />
             </intent-filter>
         </activity>
 

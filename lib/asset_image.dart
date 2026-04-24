@@ -220,6 +220,8 @@ class AssetImages {
   static const String ic_card_ticket_vip_background =
       "assets/icons/card_ticket_vip_background.png";
 
+  static const String ic_recieved = "assets/images/icon_recieved.png";
+
   // =========================
   // Location Dashboard
   // =========================
