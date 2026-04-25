@@ -411,7 +411,7 @@ class _GoodsInformationNoTokenScreenState
                 }
               }
             } else if (transferData.hasError) {
-              log('error ${transferData.error}');
+              debugPrint('error ${transferData.error}');
             }
 
             return const Center(

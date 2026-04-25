@@ -131,7 +131,7 @@ class RateScheduleController extends StateController<RateScheduleUiState> {
       }
     } catch (e) {
       Loading().loadingClose();
-      log('An error occurred: $e');
+      debugPrint('An error occurred: $e');
       rethrow;
     }
   }

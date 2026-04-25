@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
+import 'package:flutter/material.dart';
 import '../model/response/ev_charger_response.dart';
 import '../model/response/ev_contact_response.dart';
 import '../model/response/ev_faq_response.dart';
@@ -367,7 +368,7 @@ class EvChargerNetworkRequest {
       final body =
           EvWalletTopUpRequest(amount: amount, paymentMethod: paymentMethod)
               .toJson();
-      log(
+      debugPrint(
         'EvChargerNetworkRequest.walletTopUp.request '
         'url=${evDataSource.baseUrl}${Endpoint.evSaleOrderWalletTopUp} '
         'body=$body',
@@ -379,7 +380,7 @@ class EvChargerNetworkRequest {
         attachAuth: true,
       );
       final parsed = EvTopUpResponse.fromJson(json);
-      log(
+      debugPrint(
         'EvChargerNetworkRequest.walletTopUp.response '
         'statusCode=${parsed.header?.statusCode}, '
         'status=${parsed.body?.status}, '
@@ -408,7 +409,7 @@ class EvChargerNetworkRequest {
     required String transactionId,
   }) async {
     try {
-      log(
+      debugPrint(
         'EvChargerNetworkRequest.walletTopUpStatus.request '
         'url=${evDataSource.baseUrl}${Endpoint.evSaleOrderWalletTopUpStatus(transactionId)}',
       );
@@ -418,7 +419,7 @@ class EvChargerNetworkRequest {
         attachAuth: true,
       );
       final parsed = EvTopUpResponse.fromJson(json);
-      log(
+      debugPrint(
         'EvChargerNetworkRequest.walletTopUpStatus.response '
         'statusCode=${parsed.header?.statusCode}, '
         'status=${parsed.body?.status}, '

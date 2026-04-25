@@ -1,12 +1,10 @@
 // // ignore_for_file: unnecessary_null_comparison, prefer_const_declarations
 
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
 
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/multipart/form_data.dart';
-import 'package:get/get_connect/http/src/multipart/multipart_file.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 
 import 'base_url.dart';
@@ -31,10 +29,10 @@ class NetWorkDataSource extends GetConnect {
       //     AppPref.getToken();
 
       // Log the FULL tokens
-      log('=============== AUTH ===============');
-      log('Access Token: ${token ?? "<empty>"}');
+      debugPrint('=============== AUTH ===============');
+      debugPrint('Access Token: ${token ?? "<empty>"}');
       // log('Refresh Token: ${refreshToken ?? "<empty>"}');
-      log('====================================');
+      debugPrint('====================================');
     }
 
     httpClient.addRequestModifier<dynamic>((Request<dynamic> request) async {

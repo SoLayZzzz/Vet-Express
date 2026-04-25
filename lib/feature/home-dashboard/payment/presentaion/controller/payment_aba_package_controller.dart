@@ -140,13 +140,13 @@ class PaymentAbaPackageController extends GetxController {
     try {
       final uri = Uri.tryParse(deepLink);
       if (uri == null || !uri.hasScheme) {
-        log('Invalid or empty ABA deep link: $deepLink');
+        debugPrint('Invalid or empty ABA deep link: $deepLink');
         return;
       }
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-      log("launching... deep link");
+      debugPrint("launching... deep link");
     } catch (e) {
-      log(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -155,7 +155,7 @@ class PaymentAbaPackageController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
-    log(
+    debugPrint(
       '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token',
     );
 
@@ -167,7 +167,7 @@ class PaymentAbaPackageController extends GetxController {
     );
 
     if (response.statusCode == 200) {
-      log('This is response ABA Payment ==>>${response.body}');
+      debugPrint('This is response ABA Payment ==>>${response.body}');
       var data = ABAPayResponse.fromJson(jsonDecode(response.body));
 
       if (data.status == 1) {
@@ -200,7 +200,7 @@ class PaymentAbaPackageController extends GetxController {
   }) async {
     if (!_loop) return;
     try {
-      log(
+      debugPrint(
         '${BaseUrl.PAYMENT_URL}payments/checkTravelPackageStatus/$transactionId',
       );
 
@@ -218,15 +218,15 @@ class PaymentAbaPackageController extends GetxController {
       if (!_loop) return;
 
       if (response.statusCode == 200) {
-        log('This is response check payment $title ==>>${response.body}');
+        debugPrint('This is response check payment $title ==>>${response.body}');
         Map<dynamic, dynamic> result = jsonDecode(response.body);
         final status = '${result['status']}';
         if (status == '1') {
-          log('Check status transaction $title == 1');
+          debugPrint('Check status transaction $title == 1');
           _loop = false;
           Get.back(result: '1');
         } else {
-          log('Check status transaction $title == $status (payment pending)');
+          debugPrint('Check status transaction $title == $status (payment pending)');
           _scheduleRetry(() {
             checkPaymentABAComplete(
               context: Get.context ?? context,
@@ -236,7 +236,7 @@ class PaymentAbaPackageController extends GetxController {
           });
         }
       } else {
-        log(
+        debugPrint(
           'Check travel package payment request failed (${response.statusCode}). Retrying...',
         );
         _scheduleRetry(() {
@@ -248,7 +248,7 @@ class PaymentAbaPackageController extends GetxController {
         });
       }
     } on SocketException catch (e) {
-      log('Network error while checking travel package payment status: $e');
+      debugPrint('Network error while checking travel package payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,
@@ -257,7 +257,7 @@ class PaymentAbaPackageController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } on http.ClientException catch (e) {
-      log('HTTP client error while checking travel package payment status: $e');
+      debugPrint('HTTP client error while checking travel package payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,
@@ -266,7 +266,7 @@ class PaymentAbaPackageController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } on TimeoutException catch (e) {
-      log('Timeout while checking travel package payment status: $e');
+      debugPrint('Timeout while checking travel package payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,
@@ -275,7 +275,7 @@ class PaymentAbaPackageController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } catch (e) {
-      log('Unexpected error while checking travel package payment status: $e');
+      debugPrint('Unexpected error while checking travel package payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,

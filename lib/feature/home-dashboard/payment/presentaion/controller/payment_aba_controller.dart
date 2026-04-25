@@ -129,18 +129,18 @@ class PaymentAbaController extends GetxController {
     try {
       final uri = Uri.tryParse(deepLink);
       if (uri == null || !uri.hasScheme) {
-        log('Invalid or empty ABA deep link: $deepLink');
+        debugPrint('Invalid or empty ABA deep link: $deepLink');
         return;
       }
       final canOpen = await canLaunchUrl(uri);
       if (!canOpen) {
-        log('ABA app is not available for deep link: $deepLink');
+        debugPrint('ABA app is not available for deep link: $deepLink');
         return;
       }
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-      log("launching... deep link");
+      debugPrint("launching... deep link");
     } catch (e) {
-      log(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -162,7 +162,7 @@ class PaymentAbaController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
-    log('${BaseUrl.PAYMENT_URL}payments/abaMobilePay/$transactionId/$token');
+    debugPrint('${BaseUrl.PAYMENT_URL}payments/abaMobilePay/$transactionId/$token');
 
     final response = await http.post(
       Uri.parse(
@@ -174,17 +174,17 @@ class PaymentAbaController extends GetxController {
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseMap = jsonDecode(response.body);
       var data = ABAPayResponse.fromJson(responseMap);
-      log('This is response ABA Payment 2 ==>>${response.body}');
+      debugPrint('This is response ABA Payment 2 ==>>${response.body}');
       final checkoutUrl =
           (responseMap['checkout_qr_url'] ?? data.checkout_qr_url ?? '')
               .toString();
-      log("======>> Check out url: === $checkoutUrl");
+      debugPrint("======>> Check out url: === $checkoutUrl");
       if (data.status == 1) {
         if (checkoutUrl.isNotEmpty) {
           final uri = Uri.tryParse(checkoutUrl);
 
           if (uri != null && uri.hasScheme) {
-            log("======----->> Check out url - uri: === $uri");
+            debugPrint("======----->> Check out url - uri: === $uri");
             webViewController.loadRequest(uri);
           }
         }
@@ -228,15 +228,15 @@ class PaymentAbaController extends GetxController {
       if (!_loop) return;
 
       if (response.statusCode == 200) {
-        log('This is response check payment $title ==>>${response.body}');
+        debugPrint('This is response check payment $title ==>>${response.body}');
         Map<dynamic, dynamic> result = jsonDecode(response.body);
         final status = '${result['status']}';
         if (status == '1') {
-          log('Check status transaction == 1');
+          debugPrint('Check status transaction == 1');
           _loop = false;
           Get.back(result: '1');
         } else {
-          log('Check status transaction == $status (payment pending)');
+          debugPrint('Check status transaction == $status (payment pending)');
           _scheduleRetry(() {
             checkPaymentABAComplete(
               context: Get.context ?? context,
@@ -246,7 +246,7 @@ class PaymentAbaController extends GetxController {
           });
         }
       } else {
-        log(
+        debugPrint(
           'Check payment request failed (${response.statusCode}). Retrying...',
         );
         _scheduleRetry(() {
@@ -258,7 +258,7 @@ class PaymentAbaController extends GetxController {
         });
       }
     } on SocketException catch (e) {
-      log('Network error while checking payment status: $e');
+      debugPrint('Network error while checking payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,
@@ -267,7 +267,7 @@ class PaymentAbaController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } on http.ClientException catch (e) {
-      log('HTTP client error while checking payment status: $e');
+      debugPrint('HTTP client error while checking payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,
@@ -276,7 +276,7 @@ class PaymentAbaController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } on TimeoutException catch (e) {
-      log('Timeout while checking payment status: $e');
+      debugPrint('Timeout while checking payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,
@@ -285,7 +285,7 @@ class PaymentAbaController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } catch (e) {
-      log('Unexpected error while checking payment status: $e');
+      debugPrint('Unexpected error while checking payment status: $e');
       _scheduleRetry(() {
         checkPaymentABAComplete(
           context: Get.context ?? context,
@@ -303,7 +303,7 @@ class PaymentAbaController extends GetxController {
   }) async {
     final requestUrl =
         '${BaseUrl.PAYMENT_URL}payments/checkTerminalPaymentComplete/$transactionId/$token';
-    log(
+    debugPrint(
       'PaymentAbaController.checkTransactionABAComplete.request '
       'transactionId=$transactionId, tokenLen=${token.length}, url=$requestUrl',
     );
@@ -325,49 +325,49 @@ class PaymentAbaController extends GetxController {
           'transactionCode': result['transactionCode'] ?? transactionId,
           'status': '${result['status']}',
         });
-        log(
+        debugPrint(
           'PaymentAbaController.checkTransactionABAComplete.response '
           'statusCode=${response.statusCode}, status=${result['status']}',
         );
-        log(
+        debugPrint(
           'This is response check transaction $title ==>>\n      $normalizedResponse',
         );
-        log(
+        debugPrint(
           'PaymentAbaController.checkTransactionABAComplete.status=${result['status']}',
         );
         Loading().loadingClose();
         if (result['status'] == "1") {
-          log('Check status transaction $title == 1');
+          debugPrint('Check status transaction $title == 1');
           Get.back(result: '1');
         }
       } else {
         Loading().loadingClose();
-        log(
+        debugPrint(
           'PaymentAbaController.checkTransactionABAComplete.failed '
           'statusCode=${response.statusCode}, body=${response.body}',
         );
       }
     } on SocketException catch (e) {
       Loading().loadingClose();
-      log(
+      debugPrint(
         'PaymentAbaController.checkTransactionABAComplete.networkError '
         'transactionId=$transactionId, error=$e',
       );
     } on http.ClientException catch (e) {
       Loading().loadingClose();
-      log(
+      debugPrint(
         'PaymentAbaController.checkTransactionABAComplete.httpClientError '
         'transactionId=$transactionId, error=$e',
       );
     } on TimeoutException catch (e) {
       Loading().loadingClose();
-      log(
+      debugPrint(
         'PaymentAbaController.checkTransactionABAComplete.timeout '
         'transactionId=$transactionId, error=$e',
       );
     } catch (e) {
       Loading().loadingClose();
-      log(
+      debugPrint(
         'PaymentAbaController.checkTransactionABAComplete.unexpectedError '
         'transactionId=$transactionId, error=$e',
       );
@@ -395,15 +395,15 @@ class PaymentAbaController extends GetxController {
       if (!_loop) return;
 
       if (response.statusCode == 200) {
-        log('This is response check payment ACLEDA ==>>${response.body}');
+        debugPrint('This is response check payment ACLEDA ==>>${response.body}');
         Map<dynamic, dynamic> result = jsonDecode(response.body);
         final status = '${result['status']}';
         if (status == '1') {
-          log('Check status transaction == 1');
+          debugPrint('Check status transaction == 1');
           _loop = false;
           Get.back(result: '1');
         } else if (status == '0') {
-          log('Check status transaction == 0 (payment failed)');
+          debugPrint('Check status transaction == 0 (payment failed)');
           _loop = false;
           Get.back(result: '0');
         } else {
@@ -416,7 +416,7 @@ class PaymentAbaController extends GetxController {
           });
         }
       } else {
-        log(
+        debugPrint(
           'Check ACLEDA payment request failed (${response.statusCode}). Retrying...',
         );
         _scheduleRetry(() {
@@ -428,7 +428,7 @@ class PaymentAbaController extends GetxController {
         });
       }
     } on SocketException catch (e) {
-      log('Network error while checking ACLEDA payment status: $e');
+      debugPrint('Network error while checking ACLEDA payment status: $e');
       _scheduleRetry(() {
         checkPaymentACLEDAComplete(
           context: Get.context ?? context,
@@ -437,7 +437,7 @@ class PaymentAbaController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } on http.ClientException catch (e) {
-      log('HTTP client error while checking ACLEDA payment status: $e');
+      debugPrint('HTTP client error while checking ACLEDA payment status: $e');
       _scheduleRetry(() {
         checkPaymentACLEDAComplete(
           context: Get.context ?? context,
@@ -446,7 +446,7 @@ class PaymentAbaController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } on TimeoutException catch (e) {
-      log('Timeout while checking ACLEDA payment status: $e');
+      debugPrint('Timeout while checking ACLEDA payment status: $e');
       _scheduleRetry(() {
         checkPaymentACLEDAComplete(
           context: Get.context ?? context,
@@ -455,7 +455,7 @@ class PaymentAbaController extends GetxController {
         );
       }, delay: const Duration(seconds: 2));
     } catch (e) {
-      log('Unexpected error while checking ACLEDA payment status: $e');
+      debugPrint('Unexpected error while checking ACLEDA payment status: $e');
       _scheduleRetry(() {
         checkPaymentACLEDAComplete(
           context: Get.context ?? context,
@@ -486,32 +486,32 @@ class PaymentAbaController extends GetxController {
           .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 200) {
-        log('This is response check transaction ACLEDA ==>>${response.body}');
+        debugPrint('This is response check transaction ACLEDA ==>>${response.body}');
         Map<dynamic, dynamic> result = jsonDecode(response.body);
-        log(result['status'].toString());
+        debugPrint(result['status'].toString());
         Loading().loadingClose();
         if (result['status'] == 1) {
-          log('Check status transaction ACLEDA == 1');
+          debugPrint('Check status transaction ACLEDA == 1');
           Get.back(result: '1');
         }
       } else {
         Loading().loadingClose();
-        log(
+        debugPrint(
           'Check ACLEDA transaction request failed (${response.statusCode}).',
         );
       }
     } on SocketException catch (e) {
       Loading().loadingClose();
-      log('Network error while checking ACLEDA transaction status: $e');
+      debugPrint('Network error while checking ACLEDA transaction status: $e');
     } on http.ClientException catch (e) {
       Loading().loadingClose();
-      log('HTTP client error while checking ACLEDA transaction status: $e');
+      debugPrint('HTTP client error while checking ACLEDA transaction status: $e');
     } on TimeoutException catch (e) {
       Loading().loadingClose();
-      log('Timeout while checking ACLEDA transaction status: $e');
+      debugPrint('Timeout while checking ACLEDA transaction status: $e');
     } catch (e) {
       Loading().loadingClose();
-      log('Unexpected error while checking ACLEDA transaction status: $e');
+      debugPrint('Unexpected error while checking ACLEDA transaction status: $e');
     }
   }
 }

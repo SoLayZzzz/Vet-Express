@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,7 +52,7 @@ class PaymentWingController extends GetxController {
     webViewController = WebViewController();
     final wingPaymentUrl =
         "${BaseUrl.PAYMENT_URL}payments/wingNewApiPaymentPro/$transactionId/$token";
-    log('PaymentWingController.loadWingPayment.request url=$wingPaymentUrl');
+    debugPrint('PaymentWingController.loadWingPayment.request url=$wingPaymentUrl');
 
     _showLoadingIfNeeded();
 
@@ -74,22 +73,22 @@ class PaymentWingController extends GetxController {
     webViewController.setNavigationDelegate(
       NavigationDelegate(
         onPageStarted: (String url) {
-          log('PaymentWingController.onPageStarted url=$url');
+          debugPrint('PaymentWingController.onPageStarted url=$url');
           _showLoadingIfNeeded();
         },
         onPageFinished: (String url) {
-          log('PaymentWingController.onPageFinished url=$url');
+          debugPrint('PaymentWingController.onPageFinished url=$url');
           _hideLoadingIfShown();
         },
         onWebResourceError: (WebResourceError error) {
-          log(
+          debugPrint(
             'PaymentWingController.onWebResourceError '
             'code=${error.errorCode} desc=${error.description}',
           );
           _hideLoadingIfShown();
         },
         onNavigationRequest: (NavigationRequest request) {
-          log('PaymentWingController.onNavigationRequest url=${request.url}');
+          debugPrint('PaymentWingController.onNavigationRequest url=${request.url}');
           if (request.url.startsWith('https://closewingpayment/')) {
             _hideLoadingIfShown();
             return NavigationDecision.prevent;
@@ -122,7 +121,7 @@ class PaymentWingController extends GetxController {
 
   Future<void> openDeepLinkWingBank(String deepLink) async {
     final Uri url = Uri.parse(deepLink);
-    log(
+    debugPrint(
       'PaymentWingController.openDeepLinkWingBank.request deepLink=$deepLink',
     );
 
@@ -155,7 +154,7 @@ class PaymentWingController extends GetxController {
     if (!_active) return;
     _pollCount++;
     if (_pollCount > _maxPollCount) {
-      log(
+      debugPrint(
         'PaymentWingController.checkTicketStatus.stop polling (max reached) '
         'transactionId=$transactionId',
       );
@@ -166,7 +165,7 @@ class PaymentWingController extends GetxController {
       return;
     }
     try {
-      log(
+      debugPrint(
         'PaymentWingController.checkTicketStatus.request transactionId=$transactionId',
       );
       final wingResponse = await _ensureNetworkRequest().checkTicketStatus(
@@ -176,7 +175,7 @@ class PaymentWingController extends GetxController {
 
       if (wingResponse.header?.statusCode == 200) {
         final status = '${wingResponse.body?.data?[0].status ?? ''}';
-        log(
+        debugPrint(
           'PaymentWingController.checkTicketStatus.response '
           'statusCode=${wingResponse.header?.statusCode}, '
           'result=${wingResponse.header?.result}, status=$status',
@@ -200,7 +199,7 @@ class PaymentWingController extends GetxController {
           return;
         }
 
-        log(
+        debugPrint(
           'PaymentWingController.checkTicketStatus.pending -> poll again in 2s',
         );
         Future.delayed(const Duration(seconds: 2), () {
@@ -213,7 +212,7 @@ class PaymentWingController extends GetxController {
         });
       }
     } catch (_) {
-      log(
+      debugPrint(
         'PaymentWingController.checkTicketStatus.error for transactionId=$transactionId',
       );
       _hideLoadingIfShown();

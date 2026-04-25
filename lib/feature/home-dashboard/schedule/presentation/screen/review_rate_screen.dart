@@ -164,7 +164,7 @@ class _ReviewRateScreenState extends State<ReviewRateScreen> {
                     }
                   }
                 } else if (dataReview.hasError) {
-                  log('error ${dataReview.error}');
+                  debugPrint('error ${dataReview.error}');
                 }
                 return const SizedBox(
                   height: 200, // Define a reasonable height
@@ -205,7 +205,7 @@ class _ReviewRateScreenState extends State<ReviewRateScreen> {
                     }
                   }
                 } else if (dataUser.hasError) {
-                  log('error ${dataUser.error}');
+                  debugPrint('error ${dataUser.error}');
                 }
 
                 return const SizedBox.shrink();

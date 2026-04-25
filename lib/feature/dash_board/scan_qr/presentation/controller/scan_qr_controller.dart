@@ -87,7 +87,7 @@ class ScanQrController extends StateController<ScanQrUiState>
       uiState.value = state.copyWith(isScanning: true);
     } on MobileScannerException catch (e) {
       final message = e.toString().toLowerCase();
-      log('Error starting scanner: $e');
+      debugPrint('Error starting scanner: $e');
 
       if (message.contains('controllerinitializing')) {
         return;
@@ -112,7 +112,7 @@ class ScanQrController extends StateController<ScanQrUiState>
         );
       }
     } catch (e) {
-      log('Error starting scanner: $e');
+      debugPrint('Error starting scanner: $e');
     } finally {
       _isStarting = false;
     }
@@ -154,7 +154,7 @@ class ScanQrController extends StateController<ScanQrUiState>
               uiState.value = state.copyWith(isScanning: false);
             })
             .catchError((e) {
-              log('Error stopping scanner: $e');
+              debugPrint('Error stopping scanner: $e');
             });
         break;
     }
@@ -165,7 +165,7 @@ class ScanQrController extends StateController<ScanQrUiState>
       await scannerController.toggleTorch();
       uiState.value = state.copyWith(flash: !state.flash);
     } catch (e) {
-      log('Error toggling torch: $e');
+      debugPrint('Error toggling torch: $e');
       _displayDialog('information'.tr, 'flash_error'.tr);
     }
   }
@@ -229,7 +229,7 @@ class ScanQrController extends StateController<ScanQrUiState>
     } catch (e) {
       Loading().loadingClose();
       await _displayDialog('information'.tr, 'error_occurred'.tr);
-      log('Goods search error: $e');
+      debugPrint('Goods search error: $e');
     }
   }
 
@@ -300,7 +300,7 @@ class ScanQrController extends StateController<ScanQrUiState>
       await _displayPermissionDialog('information'.tr, 'camera_permission_error'.tr);
       return false;
     } catch (e) {
-      log('ensureCameraPermission error: $e');
+      debugPrint('ensureCameraPermission error: $e');
       return false;
     }
   }
@@ -353,13 +353,13 @@ class ScanQrController extends StateController<ScanQrUiState>
             await _displayDialog('information'.tr, 'code_invalid'.tr);
           }
         } catch (e) {
-          log('QR analysis error: $e');
+          debugPrint('QR analysis error: $e');
           await _displayDialog('information'.tr, 'qr_analysis_error'.tr);
         }
       }
     } catch (e) {
       await _displayDialog('information'.tr, 'error_occurred'.tr);
-      log('Image cropping error: $e');
+      debugPrint('Image cropping error: $e');
     }
   }
 }

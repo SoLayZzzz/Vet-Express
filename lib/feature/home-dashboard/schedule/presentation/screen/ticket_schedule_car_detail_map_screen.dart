@@ -160,7 +160,7 @@ class _TicketScheduleCarDetailMapScreenState
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
-      log('Could not launch Google Maps for this location.');
+      debugPrint('Could not launch Google Maps for this location.');
     }
   }
 

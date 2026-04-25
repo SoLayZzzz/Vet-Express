@@ -173,7 +173,7 @@ class EvWalletController extends GetxController {
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
-      log('Error fetching wallet transactions: $e');
+      debugPrint('Error fetching wallet transactions: $e');
     } finally {
       isLoading.value = false;
       isLoadingMore.value = false;

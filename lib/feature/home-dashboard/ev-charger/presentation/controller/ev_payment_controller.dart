@@ -43,7 +43,7 @@ class EvPaymentController extends GetxController {
   @override
   void onClose() {
     if (!paymentCompleted.value) {
-      log('Payment screen closed, checking status');
+      debugPrint('Payment screen closed, checking status');
       topUpController.checkPaymentStatusManually();
     }
 
@@ -69,14 +69,14 @@ class EvPaymentController extends GetxController {
       final canLaunch = await canLaunchUrl(uri);
 
       if (canLaunch) {
-        log('Attempting to launch deeplink: $deepLink');
+        debugPrint('Attempting to launch deeplink: $deepLink');
         final launched = await launchUrl(
           uri,
           mode: LaunchMode.externalApplication,
         );
 
         if (launched) {
-          log('Banking app launched successfully');
+          debugPrint('Banking app launched successfully');
           Get.snackbar(
             'Payment App Opened',
             'Please complete the payment in your banking app',
@@ -99,16 +99,16 @@ class EvPaymentController extends GetxController {
         }
       }
 
-      log('Cannot launch deeplink or launch failed');
+      debugPrint('Cannot launch deeplink or launch failed');
       fallbackToWebView();
     } catch (e) {
-      log('Error launching deeplink: $e');
+      debugPrint('Error launching deeplink: $e');
       fallbackToWebView();
     }
   }
 
   void fallbackToWebView() {
-    log('Falling back to webview with URL: $checkoutQrUrl');
+    debugPrint('Falling back to webview with URL: $checkoutQrUrl');
     showWebView.value = true;
     isLoading.value = false;
     initializeWebView();
@@ -144,11 +144,11 @@ class EvPaymentController extends GetxController {
           checkForPaymentCompletion(url);
         },
         onWebResourceError: (WebResourceError error) {
-          log('WebView error: ${error.description}');
+          debugPrint('WebView error: ${error.description}');
           isLoading.value = false;
         },
         onNavigationRequest: (NavigationRequest request) {
-          log('WebView navigation to: ${request.url}');
+          debugPrint('WebView navigation to: ${request.url}');
 
           if (paymentCompleted.value) {
             return NavigationDecision.prevent;
@@ -184,7 +184,7 @@ class EvPaymentController extends GetxController {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      log('Error launching deeplink from WebView: $e');
+      debugPrint('Error launching deeplink from WebView: $e');
     }
   }
 
@@ -230,7 +230,7 @@ class EvPaymentController extends GetxController {
     if (paymentCompleted.value) return;
 
     paymentCompleted.value = true;
-    log('Payment success detected in WebView');
+    debugPrint('Payment success detected in WebView');
 
     final wv = webViewController.value;
     if (showWebView.value && wv != null) {
@@ -261,7 +261,7 @@ class EvPaymentController extends GetxController {
     if (paymentCompleted.value) return;
 
     paymentCompleted.value = true;
-    log('Payment failure detected in WebView');
+    debugPrint('Payment failure detected in WebView');
 
     final wv = webViewController.value;
     if (showWebView.value && wv != null) {

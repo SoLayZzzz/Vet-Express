@@ -4,6 +4,7 @@ import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/utils/contains.dart';
 import 'package:express_vet/feature/home-dashboard/payment/data/model/response/aba_payment_response.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/response/process_payment_response.dart';
+import 'package:flutter/material.dart';
 
 class PaymentNetworkRequest {
   final NetworkDataSource paymentApi;
@@ -22,7 +23,7 @@ class PaymentNetworkRequest {
       'totalAmount': totalAmount,
     };
     try {
-      log(
+      debugPrint(
         'PaymentNetworkRequest.processPayment.request '
         'url=${ticketApi.baseUrl}${Endpoint.ticketBookingProcessPayment} '
         'fields=$fields',

@@ -17,6 +17,8 @@ class GoodsTransferHistoryController
 
   final RxBool isFiltering = false.obs;
 
+  final RxInt expandedIndex = (-1).obs;
+
   int desFromId = 0;
   int desToId = 0;
   int statusId = 0;
@@ -48,7 +50,7 @@ class GoodsTransferHistoryController
     }
   }
 
-  var expandedIndex = (-1).obs;
+  // var expandedIndex = (-1).obs;
 
   void toggleExpansion(int index) {
     if (expandedIndex.value == index) {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:express_vet/base/network_data_source.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../base/endpoint.dart';
@@ -22,7 +23,7 @@ class ScheduleNetworkRequest {
     required ScheduleRequestBody body,
   }) async {
     try {
-      Get.log(
+      debugPrint(
         '[Schedule] fetchScheduleWithBody -> fields: ${body.toFormFields()}',
       );
       final json = await netWorkDataSource.postFormUrlEncoded(
@@ -31,7 +32,7 @@ class ScheduleNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      Get.log('[Schedule] fetchScheduleWithBody <- response received');
+      debugPrint('[Schedule] fetchScheduleWithBody <- response received');
       return ScheduleResponse.fromJson(json);
     } on TimeoutException {
       Loading().loadingClose();
@@ -51,14 +52,14 @@ class ScheduleNetworkRequest {
     required int scheduleId,
   }) async {
     try {
-      Get.log('[Schedule] fetchListByJourney -> scheduleId: $scheduleId');
+      debugPrint('[Schedule] fetchListByJourney -> scheduleId: $scheduleId');
       final json = await netWorkDataSource.postFormUrlEncoded(
         Endpoint.ticketScheduleRateListByJourney,
         fields: <String, String>{'scheduleId': scheduleId.toString()},
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      Get.log('[Schedule] fetchListByJourney <- response received');
+      debugPrint('[Schedule] fetchListByJourney <- response received');
       return ListByJourneyResponse.fromJson(json);
     } on TimeoutException {
       Loading().loadingClose();
@@ -78,14 +79,14 @@ class ScheduleNetworkRequest {
     required int scheduleId,
   }) async {
     try {
-      Get.log('[Schedule] fetchTotalByJourney -> scheduleId: $scheduleId');
+      debugPrint('[Schedule] fetchTotalByJourney -> scheduleId: $scheduleId');
       final json = await netWorkDataSource.postFormUrlEncoded(
         Endpoint.ticketScheduleRateTotalByJourney,
         fields: <String, String>{'scheduleId': scheduleId.toString()},
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      Get.log('[Schedule] fetchTotalByJourney <- response received');
+      debugPrint('[Schedule] fetchTotalByJourney <- response received');
       return TotalByJourneyResponse.fromJson(json);
     } on TimeoutException {
       Loading().loadingClose();

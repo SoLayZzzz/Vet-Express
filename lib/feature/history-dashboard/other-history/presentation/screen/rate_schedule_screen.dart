@@ -163,7 +163,7 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
                           }
                         }
                       } else if (dataReview.hasError) {
-                        log('error ${dataReview.error}');
+                        debugPrint('error ${dataReview.error}');
                       }
 
                       return Center(

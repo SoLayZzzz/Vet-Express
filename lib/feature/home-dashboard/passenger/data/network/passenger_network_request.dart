@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
+
 
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';
@@ -83,7 +83,7 @@ class PassengerNetworkRequest {
     CheckBookingPackageRequest body,
   ) async {
     try {
-      Get.log(
+      debugPrint(
         '[Package] checkPackageApply -> code: ${body.code}, journeyId: ${body.journeyId}, travelDate: ${body.travelDate}',
       );
       final json = await networkDataSource.postFormUrlEncoded(
@@ -97,7 +97,7 @@ class PassengerNetworkRequest {
         attachAuth: true,
       );
       final res = CheckPackageApplyResponse.fromJson(json);
-      Get.log(
+      debugPrint(
         '[Package] checkPackageApply <- status: '
         'header.statusCode=${res.header?.statusCode}, '
         'header.result=${res.header?.result}, '
@@ -124,7 +124,7 @@ class PassengerNetworkRequest {
     required Map<String, String> fields,
   }) async {
     try {
-      Get.log('[Booking] confirmBooking -> fields: $fields');
+      debugPrint('[Booking] confirmBooking -> fields: $fields');
       final json = await networkDataSource.postFormUrlEncoded(
         Endpoint.ticketBookingConfirm,
         fields: fields,
@@ -132,7 +132,7 @@ class PassengerNetworkRequest {
         attachAuth: true,
       );
       final res = ConfirmBookingResponse.fromJson(json);
-      Get.log(
+      debugPrint(
         '[Booking] confirmBooking <- status: \\n+        header.statusCode=${res.header?.statusCode}, \\n+        header.result=${res.header?.result}, \\n+        body.status=${res.body?.status}, \\n+        body.msg=${res.body?.msg}, \\n+        body.transactionId=${res.body?.transactionId}',
       );
       return res;
@@ -297,7 +297,7 @@ class PassengerNetworkRequest {
     required String transactionId,
   }) async {
     try {
-      log(
+      debugPrint(
         'PassengerNetworkRequest.checkTicketStatus.request transactionId=$transactionId',
       );
       final json = await networkDataSource.postMultipart(
@@ -307,7 +307,7 @@ class PassengerNetworkRequest {
         attachAuth: true,
       );
       try {
-        log(
+        debugPrint(
           'PassengerNetworkRequest.checkTicketStatus.response ${json.toString()}',
         );
       } catch (_) {

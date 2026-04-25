@@ -152,7 +152,7 @@ class ScheduleListScreen extends StatelessWidget {
               );
             }
           } else if (scheduleData.hasError) {
-            log('error ${scheduleData.error}');
+            debugPrint('error ${scheduleData.error}');
             return Center(child: Text('Error: ${scheduleData.error}'));
           }
 

@@ -120,7 +120,7 @@ class EvScannerController extends GetxController {
       await cameraController.toggleTorch();
       isFlashOn.value = !isFlashOn.value;
     } catch (e) {
-      log('Flashlight error: $e');
+      debugPrint('Flashlight error: $e');
     }
   }
 

@@ -52,98 +52,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //* transfer code
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20),
-                          decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: AppColors.borderColor,
-                              width: 0.5,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 4,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      labelDisplay(
-                                        title: 'tracking_code'.tr,
-                                        value:
-                                            (transferData
-                                                .data!
-                                                .body
-                                                ?.data?[0]
-                                                .code)!,
-                                      ),
-                                      labelDisplay(
-                                        title: 'sender'.tr,
-                                        value:
-                                            (transferData
-                                                .data!
-                                                .body
-                                                ?.data?[0]
-                                                .senderTelephone)!,
-                                      ),
-                                      labelDisplay(
-                                        title: 'from'.tr,
-                                        value:
-                                            (transferData
-                                                .data!
-                                                .body
-                                                ?.data?[0]
-                                                .destinationFromEn
-                                                .toString())!,
-                                      ),
-                                      labelDisplay(
-                                        title: 'receiver'.tr,
-                                        value:
-                                            (transferData
-                                                .data!
-                                                .body
-                                                ?.data?[0]
-                                                .receiverTelephone)!,
-                                      ),
-                                      labelDisplay(
-                                        title: 'to'.tr,
-                                        value:
-                                            (transferData
-                                                .data!
-                                                .body
-                                                ?.data?[0]
-                                                .destinationToEn
-                                                .toString())!,
-                                      ),
-                                      labelDisplay(
-                                        title: 'qty'.tr,
-                                        value:
-                                            (transferData
-                                                .data!
-                                                .body
-                                                ?.data?[0]
-                                                .qty
-                                                .toString())!,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                Expanded(
-                                  flex: 1,
-                                  child: Image.asset(
-                                    'assets/icons/icon_tracking_parcel.png',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        _buildParcelInfo(transferData),
 
                         //* tracking parcel
                         Text(
@@ -453,6 +362,261 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
       ),
     );
   }
+
+  Widget _buildParcelInfo(AsyncSnapshot<GoodsFindResponse> transferData) {
+  final data = transferData.data!.body?.data?[0];
+
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
+        ),
+      ],
+      border: Border.all(color: Colors.grey.shade200),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Tracking Section
+          _labelRow('Tracking Code:', '${data?.code}'),
+          _labelRow('Tracking China No.:', 'N/A'),
+          
+          const SizedBox(height: 16),
+          const Text('Item Details:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+
+          // 2. Fees Grid
+          Row(
+            children: [
+              Expanded(child: _labelRow('Transfer Fee CH:', '\$10.50')),
+              Expanded(child: _labelRow('Packing Fee:', '\$0.50')),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(child: _labelRow('Transfer Fee KH:', '\$0.00')),
+              Expanded(child: _labelRow('Delivery Fee:', '\$0.00')),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          const Text('Item Size:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+
+          // 3. Size Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Width: 120CM', style: const TextStyle(fontSize: 13)),
+              Text('Length: 120CM', style: const TextStyle(fontSize: 13)),
+              Text('Height: 120CM', style: const TextStyle(fontSize: 13)),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          const Text('Item Weight:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Text('Weight: 1.20KG'),
+
+          const SizedBox(height: 20),
+
+          // 4. Stylized Info Boxes
+          _buildInfoBox('QTY:', '${data?.qty} Package'),
+          const SizedBox(height: 10),
+          _buildInfoBox('From:', '${data?.destinationFromEn}'),
+          const SizedBox(height: 10),
+          _buildReceiverBox(
+            label: 'Receiver:',
+            phoneNumber: '${data?.receiverTelephone}',
+            toLabel: 'To:',
+            destination: '${data?.destinationToEn}',
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+// Helper for simple label: value rows
+Widget _labelRow(String title, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: Row(
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('$title  ', style: const TextStyle(color: Colors.black87)),
+        // Spacer(),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// Helper for the rounded white boxes at the bottom
+Widget _buildInfoBox(String label, String value) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Row(
+      children: [
+        SizedBox(width: 80, child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500))),
+        Expanded(child: Text(value)),
+      ],
+    ),
+  );
+}
+
+// Helper for the Receiver box which has two lines of value
+Widget _buildReceiverBox({
+  required String label,
+  required String phoneNumber,
+  required String toLabel,
+  required String destination,
+}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Column(
+      children: [
+        // Top Row: Receiver and Phone Number
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+            ),
+            Expanded(
+              child: Text(phoneNumber),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8), // Space between Receiver line and To line
+        // Bottom Row: To and Destination
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(toLabel, style: const TextStyle(fontWeight: FontWeight.w500)),
+            ),
+            Expanded(
+              child: Text(destination),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+  // Widget _buildParcelInfo(AsyncSnapshot<GoodsFindResponse> transferData) {
+  //   return Container(
+  //                       margin: const EdgeInsets.symmetric(vertical: 20),
+  //                       decoration: BoxDecoration(
+  //                         color: AppColors.whiteColor,
+  //                         borderRadius: BorderRadius.circular(10),
+  //                         border: Border.all(
+  //                           color: AppColors.borderColor,
+  //                           width: 0.5,
+  //                         ),
+  //                       ),
+  //                       child: Padding(
+  //                         padding: const EdgeInsets.all(12.0),
+  //                         child: Row(
+  //                           crossAxisAlignment: CrossAxisAlignment.start,
+  //                           children: [
+  //                             Expanded(
+  //                               flex: 4,
+  //                               child: Column(
+  //                                 crossAxisAlignment:
+  //                                     CrossAxisAlignment.start,
+  //                                 children: [
+  //                                   labelDisplay(
+  //                                     title: 'tracking_code'.tr,
+  //                                     value:
+  //                                         (transferData
+  //                                             .data!
+  //                                             .body
+  //                                             ?.data?[0]
+  //                                             .code)!,
+  //                                   ),
+  //                                   labelDisplay(
+  //                                     title: 'sender'.tr,
+  //                                     value:
+  //                                         (transferData
+  //                                             .data!
+  //                                             .body
+  //                                             ?.data?[0]
+  //                                             .senderTelephone)!,
+  //                                   ),
+  //                                   labelDisplay(
+  //                                     title: 'from'.tr,
+  //                                     value:
+  //                                         (transferData
+  //                                             .data!
+  //                                             .body
+  //                                             ?.data?[0]
+  //                                             .destinationFromEn
+  //                                             .toString())!,
+  //                                   ),
+  //                                   labelDisplay(
+  //                                     title: 'receiver'.tr,
+  //                                     value:
+  //                                         (transferData
+  //                                             .data!
+  //                                             .body
+  //                                             ?.data?[0]
+  //                                             .receiverTelephone)!,
+  //                                   ),
+  //                                   labelDisplay(
+  //                                     title: 'to'.tr,
+  //                                     value:
+  //                                         (transferData
+  //                                             .data!
+  //                                             .body
+  //                                             ?.data?[0]
+  //                                             .destinationToEn
+  //                                             .toString())!,
+  //                                   ),
+  //                                   labelDisplay(
+  //                                     title: 'qty'.tr,
+  //                                     value:
+  //                                         (transferData
+  //                                             .data!
+  //                                             .body
+  //                                             ?.data?[0]
+  //                                             .qty
+  //                                             .toString())!,
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+                              
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     );
+  // }
 
   display(
     String img,

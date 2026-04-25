@@ -102,7 +102,7 @@ class PaymentController extends StateController<PaymentUistate> {
     required BuildContext context,
     required String transactionId,
   }) async {
-    log(
+    debugPrint(
       'PaymentController.processBooking.request code=$transactionId, '
       'paymentMethodId=${state.paymentMethodId}, '
       'paymentMethodSelected=${state.paymentMethodSelected}, '
@@ -122,7 +122,7 @@ class PaymentController extends StateController<PaymentUistate> {
       final token = (rawToken ?? '').trim();
       final hasUsableToken = token.isNotEmpty && token.toLowerCase() != 'null';
 
-      log(
+      debugPrint(
         'PaymentController.processBooking.response '
         'statusCode=${data.header?.statusCode}, '
         'result=${data.header?.result}, '
@@ -144,7 +144,7 @@ class PaymentController extends StateController<PaymentUistate> {
       if (isSuccessHeader || shouldProceedWing) {
         if (state.paymentMethodSelected == 1) {
           final token = data.body?.token;
-          log(
+          debugPrint(
             'PaymentController.ABA_KHQR.start '
             'transactionId=$transactionId, tokenLen=${(token ?? '').length}',
           );
@@ -164,7 +164,7 @@ class PaymentController extends StateController<PaymentUistate> {
               url: '',
             ),
           );
-          log('PaymentController.ABA_Card.result=$result');
+          debugPrint('PaymentController.ABA_Card.result=$result');
           if (result == '1') {
             showDialogPaymentComplete(context);
           } else {
@@ -181,7 +181,7 @@ class PaymentController extends StateController<PaymentUistate> {
               url: '',
             ),
           );
-          log('PaymentController.Alipay.result=$result');
+          debugPrint('PaymentController.Alipay.result=$result');
           if (result == '1') {
             showDialogPaymentComplete(context);
           } else {
@@ -195,7 +195,7 @@ class PaymentController extends StateController<PaymentUistate> {
               token: token.toString(),
             ),
           );
-          log('PaymentController.Wing.result=$result');
+          debugPrint('PaymentController.Wing.result=$result');
           if (result == '1') {
             showDialogPaymentComplete(context);
           } else {
@@ -203,7 +203,7 @@ class PaymentController extends StateController<PaymentUistate> {
           }
         } else if (state.paymentMethodSelected == 5) {
           final token = data.body?.token ?? '';
-          log(
+          debugPrint(
             'PaymentController.ACLEDA_App.start transactionId=$transactionId, tokenLen=${token.length}',
           );
           setNewToken(token);
@@ -219,7 +219,7 @@ class PaymentController extends StateController<PaymentUistate> {
       try {
         Loading().loadingClose();
       } catch (_) {}
-      log('PaymentController.processBooking.error $e');
+      debugPrint('PaymentController.processBooking.error $e');
       alertDialogOneButton(
         title: 'information'.tr,
         description: 'Failed to load to server!',
@@ -233,14 +233,14 @@ class PaymentController extends StateController<PaymentUistate> {
     required String transactionId,
     required String token,
   }) async {
-    log(
+    debugPrint(
       'PaymentController.abaMobilePay.request transactionId=$transactionId, tokenLen=${token.length}',
     );
     final data = await uscase.abaMobilePay(
       transactionId: transactionId,
       token: token,
     );
-    log(
+    debugPrint(
       'PaymentController.abaMobilePay.response status=${data.status}, '
       'hasDeeplink=${(data.abapayDeeplink ?? '').isNotEmpty}, '
       'hasCheckoutQr=${(data.checkout_qr_url ?? '').isNotEmpty}',
@@ -255,7 +255,7 @@ class PaymentController extends StateController<PaymentUistate> {
         deeplink: data.abapayDeeplink ?? '',
       ),
     );
-    log('PaymentController.ABA_KHQR.result=$result');
+    debugPrint('PaymentController.ABA_KHQR.result=$result');
     if (result == '1') {
       showDialogPaymentComplete(context);
     } else {
@@ -332,11 +332,11 @@ class PaymentController extends StateController<PaymentUistate> {
     if (!state.loop) return;
     final result = await uscase.acledaCheckStatus(transactionId: transactionId);
     final status = '${result['status']}';
-    log(
+    debugPrint(
       'PaymentController.acledaCheckStatus.response status=$status for transactionId=$transactionId',
     );
     if (status == '1') {
-      log(
+      debugPrint(
         'PaymentController.acledaCheckStatus.next checkTransactionACLEDAComplete in 3s',
       );
       Future.delayed(const Duration(seconds: 3), () async {
@@ -349,12 +349,12 @@ class PaymentController extends StateController<PaymentUistate> {
     } else if (status == '0') {
       // Payment failed -> stop loop and cancel booking so seats are released
       setLoop(false);
-      log(
+      debugPrint(
         'PaymentController.acledaCheckStatus.failed -> cancel booking for transactionId=$transactionId',
       );
       showDialogPaymentFail(context, transactionId);
     } else {
-      log('PaymentController.acledaCheckStatus.pending -> poll again');
+      debugPrint('PaymentController.acledaCheckStatus.pending -> poll again');
       Future.delayed(const Duration(milliseconds: 1000), () async {
         if (state.loop) {
           await checkPaymentACLEDAComplete(
@@ -379,7 +379,7 @@ class PaymentController extends StateController<PaymentUistate> {
       token: token,
     );
     Loading().loadingClose();
-    log(
+    debugPrint(
       'PaymentController.acledaComplete.response status=${result['status']} for transactionId=$transactionId',
     );
     if (result['status'] == 1) {
@@ -404,7 +404,7 @@ class PaymentController extends StateController<PaymentUistate> {
     required String transactionId,
     required String token,
   }) async {
-    log(
+    debugPrint(
       'PaymentController.ACLEDA_XPay.start transactionId=$transactionId, tokenLen=${token.length}',
     );
     final result = await Get.to(
@@ -416,7 +416,7 @@ class PaymentController extends StateController<PaymentUistate> {
         url: '',
       ),
     );
-    log('PaymentController.ACLEDA_XPay.result=$result');
+    debugPrint('PaymentController.ACLEDA_XPay.result=$result');
     if (result == '1') {
       showDialogPaymentComplete(context);
     } else {
@@ -430,7 +430,7 @@ class PaymentController extends StateController<PaymentUistate> {
     required String token,
   }) async {
     String type = GetPlatform.isIOS ? '2' : '1';
-    log(
+    debugPrint(
       'PaymentController.acledaMobilePay.request transactionId=$transactionId, tokenLen=${token.length}, type=$type',
     );
     final data = await uscase.acledaMobilePay(
@@ -438,7 +438,7 @@ class PaymentController extends StateController<PaymentUistate> {
       token: token,
       type: type,
     );
-    log(
+    debugPrint(
       'PaymentController.acledaMobilePay.response status=${data.status}, '
       'hasDeeplink=${(data.abapayDeeplink ?? '').isNotEmpty}',
     );

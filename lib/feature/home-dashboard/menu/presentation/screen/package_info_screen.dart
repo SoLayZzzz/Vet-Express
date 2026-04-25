@@ -1330,7 +1330,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   }
 
   Future<void> payWithABAMobile(transactionId, token) async {
-    log(
+    debugPrint(
       '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token',
     );
 
@@ -1342,10 +1342,10 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
     );
 
     if (response.statusCode == 200) {
-      log('This is response ABA Payment ==>>${response.body}');
+      debugPrint('This is response ABA Payment ==>>${response.body}');
       var data = ABAPayResponse.fromJson(jsonDecode(response.body));
 
-      log('QR Link ${data.checkout_qr_url}');
+      debugPrint('QR Link ${data.checkout_qr_url}');
       var result = await Navigator.push(
         Get.context!,
         MaterialPageRoute(
@@ -1423,7 +1423,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
     fields['paymentMethodId'] = paymentMethodID.toString();
     fields['totalAmount'] = "22.22";
 
-    log(fields.toString());
+    debugPrint(fields.toString());
 
     try {
       Future<http.Response> sendOnce() {
@@ -1452,19 +1452,19 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
       }
 
       if (response.statusCode == 200) {
-        log('This is response booking process ==>>${response.body}');
+        debugPrint('This is response booking process ==>>${response.body}');
         var data = PaymentResponse.fromJson(jsonDecode(response.body));
         Loading().loadingClose();
 
         if (data.header?.statusCode == 200 && data.header?.result == true) {
           if (paymentMethodSelected == 1) {
             /// do payment with ABA mobile
-            log('Pay by ABA Mobile');
+            debugPrint('Pay by ABA Mobile');
             var token = data.body?.token;
             payWithABAMobile(transactionId, token);
           } else if (paymentMethodSelected == 2) {
             /// open web view for credit payment
-            log('===> Pay Credit card');
+            debugPrint('===> Pay Credit card');
             var token = data.body?.token;
             var result = await Navigator.push(
               Get.context!,
@@ -1489,7 +1489,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
               Get.delete<PaymentAbaPackageController>(force: true);
             }
 
-            log('Result $result');
+            debugPrint('Result $result');
 
             if (result == "1") {
               /// Payment Credit card success
@@ -1512,7 +1512,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
       rethrow;
     } on http.ClientException catch (e) {
       Loading().loadingClose();
-      log('Network client error: $e');
+      debugPrint('Network client error: $e');
       alertDialogOneButton(
         title: 'information'.tr,
         description: 'payment_not_success'.tr,
@@ -1521,7 +1521,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
       rethrow;
     } catch (e) {
       Loading().loadingClose();
-      log('Unexpected error: $e');
+      debugPrint('Unexpected error: $e');
       rethrow;
     }
   }
@@ -1550,7 +1550,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
 
       if (response.statusCode == 200) {
         Loading().loadingClose();
-        log('This is response image travel package ==>>${response.body}');
+        debugPrint('This is response image travel package ==>>${response.body}');
         final registerImageResponse = UploadImage.fromJson(
           jsonDecode(response.body),
         );
@@ -1579,7 +1579,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
       );
     } catch (e) {
       Loading().loadingClose();
-      log('An error occurred: $e');
+      debugPrint('An error occurred: $e');
       rethrow;
     }
   }

@@ -35,7 +35,7 @@ class TicketMenuPageController extends GetxController {
       final images =
           type == 2 ? slideController.imgListBoat : slideController.imgListBus;
       if (images.isNotEmpty) {
-        log('✅ TicketMenuScreen: Pre-cached relevant images for type $type');
+        debugPrint('✅ TicketMenuScreen: Pre-cached relevant images for type $type');
       }
     });
   }

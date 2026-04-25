@@ -122,7 +122,7 @@ class ProfileController extends GetxController {
         }
       }
     } catch (e) {
-      log("Error fetching nationalities: $e");
+      debugPrint("Error fetching nationalities: $e");
     }
   }
 
@@ -166,7 +166,7 @@ class ProfileController extends GetxController {
 
       _captureInitialSnapshot();
     } catch (e) {
-      log('Error fetching user data: $e');
+      debugPrint('Error fetching user data: $e');
     }
   }
 

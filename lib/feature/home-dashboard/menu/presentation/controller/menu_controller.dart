@@ -42,7 +42,7 @@ class MenuController extends StateController<MenuUiState>
     WidgetsBinding.instance.addObserver(this);
     _loadLanguageFromPref();
     OneSignal.Notifications.addForegroundWillDisplayListener((e) {
-      log('Notification Foreground');
+      debugPrint('Notification Foreground');
     });
   }
 
@@ -152,11 +152,11 @@ class MenuController extends StateController<MenuUiState>
         );
       }
     } on TimeoutException catch (e) {
-      log('Timeout loading notification count: $e');
+      debugPrint('Timeout loading notification count: $e');
     } on SocketException catch (e) {
-      log('Network error loading notification count: $e');
+      debugPrint('Network error loading notification count: $e');
     } on Exception catch (e) {
-      log('Error loading notification count: $e');
+      debugPrint('Error loading notification count: $e');
     }
   }
 
@@ -167,7 +167,7 @@ class MenuController extends StateController<MenuUiState>
     final String? deviceId = AppPref.getDeviceId();
     final String deviceType = Platform.isAndroid ? 'Android' : 'IOS';
 
-    log(
+    debugPrint(
       'OneSignal.User.pushSubscription.id ${OneSignal.User.pushSubscription.id}',
     );
 
@@ -209,7 +209,7 @@ class MenuController extends StateController<MenuUiState>
           return;
         }
       } catch (e) {
-        log('VTENH app not installed or failed to open by package: $e');
+        debugPrint('VTENH app not installed or failed to open by package: $e');
       }
     }
 
@@ -222,7 +222,7 @@ class MenuController extends StateController<MenuUiState>
         return;
       }
     } catch (e) {
-      log('VTinh app not installed or failed to open: $e');
+      debugPrint('VTinh app not installed or failed to open: $e');
     }
 
     try {
@@ -234,7 +234,7 @@ class MenuController extends StateController<MenuUiState>
         return;
       }
     } catch (e) {
-      log('VTinh app failed to open by universal link: $e');
+      debugPrint('VTinh app failed to open by universal link: $e');
     }
 
     final ok = await canLaunchUrl(webUri);

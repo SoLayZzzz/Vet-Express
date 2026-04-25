@@ -255,7 +255,7 @@ class EvTopUpController extends GetxController {
       }
     } catch (e) {
       // Error checking status, try again
-      log('Error checking payment status: $e');
+      debugPrint('Error checking payment status: $e');
       Future.delayed(const Duration(milliseconds: 5000), () {
         _checkPaymentStatus();
       });
@@ -272,7 +272,7 @@ class EvTopUpController extends GetxController {
       // Also refresh transactions to show the new transaction
       await walletController.fetchWalletTransactions();
     } catch (e) {
-      log('Error fetching updated balance: $e');
+      debugPrint('Error fetching updated balance: $e');
       // Continue anyway - user will still see success
     }
 
