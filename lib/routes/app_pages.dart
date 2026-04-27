@@ -1,3 +1,4 @@
+import 'package:express_vet/feature/history-dashboard/other-history/presentation/screen/parcel_payment_screen.dart';
 import 'package:express_vet/feature/home-dashboard/contact_us/presentation/screen/contact_us_screen.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_charger_response.dart';
 import 'package:express_vet/feature/home-dashboard/notifications/presentation/screen/notification_screen.dart';
@@ -519,6 +520,13 @@ class AppPages {
       name: AppRoutes.memberAccountDetail,
       page: () => const AccountDetailScreen(),
       binding: MemberShipBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    // Parcel Payment 
+    GetPage(
+      name: AppRoutes.parcelPayment,
+      page: () =>  ParcelPaymentScreen(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

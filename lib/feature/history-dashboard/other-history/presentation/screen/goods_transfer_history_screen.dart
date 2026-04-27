@@ -1,7 +1,10 @@
 import 'dart:developer';
 
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/feature/history-dashboard/other-history/presentation/screen/review_screen.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 
 import '../../../../home-dashboard/notifications/presentation/screen/goods_information_screen.dart';
@@ -376,41 +379,41 @@ Widget _transferTab({required BuildContext context, required int type}) {
 }
   
 
-  // Widget _surveyButton({
-  //   required BuildContext context,
-  //   required String goodsTransferId,
-  //   required int type,
-  // }) {
-  //   return Row(
-  //     children: [
-  //       const Icon(
-  //         Ionicons.chatbubble_ellipses_outline,
-  //         color: AppColors.primaryColor,
-  //       ),
-  //       const SizedBox(width: 6),
-  //       InkWell(
-  //         borderRadius: BorderRadius.circular(10),
-  //         onTap: () async {
-  //           final result = await Get.to(
-  //             () => ReviewScreen(
-  //               goodsTransferID: goodsTransferId,
-  //               type: type.toString(),
-  //             ),
-  //             transition: Transition.rightToLeft,
-  //             duration: const Duration(milliseconds: Constrains.duration),
-  //           );
-  //           if (result != null) {
-  //             controller.loadTransferList(context: Get.context!, type: type);
-  //           }
-  //         },
-  //         child: Text(
-  //           'take_survey'.tr,
-  //           style: const TextStyle(fontWeight: FontWeight.bold),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _surveyButton({
+    required BuildContext context,
+    required String goodsTransferId,
+    required int type,
+  }) {
+    return Row(
+      children: [
+        const Icon(
+          Ionicons.chatbubble_ellipses_outline,
+          color: AppColors.primaryColor,
+        ),
+        const SizedBox(width: 6),
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () async {
+            final result = await Get.to(
+              () => ReviewScreen(
+                goodsTransferID: goodsTransferId,
+                type: type.toString(),
+              ),
+              transition: Transition.rightToLeft,
+              duration: const Duration(milliseconds: Constrains.duration),
+            );
+            if (result != null) {
+              controller.loadTransferList(context: Get.context!, type: type);
+            }
+          },
+          child: Text(
+            'take_survey'.tr,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
 
   Positioned _filterButton({required BuildContext context}) {
     return Positioned(
@@ -591,10 +594,10 @@ class _TransferItemCardState extends State<TransferItemCard> {
                       child: Column(
                         children: [
                           
-                          _buildFeeRow("Transfer Fee CH", "\$10.50"),
-                          _buildFeeRow("Packing Fee", "\$0.50"),
-                          _buildFeeRow("Transfer Fee KH", "\$0.00"),
-                          _buildFeeRow("Delivery Fee", "\$0.00"),
+                          _buildFeeRow('tranfer_fee_ch'.tr, '\$10.50'),
+                          _buildFeeRow('packing_fee'.tr, '\$0.50'),
+                          _buildFeeRow('tranfer_fee_kh'.tr, '\$0.00'),
+                          _buildFeeRow('delivery_fee'.tr, '\$0.00'),
                           
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 10),
@@ -641,18 +644,20 @@ class _TransferItemCardState extends State<TransferItemCard> {
                 children: [
 
                   Expanded(child: _buildBtn(
-                    "Unpaid", 
+                    "unpaid".tr, 
                     (){},
                     isOutline: true)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: _buildBtn(
-                      "Track Order",
+                      "track_order".tr,
                       _onTrackOrderPressed,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildBtn("Pay Now", (){})),
+                  Expanded(child: _buildBtn("pay_now".tr, (){
+                    Get.toNamed(AppRoutes.parcelPayment);
+                  })),
                 ],
               ),
             ),
@@ -688,7 +693,7 @@ class _TransferItemCardState extends State<TransferItemCard> {
           child: Text(
             title,
             style: TextStyle(
-              color: isOutline ? Colors.black87 : const Color(0xFFE67E22),
+              color: isOutline ? Colors.black87 : AppColors.primaryColor,
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),

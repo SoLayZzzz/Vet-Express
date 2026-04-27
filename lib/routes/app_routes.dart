@@ -65,4 +65,7 @@ class AppRoutes {
 
   // Member dashboard routes
   static const memberAccountDetail = '/member/account-detail';
+
+  // Parcel Payment route
+  static const parcelPayment = '/parcel/payment';
 }

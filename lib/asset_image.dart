@@ -248,4 +248,8 @@ class AssetImages {
       "assets/images/ic_delivery_to_customer.png";
   static const String ic_call_to_customer =
       "assets/images/ic_call_to_customer.png";
+
+
 }
+
+

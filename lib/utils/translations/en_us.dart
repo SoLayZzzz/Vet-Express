@@ -1,0 +1,996 @@
+final Map<String, String> enUS = {
+       
+         // Parcel
+        'tranfer_fee_ch': 'Tranfer Fee CH',
+        'tranfer_fee_kh': 'Tranfer Fee KH',
+        'packing_fee': 'Packing Fee',
+        'delivery_fee': 'Delivery Fee',
+        'paid': 'Paid',
+        'unpaid': 'Unpaid',
+        'pay_now': 'Pay Now',
+        'track_order': 'Track Order',
+        'track_code': 'Tracking Code',
+        'track_china_no': 'Tracking China No',
+        'item_detail': 'Item Detail',
+        'item_size': 'Item Size',
+        'item_weight': 'Item Weight',
+        'width': 'Width',
+        'height': 'Height',
+        'length': 'Length',
+        'weight': 'Weight',
+         'from': 'From',
+        'to': 'To',
+        'receiver': 'Receiver',
+        'parcel_payment': 'Parcel Payment',
+        'delivery_to': 'Delivery To',
+
+        // Version App
+        'version': 'Version ',
+
+        //timeout
+        'timeout': "Warning!",
+        'request_timed_out': "Connection Timeout, Please try again",
+        'an_error_occurred': "Something went wrong. Please try again.",
+        'camera_permission_error':
+            'Camera permission is required. Please allow camera access to continue.',
+
+        //ev new version
+        'total_balance': "Total Balance",
+        'top_up': 'Top Up',
+        'favorites': "Favorites",
+        'news_feed': 'News Feed',
+        'view_all': "View All",
+        'ev_wallet': 'EV Charger Wallet',
+        'all': 'All',
+        'income': 'Income',
+        'expense': 'Expense',
+        'choose_amount': 'Choose Amount',
+        'enter_amount': 'Enter Amount',
+
+        //access china address
+        'access_address_china': 'China Address',
+        'full_name': 'Full name',
+        'enter_full_name': 'Enter full name',
+        'phone_number': 'Phone number',
+        'enter_phone_number': 'Enter phone number',
+        'vet_branch_near_you': 'VET branch near you',
+        'address': 'Address',
+        'enter_address': 'Enter address',
+        'register_china_address': 'Create Address',
+        'select_branch': 'Select Branch',
+        'please_select_branch_from': 'Please select a branch',
+        'select_province': 'Select province',
+        'clear': 'Clear',
+        'no_provinces_available': 'No provinces available',
+        'retry': 'Retry',
+        'search': 'Search',
+        'search_branch': 'Search branch...',
+        'no_provinces_found': 'No provinces found',
+        'no_branches_available': 'No branches available',
+        'no_branches_found': 'No branches found',
+        'warehouse_address': 'Warehouse Address China',
+        'contact_information': 'Contact Information',
+        'contact_name': 'Contact name',
+        'your_address': 'Your address',
+        'warehouse_address_by': 'Warehouse Address In China By:',
+        'warehouse_details': 'Warehouse Details',
+        'warehouse_name': 'Warehouse name',
+        'customer_code': 'Customer code',
+        'warehouse_phone': 'Warehouse phone number',
+        'no_warehouse_data_for_transport':
+            'No warehouse data for this transport type',
+        'land': 'Land',
+        'sea': 'Sea',
+        'air': 'Air',
+        'registration_failed': 'Registration Failed',
+        'ok': 'OK',
+        'please_enter_full_name': 'Please enter your full name',
+        'please_enter_phone_number': 'Please enter your phone number',
+        'please_select_branch_near_you': 'Please select a branch near you',
+        'please_enter_address': 'Please enter your address',
+
+        //EV
+        // 'coming_soon': "Coming Soon",
+        // 'ev_charger': 'Charging Station',
+        // 'ev_charger1': 'Charging Station',
+        // 'search_station': 'Search Station',
+        // 'ev_station': 'EV Station',
+        // 'select_province': 'Select Province',
+        // 'search_province': 'Search Province',
+        // 'direction': 'Direction',
+        // 'charger_type': 'Charger Type:',
+        // 'charger_qty': 'Charger QTY:',
+        // 'no_provinces_available': 'No provinces available',
+        // 'see_all_provinces': 'See all provinces',
+        // 'no_station_available': 'No EV station available in',
+        'total_balance': "Total Balance",
+        'top_up': 'Top Up',
+        'favorites': "Favorites",
+        'news_feed': 'News Feed',
+        'view_all': "View All",
+        'ev_wallet': 'EV Charger Wallet',
+        'all': 'All',
+        'income': 'Income',
+        'expense': 'Expense',
+        'choose_amount': 'Choose Amount',
+        'enter_amount': 'Enter Amount',
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "top_up_transaction": "Top-up",
+        "charging": "Charging",
+        "unknown_transaction": "Unknown transaction",
+        "failed_to_load_transactions": "Failed to load transactions",
+        "retry": "Retry",
+        "no_transactions": "No Transactions",
+        "make_first_transaction": "Make first transaction",
+        "no_transactions_found": "No transactions found",
+        "clear_filters": "Clear filters",
+
+        "ev_charger": "EV Charger",
+        "ev_charger1": "EV Charger",
+        "failed_to_load_slides": "Failed to load slides",
+        "contact_us": "Contact Us",
+        "failed_to_load_contacts": "Failed to load contacts",
+        "no_contacts_available": "No contacts available",
+        "no_news_available": "No news available at the moment",
+        "failed_to_load_news": "Failed to load news",
+
+        "faq": "FAQ",
+        "failed_to_load_faq": "Failed to load FAQ",
+        "no_faq_available": "No FAQ available",
+        "load_more": "Load More",
+
+        "failed_to_load_stations": "Failed to load stations",
+        "no_favorites": "No favorites",
+        "add_stations_to_favorites": "Add stations to favorites",
+        "unknown_station": "Unknown Station",
+        "no_address_available": "No address available",
+        "start_from": "Start from",
+        "get_direction": "Get Direction",
+        "na_km": "N/A km",
+        "error": "Error",
+        "could_not_launch_maps": "Could not launch maps",
+
+        "news_detail": "News Detail",
+        "no_more_news": "No more news",
+
+        "payment": "Payment",
+        "cancel_payment": "Cancel Payment",
+        "cancel_payment_confirmation":
+            "Are you sure you want to cancel this payment?",
+        "no": "No",
+        "yes": "Yes",
+
+        "privacy_policy": "Privacy Policy",
+        "failed_to_load_policy": "Failed to load policy",
+        "no_policy_available": "No policy available",
+        "failed_to_load_html": "Failed to load content",
+        "no_content_available": "No content available",
+        "cannot_launch_url": "Cannot launch URL",
+
+        "scan_qr_instruction":
+            "Please scan the EV Charger QR code to confirm your payment",
+        "flashlight": "Flashlight",
+
+        "select_province": "Select Province",
+        "search_province": "Search province",
+        "clear_search": "Clear search",
+        "provinces_found": "{{count}} provinces found",
+        "no_provinces_available": "No provinces available",
+        "no_provinces_found": "No provinces found",
+        "try_different_search": "Try different search",
+        "clear_filter": "Clear filter",
+        "close": "Close",
+        "search_station": "Search station",
+        "direction": "Direction",
+        "added_to_favorites": "Added to favorites!",
+        "failed_to_update_favorite": "Failed to update favorite",
+        "khr": "KHR",
+        "choose_payment": "Choose payment",
+        "aba_khqr": "ABA KHQR",
+        "tap_to_pay_with_khqr": "Tap to pay with KHQR",
+        "please_enter_valid_amount": "Please enter a valid amount",
+        "please_select_payment_method": "Please select a payment method",
+        "warning": "Warning",
+        "checkout_qr_url_empty": "Checkout QR URL is Empty",
+
+        "top_up_successfully": "Top up Successfully",
+        "payment_success_message":
+            "Please check your account balance make sure all information are correct.",
+        "continue": "Continue",
+
+        "loading": "Loading...",
+        "please_wait": "Please wait...",
+        "success": "Success",
+        "failed": "Failed",
+        "cancelled": "Cancelled",
+        "pending": "Pending",
+        "approved": "Approved",
+        "no_data_available": "No data available",
+        "something_went_wrong": "Something went wrong",
+        "please_try_again": "Please try again",
+        "network_error": "Network error",
+        "connection_timeout": "Connection timeout",
+        "ok": "OK",
+
+        "transaction_details": "Transaction Details",
+        "transaction_id": "Transaction ID",
+        "station_name": "Station Name",
+        "order_date": "Order Date",
+        "total_amount": "Total Amount",
+        "payment_method": "Payment method",
+        "confirm_payment": "Confirm payment",
+        "payment_successful": "Payment Successful!",
+        "scan_another_qr": "Scan Another QR",
+        "go_to_wallet": "Go to Wallet",
+        "total_kwh": "Total kWh",
+
+        "distance": "Distance",
+        "km": "km",
+        "current_location": "Current location",
+
+        //coupon
+        "promo_code": "Promo Code",
+        "enter_pro": "Enter Promo Code",
+        "my_offer": "My Offers",
+        "pro_message":
+            "Promotion code value must be equal to or higher than the ticket price.",
+        "your_pro": "Your promotion code ",
+        "is_invalid": " is invalid",
+        "is_expired": " has expired",
+        "dun_match": " The price doesn't match with ticket price",
+        'return': "Return",
+        'pro_available': 'Your promo code available ',
+        'more': " more",
+        'dis_coupon': "Discount (Promo code)",
+
+        // Membership
+        'ticket1': "1. Buy 10 tickets you will become VIP Customer.",
+        'ticket2': "2. You will get 1 ticket for free on every 11th ticket.",
+        'ticket3': "3. VIP customer get \$1 discount on each ticket.",
+        'score': 'Score',
+        'balance': 'Balance',
+        'ticket': 'Ticket',
+        'logistic': 'Logistics',
+        'note100': 'Note: 100 points = 100 riels',
+        'mem':
+            'This discounted amount cannot be exchanged for cash but can be used for sending goods, purchasing tickets, or buying items in VPhsar and VTENH',
+        'mem1':
+            '. The company offers a discount at the end of each month based on the discount table, according to the monthly deposit amount.',
+        'mem2': '. The company provides VIP services for customers',
+        'don_have_member_card': "You don't have a membership card.",
+        'hide_info_card': "Hide information card",
+        'see_info_card': "See information card",
+
+        // Sign In Screen..................x
+        'welcome': 'Welcome',
+        'phone_num': 'Phone number / Email address',
+        'phone_req': 'Phone number / Email address is required ',
+        'phone_inco': 'Phone number / Email address is invalid',
+        'phone_in': 'Phone number is invalid',
+        'pass': 'Password',
+        'pass_req': 'Password is required',
+        'pass_inco': 'Password at least 4 digits',
+        'new_here': "Don't have account?",
+        'register': 'Register',
+        'forget_pass': 'Forgot Password?',
+        'login': 'Login Account',
+        'contact': 'Contact Us',
+        'invalid': 'Invalid',
+        'password_invalid': 'Password Invalid',
+        'check_password': "Please check your phone number or password again!",
+        'session_expired': 'Session Expired',
+        'session_expired_info': 'Please login again!',
+        'server_disruption': 'Server Disruption',
+        'server_disruption_info': 'We will back soon!',
+        "scan_parcel": "Scan Tracking Parcel",
+
+        // Sign Up Screen..................
+        'user_can': "For local phone number only (Cambodia +855)",
+        'create_account': 'Create New Account',
+        'phone_r': "Phone number is required",
+        'username_req': 'Username is required',
+        'username_inco': 'Full Name at least 4 character',
+        'name-signup': 'Name',
+        'pass_not_match': 'Password not match',
+        'confirm_pass': 'Confirm Password',
+        'agree_info':
+            'By registering for a VET Express account, you are agreed to our ',
+        'agree': ' Agreement',
+        'have_account': 'Have an account?  ',
+        'sign_in': 'Sign In',
+        'this_phone_number_have_been_registered':
+            'This phone number have been registered',
+        'code_verify_invalid': 'Code verify invalid',
+        'code_have_sent': 'Code have sent',
+        'check_your_phone_number': 'Check your phone number',
+        'this_phone_number_not_registered': 'This phone number not registered',
+        'sms_code_invalid': 'Your code invalid please check sms code',
+        "optional": "Optional",
+        "nationality": "Nationality",
+        "choose_gallery": "Choose Gallery From",
+        'upload': "Upload",
+        'search_nation': "Search nationality",
+
+        // Forgot Password..................
+        'forgot_pass': 'Forgot Password',
+        'enter_phone_num': 'Enter your phone number to continue',
+        'continue': 'Continue',
+
+        // New Password Screen..................
+        'new_pass': 'New Password',
+        'new_password': "Enter your new password",
+
+        // Verify Code Screen..................
+        'verify_code': 'Verification Code',
+        'enter_code_sms':
+            'Enter 4 digits code we sent you via SMS  to continue',
+        'code_expired': 'Code Expired',
+        'code_expire': 'Code Expire',
+        'resend': 'Resend',
+        'click_open_telegram':
+            'Please click here to open Telegram for get code OTP',
+        'opt_not_working':
+            'OPT not working? Would you like to change OTP option?',
+
+        // Search Goods Screen..................
+        'search_goods': 'Search Goods Transfer',
+        'enter_goods_transfer':
+            'Enter the goods transfer code in the input text and then press on icon search button to find the result.',
+        'goods_transfer_code': 'Enter goods transfer code',
+        'or': ' Or ',
+        'scan_qr_info': 'Scan QR code on goods receipt',
+        'scan_qr': 'Scan QR code',
+        'code': 'Enter goods transfer code',
+        'code_requ': 'Code is required',
+
+        // Change language Screen..................
+        'change_lang': 'Choose Language',
+        'lang': 'Language',
+        'lang_ques': 'Do you want to change language?',
+        'no': 'No',
+        'yes': 'Yes',
+
+        // Contact Us Screen..................
+        'contact_us': 'Contact Us',
+        'help': 'Need Help?',
+        'help_info':
+            'Contact us 24/7 by selecting any channel you prefer below',
+        'info': 'Information',
+        'install_messenger': 'Please install Messenger App!',
+        'phone_call': 'Phone Call',
+        'cancel': 'Cancel',
+        'phone': 'Phone',
+        'hotline': "Hotline",
+        'vetBus': 'Vireak Buntham - Bus Ticket',
+        'vetLogistic': 'Vireak Buntham - Logistics',
+        'vetBuva': 'Buva Sea Cambodia - Speedboat',
+        'vetThai': 'Vireak Buntham - Thai Logistics',
+        'vetVN': 'Vireak Buntham - Vietnamese Logistics',
+        'vetRental': 'Vireak Buntham - Vehicle Rental',
+        'chat': 'Chat',
+        'messengerChat': 'Facebook Chat',
+        'fb': 'Facebook Chat',
+        'rental': 'Vehicle Rental',
+        'rental_tele': 'Telegram Chat',
+        'vetService': 'Vireak Buntham Travel & Bus Service',
+        'social': 'Social Media',
+        'ig': 'Instagram',
+        'tele': 'Telegram',
+        'tiktok': 'Tik Tok',
+        'yt': 'YouTube',
+
+        // Menu Screen..................
+        'home': 'Home',
+        'view_acc': "View Account",
+        'coming': "Coming soon!",
+        'view_pf': "View Profile",
+        'skip': 'Skip',
+        'news': "News & Promotions",
+        'vet_airway': "VET Airways",
+        'self_service': 'Self-Service',
+        'booking_delivery': 'Book Delivery',
+        'booking_bus': 'Vireak Buntham',
+        'booking_bus_new': 'Vireak Buntham',
+        'booking_boat': 'Buva Sea',
+        'booking_boat_new': 'Buva Sea',
+        'booking_travel_package': 'Travel Package',
+        'booking_travel_package2': "Travel Package",
+        'track_parcel': 'Track Parcel',
+        'goods_transfer': 'Goods Transfer History',
+        'goods_transfer_new': 'Parcel History',
+        'ticket_history_new': 'Ticket\nHistory',
+        'account': 'Account',
+        'subsidiaries': 'VET\nSubsidiaries',
+        'vet_location': 'VET Location',
+        'telephone': 'Telephone : ',
+        'membership': 'Membership Card',
+        'setting': 'Settings',
+        'logout': 'Logout',
+        'logout_que': 'Do you want to Logout?',
+        'car_rental': 'Vehicle Rental',
+        'car_rental1': 'Vehicle Rental',
+        'booking_air_bus': 'VET Air Bus',
+        'booking_air_bus1': 'VET Air Bus',
+        'our_services': 'Our Services',
+        'other_service': 'Explore Services',
+        'history': 'History',
+        'promotion': 'Promotion',
+        'resort': 'Resort',
+        'v_tinh': 'VTenh',
+        'v_phsar': 'VPhsar',
+        'hotline_1': 'Hotline - Bus Ticket: ',
+        'hotline_2': 'Hotline - Logistic: ',
+        'hotline_3': 'Hotline - BuvaSea: ',
+        'hotline_4': 'Thailand - Logistic: ',
+        'hotline_5': 'Veitnam - Logistic: ',
+        'hotline_6': 'Vehicle Rental: ',
+        'contact_list': 'Contact List',
+        'telephone_num': 'Phone number',
+
+        //Goods transfer list detail
+        'date': 'Date',
+        'sender': 'Sender',
+        'receiver': 'Receiver',
+        'from': 'From',
+        'note': 'Note',
+        'status': 'Status',
+        'tracking_detail': 'Tracking Detail',
+        'no_qr_code_found': 'This QR Code is not found.',
+        'posting': 'Posting',
+        'shipping': 'Shipping',
+        'arrival': 'Arrival',
+        'call': 'Call to Customer',
+        'delivery': 'Delivery To Customer',
+        'received': 'Customer Received',
+        'at': 'at',
+        'from_info': 'from',
+        'thank_for_your_support':
+            'Thank For your Support \n HotLine: 010 522 522',
+        'hotline_010_522_522': 'HotLine:010 522 522',
+
+        //passenger detail
+        'no_package': "You don't have travel package",
+        'hello': "Hello",
+        'passenger': "Passenger Details",
+        'travel_ticket_form': 'Travel Ticket From',
+        'round_trip_ticket': 'Round Trip Ticket',
+        'departure_date:': 'Departure Date : ',
+        'seat_number': 'Seat No.',
+        'female': 'Female',
+        'nationality_choose': 'Choose Nationality',
+        'cambodian': 'Cambodian',
+        'foreigner': 'Non-Cambodian',
+        'gender': 'Gender',
+        'male': 'Male',
+        'to': " To ",
+        'select_boarding': "Select boarding point",
+        'select_drop': "Select drop off point",
+        'process_to_payment': 'Process Payment',
+        'contact_information': 'Contact Information',
+        'information_of_travel': 'Customer Information',
+        'boarding_point': 'Boarding point',
+        'drop_off_point': 'Drop off point',
+        'please_input_require_data': 'Please input require data',
+        'start_again': 'Start again',
+        'passenger_detail': 'Passenger Detail',
+        'lucky_draw_1':
+            'Booking LUCKY TICKET chances to win monthly prizes by just adding 0.25\$ on ticket price. Visit our ',
+        'lucky_draw_2': 'Facebook page ',
+        'lucky_draw_3': 'for details.',
+        'lucky_draw': 'Lucky Ticket',
+        'dob': "DOB",
+        'passport': "Passport No.",
+
+        //ticket_history
+        'ticket_history': 'Ticket History',
+        'ticket_history_new_1': 'Ticket History',
+        'ticket_code': 'Ticket Code',
+        'transaction_id': 'Transaction ID',
+        'booking_date': 'Booking date',
+        'departure_date': 'Departure Date',
+        'transportation_type': 'Transportation Type',
+        'payment': 'Payment type',
+        'ticket_price': 'Ticket Price',
+        'sub_total': 'Grand Total',
+        'sub_total_from': 'Sub Total Of',
+        'discount': 'Discount',
+        'grand_total': 'Grand Total',
+        'total_vat': 'Total VAT',
+        'ticket_qr': 'Please show QR Code when boarding',
+        'show_qr': 'Show QR Code',
+        'search_ticket': "Search",
+
+        //payment_screen
+        'choose_payment': 'Choose payment',
+        'tap_to_pay_with_ABA_mobile': 'Scan to pay with ABA mobile',
+        'tap_to_pay_with_KHQR': 'Scan to pay with any banking app',
+        'tap_to_pay_with_ALIPAY': 'Scan to pay with AliPay',
+        'tap_to_pay_wing': 'Pay Securely With Wing Bank',
+        'tap_to_pay_acleda': 'Scan to pay with ACLEDA',
+        'travel_ticket_from': 'Travel Ticket From',
+        'information': 'Information',
+        'do_you_want_to_cancel_booking': 'Do you want to cancel booking?',
+        'discount5': 'Discount (5%)',
+        'total_discount': 'Total Discount',
+        'total_price': 'Total Price',
+        'travel_information_summary': 'Travel information summary',
+        'your_ticket_has_been_reserved': 'Your Ticket Has Been Booked',
+        'ticket_info1':
+            'Please arrives the boarding station 30 minutes before departure time.Please check your booking ticket in option Ticketing History.',
+        'payment_not_success': 'Payment not success',
+        'choose_payment_method': 'Please choose payment method',
+        'seat_not_free_now': 'Seat not free now',
+        'pay_now': 'Pay Now',
+        'show_ticket': 'Show Ticket',
+        'show_package': "Code Travel",
+        'ok': 'Ok',
+        'payment_method': 'Payment Method : ',
+        'show_less': "(Show Less)",
+        'fare_summary': "(Fare Summary)",
+        'total_going': "Total going",
+        'total_return': "Total return",
+        'service_fee': "Service Fee",
+
+        //schedule_list_one_way
+        'remaining_seat': 'Remaining Seat',
+        'direct': 'Direct',
+        'booking_ticket': 'Book Now',
+        'left': 'Left',
+        'departure_time': 'Departure',
+        'estimate_arrival': 'Arrival',
+        'full': 'Full',
+        'national_road': 'National Road ',
+        'trip_info': 'Trip Info',
+        'estimate_time': 'Estimate Time',
+        'data_not_found': 'Data Not Found',
+        'bus_left': 'This schedule has left the station.',
+        'bus_full': 'This schedule is fully booked.',
+
+        //select_screen
+        'destination_from': 'Destination From',
+
+        //select_seat_one_way
+        'available': 'Available',
+        'selected': 'Selected',
+        'unavailable': 'Unavailable',
+        'next': 'Next',
+        'next1': 'Continue',
+        'choose_seat': 'Choose Seat',
+        'number_of_seat': 'Number of seat not same',
+
+        //ticket_history
+        'booking_history': 'Booking History',
+        'payment_type': 'Payment type',
+        'view_details': 'View Details',
+        'total_ticket_price': 'Total',
+        'total_amount': "Total amount ",
+        'seat': "Seat",
+        'seats': "Seats",
+        'view_map': "View Map",
+
+        //ticket_menu
+        'one_way': 'One Way',
+        'round_trip': 'Round Trip',
+        'find_now': 'Find Now',
+        'select_destination': 'Select Destination',
+        'please_select_destination': 'Please Select Destination',
+        'please_select_destination_from': 'Please Select Departing From',
+        'please_select_destination_to': "Please Select Going to",
+        'return_date': 'Return Date',
+        'departing_from': 'Departing From',
+        'going_to': 'Going To',
+        'select_date': 'Select Date',
+        'please_select_back_date': 'Please select return date',
+
+        // Resort
+        'accommodation': "Accommodation",
+        'can_not_open_facebook': 'Can not open Facebook',
+        'can_not_open_telegram': 'Can not open Telegram',
+        'book_resort': 'Book Now',
+
+        // Select OTP
+        'select_opt': 'Select OTP Option',
+        'select_opt_helper': 'Please select OTP Option',
+        'send_sms': 'Send via SMS',
+        'send_telegram': 'Send via Telegram',
+
+        //logistic ///////////////////////////////////////////////////
+
+        // subsidiaries
+        'vet_subsidiaries': 'VET Subsidiaries',
+
+        //self_service
+        'add_items_to_self_service': 'Add Items To Self Service',
+        'phone_number': 'Phone number',
+        'phone_number_is_incorrect': 'Phone Number is incorrect',
+        'phone_number_is_required': 'Phone Number is required',
+        'destination': 'Destination',
+        'name_of_the_location': 'Name of the location',
+        'province_is_required': 'Province is required',
+        'province_city': 'Province/City',
+        'location_is_required': 'Location is required',
+        'location': 'Location',
+        'items_information': 'Items Information',
+        'items_price': 'Items Price',
+        'items_price_is_required': 'Items Price is required',
+        'amount': 'Amount',
+        'amount_is_required': 'Amount is required',
+        'unit_is_required': 'Unit is required',
+        'please_select_province': 'Please select province/city',
+
+        //self_service_qr
+        'successful_deposit': 'Successful Deposit',
+        'plz_show': 'Please show the QR code to the branch staff to Scan',
+        'book_more': 'Book More',
+        'plz_check':
+            'Please check the item information before you click save to get the QR code',
+        'plz_view': 'Please view detail in Goods Transfer History',
+        'check_information': 'Check Information',
+        'save': 'Save',
+        'edit': 'Edit',
+        'unit': 'Unit',
+        'sender_telephone': 'Sender phone number',
+        'receiver_telephone': 'Receiver phone number',
+        'pro_city': 'Province/City',
+        'item_price': 'Item Price',
+        'qty': "Qty",
+
+        //scan_qr_screen
+        'enter_tracking': 'Enter Tracking Code',
+        'upload_image': 'Upload Image',
+        'code_invalid': 'Code invalid',
+        'crop_qr_code': 'Crop QR Code',
+        'scan_btn': 'Scan QR Code',
+
+        //location_search_screen
+        'vet_location_new': 'VET Location ',
+        'search_virak': 'Search Vireak Buntham Location',
+        'no_data': 'No Data History!',
+        'have_data': 'has data',
+
+        //location_detail_screen
+        'click_to_find': 'Click to find best rout',
+        'phone_number_dort': 'Phone Number : ',
+        'check_to_call': 'Click to call',
+        'plz_install': 'Please install Google Map App!',
+        'plz_install_messager': 'Please install Messenger',
+
+        //good_transfer_history_screen
+        'goods_transfer_history': 'Goods Transfer History',
+        'sending': 'Sender',
+        'receiving': 'Receiver',
+        'vet_self_service': 'Self-Service',
+        'sender_tel': 'Sender Telephone',
+        'phone_of_receiver': 'Phone Number of Receiver',
+        'view_qr_code': 'View QR Code',
+
+        //goods_search_input
+        'search_tracking_code': 'Search Tracking Code',
+        'code_is_required': 'Code is required',
+        'code_not_correct': 'Code not correct',
+        'enter_tracking_code': 'Enter Tracking Code',
+        'search': 'Search',
+        'plz_enter_code': 'Please enter code',
+
+        //goods_information_screen
+        'goods_information': 'Goods Information',
+        'tracking_parcel': 'Tracking Parcel',
+        'transfer_code': 'Transfer Code',
+        'tracking_code': 'Tracking Code',
+
+        //booking_delivery_screen
+        'booking_for_goods_delivery': 'Booking for goods delivery',
+        'item_type': 'Item Type',
+        'item_type_is_required': 'Item Type is required',
+        'item_size': 'Item Size',
+        'gallery': 'Gallery',
+        'take_photo': 'Take Photo (Optional)',
+        'enter_address':
+            'Enter address \nExmaple: Home 64F Road KS7 3 Village \nChhroy Chonva Distric Phnom Penh ',
+        'add_is_req': 'Address is required',
+        'change_photo': 'Change Photo',
+        'pick_up_address': 'Pick Up Address',
+        'booking': 'Booking',
+        'plz_com_info': 'Please complete information',
+        'live_location': 'Live Location',
+        'manual_address': 'Manual Address',
+        'in_pp': 'In Phnom Penh',
+        'in_province': 'In Province',
+        'small_moto': 'Small (Motor Pick Up)',
+        'big_tuk_tuk': 'Big (Tuk Tuk Pick Up)',
+        'accept': 'Accept',
+        'street': 'Street ',
+        'live_location_title': 'Live location',
+        'success': 'ការស្នើសុំបានជោគជ័យ',
+        'not_success': 'Unsuccessful',
+        'success_info': '(Request Successful)',
+        'un_success_info': '(Request Unsuccessful)',
+
+        //account_screen
+        'total': 'Total ',
+        'select_month': 'Select Month ',
+        'detail_acc': 'Detail ',
+        'available_point': 'Available Point ',
+        'detail_new': 'More Detail',
+
+        //user information
+        'user_information': 'User Information',
+        'choose_action': 'Choose Action',
+        'camera': 'Camera',
+        'name_pro': 'Full name',
+        'phone_number_info': 'Phone number',
+        'email': 'Email address',
+        'birth_date': 'Birth Of Date',
+        'address': 'Address',
+        'plz_fill': 'Please fill the information',
+
+        //setting
+        'change_language': 'Change Language',
+        'user_info': 'User Information',
+
+        //notification
+        'read_all': 'Read All',
+        'notification': 'Notification',
+        'no_notification': 'Not have notification',
+
+        //member ship
+        'membership_card': 'Membership',
+        'not_have_membership': "You don't have membership card yet!",
+        'name': 'Name',
+        'tel': 'Tel',
+        'app': 'App',
+        'vet_logistic': 'VET Logistic',
+        'website': 'Website',
+        'memeber_code': 'Membership Code',
+
+        // internet check
+        'connection': 'No Connection',
+        'no_internet_connection': 'Check your internet connection',
+
+        // delete account
+        'successful': 'Successful',
+        'not_successful': 'Not Successful',
+        'successful_delete': 'Account deleted successfully',
+        'fail_delete': 'Account not delete',
+        'delete_account': 'Delete Account',
+        'delete_ques': 'Do you want to delete your account?',
+        'delete_info':
+            'If you click button YES, your account and all your information will be permanently deleted, and you will not be able to retrieve your information.',
+        'updated': 'Information Updated',
+        'try_again': 'Please try again',
+
+        // update
+        'update': 'Update VET Express?',
+        'update_info':
+            'VET Express recommends that you update to the last version.',
+        'update_now': 'Update',
+        'close': 'Close',
+
+        // location
+        'location_total': 'Location',
+
+        // survey
+        'title_survey': 'Survey our services',
+        'survey_ques': 'How is our company services?',
+        'survey_comment': 'Your comment',
+        'survey_submit': 'Submit',
+        'survey_required': 'Comment is required',
+        'take_a_survey': 'Take a Survey',
+        'survey_submitted': 'Your survey have submitted!',
+        'take_survey': 'Take a Survey',
+
+        // rental car
+        "ask_info": "Ask info or book via",
+        'car_type': 'Vehicle Type',
+        'choose_car': 'Choose Car',
+        'booking_name': 'Booking Name',
+        'name_is_required': 'Name is required',
+        'name_at_least_3': 'Name at least 3 digits',
+        'one_way_rental': 'One Way',
+        'round_trip_rental': 'Round Trip',
+        'trip': 'Trip',
+        'date_rental': 'Departure Date',
+        'until': 'Until',
+        'to_rental': 'To',
+        'journey_type': 'Journey Type',
+        'amount_of_car': 'Amount of Car',
+        'remark': 'Remark',
+        'remark_optional': 'Remark (Optional)',
+        'thz': 'Thank you!',
+        'rental_information': 'Rental Information',
+        'thz_info':
+            'Please wait until our Call Service call to confirm of your rental car.\n Contact Us: 010522522 / 081911911',
+
+        // Schedule car detail
+        'amenities': 'Amenities',
+        'boarding': 'Boarding',
+        'drop_off': 'Drop Off',
+        'boarding_address': 'Boarding point',
+        'drop_off_address': 'Drop off point',
+        'description': 'Description',
+        'show_point': 'Show Pin',
+
+        'payment_time_out': 'Payment time out!',
+        'something_wrong': 'Something went wrong!',
+
+        'tracking_status': 'Tracking Status',
+
+        // Travel Package
+        'travel_package_history': 'Travel Package History',
+        'register_info': 'Register Info',
+        'confirm_package': 'Package Detail',
+        'confirm_payment': 'Confirm Payment',
+        'package_pf': "Travel Package Profile",
+        'buy_now': 'Buy Now',
+
+        // Drop Down
+        'select_item': 'Select item',
+        'select_gender': "Select gender",
+        'select_nation': "Select nationality",
+
+        //user detail
+        "click": "By clicking on 'Process Payment', you agree to the ",
+        "term and policy": "Terms & Conditions and Privacy Policy",
+        "apply": "Apply",
+        "apply_package": "Apply Travel Package Code",
+        "apply coupon code": "Apply Coupon Code",
+        "Telephone": "Telephone : ",
+        "summary": "Summary",
+        'ready_to_lucky_ticket': "Ready to Win? Get Your Lucky Ticket Now!",
+        "please_tick":
+            "Please tick if you are feeling lucky to turn that luck into real rewards with our exciting Lucky Ticket!",
+        'add': "Add ",
+        'only_25': "ONLY \$0.25 ",
+        'extra_on':
+            "extra on top of the ticket price for chance to win monthly grand prizes. Visit our",
+        'facebook': " Facebook page ",
+        'detail': "for details.",
+
+        // select seat
+        "DownStair": "Down Stair",
+        "UpStair": "Up Stair",
+        'Toilet': "Toilet",
+        'Door': "Door",
+
+        //travel package
+        "issue_date": "Issue Date",
+        "expire_date": "Expired Date",
+        "Copy": "Copy",
+        "Code Travel": "Code travel : ",
+        'why_choose': "Why choose Travel Package?",
+        'readme':
+            'Are you a travel enthusiast with an ever-itchy foot? Look no further! Our Travel Package offers unparalleled opportunities for unforgettable experiences. Let us explain why our package is the perfect choice for your next adventure:\n\nCost-Effective: Great value for your money with best rate offer.Variety of Destinations: From 25 provinces in Cambodia, Thailand, Vietnam and Laos.\nPeace of Mind: Safety and comfort ensured.\nCustomization: Tailored to your preferences of Air Bus, VIP Van, Luxury Bus, Rental Car and Speed Boat any dates within your package validity.\nUnforgettable Experiences: Memories that last a lifetime.\n\nBook now and embark on your dream adventure!',
+        'discount_travel': 'Discount (Travel Package)',
+        "see_more": "SEE MORE",
+        "see_less": " SEE LESS",
+        'add_img': 'Photo',
+        'plz_upload': 'Please upload a clear face photo',
+        'buy_package': "Buy Package",
+        'price': "Price",
+
+        //vehicle rental screen
+        "vehicle readme":
+            "VET Air Bus rental is providing premium fleet rental through the country with safe and reliable service as require itinerary. We also offer charter service from Cambodia to Bangkok & Ho Chi Minh city.There are varieties of fleet such as Luxury Bus, Mini Bus and Van. Both Thailand & Vietnam border process is more convenience, we have our staff at the border to process VIP service for exit and entry visa stamp included with the charter fee.",
+        "vehicle_bar": "Vehicle Rental in Cambodia, Vietnam & Thailand",
+
+        // term and conditions
+        "condition": "Terms & Conditions",
+        "condition-ticket": "Terms & Conditions For Ticket",
+        "condition-logistic": "Terms & Conditions For Logistics",
+        "condition-buvaSea": "Terms & Conditions For Buvasea",
+
+        //* term condition logistic
+        't1':
+            'The company does not accept illegal items, including but not limited to weapons, drugs, and wildlife, etc. ',
+        't2':
+            'The company is not responsible for the handling or preservation of perishable items.',
+        't3':
+            'The company is not responsible for items left by guests for more than one week.',
+        't4':
+            'In the event of loss or damage, the company will compensate up to 20 times the shipping cost, not exceeding the value of the item. (Normal Logistics)',
+        't5':
+            'In the event of loss or damage, the company will compensate up to 40 times the shipping cost, not exceeding the value of the item. (Toan Chet Logistics)',
+        't6':
+            'In the event of loss or damage, the company will compensate up to 5 times the shipping cost, not exceeding the value of the item. (International Logistics)',
+
+        //*term condition ticket
+        "1": "1. Arrival Time",
+        '1.1':
+            'Passengers are required to arrive at the boarding point 15 minutes before the scheduled departure time for check-in.',
+        '1.2':
+            "It is the passenger's responsibility to ensure early or on-time arrival at the boarding station. Passengers who arrive late or fail to show up on the date and time of travel will not be eligible for refunds, and purchased tickets will expire once the bus departs.",
+        "2": "2. Ticket Policy",
+        '2.1':
+            "Purchased tickets are non-refundable but can be converted into a coupon for future trips.",
+        '2.2':
+            "Coupon refunds or reschedules can be processed up to 12 hours before the departure schedule. Coupons are valid for three months and can be used only once for rescheduling with the same route and vehicle type.",
+        "3":
+            "3. Infant, Child, Pregnant Women and People with Disabilities Policy",
+        '3.1':
+            "Infants under the age of 3 are not required to have tickets. They must be accompanied by an adult and sit on their lap. The company will not be held responsible for any injuries or harm that may occur to the infant during travel.",
+        '3.2':
+            "Children aged 3 and above, or those taller than 1 meter, are required to purchase their own seats at the full price.",
+        '3.3':
+            'For sleeper buses, infants are required to have a ticket at the full price.',
+        '3.4':
+            "Pregnant women over 27 weeks and people with disabilities must obtain prior approval from the company before purchasing tickets and traveling to ensure their safety. The company is not liable for any complications that may arise during travel.",
+        "4": "4. Border Crossing",
+        '4.1':
+            'Vireak Buntham Express Travel is not responsible for VISA entry to the destination country.',
+        '4.2':
+            'In cases where immigration rejects entry at the border, passengers will not be eligible for ticket refunds.',
+        "5": "5. Booking and Seat Selection",
+        '5.1':
+            'Passengers can choose their preferred seats and purchase real-time tickets through the following options:',
+        '5.2': 'Booking hotline: +855 81 911 911',
+        '5.3': 'Mobile app: VET Express',
+        '5.4': 'Website: www.vireakbuntham.com',
+        '5.5': 'Any VET branches',
+        "6": "6. Baggage Policy",
+        "6.1":
+            "Passengers are allowed a maximum of 25kg of checked baggage and one carry-on item.",
+        "6.2":
+            "Additional charges will apply for overweight baggage, calculated based on the local delivery fee.",
+        "7": "7. Prohibited Items",
+        "7.1": "The following items are strictly prohibited onboard:",
+        "7.2": "Strong-smelling food (e.g., durian)",
+        "7.3": "Pets and other living animals",
+        "7.4": "Firearms of all types",
+        "7.5":
+            "All types of drugs, smoking, e-cigarettes, and substance abuse in the vehicle",
+        "7.6": "Smuggled or illegal products",
+        "7.7": "Dangerous, flammable, or explosive items",
+        "8": "8. Passenger Responsibility",
+        '8.1':
+            'Passengers are responsible for the safety of their personal belongings and valuables.',
+        '8.2':
+            'Vireak Buntham Express Travel will not be held liable for any loss or damage to personal items.',
+        "9": "9. Alcohol Policy",
+        "9.1":
+            "Bringing alcohol onboard or consuming alcohol inside the vehicle is prohibited.",
+        "9.2":
+            "The company reserves the right to deboard any passengers who are intoxicated, unhygienic, or displaying inappropriate behavior that causes disturbances to others. Such passengers will not be eligible for refunds.",
+
+        //*term condition buva sea
+        "b1": "1. Pick-Up Service",
+        "b11":
+            "Free pick-up service is available at VET’s bus terminal in Sihanoukville.",
+        "b12": "Passengers must be present at the designated pick-up time.",
+        "b13":
+            "It is the passengers' responsibility to ensure early or on-time arrival at the pick-up station. Passengers who arrive late or fail to show up on the date and time of travel will not be eligible for refunds, and purchased tickets will expire once the speedboat departs.",
+
+        "b2": "2. Infant and Child Ticket Policy",
+        "b21":
+            "Infants under the age of 5 are not required to have tickets. They must be accompanied by an adult and sit on their lap. The company will not be held responsible for any injuries or harm that may occur to the infant during travel.",
+        "b22":
+            "Children aged 5 and above are required to purchase their own seats at the full price.",
+
+        "b3": "3. Baggage Allowance",
+        "b31":
+            "Checked Baggage: Each passenger is allowed a maximum of 30kg of checked baggage.",
+        "b32": "Carry-On Item: One carry-on item is permitted per passenger.",
+        "b33":
+            "Overweight Baggage: Additional charges will apply for overweight baggage, calculated based on the local delivery fee.",
+
+        "b4": "4. Prohibited Items",
+        'b40': 'The following items are strictly prohibited onboard:',
+        "b41": "Firearms",
+        "b42": "Narcotics and illegal substances",
+        "b43": "Smuggled or prohibited goods",
+        "b44": "Dangerous, flammable, or explosive items",
+
+        "b5": "5. Pets",
+        "b51":
+            "Small pets (weighing less than 6kg) are permitted onboard, provided they are securely placed in a suitable cage or carrier.",
+
+        "b6": "6. Passenger Responsibilities",
+        "b61":
+            "Passengers are responsible for the safety of their personal belongings and valuables.",
+        "b62":
+            "Buva Sea Speedboat will not be held liable for any loss or damage to personal items.",
+
+        "b7": "7. Ticket Policy",
+        "b71":
+            "Purchased tickets are non-refundable but can be converted into a coupon for future trips, and shall be processed up to 12 hours before the departure schedule.",
+};

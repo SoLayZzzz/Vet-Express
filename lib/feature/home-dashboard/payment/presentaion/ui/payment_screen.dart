@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/feature/home-dashboard/payment/presentaion/state/payment_uistate.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
@@ -158,53 +159,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                 ),
               ),
             ),
-            bottomNavigationBar: SafeArea(
-              child: Container(
-                color: AppColors.whiteColor,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 10,
-                ),
-                child: globalButton(
-                  context: context,
-                  buttonText: 'pay_now'.tr,
-                  buttonColor:
-                      ValueStatic.ticketType == '3'
-                          ? AppColors.airBusColor
-                          : AppColors.primaryColor,
-                  onPressed: () async {
-                    if (uiState.paymentMethodSelected == 0) {
-                      alertDialogOneButton(
-                        title: 'information'.tr,
-                        description: 'choose_payment_method'.tr,
-                        buttonText: 'yes'.tr,
-                      );
-                    } else if (uiState.paymentMethodSelected == 5) {
-                      await controller.processBooking(
-                        context: context,
-                        transactionId: widget.id,
-                      );
-                      final token = controller.state.newToken;
-                      if (token.isNotEmpty && context.mounted) {
-                        showDialog(
-                          barrierColor: Colors.black26,
-                          context: context,
-                          builder: (dialogContext) {
-                            return dialogOptionACLEDA(widget.id, token);
-                          },
-                        );
-                      }
-                    } else {
-                      controller.processBooking(
-                        context: context,
-                        transactionId: widget.id,
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
+            bottomNavigationBar: _buildButtonPay(context, uiState),
             body: SafeArea(
               child: Column(
                 children: [
@@ -935,6 +890,56 @@ class _PaymentScreenState extends State<PaymentScreen>
         ),
       );
     });
+  }
+
+  Widget _buildButtonPay(BuildContext context, PaymentUistate uiState) {
+    return SafeArea(
+            child: Container(
+              color: AppColors.whiteColor,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 10,
+              ),
+              child: globalButton(
+                context: context,
+                buttonText: 'pay_now'.tr,
+                buttonColor:
+                    ValueStatic.ticketType == '3'
+                        ? AppColors.airBusColor
+                        : AppColors.primaryColor,
+                onPressed: () async {
+                  if (uiState.paymentMethodSelected == 0) {
+                    alertDialogOneButton(
+                      title: 'information'.tr,
+                      description: 'choose_payment_method'.tr,
+                      buttonText: 'yes'.tr,
+                    );
+                  } else if (uiState.paymentMethodSelected == 5) {
+                    await controller.processBooking(
+                      context: context,
+                      transactionId: widget.id,
+                    );
+                    final token = controller.state.newToken;
+                    if (token.isNotEmpty && context.mounted) {
+                      showDialog(
+                        barrierColor: Colors.black26,
+                        context: context,
+                        builder: (dialogContext) {
+                          return dialogOptionACLEDA(widget.id, token);
+                        },
+                      );
+                    }
+                  } else {
+                    controller.processBooking(
+                      context: context,
+                      transactionId: widget.id,
+                    );
+                  }
+                },
+              ),
+            ),
+          );
   }
 
   void _onPaymentGroupChanged(int? value) {

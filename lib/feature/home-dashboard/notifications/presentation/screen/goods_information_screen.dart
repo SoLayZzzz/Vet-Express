@@ -1,5 +1,5 @@
-import 'dart:developer';
-
+import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/utils/app_bar.dart';
@@ -36,7 +36,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarVET().appBar(context, 'goods_information'.tr),
+      appBar: AppBarVET().appBar(context, 'tracking_parcel'.tr),
       body: SafeArea(
         child: FutureBuilder<GoodsFindResponse>(
           future: futureData,
@@ -93,8 +93,8 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                   children: [
                                     Image.asset(
                                       index == 0
-                                          ? 'assets/icons/icon_tick_green.png'
-                                          : 'assets/icons/icon_tick_orange.png',
+                                          ? AssetImages.ic_ticket_green
+                                          : AssetImages.ic_ticket_orange,
                                       height: 24,
                                     ),
                                     Container(
@@ -124,7 +124,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                               .status)! ==
                                           1)
                                         display(
-                                          'assets/images/ic_posting.png',
+                                          AssetImages.ic_posting,
                                           'posting',
                                           'at',
                                           (transferData
@@ -154,7 +154,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                               .status)! ==
                                           2)
                                         display(
-                                          'assets/images/ic_shipping.png',
+                                          AssetImages.ic_shipping,
                                           'shipping',
                                           'from_info',
                                           (transferData
@@ -183,7 +183,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                               .status)! ==
                                           3)
                                         display(
-                                          'assets/images/ic_arrive.png',
+                                          AssetImages.ic_arrive,
                                           'arrival',
                                           'at',
                                           (transferData
@@ -212,7 +212,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                               .status)! ==
                                           4)
                                         display(
-                                          'assets/images/ic_receive.png',
+                                          AssetImages.ic_recieved,
                                           'received',
                                           '',
                                           (transferData
@@ -241,7 +241,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                               .status)! ==
                                           5)
                                         display(
-                                          'assets/images/ic_arrive.png',
+                                          AssetImages.ic_arrive,
                                           'transit',
                                           'at',
                                           (transferData
@@ -270,7 +270,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                               .status)! ==
                                           6)
                                         display(
-                                          'assets/images/ic_delivery_to_customer.png',
+                                          AssetImages.ic_delivery_to_customer,
                                           'delivery',
                                           '',
                                           (transferData
@@ -299,7 +299,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                                               .status)! ==
                                           7)
                                         display(
-                                          'assets/images/ic_call_to_customer.png',
+                                          AssetImages.ic_call_to_customer,
                                           'call',
                                           '',
                                           (transferData
@@ -334,7 +334,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                 }
               }
             } else if (transferData.hasError) {
-              log('error ${transferData.error}');
+              debugPrint('error ${transferData.error}');
             }
 
             return const Center(
@@ -347,21 +347,60 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
           },
         ),
       ),
-      bottomNavigationBar: Container(
-        width: MediaQuery.of(context).size.width,
-        color: AppColors.primaryColor,
-        height: 70,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text(
-            'thank_for_your_support'.tr,
-            style: const TextStyle(color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+      bottomNavigationBar: _buildTotalBottomNavigationBar(),
     );
   }
+
+  Widget _buildTotalBottomNavigationBar() {
+  return SafeArea(
+    child: Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.black12, width: 0.5)), 
+      ),
+      height: 70,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${'total_price'.tr} \$11.00',
+            style: const TextStyle(
+              color: Colors.black, 
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+
+          SizedBox(
+            width: 140,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                Get.toNamed(AppRoutes.parcelPayment);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                "unpaid".tr,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+              ),
+            ),
+          )
+        
+        ],
+      ),
+    ),
+  );
+}
+
+  
 
   Widget _buildParcelInfo(AsyncSnapshot<GoodsFindResponse> transferData) {
   final data = transferData.data!.body?.data?[0];
@@ -373,7 +412,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
       borderRadius: BorderRadius.circular(10),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withAlpha(30),
           blurRadius: 10,
           offset: const Offset(0, 2),
         ),
@@ -386,59 +425,56 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 1. Tracking Section
-          _labelRow('Tracking Code:', '${data?.code}'),
-          _labelRow('Tracking China No.:', 'N/A'),
+          _labelRow('${'track_code'.tr}:', '${data?.code}'),
+          _labelRow('${'track_china_no'.tr}:', '-'),
           
           const SizedBox(height: 16),
-          const Text('Item Details:', style: TextStyle(fontWeight: FontWeight.bold)),
+           Text('${'item_detail'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
 
           // 2. Fees Grid
-          Row(
+          Column(
             children: [
-              Expanded(child: _labelRow('Transfer Fee CH:', '\$10.50')),
-              Expanded(child: _labelRow('Packing Fee:', '\$0.50')),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(child: _labelRow('Transfer Fee KH:', '\$0.00')),
-              Expanded(child: _labelRow('Delivery Fee:', '\$0.00')),
+              _buildItemDetailsRow('${'tranfer_fee_ch'.tr}:', '\$10.50', '${'packing_fee'.tr}:', '\$0.50'),
+              _buildItemDetailsRow('${'tranfer_fee_kh'.tr}:', '\$0.00', '${'delivery_fee'.tr}:', '\$0.00'),
             ],
           ),
 
           const SizedBox(height: 16),
-          const Text('Item Size:', style: TextStyle(fontWeight: FontWeight.bold)),
+           Text('${'item_size'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
 
           // 3. Size Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Width: 120CM', style: const TextStyle(fontSize: 13)),
-              Text('Length: 120CM', style: const TextStyle(fontSize: 13)),
-              Text('Height: 120CM', style: const TextStyle(fontSize: 13)),
+              Text('${'width'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
+              Text('${'length'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
+              Text('${'height'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
             ],
           ),
 
           const SizedBox(height: 16),
-          const Text('Item Weight:', style: TextStyle(fontWeight: FontWeight.bold)),
+           Text('${'item_weight'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Text('Weight: 1.20KG'),
+          Text('${'weight'.tr}: 1.20KG'),
 
           const SizedBox(height: 20),
 
           // 4. Stylized Info Boxes
-          _buildInfoBox('QTY:', '${data?.qty} Package'),
+          _buildInfoBox('${'qty'.tr}:', '${data?.qty} Package'),
           const SizedBox(height: 10),
-          _buildInfoBox('From:', '${data?.destinationFromEn}'),
+          _buildInfoBox('${'from'.tr}:', '${data?.destinationFromEn}'),
           const SizedBox(height: 10),
           _buildReceiverBox(
-            label: 'Receiver:',
+            label: '${'receiver'.tr}:',
             phoneNumber: '${data?.receiverTelephone}',
-            toLabel: 'To:',
+            toLabel: '${'to'.tr}:',
             destination: '${data?.destinationToEn}',
           ),
+          //
+          const SizedBox(height: 10),
+           _buildInfoBox('${'delivery_to'.tr}:', '${data?.destinationToEn}'),
         ],
       ),
     ),
@@ -453,11 +489,49 @@ Widget _labelRow(String title, String value) {
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('$title  ', style: const TextStyle(color: Colors.black87)),
-        // Spacer(),
+        
         Expanded(
           child: Text(
             value,
             style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildItemDetailsRow(String title1, String value1, String title2, String value2) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6.0),
+    child: Row(
+      children: [
+        // Left Section
+        Expanded(
+          child: Row(
+            children: [
+              Text('$title1 ', style: const TextStyle(color: Colors.black87, fontSize: 14)),
+              const Spacer(), 
+              Text(
+                value1,
+                style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 14),
+              ),
+              const SizedBox(width: 20), 
+            ],
+          ),
+        ),
+        
+        // Right Section
+        Expanded(
+          child: Row(
+            children: [
+              Text('$title2 ', style: const TextStyle(color: Colors.black87, fontSize: 14)),
+              const Spacer(), 
+              Text(
+                value2,
+                style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 14),
+              ),
+            ],
           ),
         ),
       ],
@@ -510,8 +584,7 @@ Widget _buildReceiverBox({
             ),
           ],
         ),
-        const SizedBox(height: 8), // Space between Receiver line and To line
-        // Bottom Row: To and Destination
+        const SizedBox(height: 8),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -655,32 +728,32 @@ Widget _buildReceiverBox({
     );
   }
 
-  labelDisplay({required title, required value}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              '$title:',
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: AppColors.titleColor,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: AppColors.titleColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // labelDisplay({required title, required value}) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 4.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Expanded(
+  //           child: Text(
+  //             '$title:',
+  //             style: const TextStyle(
+  //               fontWeight: FontWeight.w500,
+  //               color: AppColors.titleColor,
+  //             ),
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: Text(
+  //             value,
+  //             style: const TextStyle(
+  //               fontWeight: FontWeight.w500,
+  //               color: AppColors.titleColor,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
