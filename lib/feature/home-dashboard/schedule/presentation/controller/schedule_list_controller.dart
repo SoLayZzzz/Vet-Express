@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:express_vet/feature/home-dashboard/schedule/data/model/request/schedule_request_body.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -210,6 +212,9 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
 
     final args = Get.arguments as Map<dynamic, dynamic>?;
     final flowId = (args?['flowId'] as String?) ?? '';
+
+    debugPrint('ScheduleResponseBody: ${jsonEncode(data.toJson())}');
+    debugPrint("args: $args");
 
     Get.toNamed(
       AppRoutes.selectSeat,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:express_vet/models/boarding_point.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -140,6 +142,32 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       futures.add(state.futureDropOffPointTwoWay!);
     }
     await Future.wait(futures);
+
+    try {
+      final boardingOneWay = await state.futureBoardingPointOneWay!;
+      final dropOffOneWay = await state.futureDropOffPointOneWay!;
+      debugPrint(
+        '[Passenger] BoardingPoint OneWay: ${jsonEncode(boardingOneWay.toJson())}',
+      );
+      debugPrint(
+        '[Passenger] DropOffPoint OneWay: ${jsonEncode(dropOffOneWay.toJson())}',
+      );
+
+      if (state.futureBoardingPointTwoWay != null) {
+        final boardingTwoWay = await state.futureBoardingPointTwoWay!;
+        debugPrint(
+          '[Passenger] BoardingPoint TwoWay: ${jsonEncode(boardingTwoWay.toJson())}',
+        );
+      }
+      if (state.futureDropOffPointTwoWay != null) {
+        final dropOffTwoWay = await state.futureDropOffPointTwoWay!;
+        debugPrint(
+          '[Passenger] DropOffPoint TwoWay: ${jsonEncode(dropOffTwoWay.toJson())}',
+        );
+      }
+    } catch (e) {
+      debugPrint('[Passenger] Failed to log boarding/drop-off data: $e');
+    }
 
     return PassengerDetailInitResult(
       futureBoardingPointOneWay: state.futureBoardingPointOneWay!,

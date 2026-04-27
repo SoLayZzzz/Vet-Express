@@ -9,6 +9,7 @@ import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
+import 'package:express_vet/feature/home-dashboard/schedule/presentation/screen/ticket_schedule_car_detail_map_screen.dart';
 import '../controller/passenger_deatail_controller.dart';
 import '../../../../../api/travel_package.dart';
 import '../../../../auth/data/model/response/nationality_response.dart';
@@ -314,6 +315,66 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     );
   }
 
+  boarding.Body? _resolveSelectedPoint(List<boarding.Body> items, int selectedIndex) {
+    if (items.isEmpty) return null;
+    if (items.length == 1) return items[0];
+    if (selectedIndex >= 0 && selectedIndex < items.length) {
+      return items[selectedIndex];
+    }
+    return null;
+  }
+
+  void _openPointMap(BuildContext context, boarding.Body item) {
+    final lat = double.tryParse((item.lats ?? '').toString());
+    final long = double.tryParse((item.longs ?? '').toString());
+    if (lat == null || long == null) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => TicketScheduleCarDetailMapScreen(
+              name: (item.name ?? '').toString(),
+              address: (item.address ?? '').toString(),
+              latitude: lat,
+              longitude: long,
+            ),
+      ),
+    );
+  }
+
+  Widget _viewMapButtonForSelection({
+    required BuildContext context,
+    required List<boarding.Body> items,
+    required int selectedIndex,
+  }) {
+    final item = _resolveSelectedPoint(items, selectedIndex);
+    if (item == null) return const SizedBox.shrink();
+
+    final lat = double.tryParse((item.lats ?? '').toString());
+    final long = double.tryParse((item.longs ?? '').toString());
+    if (lat == null || long == null) return const SizedBox.shrink();
+
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: () {
+          _openPointMap(context, item);
+        },
+        child: Text(
+          'view_map'.tr,
+          style: TextStyle(
+            fontSize: 14,
+            color:
+                ValueStatic.ticketType == '3'
+                    ? AppColors.airBusColor
+                    : AppColors.primaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _travelInformationSection({
     required BuildContext context,
     required List<dynamic> selectedSeats,
@@ -347,6 +408,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
             itemBuilder: (BuildContext context, int index) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 10),
@@ -399,348 +461,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                       ],
                     ),
                   if (companyType == 4) const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'gender'.tr,
-                                style: const TextStyle(
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                              const TextSpan(
-                                text: ' *',
-                                style: TextStyle(color: AppColors.redColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                // set male
-                                if (index < gender.length) {
-                                  gender[index] = '1';
-                                }
-                                controller.update();
-                              },
-                              child: Container(
-                                height: 45,
-                                width: MediaQuery.of(context).size.width / 3.5,
-                                decoration:
-                                    gender[index] == "1"
-                                        ? BoxDecoration(
-                                          color:
-                                              ValueStatic.ticketType == '3'
-                                                  ? AppColors.airBusColor
-                                                  : AppColors.primaryColor,
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                        )
-                                        : BoxDecoration(
-                                          color: AppColors.whiteColor,
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                          border: Border.all(
-                                            color: AppColors.borderColor,
-                                          ),
-                                        ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Ionicons.male_outline,
-                                        color:
-                                            gender[index] == "1"
-                                                ? AppColors.whiteColor
-                                                : AppColors.textColor,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'male'.tr,
-                                        style: TextStyle(
-                                          color:
-                                              gender[index] == "1"
-                                                  ? AppColors.whiteColor
-                                                  : AppColors.textColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                // set female
-                                if (index < gender.length) {
-                                  gender[index] = '2';
-                                }
-                                controller.update();
-                              },
-                              child: Container(
-                                height: 45,
-                                width: MediaQuery.of(context).size.width / 3.5,
-                                decoration:
-                                    gender[index] == "2"
-                                        ? BoxDecoration(
-                                          color:
-                                              ValueStatic.ticketType == '3'
-                                                  ? AppColors.airBusColor
-                                                  : AppColors.primaryColor,
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                        )
-                                        : BoxDecoration(
-                                          color: AppColors.whiteColor,
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                          border: Border.all(
-                                            color: AppColors.borderColor,
-                                          ),
-                                        ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Ionicons.female_outline,
-                                        color:
-                                            gender[index] == "2"
-                                                ? AppColors.whiteColor
-                                                : AppColors.textColor,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'female'.tr,
-                                        style: TextStyle(
-                                          color:
-                                              gender[index] == "2"
-                                                  ? AppColors.whiteColor
-                                                  : AppColors.textColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildChooseGender(gender, index),
                   const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text.rich(
-                          TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'nationality'.tr,
-                                style: const TextStyle(
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                              const TextSpan(
-                                text: ' *',
-                                style: TextStyle(color: AppColors.redColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: FutureBuilder<NationalityResponse>(
-                          future: controller.state.futureNationality,
-                          builder: (context, data) {
-                            if (data.hasData) {
-                              if ((data.data?.header?.result) == true &&
-                                  (data.data?.header?.statusCode) == 200) {
-                                if ((data.data?.body)!.status == true &&
-                                    (data.data?.body)!.data!.isNotEmpty) {
-                                  return Column(
-                                    children: [
-                                      InputDecorator(
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 4,
-                                              ),
-                                          border: Style.outlineInputBorder(),
-                                          enabledBorder:
-                                              Style.outlineInputBorder(),
-                                          focusedBorder:
-                                              Style.outlineInputBorder(),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            iconStyleData: const IconStyleData(
-                                              iconEnabledColor:
-                                                  AppColors.borderColor,
-                                            ),
-                                            isExpanded: true,
-                                            hint: Text(
-                                              'select_nation'.tr,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            items:
-                                                data.data?.body!.data
-                                                    ?.map(
-                                                      (
-                                                        item,
-                                                      ) => DropdownMenuItem<
-                                                        String
-                                                      >(
-                                                        value: item.name,
-                                                        child: Text(
-                                                          "${item.name}",
-                                                          style:
-                                                              const TextStyle(
-                                                                fontSize: 14,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                    .toList(),
-                                            value:
-                                                nationalityIds[index] != null
-                                                    ? data.data?.body!.data
-                                                        ?.firstWhere(
-                                                          (item) =>
-                                                              item.id ==
-                                                              nationalityIds[index],
-                                                        )
-                                                        .name
-                                                    : null,
-                                            onChanged: (value) {
-                                              nationalityIds[index] =
-                                                  data.data?.body!.data
-                                                      ?.firstWhere(
-                                                        (item) =>
-                                                            item.name == value,
-                                                      )
-                                                      .id;
-                                              national[index] =
-                                                  nationalityIds[index]!;
-                                              controller.update();
-                                            },
-                                            dropdownStyleData:
-                                                const DropdownStyleData(
-                                                  width: double.infinity,
-                                                ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                                  height: 40,
-                                                ),
-                                            dropdownSearchData: DropdownSearchData(
-                                              searchController:
-                                                  controller
-                                                      .state
-                                                      .nationalityController,
-                                              searchInnerWidgetHeight: 50,
-                                              searchInnerWidget: Container(
-                                                height: 60,
-                                                padding: const EdgeInsets.only(
-                                                  top: 8,
-                                                  bottom: 4,
-                                                  right: 8,
-                                                  left: 8,
-                                                ),
-                                                child: TextFormField(
-                                                  expands: true,
-                                                  maxLines: null,
-                                                  controller:
-                                                      controller
-                                                          .state
-                                                          .nationalityController,
-                                                  decoration: InputDecoration(
-                                                    isDense: true,
-                                                    contentPadding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 8,
-                                                        ),
-                                                    hintText:
-                                                        'search_nation'.tr,
-                                                    hintStyle: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                    border:
-                                                        Style.outlineInputBorder(),
-                                                    enabledBorder:
-                                                        Style.outlineInputBorder(),
-                                                    focusedBorder:
-                                                        Style.outlineInputBorder(),
-                                                  ),
-                                                ),
-                                              ),
-                                              searchMatchFn: (
-                                                item,
-                                                searchValue,
-                                              ) {
-                                                return item.value
-                                                    .toString()
-                                                    .toLowerCase()
-                                                    .contains(
-                                                      searchValue.toLowerCase(),
-                                                    );
-                                              },
-                                            ),
-                                            onMenuStateChange: (isOpen) {
-                                              if (!isOpen) {
-                                                controller
-                                                    .state
-                                                    .nationalityController
-                                                    .clear();
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }
-                              }
-                            } else if (data.hasError) {
-                              return const Text('');
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildChooseNationality(nationalityIds, index, national),
                   const SizedBox(height: 15),
                   if (companyType == 4)
                     Row(
@@ -868,6 +591,269 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
       ),
     );
   }
+
+  Widget _buildChooseNationality(List<int?> nationalityIds, int index, List<int> national) {
+    return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text.rich(
+                        TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: 'nationality'.tr,
+                              style: const TextStyle(
+                                color: AppColors.textColor,
+                              ),
+                            ),
+                            const TextSpan(
+                              text: ' *',
+                              style: TextStyle(color: AppColors.redColor),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: FutureBuilder<NationalityResponse>(
+                        future: controller.state.futureNationality,
+                        builder: (context, data) {
+                          if (data.hasData) {
+                            if ((data.data?.header?.result) == true &&
+                                (data.data?.header?.statusCode) == 200) {
+                              if ((data.data?.body)!.status == true &&
+                                  (data.data?.body)!.data!.isNotEmpty) {
+                                return Column(
+                                  children: [
+                                    InputDecorator(
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 4,
+                                            ),
+                                        border: Style.outlineInputBorder(),
+                                        enabledBorder:
+                                            Style.outlineInputBorder(),
+                                        focusedBorder:
+                                            Style.outlineInputBorder(),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton2<String>(
+                                          iconStyleData: const IconStyleData(
+                                            iconEnabledColor:
+                                                AppColors.borderColor,
+                                          ),
+                                          isExpanded: true,
+                                          hint: Text(
+                                            'select_nation'.tr,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          items:
+                                              data.data?.body!.data
+                                                  ?.map(
+                                                    (
+                                                      item,
+                                                    ) => DropdownMenuItem<
+                                                      String
+                                                    >(
+                                                      value: item.name,
+                                                      child: Text(
+                                                        "${item.name}",
+                                                        style:
+                                                            const TextStyle(
+                                                              fontSize: 14,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                          value:
+                                              nationalityIds[index] != null
+                                                  ? data.data?.body!.data
+                                                      ?.firstWhere(
+                                                        (item) =>
+                                                            item.id ==
+                                                            nationalityIds[index],
+                                                      )
+                                                      .name
+                                                  : null,
+                                          onChanged: (value) {
+                                            nationalityIds[index] =
+                                                data.data?.body!.data
+                                                    ?.firstWhere(
+                                                      (item) =>
+                                                          item.name == value,
+                                                    )
+                                                    .id;
+                                            national[index] =
+                                                nationalityIds[index]!;
+                                            controller.update();
+                                          },
+                                          dropdownStyleData:
+                                              const DropdownStyleData(
+                                                width: double.infinity,
+                                              ),
+                                          menuItemStyleData:
+                                              const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                          dropdownSearchData: DropdownSearchData(
+                                            searchController:
+                                                controller
+                                                    .state
+                                                    .nationalityController,
+                                            searchInnerWidgetHeight: 50,
+                                            searchInnerWidget: Container(
+                                              height: 60,
+                                              padding: const EdgeInsets.only(
+                                                top: 8,
+                                                bottom: 4,
+                                                right: 8,
+                                                left: 8,
+                                              ),
+                                              child: TextFormField(
+                                                expands: true,
+                                                maxLines: null,
+                                                controller:
+                                                    controller
+                                                        .state
+                                                        .nationalityController,
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  contentPadding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                  hintText:
+                                                      'search_nation'.tr,
+                                                  hintStyle: const TextStyle(
+                                                    fontSize: 12,
+                                                  ),
+                                                  border:
+                                                      Style.outlineInputBorder(),
+                                                  enabledBorder:
+                                                      Style.outlineInputBorder(),
+                                                  focusedBorder:
+                                                      Style.outlineInputBorder(),
+                                                ),
+                                              ),
+                                            ),
+                                            searchMatchFn: (
+                                              item,
+                                              searchValue,
+                                            ) {
+                                              return item.value
+                                                  .toString()
+                                                  .toLowerCase()
+                                                  .contains(
+                                                    searchValue.toLowerCase(),
+                                                  );
+                                            },
+                                          ),
+                                          onMenuStateChange: (isOpen) {
+                                            if (!isOpen) {
+                                              controller
+                                                  .state
+                                                  .nationalityController
+                                                  .clear();
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            }
+                          } else if (data.hasError) {
+                            return const Text('');
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                  ],
+                );
+  }
+
+  Widget _buildGenderItem({
+  required String value,
+  required String label,
+  required String groupValue,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 18,
+          width: 18,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppColors.primaryColor,
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: Container(
+              height: 8,
+              width: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: groupValue == value
+                    ? AppColors.primaryColor
+                    : Colors.transparent,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildChooseGender(List<String> gender, int index) {
+  return Row(
+    children: [
+      _buildGenderItem(
+        value: '2',
+        label: "female".tr,
+        groupValue: gender[index],
+        onTap: () {
+          gender[index] = '2';
+          controller.update();
+        },
+      ),
+      const SizedBox(width: 16),
+      _buildGenderItem(
+        value: '1',
+        label: "male".tr,
+        groupValue: gender[index],
+        onTap: () {
+          gender[index] = '1';
+          controller.update();
+        },
+      ),
+    ],
+  );
+}
+
 
   FutureBuilder<void> _buildPassengerHaveDiscount() {
     controller.forceZeroDiscount = false;
@@ -1090,8 +1076,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                   bottom: 5,
                                                 ),
                                                 child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
-                                                    Text(
+                                                    Row(children: [
+                                                      Text(
                                                       'boarding_point'.tr,
                                                       style: const TextStyle(
                                                         fontSize: 14,
@@ -1110,7 +1098,20 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                           ),
                                                         )
                                                         : const SizedBox(),
+                                                    ],),
+
+                                                      _viewMapButtonForSelection(
+                                                        context: context,
+                                                        items: data.data?.body ?? [],
+                                                        selectedIndex:
+                                                            controller
+                                                                .state
+                                                                .isSelectedIndexBoardingOneWay
+                                                                .value,
+                                              ),
                                                   ],
+
+                                                  
                                                 ),
                                               ),
                                               _pointPicker(
@@ -1188,6 +1189,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                       0;
                                                 },
                                               ),
+                                              
                                             ],
                                           );
                                         }
@@ -1237,8 +1239,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                   bottom: 5,
                                                 ),
                                                 child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
-                                                    Text(
+                                                    Row(children: [
+                                                      Text(
                                                       'drop_off_point'.tr,
                                                       style: const TextStyle(
                                                         fontSize: 14,
@@ -1257,6 +1261,17 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                           ),
                                                         )
                                                         : const SizedBox(),
+                                                    ],),
+                                                        //
+                                                 _viewMapButtonForSelection(
+                                                  context: context,
+                                                  items: data.data?.body ?? [],
+                                                  selectedIndex:
+                                                      controller
+                                                          .state
+                                                          .isSelectedIndexBoardingOneWay
+                                                          .value,
+                                              ),
                                                   ],
                                                 ),
                                               ),
@@ -1329,6 +1344,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                       (item.name).toString();
                                                 },
                                               ),
+                                             
                                             ],
                                           );
                                         }
@@ -1466,8 +1482,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                         bottom: 5,
                                                       ),
                                                   child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Text(
+                                                      Row(
+                                                        children: [
+                                                          Text(
                                                         'boarding_point'.tr,
                                                         style: const TextStyle(
                                                           fontWeight:
@@ -1491,6 +1510,18 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                             ),
                                                           )
                                                           : const SizedBox(),
+                                                        ],
+                                                      ),
+                                                          //
+                                                           _viewMapButtonForSelection(
+                                                  context: context,
+                                                  items: data.data?.body ?? [],
+                                                  selectedIndex:
+                                                      controller
+                                                          .state
+                                                          .isSelectIndexBoardingTwoWay
+                                                          .value,
+                                                ),
                                                     ],
                                                   ),
                                                 ),
@@ -1673,6 +1704,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                             ],
                                                           ),
                                                 ),
+                                               
                                               ],
                                             );
                                           }
@@ -1726,31 +1758,46 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                         bottom: 5,
                                                       ),
                                                   child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Text(
+                                                      Row(
+                                                        children: [
+                                                          Text(
                                                         'drop_off_point'.tr,
                                                         style: const TextStyle(
                                                           fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize: 14,
-                                                          color:
-                                                              AppColors
-                                                                  .titleColor,
+                                                                FontWeight.w400,
+                                                            fontSize: 14,
+                                                            color:
+                                                                AppColors
+                                                                    .titleColor,
+                                                          ),
                                                         ),
+                                                        const SizedBox(width: 5),
+                                                        (data
+                                                                    .data
+                                                                    ?.body
+                                                                    ?.length !=
+                                                                1)
+                                                            ? const Text(
+                                                              "*",
+                                                              style: TextStyle(
+                                                                color: Colors.red,
+                                                              ),
+                                                            )
+                                                            : const SizedBox(),
+                                                        ],
                                                       ),
-                                                      const SizedBox(width: 5),
-                                                      (data
-                                                                  .data
-                                                                  ?.body
-                                                                  ?.length !=
-                                                              1)
-                                                          ? const Text(
-                                                            "*",
-                                                            style: TextStyle(
-                                                              color: Colors.red,
-                                                            ),
-                                                          )
-                                                          : const SizedBox(),
+                                                          //
+                                                           _viewMapButtonForSelection(
+                                                  context: context,
+                                                  items: data.data?.body ?? [],
+                                                  selectedIndex:
+                                                      controller
+                                                          .state
+                                                          .isSelectIndexDropOffTwoWay
+                                                          .value,
+                                                ),
                                                     ],
                                                   ),
                                                 ),
@@ -1933,6 +1980,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                             ],
                                                           ),
                                                 ),
+                                               
                                               ],
                                             );
                                           }

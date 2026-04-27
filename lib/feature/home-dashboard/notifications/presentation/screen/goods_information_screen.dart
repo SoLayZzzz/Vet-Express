@@ -20,6 +20,10 @@ class GoodsInformationScreen extends StatefulWidget {
 
 class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
   late Future<GoodsFindResponse> futureData;
+  bool _didLogStatusTracking = false;
+  RxBool _showAllLogisticsDetails = false.obs;
+  final GlobalKey _activeStatusKey = GlobalKey();
+  final GlobalKey _lastStatusKey = GlobalKey();
 
   @override
   void initState() {
@@ -65,269 +69,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                         ),
 
                         //* status of tacking
-                        ListView.builder(
-                          padding: const EdgeInsets.only(top: 12),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount:
-                              transferData
-                                  .data!
-                                  .body!
-                                  .data![0]
-                                  .goodsTransferMoveList!
-                                  .length,
-                          itemBuilder: (context, index) {
-                            int? length =
-                                transferData
-                                    .data!
-                                    .body!
-                                    .data![0]
-                                    .goodsTransferMoveList!
-                                    .length;
-
-                            return Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                //* icon tick
-                                Column(
-                                  children: [
-                                    Image.asset(
-                                      index == 0
-                                          ? AssetImages.ic_ticket_green
-                                          : AssetImages.ic_ticket_orange,
-                                      height: 24,
-                                    ),
-                                    Container(
-                                      height: 70,
-                                      width: 4,
-                                      color:
-                                          (index >= length - 1)
-                                              ? AppColors.backgroundColor
-                                              : AppColors.borderColor,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(width: 10),
-
-                                //* status
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if ((transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .status)! ==
-                                          1)
-                                        display(
-                                          AssetImages.ic_posting,
-                                          'posting',
-                                          'at',
-                                          (transferData
-                                                  .data!
-                                                  .body
-                                                  ?.data?[0]
-                                                  .goodsTransferMoveList?[index]
-                                                  .msg) ??
-                                              '',
-                                          (transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .created)!,
-                                          colorText:
-                                              index == 0
-                                                  ? AppColors.greenColor
-                                                  : AppColors.textColor,
-                                          view: false,
-                                        ),
-                                      if ((transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .status)! ==
-                                          2)
-                                        display(
-                                          AssetImages.ic_shipping,
-                                          'shipping',
-                                          'from_info',
-                                          (transferData
-                                                  .data!
-                                                  .body
-                                                  ?.data?[0]
-                                                  .goodsTransferMoveList?[index]
-                                                  .msg) ??
-                                              '',
-                                          (transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .created)!,
-                                          colorText:
-                                              index == 0
-                                                  ? AppColors.greenColor
-                                                  : AppColors.textColor,
-                                        ),
-                                      if ((transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .status)! ==
-                                          3)
-                                        display(
-                                          AssetImages.ic_arrive,
-                                          'arrival',
-                                          'at',
-                                          (transferData
-                                                  .data!
-                                                  .body
-                                                  ?.data?[0]
-                                                  .goodsTransferMoveList?[index]
-                                                  .msg) ??
-                                              '',
-                                          (transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .created)!,
-                                          colorText:
-                                              index == 0
-                                                  ? AppColors.greenColor
-                                                  : AppColors.textColor,
-                                        ),
-                                      if ((transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .status)! ==
-                                          4)
-                                        display(
-                                          AssetImages.ic_recieved,
-                                          'received',
-                                          '',
-                                          (transferData
-                                                  .data!
-                                                  .body
-                                                  ?.data?[0]
-                                                  .goodsTransferMoveList?[index]
-                                                  .msg) ??
-                                              '',
-                                          (transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .created)!,
-                                          colorText:
-                                              index == 0
-                                                  ? AppColors.greenColor
-                                                  : AppColors.textColor,
-                                        ),
-                                      if ((transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .status)! ==
-                                          5)
-                                        display(
-                                          AssetImages.ic_arrive,
-                                          'transit',
-                                          'at',
-                                          (transferData
-                                                  .data!
-                                                  .body
-                                                  ?.data?[0]
-                                                  .goodsTransferMoveList?[index]
-                                                  .msg) ??
-                                              '',
-                                          (transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .created)!,
-                                          colorText:
-                                              index == 0
-                                                  ? AppColors.greenColor
-                                                  : AppColors.textColor,
-                                        ),
-                                      if ((transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .status)! ==
-                                          6)
-                                        display(
-                                          AssetImages.ic_delivery_to_customer,
-                                          'delivery',
-                                          '',
-                                          (transferData
-                                                  .data!
-                                                  .body
-                                                  ?.data?[0]
-                                                  .goodsTransferMoveList?[index]
-                                                  .msg) ??
-                                              '',
-                                          (transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .created)!,
-                                          colorText:
-                                              index == 0
-                                                  ? AppColors.greenColor
-                                                  : AppColors.textColor,
-                                        ),
-                                      if ((transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .status)! ==
-                                          7)
-                                        display(
-                                          AssetImages.ic_call_to_customer,
-                                          'call',
-                                          '',
-                                          (transferData
-                                                  .data!
-                                                  .body
-                                                  ?.data?[0]
-                                                  .goodsTransferMoveList?[index]
-                                                  .msg) ??
-                                              '',
-                                          (transferData
-                                              .data!
-                                              .body
-                                              ?.data?[0]
-                                              .goodsTransferMoveList?[index]
-                                              .created)!,
-                                          colorText:
-                                              index == 0
-                                                  ? AppColors.greenColor
-                                                  : AppColors.textColor,
-                                          view: false,
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
+                        _buildStatusTracking(transferData),
                       ],
                     ),
                   );
@@ -349,6 +91,295 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
       ),
       bottomNavigationBar: _buildTotalBottomNavigationBar(),
     );
+  }
+
+  Widget _buildStatusTracking(AsyncSnapshot<GoodsFindResponse> transferData) {
+    final List<GoodsTransferMoveList> moveList =
+        transferData.data?.body?.data?[0].goodsTransferMoveList ??
+            <GoodsTransferMoveList>[];
+
+    final int? currentStatus = moveList.isNotEmpty ? moveList.first.status : null;
+
+    const Set<int> allowedStatuses = <int>{1, 2, 3, 4, 5, 6, 7};
+
+    int orderOf(int? status) {
+      switch (status) {
+        case 1:
+          return 0; // Posting
+        case 2:
+          return 1; // Shipping
+        case 5:
+          return 2; // Transit
+        case 6:
+          return 3; // Shipping
+        case 3:
+          return 4; // Arrived
+        case 7:
+          return 5; // Call to Customer
+        case 4:
+          return 6; // Received
+        default:
+          return 999;
+      }
+    }
+
+    final List<GoodsTransferMoveList> sortedMoves =
+        List<GoodsTransferMoveList>.from(moveList)
+          ..removeWhere((e) => e.status == null || !allowedStatuses.contains(e.status))
+          ..sort((a, b) => orderOf(a.status).compareTo(orderOf(b.status)));
+
+    final int? highlightStatus = (currentStatus != null &&
+            allowedStatuses.contains(currentStatus))
+        ? currentStatus
+        : (sortedMoves.isNotEmpty ? sortedMoves.last.status : null);
+
+    final int highlightIndex = (highlightStatus == null)
+        ? -1
+        : sortedMoves.indexWhere((e) => e.status == highlightStatus);
+
+    final int effectiveHighlightIndex = (highlightIndex >= 0)
+        ? highlightIndex
+        : (sortedMoves.isNotEmpty ? sortedMoves.length - 1 : -1);
+
+    final int activeIndex = effectiveHighlightIndex >= 0 ? effectiveHighlightIndex : 0;
+
+    return Obx(() {
+      final bool showAll = _showAllLogisticsDetails.value;
+      final List<GoodsTransferMoveList> displayMoves = showAll
+          ? sortedMoves
+          : (sortedMoves.isNotEmpty
+              ? <GoodsTransferMoveList>[sortedMoves[activeIndex]]
+              : <GoodsTransferMoveList>[]);
+
+      return ListView.builder(
+        padding: const EdgeInsets.only(top: 12),
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: displayMoves.length + 1,
+        itemBuilder: (context, index) {
+          final int length = displayMoves.length + 1;
+
+          if (index == displayMoves.length) {
+            final text = showAll
+                ? 'View less logistics details'
+                : 'View more logistics details';
+            final int moveIndexInSorted = activeIndex;
+
+            return InkWell(
+              onTap: () {
+                final bool nextValue = !_showAllLogisticsDetails.value;
+                _showAllLogisticsDetails.value = nextValue;
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final targetContext = nextValue
+                      ? _lastStatusKey.currentContext
+                      : _activeStatusKey.currentContext;
+                  if (targetContext == null) return;
+                  Scrollable.ensureVisible(
+                    targetContext,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          height: 18,
+                          width: 18,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.borderColor,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 70,
+                          width: 2,
+                          color: (index >= length - 1)
+                              ? AppColors.backgroundColor
+                              : (moveIndexInSorted < effectiveHighlightIndex
+                                  ? AppColors.primaryColor
+                                  : AppColors.borderColor),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            text,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textColor,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.chevron_right,
+                            size: 18,
+                            color: AppColors.textColor,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          final move = displayMoves[index];
+          final int moveIndexInSorted = showAll ? index : activeIndex;
+
+          final bool isCurrent =
+              highlightStatus != null && move.status == highlightStatus;
+          final bool isReached = showAll
+              ? (effectiveHighlightIndex >= 0 &&
+                  moveIndexInSorted <= effectiveHighlightIndex)
+              : true;
+
+        final Color statusColor =
+            isReached ? AppColors.primaryColor : AppColors.textColor;
+
+        Widget statusWidget;
+        switch (move.status) {
+          case 1:
+            statusWidget = display(
+              'posting',
+              'at',
+              move.msg ?? '',
+              move.created ?? '',
+              colorText: statusColor,
+              view: false,
+            );
+            break;
+          case 2:
+            statusWidget = display(
+              'shipping',
+              'from_info',
+              move.msg ?? '',
+              move.created ?? '',
+              colorText: statusColor,
+            );
+            break;
+          case 5:
+            statusWidget = display(
+              'transit',
+              'at',
+              move.msg ?? '',
+              move.created ?? '',
+              colorText: statusColor,
+            );
+            break;
+          case 3:
+            statusWidget = display(
+              'arrival',
+              'at',
+              move.msg ?? '',
+              move.created ?? '',
+              colorText: statusColor,
+            );
+            break;
+          case 6:
+            statusWidget = display(
+              'shipping',
+              'from_info',
+              move.msg ?? '',
+              move.created ?? '',
+              colorText: statusColor,
+            );
+            break;
+          case 7:
+            statusWidget = display(
+              'call',
+              '',
+              move.msg ?? '',
+              move.created ?? '',
+              colorText: statusColor,
+              view: false,
+            );
+            break;
+          case 4:
+            statusWidget = display(
+              'received',
+              '',
+              move.msg ?? '',
+              move.created ?? '',
+              colorText: statusColor,
+            );
+            break;
+          default:
+            statusWidget = const SizedBox.shrink();
+        }
+
+          final Key? rowKey = (!showAll && index == 0)
+              ? _activeStatusKey
+              : (showAll && index == displayMoves.length - 1)
+                  ? _lastStatusKey
+                  : null;
+
+          return KeyedSubtree(
+            key: rowKey,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //* icon tick
+                Column(
+                  children: [
+                    Container(
+                      height: 18,
+                      width: 18,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isReached
+                              ? AppColors.primaryColor
+                              : AppColors.borderColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isReached
+                                ? AppColors.primaryColor
+                                : Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 70,
+                      width: 2,
+                      color: (index >= length - 1)
+                          ? AppColors.backgroundColor
+                          : (moveIndexInSorted < effectiveHighlightIndex
+                              ? AppColors.primaryColor
+                              : AppColors.borderColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 10),
+
+                //* status
+                Expanded(child: statusWidget),
+              ],
+            ),
+          );
+        },
+      );
+    });
   }
 
   Widget _buildTotalBottomNavigationBar() {
@@ -481,12 +512,10 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
   );
 }
 
-// Helper for simple label: value rows
 Widget _labelRow(String title, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
     child: Row(
-      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('$title  ', style: const TextStyle(color: Colors.black87)),
         
@@ -602,97 +631,8 @@ Widget _buildReceiverBox({
   );
 }
 
-  // Widget _buildParcelInfo(AsyncSnapshot<GoodsFindResponse> transferData) {
-  //   return Container(
-  //                       margin: const EdgeInsets.symmetric(vertical: 20),
-  //                       decoration: BoxDecoration(
-  //                         color: AppColors.whiteColor,
-  //                         borderRadius: BorderRadius.circular(10),
-  //                         border: Border.all(
-  //                           color: AppColors.borderColor,
-  //                           width: 0.5,
-  //                         ),
-  //                       ),
-  //                       child: Padding(
-  //                         padding: const EdgeInsets.all(12.0),
-  //                         child: Row(
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Expanded(
-  //                               flex: 4,
-  //                               child: Column(
-  //                                 crossAxisAlignment:
-  //                                     CrossAxisAlignment.start,
-  //                                 children: [
-  //                                   labelDisplay(
-  //                                     title: 'tracking_code'.tr,
-  //                                     value:
-  //                                         (transferData
-  //                                             .data!
-  //                                             .body
-  //                                             ?.data?[0]
-  //                                             .code)!,
-  //                                   ),
-  //                                   labelDisplay(
-  //                                     title: 'sender'.tr,
-  //                                     value:
-  //                                         (transferData
-  //                                             .data!
-  //                                             .body
-  //                                             ?.data?[0]
-  //                                             .senderTelephone)!,
-  //                                   ),
-  //                                   labelDisplay(
-  //                                     title: 'from'.tr,
-  //                                     value:
-  //                                         (transferData
-  //                                             .data!
-  //                                             .body
-  //                                             ?.data?[0]
-  //                                             .destinationFromEn
-  //                                             .toString())!,
-  //                                   ),
-  //                                   labelDisplay(
-  //                                     title: 'receiver'.tr,
-  //                                     value:
-  //                                         (transferData
-  //                                             .data!
-  //                                             .body
-  //                                             ?.data?[0]
-  //                                             .receiverTelephone)!,
-  //                                   ),
-  //                                   labelDisplay(
-  //                                     title: 'to'.tr,
-  //                                     value:
-  //                                         (transferData
-  //                                             .data!
-  //                                             .body
-  //                                             ?.data?[0]
-  //                                             .destinationToEn
-  //                                             .toString())!,
-  //                                   ),
-  //                                   labelDisplay(
-  //                                     title: 'qty'.tr,
-  //                                     value:
-  //                                         (transferData
-  //                                             .data!
-  //                                             .body
-  //                                             ?.data?[0]
-  //                                             .qty
-  //                                             .toString())!,
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-                              
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     );
-  // }
+  Widget display(
 
-  display(
-    String img,
     String status,
     String des,
     String msg,
@@ -705,8 +645,7 @@ Widget _buildReceiverBox({
       children: [
         Row(
           children: [
-            Image.asset(img, width: 28, height: 28),
-            const SizedBox(width: 10),
+
             Text(
               "${status.tr} ${des.tr}",
               style: TextStyle(fontSize: 14, color: colorText),

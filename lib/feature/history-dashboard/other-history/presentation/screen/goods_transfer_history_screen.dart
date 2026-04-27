@@ -507,22 +507,28 @@ class _TransferItemCardState extends State<TransferItemCard> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "${widget.item.code}",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.item.code ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold, 
+                      fontSize: 14,
+                    ),
                   ),
-                  
-                  Text(
-                    // "Posting At", // Use your _returnStatus(widget.item.status) here
-        
-                    _returnStatus(widget.item.status),
-                    
-                    style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _returnStatus(widget.item.status),
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
+                ),
+              ],
+            )
             ),
         
             // 2. Body Section (Gray Background)
@@ -564,7 +570,6 @@ class _TransferItemCardState extends State<TransferItemCard> {
                              Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                                children: [
-                                //  Text("QTY: ${widget.item.qty}/1".tr, style: const TextStyle(fontSize: 12)),
                                 Text('${'qty'.tr}: ${widget.item.qty}/1',style: const TextStyle(fontSize: 12))
                                ],
                              ),
@@ -712,6 +717,7 @@ class _TransferItemCardState extends State<TransferItemCard> {
       transition: Transition.rightToLeft,
       duration: const Duration(milliseconds: Constrains.duration),
     );
+    debugPrint('Tracking order with ID: $id');
   }
 
   int? _parseId(dynamic value) {
