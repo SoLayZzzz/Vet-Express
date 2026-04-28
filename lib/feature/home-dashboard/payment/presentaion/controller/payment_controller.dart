@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'package:express_vet/base/state_controller.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/payment_success_screen.dart';
 import 'package:express_vet/feature/home-dashboard/payment/domain/uscase/payment_uscase.dart';
 import 'package:express_vet/feature/home-dashboard/payment/presentaion/state/payment_uistate.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -166,7 +168,8 @@ class PaymentController extends StateController<PaymentUistate> {
           );
           debugPrint('PaymentController.ABA_Card.result=$result');
           if (result == '1') {
-            showDialogPaymentComplete(context);
+            // showDialogPaymentComplete(context);
+            Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
           } else {
             showDialogPaymentFail(context, transactionId);
           }
@@ -183,7 +186,8 @@ class PaymentController extends StateController<PaymentUistate> {
           );
           debugPrint('PaymentController.Alipay.result=$result');
           if (result == '1') {
-            showDialogPaymentComplete(context);
+            // showDialogPaymentComplete(context);
+            Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
           } else {
             showDialogPaymentFail(context, transactionId);
           }
@@ -197,7 +201,8 @@ class PaymentController extends StateController<PaymentUistate> {
           );
           debugPrint('PaymentController.Wing.result=$result');
           if (result == '1') {
-            showDialogPaymentComplete(context);
+            // showDialogPaymentComplete(context);
+            Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
           } else {
             showDialogPaymentFail(context, transactionId);
           }
@@ -257,7 +262,8 @@ class PaymentController extends StateController<PaymentUistate> {
     );
     debugPrint('PaymentController.ABA_KHQR.result=$result');
     if (result == '1') {
-      showDialogPaymentComplete(context);
+      // showDialogPaymentComplete(context);
+      Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
     } else {
       showDialogPaymentFail(context, transactionId);
     }
@@ -383,7 +389,8 @@ class PaymentController extends StateController<PaymentUistate> {
       'PaymentController.acledaComplete.response status=${result['status']} for transactionId=$transactionId',
     );
     if (result['status'] == 1) {
-      showDialogPaymentComplete(Get.context!);
+      // showDialogPaymentComplete(Get.context!);
+      Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
     }
   }
 
@@ -418,7 +425,9 @@ class PaymentController extends StateController<PaymentUistate> {
     );
     debugPrint('PaymentController.ACLEDA_XPay.result=$result');
     if (result == '1') {
-      showDialogPaymentComplete(context);
+      // showDialogPaymentComplete(context);
+      Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
+
     } else {
       showDialogPaymentFail(context, transactionId);
     }
@@ -462,22 +471,22 @@ class PaymentController extends StateController<PaymentUistate> {
     }
   }
 
-  void showDialogPaymentComplete(BuildContext context) {
-    alertDialogTwoButton(
-      title: 'your_ticket_has_been_reserved'.tr,
-      description: 'ticket_info1'.tr,
-      buttonText1: 'home'.tr,
-      buttonText2: 'show_ticket'.tr,
-      onButtonPressed1: () {
-        ValueStatic().clearDataTicket();
-        Get.offAll(() => const DashboardScreen(from: 0));
-      },
-      onButtonPressed2: () {
-        ValueStatic().clearDataTicket();
-        Get.offAll(() => const DashboardScreen(from: 2));
-      },
-    );
-  }
+  // void showDialogPaymentComplete(BuildContext context) {
+  //   alertDialogTwoButton(
+  //     title: 'your_ticket_has_been_reserved'.tr,
+  //     description: 'ticket_info1'.tr,
+  //     buttonText1: 'home'.tr,
+  //     buttonText2: 'show_ticket'.tr,
+  //     onButtonPressed1: () {
+  //       ValueStatic().clearDataTicket();
+  //       Get.offAll(() => const DashboardScreen(from: 0));
+  //     },
+  //     onButtonPressed2: () {
+  //       ValueStatic().clearDataTicket();
+  //       Get.offAll(() => const DashboardScreen(from: 2));
+  //     },
+  //   );
+  // }
 
   void showDialogPaymentFail(BuildContext context, String transactionId) {
     alertDialogOneButton(

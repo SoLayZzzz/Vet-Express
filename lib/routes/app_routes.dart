@@ -68,4 +68,5 @@ class AppRoutes {
 
   // Parcel Payment route
   static const parcelPayment = '/parcel/payment';
+  static const ticketpaymentSuccessScreen = '/ticket//payment/success/screem';
 }

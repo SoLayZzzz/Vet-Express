@@ -5,6 +5,7 @@ final Map<String, String> enUS = {
         'tranfer_fee_kh': 'Tranfer Fee KH',
         'packing_fee': 'Packing Fee',
         'delivery_fee': 'Delivery Fee',
+        'date_format_dd_mm_yyyy': 'DD-MM-YYYY',
         'paid': 'Paid',
         'unpaid': 'Unpaid',
         'pay_now': 'Pay Now',
@@ -221,6 +222,7 @@ final Map<String, String> enUS = {
         "payment_method": "Payment method",
         "confirm_payment": "Confirm payment",
         "payment_successful": "Payment Successful!",
+        'payment_comeplete': 'Payment Completed',
         "scan_another_qr": "Scan Another QR",
         "go_to_wallet": "Go to Wallet",
         "total_kwh": "Total kWh",
@@ -311,6 +313,7 @@ final Map<String, String> enUS = {
         "choose_gallery": "Choose Gallery From",
         'upload': "Upload",
         'search_nation': "Search nationality",
+        'email_must_be_gmail': 'Email must be a @gmail.com address',
 
         // Forgot Password..................
         'forgot_pass': 'Forgot Password',
@@ -481,6 +484,7 @@ final Map<String, String> enUS = {
         'lucky_draw': 'Lucky Ticket',
         'dob': "DOB",
         'passport': "Passport No.",
+        'passport_number': 'Passport number | Passport No.',
 
         //ticket_history
         'ticket_history': 'Ticket History',
@@ -513,7 +517,7 @@ final Map<String, String> enUS = {
         'do_you_want_to_cancel_booking': 'Do you want to cancel booking?',
         'discount5': 'Discount (5%)',
         'total_discount': 'Total Discount',
-        'total_price': 'Total Price',
+        'total_price': 'Total Payment: ',
         'travel_information_summary': 'Travel information summary',
         'your_ticket_has_been_reserved': 'Your Ticket Has Been Booked',
         'ticket_info1':
@@ -525,7 +529,7 @@ final Map<String, String> enUS = {
         'show_ticket': 'Show Ticket',
         'show_package': "Code Travel",
         'ok': 'Ok',
-        'payment_method': 'Payment Method : ',
+        'payment_method': 'Payment Method',
         'show_less': "(Show Less)",
         'fare_summary': "(Fare Summary)",
         'total_going': "Total going",
@@ -861,7 +865,8 @@ final Map<String, String> enUS = {
         'why_choose': "Why choose Travel Package?",
         'readme':
             'Are you a travel enthusiast with an ever-itchy foot? Look no further! Our Travel Package offers unparalleled opportunities for unforgettable experiences. Let us explain why our package is the perfect choice for your next adventure:\n\nCost-Effective: Great value for your money with best rate offer.Variety of Destinations: From 25 provinces in Cambodia, Thailand, Vietnam and Laos.\nPeace of Mind: Safety and comfort ensured.\nCustomization: Tailored to your preferences of Air Bus, VIP Van, Luxury Bus, Rental Car and Speed Boat any dates within your package validity.\nUnforgettable Experiences: Memories that last a lifetime.\n\nBook now and embark on your dream adventure!',
-        'discount_travel': 'Discount (Travel Package)',
+        'discount_travel': 'Discount Package',
+        'discount_wing': 'Discount Wing',
         "see_more": "SEE MORE",
         "see_less": " SEE LESS",
         'add_img': 'Photo',

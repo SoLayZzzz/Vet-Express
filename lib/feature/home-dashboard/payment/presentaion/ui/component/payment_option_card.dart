@@ -1,6 +1,7 @@
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 class PaymentOptionCard extends StatelessWidget {
   final String asset;
@@ -57,19 +58,38 @@ class PaymentOptionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Radio<int>(
-                value: value,
-                fillColor: WidgetStateColor.resolveWith(
-                  (states) =>
-                      ValueStatic.ticketType == '3'
-                          ? AppColors.airBusColor
-                          : AppColors.primaryColor,
+
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected
+                        ? (ValueStatic.ticketType == '3'
+                            ? AppColors.airBusColor
+                            : AppColors.primaryColor)
+                        : AppColors.deepGrey,
+                  ),
                 ),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: CircleAvatar(
+                    backgroundColor: isSelected
+                        ? (ValueStatic.ticketType == '3'
+                            ? AppColors.airBusColor
+                            : AppColors.primaryColor)
+                        : AppColors.deepGrey,
+                  ),
+                ),
+                
               ),
+
             ],
           ),
         ),
       ),
     );
   }
+  
 }

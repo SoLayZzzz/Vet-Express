@@ -61,10 +61,10 @@ dependencies:
   widget_zoom: ^0.0.4
   permission_handler: ^11.3.1
 
-#  component:
-#    git:
-#      url: https://github.com/SoLayZzzz/component.git
-#      ref: main
+  # component:
+  #  git:
+  #    url: https://github.com/SoLayZzzz/component.git
+  #    ref: main
 
 dev_dependencies:
   flutter_test:

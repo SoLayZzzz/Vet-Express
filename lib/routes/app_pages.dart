@@ -3,6 +3,7 @@ import 'package:express_vet/feature/home-dashboard/contact_us/presentation/scree
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_charger_response.dart';
 import 'package:express_vet/feature/home-dashboard/notifications/presentation/screen/notification_screen.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/screen/passenger_detail_screen.dart';
+import 'package:express_vet/feature/home-dashboard/payment/presentaion/ui/ticket_payment_success_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/select_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_check_screen.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/presentation/screen/self_service_qr_list_screen.dart';
@@ -527,6 +528,13 @@ class AppPages {
     GetPage(
       name: AppRoutes.parcelPayment,
       page: () =>  ParcelPaymentScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    // Payment Success
+    GetPage(
+      name: AppRoutes.ticketpaymentSuccessScreen,
+      page: () => const TicketPaymentSuccess(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

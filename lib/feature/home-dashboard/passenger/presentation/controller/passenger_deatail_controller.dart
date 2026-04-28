@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:express_vet/models/boarding_point.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/controller/user_controller.dart';
@@ -39,6 +40,52 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
   bool forceZeroDiscount = false;
   bool packageOnlyDiscountMode = false;
+
+  String _formatDobForDisplay(String rawDob) {
+    final raw = rawDob.trim();
+    if (raw.isEmpty) return '';
+
+    DateTime? parsed = DateTime.tryParse(raw);
+    parsed ??= DateTime.tryParse(raw.replaceFirst(' ', 'T'));
+    if (parsed == null) {
+      try {
+        parsed = DateFormat('dd-MM-yyyy').parseStrict(raw);
+      } catch (_) {
+        parsed = null;
+      }
+    }
+    if (parsed == null) return raw;
+    return DateFormat('dd-MM-yyyy').format(parsed);
+  }
+
+  void _applyAutofillToSeatControllers({
+    required int seatCount,
+    required int companyType,
+    required List<TextEditingController> nameControllers,
+    required List<TextEditingController> dobDisplayControllers,
+    required List<TextEditingController> dobValueControllers,
+    required String name,
+    required String dob,
+  }) {
+    if (seatCount != 1) return;
+    if (companyType == 4 && nameControllers.isNotEmpty) {
+      if (nameControllers[0].text.trim().isEmpty && name.trim().isNotEmpty) {
+        nameControllers[0].text = name.trim();
+      }
+    }
+
+    if (dobDisplayControllers.isNotEmpty && dobValueControllers.isNotEmpty) {
+      final formattedDob = _formatDobForDisplay(dob);
+      if (formattedDob.isNotEmpty) {
+        if (dobDisplayControllers[0].text.trim().isEmpty) {
+          dobDisplayControllers[0].text = formattedDob;
+        }
+        if (dobValueControllers[0].text.trim().isEmpty) {
+          dobValueControllers[0].text = formattedDob;
+        }
+      }
+    }
+  }
 
   void onPassengerDetailScreenEnter() {
     updateTotals();
@@ -917,6 +964,25 @@ class PassengerDetailController extends StateController<PassengerUistate> {
           state.nationalityIdsTwoWay[0] = natId;
         }
       }
+
+      _applyAutofillToSeatControllers(
+        seatCount: ValueStatic.oneWaySelectedSeat.length,
+        companyType: ValueStatic.companyTypeOneWay,
+        nameControllers: state.nameOneWay,
+        dobDisplayControllers: state.dobOneWayList,
+        dobValueControllers: state.dobOneWay,
+        name: ValueStatic.username,
+        dob: user.dob,
+      );
+      _applyAutofillToSeatControllers(
+        seatCount: ValueStatic.twoWaySelectedSeat.length,
+        companyType: ValueStatic.companyTypeTwoWay,
+        nameControllers: state.nameTwoWay,
+        dobDisplayControllers: state.dobTwoWayList,
+        dobValueControllers: state.dobTwoWay,
+        name: ValueStatic.username,
+        dob: user.dob,
+      );
 
       update();
     } catch (_) {}

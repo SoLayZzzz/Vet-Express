@@ -499,13 +499,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                 horizontal: 10,
                                 vertical: 15,
                               ),
-                              hintText: 'dd-MM-yyyy',
+                              hintText: 'date_format_dd_mm_yyyy'.tr,
                               enabledBorder: Style.outlineInputBorder(),
                               focusedBorder: Style.outlineInputBorder(),
                             ),
-                            initialDate: DateFormat(
-                              'yyyy-MM-dd',
-                            ).parse(DateTime.now().toString()),
+                            initialDate: DateTime.now(),
                             firstDate: DateTime.now().subtract(
                               const Duration(days: 50000),
                             ),
@@ -525,9 +523,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                 } else {
                                   dobDisplayControllers[index].text =
                                       DateFormat('dd-MM-yyyy').format(date);
-                                  dobValueControllers[index].text = DateFormat(
-                                    'yyyy-MM-dd',
-                                  ).format(date);
+                                  dobValueControllers[index].text =
+                                      DateFormat('dd-MM-yyyy').format(date);
                                   controller.update();
                                 }
                               }
@@ -560,6 +557,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             ),
                           ),
                         ),
+                       
                         Expanded(
                           flex: 2,
                           child: TextField(
@@ -571,7 +569,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                 horizontal: 10,
                                 vertical: 15,
                               ),
-                              hintText: 'Passport number',
+                              hintText: 'passport_number'.tr,
                               enabledBorder: Style.outlineInputBorder(),
                               focusedBorder: Style.outlineInputBorder(),
                             ),

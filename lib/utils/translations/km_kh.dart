@@ -5,6 +5,7 @@ final Map<String, String> kmKH = {
         'tranfer_fee_kh': 'ថ្លៃផ្ទេរពីខ្មែរ',
         'packing_fee': 'ថ្លៃវេចខ្ចប់',
         'delivery_fee': 'ថ្លៃដឹកជញ្ជូន',
+        'date_format_dd_mm_yyyy': 'ថ្ងៃ-ខែ-ឆ្នាំ',
         'paid': 'បានបង់ប្រាក់',
         'unpaid': 'មិនទាន់បង់ប្រាក់',
         'pay_now': 'បង់ឥឡូវ',
@@ -197,21 +198,22 @@ final Map<String, String> kmKH = {
         "payment_method": "វិធីទូទាត់",
         "confirm_payment": "បញ្ជាក់ការទូទាត់",
         "payment_successful": "ការទូទាត់ជោគជ័យ!",
+        'payment_comeplete': 'ការទូទាត់បានបញ្ចប់',
 
         //coupon
-        "promo_code": "Promo Code",
-        "enter_pro": "Enter Promo Code",
-        "my_offer": "My Offers",
+        "promo_code": "លេខកូដផ្សព្វផ្សាយ",
+        "enter_pro": "បញ្ចូលលេខកូដផ្សព្វផ្សាយ",
+        "my_offer": "ការផ្តល់ជូន",
         "pro_message":
-            "Promotion code value must be equal to or higher than the ticket price.",
-        "your_pro": "Your promotion code ",
-        "is_invalid": " is invalid",
-        "is_expired": " has expired",
-        "dun_match": " The price doesn't match with ticket price",
+            "តម្លៃលេខកូដផ្សព្វផ្សាយត្រូវតែស្មើនឹង ឬខ្ពស់ជាងតម្លៃសំបុត្រ",
+        "your_pro": "លេខកូដផ្សព្វផ្សាយរបស់អ្នកនៅសល់ \$24 បន្ថែមទៀត",
+        "is_invalid": " មិនត្រឹមត្រូវ",
+        "is_expired": " ផុតកំណត់",
+        "dun_match": " តម្លៃមិនត្រូវគ្នាជាមួយតម្លៃសំបុត្រ",
         'return': "Return",
-        'pro_available': 'Your promo code available ',
-        'more': " more",
-        'dis_coupon': "Discount (Promo code)",
+        'pro_available': 'លេខកូដផ្សព្វផ្សាយរបស់អ្នកមាន',
+        'more': " បន្ថែមទៀត",
+        'dis_coupon': "សេចក្តីបញ្ចុះតម្លៃ (លេខកូដផ្សព្វផ្សាយ)",
 
         // select seat
         "DownStair": "ជាន់ក្រោម",
@@ -288,6 +290,7 @@ final Map<String, String> kmKH = {
         "choose_gallery": "ជ្រើសរើសរូបថតពី",
         'upload': "បញ្ចូលរូបភាព",
         'search_nation': "ស្វែងរកសញ្ជាតិ",
+        'email_must_be_gmail': 'អ៊ីម៉ែលត្រូវតែបញ្ចប់ដោយ @gmail.com',
 
         // Forgot Password Screen..................
         'forgot_pass': 'ភ្លេចពាក្យសម្ងាត់',
@@ -467,6 +470,7 @@ final Map<String, String> kmKH = {
         'lucky_draw': 'ឆ្នោតផ្សងសំណាង',
         'dob': "ថ្ងៃកំណើត",
         'passport': "លេខលិខិតឆ្លងដែន",
+        'passport_number': 'លេខលិខិតឆ្លងដែន',
 
         //user detail ដោយចុច 'ដំណើរការដើម្បីចូលបង់ប្រាក់' អ្នកយល់ព្រមនឹង លក្ខខណ្ឌនិងគោលការណ៍ឯកជនភាព
         "click": "ដោយចុច 'ដំណើរការដើម្បីចូលបង់ប្រាក់' អ្នកយល់ព្រមនឹង",
@@ -522,7 +526,7 @@ final Map<String, String> kmKH = {
         'do_you_want_to_cancel_booking': 'តើអ្នកចង់បោះបង់ការកក់សំបុត្រមែនទេ?',
         'discount5': 'បញ្ចុះតម្លៃ (5%)',
         'total_discount': 'សរុបការបញ្ចុះតម្លៃ',
-        'total_price': 'សរុបចុងក្រោយ',
+        'total_price': 'ការទូទាត់សរុប',
         'travel_information_summary': 'ព័ត៌មានសង្ខេបការធ្វើដំណើរ',
         'your_ticket_has_been_reserved': 'សំបុត្ររបស់អ្នកត្រូវបានកក់ទុក',
         'ticket_info1':
@@ -822,8 +826,9 @@ final Map<String, String> kmKH = {
         'travel_package_history': 'ប្រវត្តិកញ្ចប់ធ្វើដំណើរ',
         'register_info': 'ព័ត៌មានចុះឈ្មោះ',
         'confirm_package': 'បញ្ជាក់កញ្ចប់សេវាកម្ម',
-        'confirm_payment': 'បញ្ជាក់ការទូទាត់ប្រាក់',
-        'discount_travel': 'បញ្ចុះតម្លៃ (កញ្ចប់ធ្វើដំណើរ)',
+        'confirm_payment': 'បញ្ជាក់ការទូទាត់ប្រាក់: ',
+        'discount_travel': 'បញ្ចុះតម្លៃតាមកញ្ចប់',
+        'discount_wing': 'បញ្ចុះតម្លៃ Wing',
         'add_img': 'បញ្ចូលរូបថត',
         'plz_upload': 'សូមបញ្ចូលរូបថតដែលឃើញមុខច្បាស់',
         'price': "តម្លៃ",
