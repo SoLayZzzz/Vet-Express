@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../payment/presentaion/ui/payment_screen.dart';
@@ -141,32 +142,33 @@ class Booking {
       if (response.header?.statusCode == 200 &&
           response.header?.result == true) {
         if (response.body?.status == 2) {
-          alertDialogTwoButton(
-            title: 'your_ticket_has_been_reserved'.tr,
-            description: 'ticket_info1'.tr,
-            buttonText1: 'home'.tr,
-            buttonText2: 'show_ticket'.tr,
-            onButtonPressed1: () {
-              ValueStatic().clearDataTicket();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const DashboardScreen(from: 0),
-                ),
-                (Route<dynamic> route) => false,
-              );
-            },
-            onButtonPressed2: () {
-              ValueStatic().clearDataTicket();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const DashboardScreen(from: 2),
-                ),
-                (Route<dynamic> route) => false,
-              );
-            },
-          );
+          Get.offAllNamed(AppRoutes.ticketpaymentSuccessScreen);
+          // alertDialogTwoButton(
+          //   title: 'your_ticket_has_been_reserved'.tr,
+          //   description: 'ticket_info1'.tr,
+          //   buttonText1: 'home'.tr,
+          //   buttonText2: 'show_ticket'.tr,
+          //   onButtonPressed1: () {
+          //     ValueStatic().clearDataTicket();
+          //     Navigator.pushAndRemoveUntil(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => const DashboardScreen(from: 0),
+          //       ),
+          //       (Route<dynamic> route) => false,
+          //     );
+          //   },
+          //   onButtonPressed2: () {
+          //     ValueStatic().clearDataTicket();
+          //     Navigator.pushAndRemoveUntil(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => const DashboardScreen(from: 2),
+          //       ),
+          //       (Route<dynamic> route) => false,
+          //     );
+          //   },
+          // );
         } else {
           if (response.body?.msg == 'Data have been saved.') {
             ValueStatic.luckyDraw = luckyDraw;

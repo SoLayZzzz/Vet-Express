@@ -193,6 +193,7 @@ final Map<String, String> zhCN = {
         "station_name": "站点名称",
         "order_date": "订购日期",
         "total_amount": "总金额",
+        'total_mn': '总计',
         "payment_method": "付款方式",
         "confirm_payment": "确认付款",
         "payment_successful": "付款成功！",

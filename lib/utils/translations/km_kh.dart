@@ -498,7 +498,7 @@ final Map<String, String> kmKH = {
         'transaction_id': 'លេខកូដកក់',
         'departure_date': 'ថ្ងៃចេញដំណើរ',
         'transportation_type': 'ប្រភេទ',
-        'payment': 'ទូទាត់',
+        // 'payment': 'ទូទាត់',
         'ticket_price': 'តម្លៃសំបុត្រ',
         'sub_total': 'សរុប',
         'sub_total_from': 'សរុបតម្លៃពី',
@@ -526,7 +526,7 @@ final Map<String, String> kmKH = {
         'do_you_want_to_cancel_booking': 'តើអ្នកចង់បោះបង់ការកក់សំបុត្រមែនទេ?',
         'discount5': 'បញ្ចុះតម្លៃ (5%)',
         'total_discount': 'សរុបការបញ្ចុះតម្លៃ',
-        'total_price': 'ការទូទាត់សរុប',
+        'total_price': 'ការទូទាត់សរុប: ',
         'travel_information_summary': 'ព័ត៌មានសង្ខេបការធ្វើដំណើរ',
         'your_ticket_has_been_reserved': 'សំបុត្ររបស់អ្នកត្រូវបានកក់ទុក',
         'ticket_info1':
@@ -544,6 +544,7 @@ final Map<String, String> kmKH = {
         'total_going': "តម្លៃសរុបទៅ",
         'total_return': "តម្លៃសរុបត្រលប់",
         'service_fee': "ថ្លៃសេវា",
+        'total_mn': 'សរុបចុងក្រោយ',
 
         //schedule_list_one_way
         'remaining_seat': 'កៅអីដែលនៅសល់',
@@ -576,7 +577,7 @@ final Map<String, String> kmKH = {
 
         //ticket_history
         'booking_history': 'ប្រតិបត្តិការកក់សំបុត្រ',
-        'payment_type': 'ប្រភេទការទូទាត់',
+        // 'payment_type': 'ប្រភេទការទូទាត់',
         'view_details': 'មើលព័ត៌មានលម្អិត',
 
         //ticket_menu

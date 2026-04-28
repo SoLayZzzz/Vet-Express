@@ -484,7 +484,7 @@ final Map<String, String> enUS = {
         'lucky_draw': 'Lucky Ticket',
         'dob': "DOB",
         'passport': "Passport No.",
-        'passport_number': 'Passport number | Passport No.',
+        'passport_number': 'Passport No.',
 
         //ticket_history
         'ticket_history': 'Ticket History',
@@ -494,7 +494,7 @@ final Map<String, String> enUS = {
         'booking_date': 'Booking date',
         'departure_date': 'Departure Date',
         'transportation_type': 'Transportation Type',
-        'payment': 'Payment type',
+        // 'payment': 'Payment type',
         'ticket_price': 'Ticket Price',
         'sub_total': 'Grand Total',
         'sub_total_from': 'Sub Total Of',
@@ -535,6 +535,7 @@ final Map<String, String> enUS = {
         'total_going': "Total going",
         'total_return': "Total return",
         'service_fee': "Service Fee",
+        'total_mn': 'Total',
 
         //schedule_list_one_way
         'remaining_seat': 'Remaining Seat',

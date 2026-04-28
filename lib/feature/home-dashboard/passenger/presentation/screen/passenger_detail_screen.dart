@@ -417,7 +417,53 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                       style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  // const SizedBox(height: 5),
+                  // if (companyType == 4)
+                  //   Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       Expanded(
+                  //         flex: 1,
+                  //         child: Text.rich(
+                  //           TextSpan(
+                  //             children: <TextSpan>[
+                  //               TextSpan(
+                  //                 text: 'name_pro'.tr,
+                  //                 style: const TextStyle(
+                  //                   color: AppColors.textColor,
+                  //                 ),
+                  //               ),
+                  //               const TextSpan(
+                  //                 text: ' *',
+                  //                 style: TextStyle(color: AppColors.redColor),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       Expanded(
+                  //         flex: 2,
+                  //         child: TextField(
+                  //           controller: nameControllers[index],
+                  //           style: const TextStyle(fontSize: 14),
+                  //           decoration: InputDecoration(
+                  //             isDense: true,
+                  //             contentPadding: const EdgeInsets.symmetric(
+                  //               horizontal: 10,
+                  //               vertical: 15,
+                  //             ),
+                  //             hintText: 'name_pro'.tr,
+                  //             enabledBorder: Style.outlineInputBorder(),
+                  //             focusedBorder: Style.outlineInputBorder(),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  if (companyType == 4) const SizedBox(height: 15),
+                  _buildChooseGender(gender, index),
+                  const SizedBox(height: 15),
+                   const SizedBox(height: 5),
                   if (companyType == 4)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -460,9 +506,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         ),
                       ],
                     ),
-                  if (companyType == 4) const SizedBox(height: 15),
-                  _buildChooseGender(gender, index),
-                  const SizedBox(height: 15),
+                    const SizedBox(height: 15),
                   _buildChooseNationality(nationalityIds, index, national),
                   const SizedBox(height: 15),
                   if (companyType == 4)
@@ -516,7 +560,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                        'Please input a date not greater than today.',
+                                        'Date cannot be in the future!',
                                       ),
                                     ),
                                   );
@@ -524,7 +568,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   dobDisplayControllers[index].text =
                                       DateFormat('dd-MM-yyyy').format(date);
                                   dobValueControllers[index].text =
-                                      DateFormat('dd-MM-yyyy').format(date);
+                                      DateFormat('yyyy-MM-dd').format(date);
                                   controller.update();
                                 }
                               }
@@ -799,7 +843,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: AppColors.primaryColor,
+              color: groupValue == value
+                    ? AppColors.primaryColor
+                    : AppColors.deepGrey,
               width: 2,
             ),
           ),
@@ -985,1045 +1031,11 @@ Widget _buildChooseGender(List<String> gender, int index) {
                       ),
 
                       //* One way display
-                      SliverList(
-                        delegate: SliverChildListDelegate([
-                          Container(
-                            margin: const EdgeInsets.only(top: 15.0),
-                            padding: const EdgeInsets.all(15),
-                            color: AppColors.whiteColor,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                //* destination
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: ValueStatic.desfrom,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                          color: AppColors.titleColor,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'to'.tr,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                          color: AppColors.titleColor,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ValueStatic.desTo,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                          color: AppColors.titleColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-
-                                //* departure date
-                                Text(
-                                  'departure_date:'.tr + ValueStatic.goDate,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: AppColors.textColor,
-                                  ),
-                                ),
-
-                                //* boarding point
-                                FutureBuilder<boarding.CarPointResponse>(
-                                  future:
-                                      controller
-                                          .state
-                                          .futureBoardingPointOneWay,
-                                  builder: (context, data) {
-                                    if (data.hasData) {
-                                      if ((data.data?.header?.result) == true &&
-                                          (data.data?.header?.statusCode) ==
-                                              200) {
-                                        if ((data.data?.body)!.isNotEmpty) {
-                                          if (data.data?.body?.length == 1) {
-                                            ValueStatic.boardingPointOneWayId =
-                                                (data.data?.body?[0].id)
-                                                    .toString();
-                                            ValueStatic.boardingPointOneWay =
-                                                (data.data?.body?[0].name)
-                                                    .toString();
-                                          }
-
-                                          if (ValueStatic
-                                              .dropOffPointOneWayId
-                                              .isNotEmpty) {
-                                            _callGetData(
-                                              context,
-                                              isConfirm: false,
-                                            );
-                                          }
-
-                                          return Column(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 10,
-                                                  bottom: 5,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(children: [
-                                                      Text(
-                                                      'boarding_point'.tr,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color:
-                                                            AppColors
-                                                                .titleColor,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 5),
-                                                    (data.data?.body?.length !=
-                                                            1)
-                                                        ? const Text(
-                                                          "*",
-                                                          style: TextStyle(
-                                                            color: Colors.red,
-                                                          ),
-                                                        )
-                                                        : const SizedBox(),
-                                                    ],),
-
-                                                      _viewMapButtonForSelection(
-                                                        context: context,
-                                                        items: data.data?.body ?? [],
-                                                        selectedIndex:
-                                                            controller
-                                                                .state
-                                                                .isSelectedIndexBoardingOneWay
-                                                                .value,
-                                              ),
-                                                  ],
-
-                                                  
-                                                ),
-                                              ),
-                                              _pointPicker(
-                                                context: context,
-                                                decoration: Style.inputText(''),
-                                                dialogTitle:
-                                                    'boarding_point'.tr,
-                                                items: data.data?.body ?? [],
-                                                selectedIndex:
-                                                    controller
-                                                        .state
-                                                        .isSelectedIndexBoardingOneWay
-                                                        .value,
-                                                onSelectedIndexChanged: (
-                                                  value,
-                                                ) {
-                                                  controller
-                                                      .state
-                                                      .isSelectedIndexBoardingOneWay
-                                                      .value = value;
-                                                },
-                                                selectedName:
-                                                    controller
-                                                        .state
-                                                        .selectedBoardingPointOneWay
-                                                        .value,
-                                                onSelectedNameChanged: (value) {
-                                                  controller
-                                                      .state
-                                                      .selectedBoardingPointOneWay
-                                                      .value = value;
-                                                },
-                                                selectedAddress:
-                                                    controller
-                                                        .state
-                                                        .selectedBoardingPointAddressOneWay
-                                                        .value,
-                                                onSelectedAddressChanged: (
-                                                  value,
-                                                ) {
-                                                  controller
-                                                      .state
-                                                      .selectedBoardingPointAddressOneWay
-                                                      .value = value;
-                                                },
-                                                defaultName:
-                                                    'select_boarding'.tr,
-                                                onClearSelection: () {
-                                                  controller
-                                                      .state
-                                                      .isSelectedIndexBoardingOneWay
-                                                      .value = -1;
-                                                  controller
-                                                      .state
-                                                      .selectedBoardingPointOneWay
-                                                      .value = 'select_boarding'
-                                                          .tr;
-                                                  controller
-                                                      .state
-                                                      .selectedBoardingPointAddressOneWay
-                                                      .value = '';
-                                                  ValueStatic
-                                                      .boardingPointOneWayId = '';
-                                                },
-                                                onValueStaticSelected: (item) {
-                                                  ValueStatic
-                                                          .boardingPointOneWayId =
-                                                      (item.id).toString();
-                                                  ValueStatic
-                                                          .boardingPointOneWay =
-                                                      (item.name).toString();
-                                                },
-                                                isDisabled: (item) {
-                                                  return (item.isAllow ?? 1) ==
-                                                      0;
-                                                },
-                                              ),
-                                              
-                                            ],
-                                          );
-                                        }
-                                      }
-                                    } else if (data.hasError) {
-                                      return const Text('');
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
-
-                                //* drop off point
-                                FutureBuilder<boarding.CarPointResponse>(
-                                  future:
-                                      controller.state.futureDropOffPointOneWay,
-                                  builder: (context, data) {
-                                    if (data.hasData) {
-                                      if ((data.data?.header?.result) == true &&
-                                          (data.data?.header?.statusCode) ==
-                                              200) {
-                                        if ((data.data?.body)!.isNotEmpty) {
-                                          if (data.data?.body?.length == 1) {
-                                            ValueStatic.dropOffPointOneWayId =
-                                                (data.data?.body?[0].id)
-                                                    .toString();
-                                            ValueStatic.dropOffPointOneWay =
-                                                (data.data?.body?[0].name)
-                                                    .toString();
-                                          }
-
-                                          if (ValueStatic
-                                              .boardingPointOneWayId
-                                              .isNotEmpty) {
-                                            _callGetData(
-                                              context,
-                                              isConfirm: false,
-                                            );
-                                          }
-
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 10,
-                                                  bottom: 5,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(children: [
-                                                      Text(
-                                                      'drop_off_point'.tr,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color:
-                                                            AppColors
-                                                                .titleColor,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 5),
-                                                    (data.data?.body?.length !=
-                                                            1)
-                                                        ? const Text(
-                                                          "*",
-                                                          style: TextStyle(
-                                                            color: Colors.red,
-                                                          ),
-                                                        )
-                                                        : const SizedBox(),
-                                                    ],),
-                                                        //
-                                                 _viewMapButtonForSelection(
-                                                  context: context,
-                                                  items: data.data?.body ?? [],
-                                                  selectedIndex:
-                                                      controller
-                                                          .state
-                                                          .isSelectedIndexBoardingOneWay
-                                                          .value,
-                                              ),
-                                                  ],
-                                                ),
-                                              ),
-                                              _pointPicker(
-                                                context: context,
-                                                decoration: Style.inputText(''),
-                                                dialogTitle:
-                                                    'drop_off_point'.tr,
-                                                items: data.data?.body ?? [],
-                                                selectedIndex:
-                                                    controller
-                                                        .state
-                                                        .isSelectedIndexDropOffOneWay
-                                                        .value,
-                                                onSelectedIndexChanged: (
-                                                  value,
-                                                ) {
-                                                  controller
-                                                      .state
-                                                      .isSelectedIndexDropOffOneWay
-                                                      .value = value;
-                                                },
-                                                selectedName:
-                                                    controller
-                                                        .state
-                                                        .selectedDropPointOneWay
-                                                        .value,
-                                                onSelectedNameChanged: (value) {
-                                                  controller
-                                                      .state
-                                                      .selectedDropPointOneWay
-                                                      .value = value;
-                                                },
-                                                selectedAddress:
-                                                    controller
-                                                        .state
-                                                        .selectedDropPointAddressOneWay
-                                                        .value,
-                                                onSelectedAddressChanged: (
-                                                  value,
-                                                ) {
-                                                  controller
-                                                      .state
-                                                      .selectedDropPointAddressOneWay
-                                                      .value = value;
-                                                },
-                                                defaultName: 'select_drop'.tr,
-                                                onClearSelection: () {
-                                                  controller
-                                                      .state
-                                                      .isSelectedIndexDropOffOneWay
-                                                      .value = -1;
-                                                  controller
-                                                      .state
-                                                      .selectedDropPointOneWay
-                                                      .value = 'select_drop'.tr;
-                                                  controller
-                                                      .state
-                                                      .selectedDropPointAddressOneWay
-                                                      .value = '';
-                                                  ValueStatic
-                                                      .dropOffPointOneWayId = '';
-                                                },
-                                                onValueStaticSelected: (item) {
-                                                  ValueStatic
-                                                          .dropOffPointOneWayId =
-                                                      (item.id).toString();
-                                                  ValueStatic
-                                                          .dropOffPointOneWay =
-                                                      (item.name).toString();
-                                                },
-                                              ),
-                                             
-                                            ],
-                                          );
-                                        }
-                                      }
-                                    } else if (data.hasError) {
-                                      return const Text('');
-                                    }
-
-                                    return Center(
-                                      child: SizedBox(
-                                        height: 30.0,
-                                        width: 30.0,
-                                        child: CircularProgressIndicator(
-                                          value: null,
-                                          color:
-                                              ValueStatic.ticketType == '3'
-                                                  ? AppColors.airBusColor
-                                                  : AppColors.primaryColor,
-                                          strokeWidth: 3.0,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          //* customer info
-                          _travelInformationSection(
-                            context: context,
-                            selectedSeats: ValueStatic.oneWaySelectedSeat,
-                            companyType: ValueStatic.companyTypeOneWay,
-                            nameControllers: controller.state.nameOneWay,
-                            gender: controller.state.genderOneWay,
-                            nationalityIds: controller.state.nationalityIds,
-                            national: controller.state.nationalOneWay,
-                            dobDisplayControllers:
-                                controller.state.dobOneWayList,
-                            dobValueControllers: controller.state.dobOneWay,
-                            passportControllers:
-                                controller.state.passportOneWay,
-                          ),
-                        ]),
-                      ),
+                      _buildPassengerOneway(context),
 
                       //* Two way display
                       if (ValueStatic.journeyType == 2)
-                        SliverList(
-                          delegate: SliverChildListDelegate([
-                            Container(
-                              margin: const EdgeInsets.only(top: 15.0),
-                              padding: const EdgeInsets.all(15),
-                              color: AppColors.whiteColor,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: ValueStatic.desTo,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: AppColors.titleColor,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: 'to'.tr,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: ValueStatic.desfrom,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    'departure_date:'.tr + ValueStatic.backDate,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14,
-                                      color: AppColors.titleColor,
-                                    ),
-                                  ),
-
-                                  //* boarding point two way
-                                  FutureBuilder<boarding.CarPointResponse>(
-                                    future:
-                                        controller
-                                            .state
-                                            .futureBoardingPointTwoWay,
-                                    builder: (context, data) {
-                                      if (data.hasData) {
-                                        if ((data.data?.header?.result) ==
-                                                true &&
-                                            (data.data?.header?.statusCode) ==
-                                                200) {
-                                          if ((data.data?.body)!.isNotEmpty) {
-                                            if (data.data?.body?.length == 1) {
-                                              ValueStatic
-                                                      .boardingPointTwoWayId =
-                                                  (data.data?.body?[0].id)
-                                                      .toString();
-                                              ValueStatic.boardingPointTwoWay =
-                                                  (data.data?.body?[0].name)
-                                                      .toString();
-                                            }
-
-                                            if (ValueStatic
-                                                .dropOffPointOneWayId
-                                                .isNotEmpty) {
-                                              _callGetData(
-                                                context,
-                                                isConfirm: false,
-                                              );
-                                            }
-
-                                            return Column(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        top: 10,
-                                                        bottom: 5,
-                                                      ),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                        'boarding_point'.tr,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize: 14,
-                                                          color:
-                                                              AppColors
-                                                                  .titleColor,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      (data
-                                                                  .data
-                                                                  ?.body
-                                                                  ?.length !=
-                                                              1)
-                                                          ? const Text(
-                                                            "*",
-                                                            style: TextStyle(
-                                                              color: Colors.red,
-                                                            ),
-                                                          )
-                                                          : const SizedBox(),
-                                                        ],
-                                                      ),
-                                                          //
-                                                           _viewMapButtonForSelection(
-                                                  context: context,
-                                                  items: data.data?.body ?? [],
-                                                  selectedIndex:
-                                                      controller
-                                                          .state
-                                                          .isSelectIndexBoardingTwoWay
-                                                          .value,
-                                                ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                InputDecorator(
-                                                  decoration: InputDecoration(
-                                                    isDense: true,
-                                                    contentPadding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 12,
-                                                        ),
-                                                    enabledBorder:
-                                                        Style.outlineInputBorder(),
-                                                    border: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color:
-                                                            ValueStatic.ticketType ==
-                                                                    '3'
-                                                                ? AppColors
-                                                                    .airBusColor
-                                                                : AppColors
-                                                                    .primaryColor,
-                                                      ),
-                                                      borderRadius:
-                                                          const BorderRadius.all(
-                                                            Radius.circular(5),
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  child:
-                                                      (data
-                                                                  .data
-                                                                  ?.body
-                                                                  ?.length !=
-                                                              1)
-                                                          ? _pointPicker(
-                                                            context: context,
-                                                            decoration: InputDecoration(
-                                                              isDense: true,
-                                                              contentPadding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical:
-                                                                        12,
-                                                                  ),
-                                                              enabledBorder:
-                                                                  Style.outlineInputBorder(),
-                                                              border: OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                  color:
-                                                                      ValueStatic.ticketType ==
-                                                                              '3'
-                                                                          ? AppColors
-                                                                              .airBusColor
-                                                                          : AppColors
-                                                                              .primaryColor,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius.all(
-                                                                      Radius.circular(
-                                                                        5,
-                                                                      ),
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                            dialogTitle:
-                                                                'boarding_point'
-                                                                    .tr,
-                                                            items:
-                                                                data
-                                                                    .data
-                                                                    ?.body ??
-                                                                [],
-                                                            selectedIndex:
-                                                                controller
-                                                                    .state
-                                                                    .isSelectIndexBoardingTwoWay
-                                                                    .value,
-                                                            onSelectedIndexChanged: (
-                                                              value,
-                                                            ) {
-                                                              controller
-                                                                  .state
-                                                                  .isSelectIndexBoardingTwoWay
-                                                                  .value = value;
-                                                            },
-                                                            selectedName:
-                                                                controller
-                                                                    .state
-                                                                    .selectBoardingPointTwoWay
-                                                                    .value,
-                                                            onSelectedNameChanged: (
-                                                              value,
-                                                            ) {
-                                                              controller
-                                                                  .state
-                                                                  .selectBoardingPointTwoWay
-                                                                  .value = value;
-                                                            },
-                                                            selectedAddress:
-                                                                controller
-                                                                    .state
-                                                                    .selectBoardingPointAddressTwoWay
-                                                                    .value,
-                                                            onSelectedAddressChanged: (
-                                                              value,
-                                                            ) {
-                                                              controller
-                                                                  .state
-                                                                  .selectBoardingPointAddressTwoWay
-                                                                  .value = value;
-                                                            },
-                                                            defaultName:
-                                                                'select_boarding'
-                                                                    .tr,
-                                                            onClearSelection: () {
-                                                              controller
-                                                                  .state
-                                                                  .isSelectIndexBoardingTwoWay
-                                                                  .value = -1;
-                                                              controller
-                                                                      .state
-                                                                      .selectBoardingPointTwoWay
-                                                                      .value =
-                                                                  'select_boarding'
-                                                                      .tr;
-                                                              controller
-                                                                  .state
-                                                                  .selectBoardingPointAddressTwoWay
-                                                                  .value = '';
-                                                              ValueStatic
-                                                                  .boardingPointTwoWayId = '';
-                                                            },
-                                                            onValueStaticSelected: (
-                                                              item,
-                                                            ) {
-                                                              ValueStatic
-                                                                      .boardingPointTwoWayId =
-                                                                  (item.id)
-                                                                      .toString();
-                                                              ValueStatic
-                                                                      .boardingPointTwoWay =
-                                                                  (item.name)
-                                                                      .toString();
-                                                            },
-                                                          )
-                                                          : Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "${(data.data?.body?[0].name)}",
-                                                                style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize: 14,
-                                                                  color:
-                                                                      AppColors
-                                                                          .textColor,
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 8,
-                                                              ),
-                                                              Text(
-                                                                "${data.data?.body?[0].address}",
-                                                                style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize: 14,
-                                                                  color:
-                                                                      AppColors
-                                                                          .textColor,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                ),
-                                               
-                                              ],
-                                            );
-                                          }
-                                        }
-                                      } else if (data.hasError) {
-                                        return const Text('');
-                                      }
-                                      return const SizedBox.shrink();
-                                    },
-                                  ),
-
-                                  //* drop off two way
-                                  FutureBuilder<boarding.CarPointResponse>(
-                                    future:
-                                        controller
-                                            .state
-                                            .futureDropOffPointTwoWay,
-                                    builder: (context, data) {
-                                      if (data.hasData) {
-                                        if ((data.data?.header?.result) ==
-                                                true &&
-                                            (data.data?.header?.statusCode) ==
-                                                200) {
-                                          if ((data.data?.body)!.isNotEmpty) {
-                                            if (data.data?.body?.length == 1) {
-                                              ValueStatic.dropOffPointTwoWayId =
-                                                  (data.data?.body?[0].id)
-                                                      .toString();
-                                              ValueStatic.dropOffPointTwoWay =
-                                                  (data.data?.body?[0].name)
-                                                      .toString();
-                                            }
-
-                                            if (ValueStatic
-                                                .boardingPointOneWayId
-                                                .isNotEmpty) {
-                                              _callGetData(
-                                                context,
-                                                isConfirm: false,
-                                              );
-                                            }
-
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        top: 10,
-                                                        bottom: 5,
-                                                      ),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                        'drop_off_point'.tr,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 14,
-                                                            color:
-                                                                AppColors
-                                                                    .titleColor,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(width: 5),
-                                                        (data
-                                                                    .data
-                                                                    ?.body
-                                                                    ?.length !=
-                                                                1)
-                                                            ? const Text(
-                                                              "*",
-                                                              style: TextStyle(
-                                                                color: Colors.red,
-                                                              ),
-                                                            )
-                                                            : const SizedBox(),
-                                                        ],
-                                                      ),
-                                                          //
-                                                           _viewMapButtonForSelection(
-                                                  context: context,
-                                                  items: data.data?.body ?? [],
-                                                  selectedIndex:
-                                                      controller
-                                                          .state
-                                                          .isSelectIndexDropOffTwoWay
-                                                          .value,
-                                                ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                InputDecorator(
-                                                  decoration: InputDecoration(
-                                                    isDense: true,
-                                                    contentPadding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 12,
-                                                        ),
-                                                    enabledBorder:
-                                                        Style.outlineInputBorder(),
-                                                    border: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color:
-                                                            ValueStatic.ticketType ==
-                                                                    '3'
-                                                                ? AppColors
-                                                                    .airBusColor
-                                                                : AppColors
-                                                                    .primaryColor,
-                                                      ),
-                                                      borderRadius:
-                                                          const BorderRadius.all(
-                                                            Radius.circular(5),
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  child:
-                                                      (data
-                                                                  .data
-                                                                  ?.body
-                                                                  ?.length !=
-                                                              1)
-                                                          ? _pointPicker(
-                                                            context: context,
-                                                            decoration: InputDecoration(
-                                                              isDense: true,
-                                                              contentPadding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical:
-                                                                        12,
-                                                                  ),
-                                                              enabledBorder:
-                                                                  Style.outlineInputBorder(),
-                                                              border: OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                  color:
-                                                                      ValueStatic.ticketType ==
-                                                                              '3'
-                                                                          ? AppColors
-                                                                              .airBusColor
-                                                                          : AppColors
-                                                                              .primaryColor,
-                                                                ),
-                                                                borderRadius:
-                                                                    const BorderRadius.all(
-                                                                      Radius.circular(
-                                                                        5,
-                                                                      ),
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                            dialogTitle:
-                                                                'drop_off_point'
-                                                                    .tr,
-                                                            items:
-                                                                data
-                                                                    .data
-                                                                    ?.body ??
-                                                                [],
-                                                            selectedIndex:
-                                                                controller
-                                                                    .state
-                                                                    .isSelectIndexDropOffTwoWay
-                                                                    .value,
-                                                            onSelectedIndexChanged: (
-                                                              value,
-                                                            ) {
-                                                              controller
-                                                                  .state
-                                                                  .isSelectIndexDropOffTwoWay
-                                                                  .value = value;
-                                                            },
-                                                            selectedName:
-                                                                controller
-                                                                    .state
-                                                                    .selectDropPointTwoWay
-                                                                    .value,
-                                                            onSelectedNameChanged: (
-                                                              value,
-                                                            ) {
-                                                              controller
-                                                                  .state
-                                                                  .selectDropPointTwoWay
-                                                                  .value = value;
-                                                            },
-                                                            selectedAddress:
-                                                                controller
-                                                                    .state
-                                                                    .selectDropPointAddressTwoWay
-                                                                    .value,
-                                                            onSelectedAddressChanged: (
-                                                              value,
-                                                            ) {
-                                                              controller
-                                                                  .state
-                                                                  .selectDropPointAddressTwoWay
-                                                                  .value = value;
-                                                            },
-                                                            defaultName:
-                                                                'select_drop'
-                                                                    .tr,
-                                                            onClearSelection: () {
-                                                              controller
-                                                                  .state
-                                                                  .isSelectIndexDropOffTwoWay
-                                                                  .value = -1;
-                                                              controller
-                                                                      .state
-                                                                      .selectDropPointTwoWay
-                                                                      .value =
-                                                                  'select_drop'
-                                                                      .tr;
-                                                              controller
-                                                                  .state
-                                                                  .selectDropPointAddressTwoWay
-                                                                  .value = '';
-                                                              ValueStatic
-                                                                  .dropOffPointTwoWayId = '';
-                                                            },
-                                                            onValueStaticSelected: (
-                                                              item,
-                                                            ) {
-                                                              ValueStatic
-                                                                      .dropOffPointTwoWayId =
-                                                                  (item.id)
-                                                                      .toString();
-                                                              ValueStatic
-                                                                      .dropOffPointTwoWay =
-                                                                  (item.name)
-                                                                      .toString();
-                                                            },
-                                                          )
-                                                          : Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                "${(data.data?.body?[0].name)}",
-                                                                style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize: 14,
-                                                                  color:
-                                                                      AppColors
-                                                                          .textColor,
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 8,
-                                                              ),
-                                                              Text(
-                                                                "${data.data?.body?[0].address}",
-                                                                style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize: 14,
-                                                                  color:
-                                                                      AppColors
-                                                                          .textColor,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                ),
-                                               
-                                              ],
-                                            );
-                                          }
-                                        }
-                                      } else if (data.hasError) {
-                                        return const Text('');
-                                      }
-                                      return Center(
-                                        child: SizedBox(
-                                          height: 30.0,
-                                          width: 30.0,
-                                          child: CircularProgressIndicator(
-                                            value: null,
-                                            color:
-                                                ValueStatic.ticketType == '3'
-                                                    ? AppColors.airBusColor
-                                                    : AppColors.primaryColor,
-                                            strokeWidth: 3.0,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            //* customer info
-                            _travelInformationSection(
-                              context: context,
-                              selectedSeats: ValueStatic.twoWaySelectedSeat,
-                              companyType: ValueStatic.companyTypeTwoWay,
-                              nameControllers: controller.state.nameTwoWay,
-                              gender: controller.state.genderTwoWay,
-                              nationalityIds:
-                                  controller.state.nationalityIdsTwoWay,
-                              national: controller.state.nationalTwoWay,
-                              dobDisplayControllers:
-                                  controller.state.dobTwoWayList,
-                              dobValueControllers: controller.state.dobTwoWay,
-                              passportControllers:
-                                  controller.state.passportTwoWay,
-                            ),
-                          ]),
-                        ),
+                        _buildPassengerTwoway(context),
 
                       //* Summary
                       SliverToBoxAdapter(
@@ -3039,10 +2051,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                           Row(
                                             children: [
                                               Text(
-                                                'total_price'.tr,
+                                                'total_mn'.tr,
                                                 style: const TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w400,
                                                 ),
                                               ),
                                               const Spacer(),
@@ -3050,7 +2062,7 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                                 '\$${total.toStringAsFixed(2)}',
                                                 style: const TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w400,
                                                 ),
                                               ),
                                             ],
@@ -3142,10 +2154,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                           Row(
                                             children: [
                                               Text(
-                                                'total_price'.tr,
+                                                'total_mn'.tr,
                                                 style: const TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w400,
                                                 ),
                                               ),
                                               const Spacer(),
@@ -3210,7 +2222,7 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                       Row(
                                         children: [
                                           Text(
-                                            'total_price'.tr,
+                                            'total_mn'.tr,
                                             style: const TextStyle(
                                               color: AppColors.textColor,
                                             ),
@@ -3354,10 +2366,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                         Row(
                                           children: [
                                             Text(
-                                              'total_price'.tr,
+                                              'total_mn'.tr,
                                               style: const TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             const Spacer(),
@@ -3389,10 +2401,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                       Row(
                                         children: [
                                           Text(
-                                            'total_price'.tr,
+                                            'total_mn'.tr,
                                             style: const TextStyle(
                                               fontSize: 16,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w400,
                                             ),
                                           ),
                                           const Spacer(),
@@ -3444,10 +2456,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                         Row(
                                           children: [
                                             Text(
-                                              'total_price'.tr,
+                                              'total_mn'.tr,
                                               style: const TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             const Spacer(),
@@ -3482,10 +2494,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                         Row(
                                           children: [
                                             Text(
-                                              'total_price'.tr,
+                                              'total_mn'.tr,
                                               style: const TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             const Spacer(),
@@ -3655,10 +2667,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                             Row(
                                               children: [
                                                 Text(
-                                                  'total_price'.tr,
+                                                  'total_mn'.tr,
                                                   style: const TextStyle(
                                                     fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
                                                 const Spacer(),
@@ -3711,11 +2723,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                               Row(
                                                 children: [
                                                   Text(
-                                                    'total_price'.tr,
+                                                    'total_mn'.tr,
                                                     style: const TextStyle(
                                                       fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                     fontWeight: FontWeight.w400,
                                                     ),
                                                   ),
                                                   const Spacer(),
@@ -3810,10 +2821,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                           Row(
                                             children: [
                                               Text(
-                                                'total_price'.tr,
+                                                'total_mn'.tr,
                                                 style: const TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w400,
                                                 ),
                                               ),
                                               const Spacer(),
@@ -4039,10 +3050,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
                                             Row(
                                               children: [
                                                 Text(
-                                                  'total_price'.tr,
+                                                  'total_mn'.tr,
                                                   style: const TextStyle(
                                                     fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
                                                 const Spacer(),
@@ -4155,6 +3166,1022 @@ Widget _buildChooseGender(List<String> gender, int index) {
         );
       },
     );
+  }
+
+  Widget _buildPassengerTwoway(BuildContext context) {
+    return SliverList(
+                        delegate: SliverChildListDelegate([
+                          Container(
+                            margin: const EdgeInsets.only(top: 15.0),
+                            padding: const EdgeInsets.all(15),
+                            color: AppColors.whiteColor,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: ValueStatic.desTo,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: AppColors.titleColor,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ' - ',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ValueStatic.desfrom,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'departure_date:'.tr + ValueStatic.backDate,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: AppColors.titleColor,
+                                  ),
+                                ),
+
+                                //* boarding point two way
+                                FutureBuilder<boarding.CarPointResponse>(
+                                  future:
+                                      controller
+                                          .state
+                                          .futureBoardingPointTwoWay,
+                                  builder: (context, data) {
+                                    if (data.hasData) {
+                                      if ((data.data?.header?.result) ==
+                                              true &&
+                                          (data.data?.header?.statusCode) ==
+                                              200) {
+                                        if ((data.data?.body)!.isNotEmpty) {
+                                          if (data.data?.body?.length == 1) {
+                                            ValueStatic
+                                                    .boardingPointTwoWayId =
+                                                (data.data?.body?[0].id)
+                                                    .toString();
+                                            ValueStatic.boardingPointTwoWay =
+                                                (data.data?.body?[0].name)
+                                                    .toString();
+                                          }
+
+                                          if (ValueStatic
+                                              .dropOffPointOneWayId
+                                              .isNotEmpty) {
+                                            _callGetData(
+                                              context,
+                                              isConfirm: false,
+                                            );
+                                          }
+
+                                          return Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                    'boarding_point'.tr,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 14,
+                                                      color:
+                                                          AppColors
+                                                              .titleColor,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  (data
+                                                              .data
+                                                              ?.body
+                                                              ?.length !=
+                                                          1)
+                                                      ? const Text(
+                                                        "*",
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      )
+                                                      : const SizedBox(),
+                                                    ],
+                                                  ),
+                                                      //
+                                                       _viewMapButtonForSelection(
+                                              context: context,
+                                              items: data.data?.body ?? [],
+                                              selectedIndex:
+                                                  controller
+                                                      .state
+                                                      .isSelectIndexBoardingTwoWay
+                                                      .value,
+                                                                                            ),
+                                                ],
+                                              ),
+                                              InputDecorator(
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  contentPadding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 12,
+                                                      ),
+                                                  enabledBorder:
+                                                      Style.outlineInputBorder(),
+                                                  border: OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color:
+                                                          ValueStatic.ticketType ==
+                                                                  '3'
+                                                              ? AppColors
+                                                                  .airBusColor
+                                                              : AppColors
+                                                                  .primaryColor,
+                                                    ),
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                          Radius.circular(5),
+                                                        ),
+                                                  ),
+                                                ),
+                                                child:
+                                                    (data
+                                                                .data
+                                                                ?.body
+                                                                ?.length !=
+                                                            1)
+                                                        ? _pointPicker(
+                                                          context: context,
+                                                          decoration: InputDecoration(
+                                                            isDense: true,
+                                                            contentPadding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical:
+                                                                      12,
+                                                                ),
+                                                            enabledBorder:
+                                                                Style.outlineInputBorder(),
+                                                            border: OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                color:
+                                                                    ValueStatic.ticketType ==
+                                                                            '3'
+                                                                        ? AppColors
+                                                                            .airBusColor
+                                                                        : AppColors
+                                                                            .primaryColor,
+                                                              ),
+                                                              borderRadius:
+                                                                  const BorderRadius.all(
+                                                                    Radius.circular(
+                                                                      5,
+                                                                    ),
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          dialogTitle:
+                                                              'boarding_point'
+                                                                  .tr,
+                                                          items:
+                                                              data
+                                                                  .data
+                                                                  ?.body ??
+                                                              [],
+                                                          selectedIndex:
+                                                              controller
+                                                                  .state
+                                                                  .isSelectIndexBoardingTwoWay
+                                                                  .value,
+                                                          onSelectedIndexChanged: (
+                                                            value,
+                                                          ) {
+                                                            controller
+                                                                .state
+                                                                .isSelectIndexBoardingTwoWay
+                                                                .value = value;
+                                                          },
+                                                          selectedName:
+                                                              controller
+                                                                  .state
+                                                                  .selectBoardingPointTwoWay
+                                                                  .value,
+                                                          onSelectedNameChanged: (
+                                                            value,
+                                                          ) {
+                                                            controller
+                                                                .state
+                                                                .selectBoardingPointTwoWay
+                                                                .value = value;
+                                                          },
+                                                          selectedAddress:
+                                                              controller
+                                                                  .state
+                                                                  .selectBoardingPointAddressTwoWay
+                                                                  .value,
+                                                          onSelectedAddressChanged: (
+                                                            value,
+                                                          ) {
+                                                            controller
+                                                                .state
+                                                                .selectBoardingPointAddressTwoWay
+                                                                .value = value;
+                                                          },
+                                                          defaultName:
+                                                              'select_boarding'
+                                                                  .tr,
+                                                          onClearSelection: () {
+                                                            controller
+                                                                .state
+                                                                .isSelectIndexBoardingTwoWay
+                                                                .value = -1;
+                                                            controller
+                                                                    .state
+                                                                    .selectBoardingPointTwoWay
+                                                                    .value =
+                                                                'select_boarding'
+                                                                    .tr;
+                                                            controller
+                                                                .state
+                                                                .selectBoardingPointAddressTwoWay
+                                                                .value = '';
+                                                            ValueStatic
+                                                                .boardingPointTwoWayId = '';
+                                                          },
+                                                          onValueStaticSelected: (
+                                                            item,
+                                                          ) {
+                                                            ValueStatic
+                                                                    .boardingPointTwoWayId =
+                                                                (item.id)
+                                                                    .toString();
+                                                            ValueStatic
+                                                                    .boardingPointTwoWay =
+                                                                (item.name)
+                                                                    .toString();
+                                                          },
+                                                        )
+                                                        : Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              "${(data.data?.body?[0].name)}",
+                                                              style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 14,
+                                                                color:
+                                                                    AppColors
+                                                                        .textColor,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Text(
+                                                              "${data.data?.body?[0].address}",
+                                                              style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 14,
+                                                                color:
+                                                                    AppColors
+                                                                        .textColor,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                              ),
+                                             
+                                            ],
+                                          );
+                                        }
+                                      }
+                                    } else if (data.hasError) {
+                                      return const Text('');
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+
+                                //* drop off two way
+                                FutureBuilder<boarding.CarPointResponse>(
+                                  future:
+                                      controller
+                                          .state
+                                          .futureDropOffPointTwoWay,
+                                  builder: (context, data) {
+                                    if (data.hasData) {
+                                      if ((data.data?.header?.result) ==
+                                              true &&
+                                          (data.data?.header?.statusCode) ==
+                                              200) {
+                                        if ((data.data?.body)!.isNotEmpty) {
+                                          if (data.data?.body?.length == 1) {
+                                            ValueStatic.dropOffPointTwoWayId =
+                                                (data.data?.body?[0].id)
+                                                    .toString();
+                                            ValueStatic.dropOffPointTwoWay =
+                                                (data.data?.body?[0].name)
+                                                    .toString();
+                                          }
+
+                                          if (ValueStatic
+                                              .boardingPointOneWayId
+                                              .isNotEmpty) {
+                                            _callGetData(
+                                              context,
+                                              isConfirm: false,
+                                            );
+                                          }
+
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                    'drop_off_point'.tr,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 14,
+                                                        color:
+                                                            AppColors
+                                                                .titleColor,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    (data
+                                                                .data
+                                                                ?.body
+                                                                ?.length !=
+                                                            1)
+                                                        ? const Text(
+                                                          "*",
+                                                          style: TextStyle(
+                                                            color: Colors.red,
+                                                          ),
+                                                        )
+                                                        : const SizedBox(),
+                                                    ],
+                                                  ),
+                                                      //
+                                                       _viewMapButtonForSelection(
+                                              context: context,
+                                              items: data.data?.body ?? [],
+                                              selectedIndex:
+                                                  controller
+                                                      .state
+                                                      .isSelectIndexDropOffTwoWay
+                                                      .value,
+                                                                                            ),
+                                                ],
+                                              ),
+                                              InputDecorator(
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  contentPadding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 12,
+                                                      ),
+                                                  enabledBorder:
+                                                      Style.outlineInputBorder(),
+                                                  border: OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color:
+                                                          ValueStatic.ticketType ==
+                                                                  '3'
+                                                              ? AppColors
+                                                                  .airBusColor
+                                                              : AppColors
+                                                                  .primaryColor,
+                                                    ),
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                          Radius.circular(5),
+                                                        ),
+                                                  ),
+                                                ),
+                                                child:
+                                                    (data
+                                                                .data
+                                                                ?.body
+                                                                ?.length !=
+                                                            1)
+                                                        ? _pointPicker(
+                                                          context: context,
+                                                          decoration: InputDecoration(
+                                                            isDense: true,
+                                                            contentPadding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical:
+                                                                      12,
+                                                                ),
+                                                            enabledBorder:
+                                                                Style.outlineInputBorder(),
+                                                            border: OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                color:
+                                                                    ValueStatic.ticketType ==
+                                                                            '3'
+                                                                        ? AppColors
+                                                                            .airBusColor
+                                                                        : AppColors
+                                                                            .primaryColor,
+                                                              ),
+                                                              borderRadius:
+                                                                  const BorderRadius.all(
+                                                                    Radius.circular(
+                                                                      5,
+                                                                    ),
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          dialogTitle:
+                                                              'drop_off_point'
+                                                                  .tr,
+                                                          items:
+                                                              data
+                                                                  .data
+                                                                  ?.body ??
+                                                              [],
+                                                          selectedIndex:
+                                                              controller
+                                                                  .state
+                                                                  .isSelectIndexDropOffTwoWay
+                                                                  .value,
+                                                          onSelectedIndexChanged: (
+                                                            value,
+                                                          ) {
+                                                            controller
+                                                                .state
+                                                                .isSelectIndexDropOffTwoWay
+                                                                .value = value;
+                                                          },
+                                                          selectedName:
+                                                              controller
+                                                                  .state
+                                                                  .selectDropPointTwoWay
+                                                                  .value,
+                                                          onSelectedNameChanged: (
+                                                            value,
+                                                          ) {
+                                                            controller
+                                                                .state
+                                                                .selectDropPointTwoWay
+                                                                .value = value;
+                                                          },
+                                                          selectedAddress:
+                                                              controller
+                                                                  .state
+                                                                  .selectDropPointAddressTwoWay
+                                                                  .value,
+                                                          onSelectedAddressChanged: (
+                                                            value,
+                                                          ) {
+                                                            controller
+                                                                .state
+                                                                .selectDropPointAddressTwoWay
+                                                                .value = value;
+                                                          },
+                                                          defaultName:
+                                                              'select_drop'
+                                                                  .tr,
+                                                          onClearSelection: () {
+                                                            controller
+                                                                .state
+                                                                .isSelectIndexDropOffTwoWay
+                                                                .value = -1;
+                                                            controller
+                                                                    .state
+                                                                    .selectDropPointTwoWay
+                                                                    .value =
+                                                                'select_drop'
+                                                                    .tr;
+                                                            controller
+                                                                .state
+                                                                .selectDropPointAddressTwoWay
+                                                                .value = '';
+                                                            ValueStatic
+                                                                .dropOffPointTwoWayId = '';
+                                                          },
+                                                          onValueStaticSelected: (
+                                                            item,
+                                                          ) {
+                                                            ValueStatic
+                                                                    .dropOffPointTwoWayId =
+                                                                (item.id)
+                                                                    .toString();
+                                                            ValueStatic
+                                                                    .dropOffPointTwoWay =
+                                                                (item.name)
+                                                                    .toString();
+                                                          },
+                                                        )
+                                                        : Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              "${(data.data?.body?[0].name)}",
+                                                              style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 14,
+                                                                color:
+                                                                    AppColors
+                                                                        .textColor,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Text(
+                                                              "${data.data?.body?[0].address}",
+                                                              style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 14,
+                                                                color:
+                                                                    AppColors
+                                                                        .textColor,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                              ),
+                                             
+                                            ],
+                                          );
+                                        }
+                                      }
+                                    } else if (data.hasError) {
+                                      return const Text('');
+                                    }
+                                    return Center(
+                                      child: SizedBox(
+                                        height: 30.0,
+                                        width: 30.0,
+                                        child: CircularProgressIndicator(
+                                          value: null,
+                                          color:
+                                              ValueStatic.ticketType == '3'
+                                                  ? AppColors.airBusColor
+                                                  : AppColors.primaryColor,
+                                          strokeWidth: 3.0,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          //* customer info
+                          _travelInformationSection(
+                            context: context,
+                            selectedSeats: ValueStatic.twoWaySelectedSeat,
+                            companyType: ValueStatic.companyTypeTwoWay,
+                            nameControllers: controller.state.nameTwoWay,
+                            gender: controller.state.genderTwoWay,
+                            nationalityIds:
+                                controller.state.nationalityIdsTwoWay,
+                            national: controller.state.nationalTwoWay,
+                            dobDisplayControllers:
+                                controller.state.dobTwoWayList,
+                            dobValueControllers: controller.state.dobTwoWay,
+                            passportControllers:
+                                controller.state.passportTwoWay,
+                          ),
+                        ]),
+                      );
+  }
+
+  Widget _buildPassengerOneway(BuildContext context) {
+    return SliverList(
+                      delegate: SliverChildListDelegate([
+                        Container(
+                          margin: const EdgeInsets.only(top: 15.0),
+                          padding: const EdgeInsets.all(15),
+                          color: AppColors.whiteColor,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //* destination
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: ValueStatic.desfrom,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: AppColors.titleColor,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' - ',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: AppColors.titleColor,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ValueStatic.desTo,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: AppColors.titleColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // const SizedBox(height: 10),
+
+                              // //* departure date
+                              // Text(
+                              //   'departure_date:'.tr + ValueStatic.goDate,
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     color: AppColors.textColor,
+                              //   ),
+                              // ),
+
+                              //* boarding point
+                              FutureBuilder<boarding.CarPointResponse>(
+                                future:
+                                    controller
+                                        .state
+                                        .futureBoardingPointOneWay,
+                                builder: (context, data) {
+                                  if (data.hasData) {
+                                    if ((data.data?.header?.result) == true &&
+                                        (data.data?.header?.statusCode) ==
+                                            200) {
+                                      if ((data.data?.body)!.isNotEmpty) {
+                                        if (data.data?.body?.length == 1) {
+                                          ValueStatic.boardingPointOneWayId =
+                                              (data.data?.body?[0].id)
+                                                  .toString();
+                                          ValueStatic.boardingPointOneWay =
+                                              (data.data?.body?[0].name)
+                                                  .toString();
+                                        }
+
+                                        if (ValueStatic
+                                            .dropOffPointOneWayId
+                                            .isNotEmpty) {
+                                          _callGetData(
+                                            context,
+                                            isConfirm: false,
+                                          );
+                                        }
+
+                                        return Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Row(children: [
+                                                  Text(
+                                                  'boarding_point'.tr,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        AppColors
+                                                            .titleColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 5),
+                                                (data.data?.body?.length !=
+                                                        1)
+                                                    ? const Text(
+                                                      "*",
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                    : const SizedBox(),
+                                                ],),
+                                            
+                                                  _viewMapButtonForSelection(
+                                                    context: context,
+                                                    items: data.data?.body ?? [],
+                                                    selectedIndex:
+                                                        controller
+                                                            .state
+                                                            .isSelectedIndexBoardingOneWay
+                                                            .value,
+                                                                                        ),
+                                              ],
+                                            
+                                              
+                                            ),
+                                            _pointPicker(
+                                              context: context,
+                                              decoration: Style.inputText(''),
+                                              dialogTitle:
+                                                  'boarding_point'.tr,
+                                              items: data.data?.body ?? [],
+                                              selectedIndex:
+                                                  controller
+                                                      .state
+                                                      .isSelectedIndexBoardingOneWay
+                                                      .value,
+                                              onSelectedIndexChanged: (
+                                                value,
+                                              ) {
+                                                controller
+                                                    .state
+                                                    .isSelectedIndexBoardingOneWay
+                                                    .value = value;
+                                              },
+                                              selectedName:
+                                                  controller
+                                                      .state
+                                                      .selectedBoardingPointOneWay
+                                                      .value,
+                                              onSelectedNameChanged: (value) {
+                                                controller
+                                                    .state
+                                                    .selectedBoardingPointOneWay
+                                                    .value = value;
+                                              },
+                                              selectedAddress:
+                                                  controller
+                                                      .state
+                                                      .selectedBoardingPointAddressOneWay
+                                                      .value,
+                                              onSelectedAddressChanged: (
+                                                value,
+                                              ) {
+                                                controller
+                                                    .state
+                                                    .selectedBoardingPointAddressOneWay
+                                                    .value = value;
+                                              },
+                                              defaultName:
+                                                  'select_boarding'.tr,
+                                              onClearSelection: () {
+                                                controller
+                                                    .state
+                                                    .isSelectedIndexBoardingOneWay
+                                                    .value = -1;
+                                                controller
+                                                    .state
+                                                    .selectedBoardingPointOneWay
+                                                    .value = 'select_boarding'
+                                                        .tr;
+                                                controller
+                                                    .state
+                                                    .selectedBoardingPointAddressOneWay
+                                                    .value = '';
+                                                ValueStatic
+                                                    .boardingPointOneWayId = '';
+                                              },
+                                              onValueStaticSelected: (item) {
+                                                ValueStatic
+                                                        .boardingPointOneWayId =
+                                                    (item.id).toString();
+                                                ValueStatic
+                                                        .boardingPointOneWay =
+                                                    (item.name).toString();
+                                              },
+                                              isDisabled: (item) {
+                                                return (item.isAllow ?? 1) ==
+                                                    0;
+                                              },
+                                            ),
+                                            
+                                          ],
+                                        );
+                                      }
+                                    }
+                                  } else if (data.hasError) {
+                                    return const Text('');
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+
+                              //* drop off point
+                              FutureBuilder<boarding.CarPointResponse>(
+                                future:
+                                    controller.state.futureDropOffPointOneWay,
+                                builder: (context, data) {
+                                  if (data.hasData) {
+                                    if ((data.data?.header?.result) == true &&
+                                        (data.data?.header?.statusCode) ==
+                                            200) {
+                                      if ((data.data?.body)!.isNotEmpty) {
+                                        if (data.data?.body?.length == 1) {
+                                          ValueStatic.dropOffPointOneWayId =
+                                              (data.data?.body?[0].id)
+                                                  .toString();
+                                          ValueStatic.dropOffPointOneWay =
+                                              (data.data?.body?[0].name)
+                                                  .toString();
+                                        }
+
+                                        if (ValueStatic
+                                            .boardingPointOneWayId
+                                            .isNotEmpty) {
+                                          _callGetData(
+                                            context,
+                                            isConfirm: false,
+                                          );
+                                        }
+
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Row(children: [
+                                                  Text(
+                                                  'drop_off_point'.tr,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        AppColors
+                                                            .titleColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 5),
+                                                (data.data?.body?.length !=
+                                                        1)
+                                                    ? const Text(
+                                                      "*",
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
+                                                    : const SizedBox(),
+                                                ],),
+                                                    //
+                                             _viewMapButtonForSelection(
+                                              context: context,
+                                              items: data.data?.body ?? [],
+                                              selectedIndex:
+                                                  controller
+                                                      .state
+                                                      .isSelectedIndexBoardingOneWay
+                                                      .value,
+                                                                                        ),
+                                              ],
+                                            ),
+                                            _pointPicker(
+                                              context: context,
+                                              decoration: Style.inputText(''),
+                                              dialogTitle:
+                                                  'drop_off_point'.tr,
+                                              items: data.data?.body ?? [],
+                                              selectedIndex:
+                                                  controller
+                                                      .state
+                                                      .isSelectedIndexDropOffOneWay
+                                                      .value,
+                                              onSelectedIndexChanged: (
+                                                value,
+                                              ) {
+                                                controller
+                                                    .state
+                                                    .isSelectedIndexDropOffOneWay
+                                                    .value = value;
+                                              },
+                                              selectedName:
+                                                  controller
+                                                      .state
+                                                      .selectedDropPointOneWay
+                                                      .value,
+                                              onSelectedNameChanged: (value) {
+                                                controller
+                                                    .state
+                                                    .selectedDropPointOneWay
+                                                    .value = value;
+                                              },
+                                              selectedAddress:
+                                                  controller
+                                                      .state
+                                                      .selectedDropPointAddressOneWay
+                                                      .value,
+                                              onSelectedAddressChanged: (
+                                                value,
+                                              ) {
+                                                controller
+                                                    .state
+                                                    .selectedDropPointAddressOneWay
+                                                    .value = value;
+                                              },
+                                              defaultName: 'select_drop'.tr,
+                                              onClearSelection: () {
+                                                controller
+                                                    .state
+                                                    .isSelectedIndexDropOffOneWay
+                                                    .value = -1;
+                                                controller
+                                                    .state
+                                                    .selectedDropPointOneWay
+                                                    .value = 'select_drop'.tr;
+                                                controller
+                                                    .state
+                                                    .selectedDropPointAddressOneWay
+                                                    .value = '';
+                                                ValueStatic
+                                                    .dropOffPointOneWayId = '';
+                                              },
+                                              onValueStaticSelected: (item) {
+                                                ValueStatic
+                                                        .dropOffPointOneWayId =
+                                                    (item.id).toString();
+                                                ValueStatic
+                                                        .dropOffPointOneWay =
+                                                    (item.name).toString();
+                                              },
+                                            ),
+                                           
+                                          ],
+                                        );
+                                      }
+                                    }
+                                  } else if (data.hasError) {
+                                    return const Text('');
+                                  }
+
+                                  return Center(
+                                    child: SizedBox(
+                                      height: 30.0,
+                                      width: 30.0,
+                                      child: CircularProgressIndicator(
+                                        value: null,
+                                        color:
+                                            ValueStatic.ticketType == '3'
+                                                ? AppColors.airBusColor
+                                                : AppColors.primaryColor,
+                                        strokeWidth: 3.0,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        //* customer info
+                        _travelInformationSection(
+                          context: context,
+                          selectedSeats: ValueStatic.oneWaySelectedSeat,
+                          companyType: ValueStatic.companyTypeOneWay,
+                          nameControllers: controller.state.nameOneWay,
+                          gender: controller.state.genderOneWay,
+                          nationalityIds: controller.state.nationalityIds,
+                          national: controller.state.nationalOneWay,
+                          dobDisplayControllers:
+                              controller.state.dobOneWayList,
+                          dobValueControllers: controller.state.dobOneWay,
+                          passportControllers:
+                              controller.state.passportOneWay,
+                        ),
+                      ]),
+                    );
   }
 
   Widget _buildButtonToPaymentScreen(BuildContext context) {

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/response/confirm_booking_response.dart';
 import 'package:express_vet/utils/button.dart';
+import 'package:intl/intl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -36,6 +37,24 @@ class _PaymentScreenState extends State<PaymentScreen>
   late final PaymentController controller;
 
   late WebViewController _controller;
+
+  String _formatDobForDisplay(String rawDob) {
+    final raw = rawDob.trim();
+    if (raw.isEmpty) return '';
+
+    DateTime? parsed = DateTime.tryParse(raw);
+    parsed ??= DateTime.tryParse(raw.replaceFirst(' ', 'T'));
+    if (parsed == null) {
+      try {
+        parsed = DateFormat('yyyy-MM-dd').parseStrict(raw);
+      } catch (_) {
+        parsed = null;
+      }
+    }
+    if (parsed == null) return raw;
+    return DateFormat('dd-MM-yyyy').format(parsed);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -139,22 +158,22 @@ class _PaymentScreenState extends State<PaymentScreen>
           child: Scaffold(
             appBar: AppBar(
               elevation: 0.0,
-              backgroundColor: AppColors.whiteColor,
+              backgroundColor: AppColors.primaryColor,
               leading: IconButton(
                 icon: const Icon(
                   Icons.close,
-                  color: Colors.blueAccent,
-                  size: 34,
+                  color: Colors.white,
+
                 ),
                 onPressed: () {
                   popScreen();
                 },
               ),
               title: Text(
-                'cancel'.tr,
+                'payment'.tr,
                 style: const TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 16,
+                  color: Colors.white,
+                  fontSize: 18,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -189,38 +208,12 @@ class _PaymentScreenState extends State<PaymentScreen>
                             _buildSelectBankOption(uiState),
 
                             //* payment type
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "payment_method".tr,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  uiState.paymentMethodSelected == 1
-                                      ? "ABA KHQR"
-                                      : uiState.paymentMethodSelected == 2
-                                      ? "Credit/Debit Card"
-                                      : uiState.paymentMethodSelected == 3
-                                      ? "AliPay"
-                                      : uiState.paymentMethodSelected == 4
-                                      ? "Wing Bank"
-                                      : uiState.paymentMethodSelected == 5
-                                      ? "ACLEDA"
-                                      : "",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                              ],
+                            
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: _buildPaymentMethodStatus(uiState),
                             ),
+                            
 
                             _buildPaymentDetail(uiState, totalPayableAll, travelPackageDiscountAll, selectedDiscountAmount, selectedPaymentMethodName, selectedServiceFeeAmount),
                           ],
@@ -237,12 +230,50 @@ class _PaymentScreenState extends State<PaymentScreen>
     });
   }
 
+  Row _buildPaymentMethodStatus(PaymentUistate uiState) {
+    return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "payment_method".tr,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                uiState.paymentMethodSelected == 1
+                                    ? "ABA KHQR"
+                                    : uiState.paymentMethodSelected == 2
+                                    ? "Credit/Debit Card"
+                                    : uiState.paymentMethodSelected == 3
+                                    ? "AliPay"
+                                    : uiState.paymentMethodSelected == 4
+                                    ? "Wing Bank"
+                                    : uiState.paymentMethodSelected == 5
+                                    ? "ACLEDA"
+                                    : "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ],
+                          );
+  }
+
   Widget _buildPaymentDetail(PaymentUistate uiState, double totalPayableAll, double travelPackageDiscountAll, double selectedDiscountAmount, String selectedPaymentMethodName, double selectedServiceFeeAmount) {
     final normalizedPaymentMethodName =
         selectedPaymentMethodName.trim().toLowerCase();
     final discountTitle = normalizedPaymentMethodName.contains('wing')
         ? 'discount_wing'.tr
         : "${"discount".tr} $selectedPaymentMethodName";
+    final grandTotalAll = (widget.datas.body?.orderPaymentLists ?? []).fold(
+      0.0,
+      (sum, item) => sum + _parseAmount(item.grandTotal),
+    );
 
     return ListView.separated(
                             scrollDirection: Axis.vertical,
@@ -268,359 +299,366 @@ class _PaymentScreenState extends State<PaymentScreen>
                                       .confirmBookingInformation!
                                       .length ==
                                   2;
+                              final companyTypeForSegment =
+                                  index == 0
+                                      ? ValueStatic.companyTypeOneWay
+                                      : ValueStatic.companyTypeTwoWay;
+                              final isBuvaSea = companyTypeForSegment == 4;
 
                               return isRoundTrip
                                   ///round trip
-                                  ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Display trip destination
-                                      const SizedBox(height: 12),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                              Text(
-                                                '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-
-                                              ListView.separated(
-                                                shrinkWrap: true,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                itemCount:
-                                                    data
-                                                        .bookingSeatDetailList!
-                                                        .length,
-                                                itemBuilder: (context, i) {
-                                                  final seatDetail =
-                                                      data.bookingSeatDetailList![i];
-                                                  return Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      view(
-                                                        'name_pro'.tr,
-                                                        seatDetail.name,
-                                                      ),
-                                                      view(
-                                                        'seat_number'.tr,
-                                                        seatDetail.seatNumber,
-                                                      ),
-                                                      view(
-                                                        'gender'.tr,
-                                                        seatDetail.gender,
-                                                      ),
-                                                      view(
-                                                        'nationality'.tr,
-                                                        seatDetail
-                                                            .nationalityName,
-                                                      ),
-                                                      if (seatDetail
-                                                          .dob!
-                                                          .isNotEmpty)
-                                                        view(
-                                                          'dob'.tr,
-                                                          seatDetail.dob!,
-                                                        ),
-                                                      if (seatDetail
-                                                          .passport!
-                                                          .isNotEmpty)
-                                                        view(
-                                                          'passport'.tr,
-                                                          seatDetail
-                                                              .passport!,
-                                                        ),
-                                                    ],
-                                                  );
-                                                },
-                                                separatorBuilder:
-                                                    (_, __) => Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 8.0,
-                                                          ),
-                                                      child: Image.asset(
-                                                        AssetImages.line,
-                                                      ),
-                                                    ),
-                                              ),
-
-                                              // Display order payment details
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.only(
-                                                      top: 10.0,
-                                                      bottom: 10.0,
-                                                    ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    view(
-                                                      "sub_total".tr,
-                                                      "${widget.datas.body!.orderPaymentLists![index].grandTotal} \$",
-                                                    ),
-                                                    view(
-                                                      index == 0
-                                                          ? "total_going".tr
-                                                          : "total_return".tr,
-                                                      "${widget.datas.body!.orderPaymentLists![index].total} \$",
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-
-                                              if (isRoundTrip && index == 1)
-                                                Column(
-                                                  children: [
-                                                    const Divider(
-                                                      thickness: 1,
-                                                    ),
-                                                    if (_hasVisibleAmount(
-                                                      travelPackageDiscountAll,
-                                                    ))
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              vertical: 6.0,
-                                                            ),
-                                                        child: view(
-                                                          'Discount (Apply travel package)',
-                                                          "${travelPackageDiscountAll.toStringAsFixed(2)} \$",
-                                                        ),
-                                                      ),
-                                                    if (_hasVisibleAmount(
-                                                      selectedDiscountAmount,
-                                                    ))
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              vertical: 6.0,
-                                                            ),
-                                                        child: view(
-                                                          discountTitle,
-                                                          "${selectedDiscountAmount.toStringAsFixed(2)} \$",
-                                                        ),
-                                                      ),
-                                                    if (_hasVisibleAmount(
-                                                      selectedServiceFeeAmount,
-                                                    ))
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              vertical: 6.0,
-                                                            ),
-                                                        child: view(
-                                                          "service_fee".tr,
-                                                          "${selectedServiceFeeAmount.toStringAsFixed(2)} \$",
-                                                        ),
-                                                      ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 6.0,
-                                                          ),
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            "total_amount".tr,
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  AppColors
-                                                                      .textColor,
-                                                            ),
-                                                          ),
-                                                          const Spacer(),
-                                                          Text(
-                                                            "\$${totalPayableAll.toStringAsFixed(2)}",
-                                                            style: const TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color:
-                                                                  Colors
-                                                                      .black54, // Slightly lighter text for value
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                            ],
-                                          ),
-                                    ],
-                                  )
+                                  ? _buildPaymentRooundtrip(index, data, isBuvaSea, isRoundTrip, grandTotalAll, travelPackageDiscountAll, selectedDiscountAmount, discountTitle, selectedServiceFeeAmount, totalPayableAll)
                                   ///one way
-                                  : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Display trip destination
-                                      const SizedBox(height: 12),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                              Text(
-                                                '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-
-                                              ListView.separated(
-                                                shrinkWrap: true,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                itemCount:
-                                                    data
-                                                        .bookingSeatDetailList!
-                                                        .length,
-                                                itemBuilder: (context, i) {
-                                                  final seatDetail =
-                                                      data.bookingSeatDetailList![i];
-                                                  return Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      view(
-                                                        'name_pro'.tr,
-                                                        seatDetail.name,
-                                                      ),
-                                                      view(
-                                                        'seat_number'.tr,
-                                                        seatDetail.seatNumber,
-                                                      ),
-                                                      view(
-                                                        'gender'.tr,
-                                                        seatDetail.gender,
-                                                      ),
-                                                      view(
-                                                        'nationality'.tr,
-                                                        seatDetail
-                                                            .nationalityName,
-                                                      ),
-                                                      if (seatDetail
-                                                          .dob!
-                                                          .isNotEmpty)
-                                                        view(
-                                                          'dob'.tr,
-                                                          seatDetail.dob!,
-                                                        ),
-                                                      if (seatDetail
-                                                          .passport!
-                                                          .isNotEmpty)
-                                                        view(
-                                                          'passport'.tr,
-                                                          seatDetail
-                                                              .passport!,
-                                                        ),
-                                                    ],
-                                                  );
-                                                },
-                                                separatorBuilder:
-                                                    (_, __) => Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 8.0,
-                                                          ),
-                                                      child: Image.asset(
-                                                        AssetImages.line,
-                                                      ),
-                                                    ),
-                                              ),
-
-                                              // Display order payment details
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.only(
-                                                      top: 10.0,
-                                                      bottom: 10.0,
-                                                    ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    view(
-                                                      "sub_total".tr,
-                                                      "\$${widget.datas.body!.orderPaymentLists![index].grandTotal}",
-                                                    ),
-                                                    //  view(
-                                                    //     "Discount platform",
-                                                    //     "\$0.0",
-                                                    //     // "\$${widget.datas.body!.confirmBookingInformation![index].}",
-                                                    //     textColor: AppColors.greyColor
-                                                    //   ),
-                                                    if (_hasVisibleAmount(
-                                                      _getTravelPackageDiscountItem(
-                                                        widget
-                                                            .datas
-                                                            .body!
-                                                            .orderPaymentLists![index],
-                                                      ),
-                                                    ))
-                                                      view(
-                                                        'discount_travel'.tr,
-                                                        "\$${_getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]).toStringAsFixed(2)}",
-                                                         textColor: AppColors.greyColor
-                                                      ),
-                                                    if (_hasVisibleAmount(
-                                                      selectedDiscountAmount,
-                                                    ))
-                                                      view(
-                                                        discountTitle,
-                                                        "\$${selectedDiscountAmount.toStringAsFixed(2)}",
-                                                        textColor: AppColors.greyColor
-                                                      ),
-                                                    // Line
-                                                    Padding(
-                                                      padding:  EdgeInsets.symmetric(vertical: 10),
-                                                      child: Container(
-                                                        height: 2,
-                                                        width: double.infinity,
-                                                        color: AppColors.lineGray,
-                                                      ),
-                                                    ), 
-                                                    if (_hasVisibleAmount(
-                                                      selectedServiceFeeAmount,
-                                                    ))
-                                                      view(
-                                                        "${"service_fee".tr} (${widget.datas.body!.paymentMethods?.first.discountPercent}%)",
-                                                        "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
-                                                      ),
-                                                    view(
-                                                      "total_ticket_price".tr,
-                                                      "\$${_nonNegative(_parseAmount(widget.datas.body!.orderPaymentLists![index].grandTotal) - _getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]) - selectedDiscountAmount + selectedServiceFeeAmount).toStringAsFixed(2)}",
-                                                    ),
-                                                  ],
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                    ],
-                                  );
+                                  : _buildPaymentOneway(data, isBuvaSea, index, selectedDiscountAmount, discountTitle, selectedServiceFeeAmount);
                             },
                             separatorBuilder: (context, index) {
                               return SizedBox.shrink();
                             },
                           );
+  }
+
+  Widget _buildPaymentRooundtrip(int index, ConfirmBookingInformation data, bool isBuvaSea, bool isRoundTrip, double grandTotalAll, double travelPackageDiscountAll, double selectedDiscountAmount, String discountTitle, double selectedServiceFeeAmount, double totalPayableAll) {
+    return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    // Display trip destination
+                                    if (index == 1)
+                                      Padding(
+                                        padding:  EdgeInsets.symmetric(
+                                          vertical: 6,
+                                        ),
+                                        child: Divider(thickness: 1),
+                                      ),
+
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                            Text(
+                                              '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+
+                                            ListView.separated(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  data
+                                                      .bookingSeatDetailList!
+                                                      .length,
+                                              itemBuilder: (context, i) {
+                                                final seatDetail =
+                                                    data.bookingSeatDetailList![i];
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                  children: [
+                                                    if (isBuvaSea)
+                                                      view(
+                                                        'name_pro'.tr,
+                                                        seatDetail.name,
+                                                      ),
+                                                    view(
+                                                      'seat_number'.tr,
+                                                      seatDetail.seatNumber,
+                                                    ),
+                                                    view(
+                                                      'gender'.tr,
+                                                      seatDetail.gender,
+                                                    ),
+                                                    view(
+                                                      'nationality'.tr,
+                                                      seatDetail
+                                                          .nationalityName,
+                                                    ),
+                                                    if (seatDetail
+                                                        .dob!
+                                                        .isNotEmpty)
+                                                      view(
+                                                        'dob'.tr,
+                                                        _formatDobForDisplay(
+                                                          seatDetail.dob!,
+                                                        ),
+                                                      ),
+                                                    if (seatDetail
+                                                        .passport!
+                                                        .isNotEmpty)
+                                                      view(
+                                                        'passport'.tr,
+                                                        seatDetail
+                                                            .passport!,
+                                                      ),
+                                                  ],
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (_, __) => Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 8.0,
+                                                        ),
+                                                    child: Image.asset(
+                                                      AssetImages.line,
+                                                    ),
+                                                  ),
+                                            ),
+
+                                            if (isRoundTrip && index == 1)
+                                              Column(
+                                                children: [
+                                                  view(
+                                                    'sub_total'.tr,
+                                                    "\$${grandTotalAll.toStringAsFixed(2)}",
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 1,
+                                                  ),
+                                                  
+                                                  if (_hasVisibleAmount(
+                                                    travelPackageDiscountAll,
+                                                  ))
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            vertical: 6.0,
+                                                          ),
+                                                      child: view(
+                                                        'discount_travel'.tr,
+                                                        "\$${travelPackageDiscountAll.toStringAsFixed(2)}",
+                                                        textColor:
+                                                            AppColors.greyColor,
+                                                      ),
+                                                    ),
+                                                  if (_hasVisibleAmount(
+                                                    selectedDiscountAmount,
+                                                  ))
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            vertical: 6.0,
+                                                          ),
+                                                      child: view(
+                                                        discountTitle,
+                                                        "\$${selectedDiscountAmount.toStringAsFixed(2)}",
+                                                        textColor:
+                                                            AppColors.greyColor,
+                                                      ),
+                                                    ),
+                                                  if (_hasVisibleAmount(
+                                                    selectedServiceFeeAmount,
+                                                  ))
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            vertical: 6.0,
+                                                          ),
+                                                      child: view(
+                                                        "service_fee".tr,
+                                                        "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
+                                                      ),
+                                                    ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 6.0,
+                                                        ),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          "total_mn".tr,
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400,
+                                                            color:
+                                                                AppColors
+                                                                    .textColor,
+                                                          ),
+                                                        ),
+                                                        const Spacer(),
+                                                        Text(
+                                                          "\$${totalPayableAll.toStringAsFixed(2)}",
+                                                          style: const TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                          ],
+                                        ),
+                                  ],
+                                );
+  }
+
+  Widget _buildPaymentOneway(ConfirmBookingInformation data, bool isBuvaSea, int index, double selectedDiscountAmount, String discountTitle, double selectedServiceFeeAmount) {
+    return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                            Text(
+                                              '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+
+                                            ListView.separated(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  data
+                                                      .bookingSeatDetailList!
+                                                      .length,
+                                              itemBuilder: (context, i) {
+                                                final seatDetail =
+                                                    data.bookingSeatDetailList![i];
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                  children: [
+                                                    if (isBuvaSea)
+                                                      view(
+                                                        'name_pro'.tr,
+                                                        seatDetail.name,
+                                                      ),
+                                                    view(
+                                                      'seat_number'.tr,
+                                                      seatDetail.seatNumber,
+                                                    ),
+                                                    view(
+                                                      'gender'.tr,
+                                                      seatDetail.gender,
+                                                    ),
+                                                    view(
+                                                      'nationality'.tr,
+                                                      seatDetail
+                                                          .nationalityName,
+                                                    ),
+                                                    if (seatDetail
+                                                        .dob!
+                                                        .isNotEmpty)
+                                                      view(
+                                                        'dob'.tr,
+                                                        _formatDobForDisplay(
+                                                          seatDetail.dob!,
+                                                        ),
+                                                      ),
+                                                    if (seatDetail
+                                                        .passport!
+                                                        .isNotEmpty)
+                                                      view(
+                                                        'passport'.tr,
+                                                        seatDetail
+                                                            .passport!,
+                                                      ),
+                                                  ],
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (_, __) => Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 8.0,
+                                                        ),
+                                                    child: Image.asset(
+                                                      AssetImages.line,
+                                                    ),
+                                                  ),
+                                            ),
+
+                                            // Display order payment details
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.only(
+                                                    top: 10.0,
+                                                    bottom: 10.0,
+                                                  ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                children: [
+                                                  view(
+                                                    "sub_total".tr,
+                                                    "\$${widget.datas.body!.orderPaymentLists![index].grandTotal}",
+                                                  ),
+                                                  //  view(
+                                                  //     "Discount platform",
+                                                  //     "\$0.0",
+                                                  //     // "\$${widget.datas.body!.confirmBookingInformation![index].}",
+                                                  //     textColor: AppColors.greyColor
+                                                  //   ),
+                                                  if (_hasVisibleAmount(
+                                                    _getTravelPackageDiscountItem(
+                                                      widget
+                                                          .datas
+                                                          .body!
+                                                          .orderPaymentLists![index],
+                                                    ),
+                                                  ))
+                                                    view(
+                                                      'discount_travel'.tr,
+                                                      "\$${_getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]).toStringAsFixed(2)}",
+                                                       textColor: AppColors.greyColor
+                                                    ),
+                                                  if (_hasVisibleAmount(
+                                                    selectedDiscountAmount,
+                                                  ))
+                                                    view(
+                                                      discountTitle,
+                                                      "\$${selectedDiscountAmount.toStringAsFixed(2)}",
+                                                      textColor: AppColors.greyColor
+                                                    ),
+                                                  // Line
+                                                  Padding(
+                                                    padding:  EdgeInsets.symmetric(vertical: 10),
+                                                    child: Container(
+                                                      height: 2,
+                                                      width: double.infinity,
+                                                      color: AppColors.lineGray,
+                                                    ),
+                                                  ), 
+                                                  if (_hasVisibleAmount(
+                                                    selectedServiceFeeAmount,
+                                                  ))
+                                                    view(
+                                                      "${"service_fee".tr} (${widget.datas.body!.paymentMethods?.first.discountPercent}%)",
+                                                      "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
+                                                    ),
+                                                  view(
+                                                    "total_ticket_price".tr,
+                                                    "\$${_nonNegative(_parseAmount(widget.datas.body!.orderPaymentLists![index].grandTotal) - _getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]) - selectedDiscountAmount + selectedServiceFeeAmount).toStringAsFixed(2)}",
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ],
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                  ],
+                                );
   }
 
   Widget _buildSelectBankOption(PaymentUistate uiState) {
@@ -786,18 +824,31 @@ class _PaymentScreenState extends State<PaymentScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Total amount
-                   Text(
-                  "${'total_price'.tr} \$${totalPayableAll.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                    color: Colors.black, 
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                   Row(
+                     children: [
+                       Text(
+                        'total_price'.tr,
+                        style: const TextStyle(
+                          fontSize: 16,
+                        color: Colors.black, 
+                        fontWeight: FontWeight.w500,
+                        ),
+                       ),
+                       Text(
+                         "\$${totalPayableAll.toStringAsFixed(2)}",
+                         style: const TextStyle(
+fontSize: 16,
+                        color: Colors.black, 
+                        fontWeight: FontWeight.bold,
+                         ),
+                                       ),
+                     ],
+                   ),
                   //
                   // Button pay 
                    SizedBox(
                       width: 200,
-                      height: 50,
+                      height: 60,
                       child: ElevatedButton(
                         onPressed: isPaymentSelected
                             ? () async {
@@ -892,6 +943,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     title,
     value, {
     Color? textColor = AppColors.titleColor,
+    FontWeight? fontWeight = FontWeight.w400,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -910,7 +962,7 @@ class _PaymentScreenState extends State<PaymentScreen>
             value,
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w400,
+              fontWeight: fontWeight,
               color: textColor,
             ),
           ),
@@ -1047,22 +1099,22 @@ class _PaymentScreenState extends State<PaymentScreen>
     );
   }
 
-  void showDialogPaymentComplete() {
-    alertDialogTwoButton(
-      title: 'your_ticket_has_been_reserved'.tr,
-      description: 'ticket_info1'.tr,
-      buttonText1: 'home'.tr,
-      buttonText2: 'show_ticket'.tr,
-      onButtonPressed1: () {
-        ValueStatic().clearDataTicket();
-        Get.offAll(() => const DashboardScreen(from: 0));
-      },
-      onButtonPressed2: () {
-        ValueStatic().clearDataTicket();
-        Get.offAll(() => const DashboardScreen(from: 2));
-      },
-    );
-  }
+  // void showDialogPaymentComplete() {
+  //   alertDialogTwoButton(
+  //     title: 'your_ticket_has_been_reserved'.tr,
+  //     description: 'ticket_info1'.tr,
+  //     buttonText1: 'home'.tr,
+  //     buttonText2: 'show_ticket'.tr,
+  //     onButtonPressed1: () {
+  //       ValueStatic().clearDataTicket();
+  //       Get.offAll(() => const DashboardScreen(from: 0));
+  //     },
+  //     onButtonPressed2: () {
+  //       ValueStatic().clearDataTicket();
+  //       Get.offAll(() => const DashboardScreen(from: 2));
+  //     },
+  //   );
+  // }
 
   void showDialogPaymentFail() {
     alertDialogOneButton(
