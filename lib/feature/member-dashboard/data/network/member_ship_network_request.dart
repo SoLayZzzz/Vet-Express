@@ -1,14 +1,10 @@
-import 'dart:async';
-
 import 'package:express_vet/base/network_data_source.dart';
-import 'package:get/get.dart';
 
 import '../../../../base/endpoint.dart';
 import '../model/reponse/membership_response.dart';
 import '../model/reponse/membership_ticket_response.dart';
 import '../../../../models/saving_point/saving_point_response.dart';
 import '../../../../models/saving_point/saving_list_response.dart';
-import '../../../../utils/alert_dialog.dart';
 import '../../../../utils/contains.dart';
 import '../../../../utils/loading.dart';
 
@@ -26,14 +22,6 @@ class MemberShipNetworkRequest {
         attachAuth: true,
       );
       return MemberShipResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -50,14 +38,6 @@ class MemberShipNetworkRequest {
         attachAuth: true,
       );
       return GetTicketMemberCardResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -77,14 +57,6 @@ class MemberShipNetworkRequest {
         attachAuth: true,
       );
       return SavingPointResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       Loading().loadingClose();
       rethrow;
@@ -102,14 +74,6 @@ class MemberShipNetworkRequest {
         attachAuth: true,
       );
       return SavingListResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       Loading().loadingClose();
       rethrow;

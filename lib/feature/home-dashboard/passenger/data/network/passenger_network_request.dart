@@ -1,6 +1,3 @@
-import 'dart:async';
-
-
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';
 import 'package:express_vet/models/boarding_point.dart';
@@ -11,12 +8,10 @@ import 'package:express_vet/feature/home-dashboard/passenger/data/model/response
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/response/process_payment_response.dart';
 import 'package:express_vet/models/wing/wing_response.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../../base/endpoint.dart';
 import '../model/response/booking_detail_model.dart';
 import '../model/response/check_booking_package_apply_response.dart';
-import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';
 import '../../../../../utils/loading.dart';
 
@@ -39,14 +34,6 @@ class PassengerNetworkRequest {
       );
 
       return CarPointResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -65,14 +52,6 @@ class PassengerNetworkRequest {
       );
 
       return CarPointResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       Loading().loadingClose();
       rethrow;
@@ -106,14 +85,6 @@ class PassengerNetworkRequest {
         'body.discount=${res.body?.discount}',
       );
       return res;
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -133,17 +104,9 @@ class PassengerNetworkRequest {
       );
       final res = ConfirmBookingResponse.fromJson(json);
       debugPrint(
-        '[Booking] confirmBooking <- status: \\n+        header.statusCode=${res.header?.statusCode}, \\n+        header.result=${res.header?.result}, \\n+        body.status=${res.body?.status}, \\n+        body.msg=${res.body?.msg}, \\n+        body.transactionId=${res.body?.transactionId}',
+        '[Booking] confirmBooking <- status: \n+        header.statusCode=${res.header?.statusCode}, \n+        header.result=${res.header?.result}, \n+        body.status=${res.body?.status}, \n+        body.msg=${res.body?.msg}, \n+        body.transactionId=${res.body?.transactionId}',
       );
       return res;
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -162,14 +125,6 @@ class PassengerNetworkRequest {
       );
 
       return CancelBookingResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -189,14 +144,6 @@ class PassengerNetworkRequest {
       );
 
       return BookingListModel.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -215,14 +162,6 @@ class PassengerNetworkRequest {
       );
 
       return BookingDetailModel.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -247,14 +186,6 @@ class PassengerNetworkRequest {
       );
 
       return PaymentResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -279,14 +210,6 @@ class PassengerNetworkRequest {
       );
 
       return CheckPromotionCodeResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -314,13 +237,6 @@ class PassengerNetworkRequest {
         // ignore logging errors
       }
       return WingResponse.fromJson(json);
-    } on TimeoutException {
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }

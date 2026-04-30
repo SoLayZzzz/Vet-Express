@@ -1,14 +1,9 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/self_service/data/model/response/destination_province.dart';
-import 'package:get/get.dart';
-
-import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';
-import '../../../../../utils/loading.dart';
 import '../model/response/uom.dart';
 import 'package:express_vet/models/request_transfer/add_goods.dart';
 
@@ -21,29 +16,17 @@ class SelfServiceNetworkRequest {
     required dynamic context,
     String searchText = '',
   }) async {
-    try {
-      final json = await netWorkDataSource.postJson(
-        Endpoint.destinationsProvince,
-        body: <String, dynamic>{
-          'page': '1',
-          'rowsPerPage': '100',
-          'searchText': searchText,
-        },
-        timeout: const Duration(seconds: Constrains.timeout30),
-        attachAuth: true,
-      );
-      return ProvinceResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
-    } catch (_) {
-      rethrow;
-    }
+    final json = await netWorkDataSource.postJson(
+      Endpoint.destinationsProvince,
+      body: <String, dynamic>{
+        'page': '1',
+        'rowsPerPage': '100',
+        'searchText': searchText,
+      },
+      timeout: const Duration(seconds: Constrains.timeout30),
+      attachAuth: true,
+    );
+    return ProvinceResponse.fromJson(json);
   }
 
   Future<ProvinceResponse> fetchDestinationByProvince({
@@ -51,52 +34,28 @@ class SelfServiceNetworkRequest {
     required String provinceId,
     String searchText = '',
   }) async {
-    try {
-      final json = await netWorkDataSource.postJson(
-        Endpoint.destinationsDestinationByProvince,
-        body: <String, dynamic>{
-          'page': '1',
-          'rowsPerPage': '100',
-          'provinceId': provinceId,
-          'searchText': searchText,
-        },
-        timeout: const Duration(seconds: Constrains.timeout30),
-        attachAuth: true,
-      );
-      return ProvinceResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
-    } catch (_) {
-      rethrow;
-    }
+    final json = await netWorkDataSource.postJson(
+      Endpoint.destinationsDestinationByProvince,
+      body: <String, dynamic>{
+        'page': '1',
+        'rowsPerPage': '100',
+        'provinceId': provinceId,
+        'searchText': searchText,
+      },
+      timeout: const Duration(seconds: Constrains.timeout30),
+      attachAuth: true,
+    );
+    return ProvinceResponse.fromJson(json);
   }
 
   Future<UomListResponse> fetchUomList({required dynamic context}) async {
-    try {
-      final json = await netWorkDataSource.postJson(
-        Endpoint.uomList,
-        body: <String, dynamic>{},
-        timeout: const Duration(seconds: Constrains.timeout30),
-        attachAuth: true,
-      );
-      return UomListResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
-    } catch (_) {
-      rethrow;
-    }
+    final json = await netWorkDataSource.postJson(
+      Endpoint.uomList,
+      body: <String, dynamic>{},
+      timeout: const Duration(seconds: Constrains.timeout30),
+      attachAuth: true,
+    );
+    return UomListResponse.fromJson(json);
   }
 
   Future<AddGoodsResponse> saveGoodsSelfService({
@@ -126,14 +85,6 @@ class SelfServiceNetworkRequest {
           attachAuth: true,
         );
         return AddGoodsResponse.fromJson(json);
-      } on TimeoutException {
-        Loading().loadingClose();
-        alertDialogOneButton(
-          title: 'timeout'.tr,
-          description: 'request_timed_out'.tr,
-          buttonText: 'ok'.tr,
-        );
-        rethrow;
       } on SocketException catch (_) {
         if (++attempt >= maxAttempts) rethrow;
         await Future.delayed(const Duration(milliseconds: 800));

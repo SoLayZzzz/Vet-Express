@@ -27,6 +27,10 @@ Future<void> main() async {
   // * Initialize SharedPreference
   await AppPref.init();
 
+  if (AppPref.getLanguage() == null) {
+    await AppPref.setLanguage('km');
+  }
+
   //store cache
   await Hive.initFlutter();
   await Hive.openBox('cacheBox'); // Open a box for caching
@@ -59,7 +63,7 @@ Future<void> main() async {
         saveLocale: true,
         supportedLocales: Translate.supportedLanguage,
         startLocale: Translate.defaultLanguage,
-        fallbackLocale: Translate.englishLanguage,
+        fallbackLocale: Translate.defaultLanguage,
         child: const MyApp(),
       ),
     );
@@ -74,6 +78,13 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+  Locale _getInitialLocale() {
+    final language = AppPref.getLanguage();
+    if (language == 'en') return const Locale('en', 'US');
+    if (language == 'zh') return const Locale('zh', 'CN');
+    return const Locale('km', 'KH');
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -91,6 +102,8 @@ class MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'VET Express',
       translations: LocaleString(),
+      locale: _getInitialLocale(),
+      fallbackLocale: const Locale('km', 'KH'),
       theme: getAppTheme(context),
       initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:external_app_launcher/external_app_launcher.dart';
@@ -175,12 +174,20 @@ class MenuController extends StateController<MenuUiState>
       if (!Get.isRegistered<NotificationsUseCase>()) {
         NotificationsBinding().dependencies();
       }
-      await Get.find<NotificationsUseCase>().notificationRegister(
-        context: context,
-        appType: deviceType,
-        deviceId: deviceId,
-        deviceToken: OneSignal.User.pushSubscription.id,
-      );
+      try {
+        await Get.find<NotificationsUseCase>().notificationRegister(
+          context: context,
+          appType: deviceType,
+          deviceId: deviceId,
+          deviceToken: OneSignal.User.pushSubscription.id,
+        );
+      } on TimeoutException catch (e) {
+        debugPrint('Timeout registering notification device: $e');
+      } on SocketException catch (e) {
+        debugPrint('Network error registering notification device: $e');
+      } on Exception catch (e) {
+        debugPrint('Error registering notification device: $e');
+      }
     } else {
       Future.delayed(const Duration(seconds: Constrains.timeout15), () {
         register();

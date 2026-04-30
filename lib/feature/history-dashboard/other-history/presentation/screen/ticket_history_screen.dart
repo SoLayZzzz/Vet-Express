@@ -40,454 +40,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: (bookingData.data?.body?.data)!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final String? travelDate =
-                              bookingData.data?.body?.data?[index].travelDate;
-                          final String departure =
-                              bookingData.data?.body?.data?[index].departure ??
-                              "01:00:00";
-
-                          String dateTimeString = "$travelDate $departure";
-                          final DateFormat dateTimeFormat = DateFormat(
-                            'yyyy-MM-dd HH:mm:ss',
-                          );
-                          DateTime travelDateTime = dateTimeFormat.parse(
-                            dateTimeString,
-                          );
-
-                          return Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: AppColors.whiteColor,
-                              border: Border.all(
-                                width: 0.2,
-                                color: AppColors.borderColor,
-                              ),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                Get.to(
-                                  () => TicketDetailScreen(
-                                    id:
-                                        (bookingData
-                                                .data
-                                                ?.body
-                                                ?.data?[index]
-                                                .id)!
-                                            .toInt(),
-                                  ),
-                                  transition: Transition.rightToLeft,
-                                  duration: const Duration(
-                                    milliseconds: Constrains.duration,
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          bookingData
-                                                      .data
-                                                      ?.body
-                                                      ?.data?[index]
-                                                      .journeyType ==
-                                                  1
-                                              ? AssetImages.vet_logo
-                                              : bookingData
-                                                      .data
-                                                      ?.body
-                                                      ?.data?[index]
-                                                      .journeyType ==
-                                                  2
-                                              ? AssetImages.buva_sea
-                                              : bookingData
-                                                      .data
-                                                      ?.body
-                                                      ?.data?[index]
-                                                      .journeyType ==
-                                                  3
-                                              ? AssetImages.vet_air_bus_schedule
-                                              : AssetImages.buva_sea,
-                                          height: 30,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Text(
-                                            "${bookingData.data?.body?.data?[index].destinationFrom} - ${bookingData.data?.body?.data?[index].destinationTo}",
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.titleColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                Ionicons.bookmarks_outline,
-                                                size: 18,
-                                                color: AppColors.textColor,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Flexible(
-                                                child: Text(
-                                                  "${bookingData.data?.body?.data?[index].code}",
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                Ionicons.calendar_outline,
-                                                size: 18,
-                                                color: AppColors.textColor,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                "${bookingData.data?.body?.data?[index].travelDate} (${DateFormat('HH:mm').format(DateFormat('HH:mm').parse((bookingData.data?.body?.data?[index].departure).toString()))})",
-                                                style: const TextStyle(
-                                                  color: AppColors.textColor,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[index]
-                                                                .journeyType ==
-                                                            2 ||
-                                                        bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[index]
-                                                                .journeyType ==
-                                                            4
-                                                    ? Ionicons.boat_outline
-                                                    : Ionicons.bus_outline,
-                                                size: 18,
-                                                color: AppColors.textColor,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Flexible(
-                                                child: Text(
-                                                  "${bookingData.data?.body?.data?[index].transportationType}",
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                Ionicons.person_outline,
-                                                size: 18,
-                                                color: AppColors.textColor,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              RichText(
-                                                text: TextSpan(
-                                                  children: <TextSpan>[
-                                                    TextSpan(
-                                                      text:
-                                                          '${bookingData.data?.body?.data?[index].totalSeat} ',
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color:
-                                                            AppColors.textColor,
-                                                      ),
-                                                    ),
-                                                    TextSpan(
-                                                      text:
-                                                          bookingData
-                                                                      .data
-                                                                      ?.body
-                                                                      ?.data?[index]
-                                                                      .totalSeat!
-                                                                      .toInt() ==
-                                                                  1
-                                                              ? 'seat'.tr
-                                                              : 'seats'.tr,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color:
-                                                            AppColors.textColor,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    if (bookingData
-                                            .data
-                                            ?.body
-                                            ?.data?[index]
-                                            .isLuckyDraw ==
-                                        1)
-                                      const SizedBox(height: 12),
-                                    if (bookingData
-                                            .data
-                                            ?.body
-                                            ?.data?[index]
-                                            .isLuckyDraw ==
-                                        1)
-                                      const Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "*",
-                                            style: TextStyle(
-                                              color: AppColors.redColor,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              "Please show your e-ticket to our staff at the ticket counter to get your physical Lucky Ticket",
-                                              style: TextStyle(
-                                                color: AppColors.primaryColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    if (bookingData
-                                            .data
-                                            ?.body
-                                            ?.data?[index]
-                                            .isTravelPackage ==
-                                        1)
-                                      const SizedBox(height: 12),
-                                    if (bookingData
-                                            .data
-                                            ?.body
-                                            ?.data?[index]
-                                            .isTravelPackage ==
-                                        1)
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "*",
-                                            style: TextStyle(
-                                              color: AppColors.redColor,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              "booking_travel_package2".tr,
-                                              style: const TextStyle(
-                                                color: AppColors.primaryColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        if (travelDateTime.isBefore(
-                                          DateTime.now(),
-                                        ))
-                                          bookingData
-                                                      .data
-                                                      ?.body
-                                                      ?.data?[index]
-                                                      .isRate ==
-                                                  0
-                                              ? Expanded(
-                                                flex: 1,
-                                                child: InkWell(
-                                                  onTap: () async {
-                                                    final result = await Get.to(
-                                                      () => RateScheduleScreen(
-                                                        scheduleId:
-                                                            bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[index]
-                                                                .scheduleId,
-                                                        id:
-                                                            bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[index]
-                                                                .id
-                                                                .toString(),
-                                                      ),
-                                                      transition:
-                                                          Transition
-                                                              .rightToLeft,
-                                                      duration: const Duration(
-                                                        milliseconds:
-                                                            Constrains.duration,
-                                                      ),
-                                                    );
-
-                                                    if (result == true) {
-                                                      controller
-                                                          .loadBookingList(
-                                                            context: context,
-                                                          );
-                                                    }
-                                                  },
-                                                  child: const Row(
-                                                    children: [
-                                                      Icon(
-                                                        Ionicons
-                                                            .chatbubble_ellipses_outline,
-                                                        size: 18,
-                                                        color:
-                                                            AppColors
-                                                                .primaryColor,
-                                                      ),
-                                                      SizedBox(width: 6),
-                                                      Text(
-                                                        'Rate a schedule',
-                                                        style: TextStyle(
-                                                          color:
-                                                              AppColors
-                                                                  .primaryColor,
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                              : const Expanded(
-                                                flex: 1,
-                                                child: SizedBox(),
-                                              ),
-                                        if (travelDateTime.isAfter(
-                                          DateTime.now(),
-                                        ))
-                                          Expanded(
-                                            flex: 1,
-                                            child: Row(
-                                              children: [
-                                                const Icon(
-                                                  Ionicons.time_outline,
-                                                  size: 18,
-                                                  color: AppColors.primaryColor,
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  _calculateCountdown(
-                                                    travelDateTime,
-                                                  ),
-                                                  style: const TextStyle(
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                Ionicons
-                                                    .information_circle_outline,
-                                                size: 18,
-                                                color: AppColors.textColor,
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                'view_details'.tr,
-                                                style: const TextStyle(
-                                                  color: AppColors.textColor,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 10);
-                        },
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 12,
-                        ),
-                      ),
+                      _buildListOfTicketHistory(bookingData),
                     ],
                   ),
                 );
@@ -530,6 +83,472 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
         );
       }),
     );
+  }
+
+  Widget _buildListOfTicketHistory(AsyncSnapshot<BookingListModel> bookingData) {
+    return ListView.separated(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: (bookingData.data?.body?.data)!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final String? travelDate =
+                            bookingData.data?.body?.data?[index].travelDate;
+                        final String departure =
+                            bookingData.data?.body?.data?[index].departure ??
+                            "01:00:00";
+
+                        String dateTimeString = "$travelDate $departure";
+                        final DateFormat dateTimeFormat = DateFormat(
+                          'yyyy-MM-dd HH:mm:ss',
+                        );
+                        DateTime travelDateTime = dateTimeFormat.parse(
+                          dateTimeString,
+                        );
+
+                        return Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: AppColors.whiteColor,
+                            border: Border.all(
+                              width: 0.2,
+                              color: AppColors.borderColor,
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(
+                                () => TicketDetailScreen(
+                                  id:
+                                      (bookingData
+                                              .data
+                                              ?.body
+                                              ?.data?[index]
+                                              .id)!
+                                          .toInt(),
+                                ),
+                                transition: Transition.rightToLeft,
+                                duration: const Duration(
+                                  milliseconds: Constrains.duration,
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                children: [
+                                  _buildDestination(bookingData, index),
+                                  const SizedBox(height: 12),
+                                  _buildCodeAndDate(bookingData, index),
+                                  const SizedBox(height: 12),
+                                  _buldBusAndTime(bookingData, index),
+                                  //
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isLuckyDraw ==
+                                      1)
+                                    const SizedBox(height: 12),
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isLuckyDraw ==
+                                      1)
+                                  //
+                                    _buildIsLuckyDraw(),
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isTravelPackage ==
+                                      1)
+                                    const SizedBox(height: 12),
+                                  if (bookingData
+                                          .data
+                                          ?.body
+                                          ?.data?[index]
+                                          .isTravelPackage ==
+                                      1)
+                                    _buildIsTravelPackage(),
+                                  const SizedBox(height: 12),
+                                  _buildRateAndTimecount(travelDateTime, bookingData, index, context),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(height: 10);
+                      },
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 12,
+                      ),
+                    );
+  }
+
+  Widget _buildRateAndTimecount(
+    DateTime travelDateTime, 
+    AsyncSnapshot<BookingListModel> bookingData, 
+    int index, 
+    BuildContext context) {
+    return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    if (travelDateTime.isBefore(
+                                      DateTime.now(),
+                                    ))
+                                      bookingData
+                                                  .data
+                                                  ?.body
+                                                  ?.data?[index]
+                                                  .isRate ==
+                                              0
+                                          ? InkWell(
+                                            onTap: () async {
+                                              final result = await Get.to(
+                                                () => RateScheduleScreen(
+                                                  scheduleId:
+                                                      bookingData
+                                                          .data
+                                                          ?.body
+                                                          ?.data?[index]
+                                                          .scheduleId,
+                                                  id:
+                                                      bookingData
+                                                          .data
+                                                          ?.body
+                                                          ?.data?[index]
+                                                          .id
+                                                          .toString(),
+                                                ),
+                                                transition:
+                                                    Transition
+                                                        .rightToLeft,
+                                                duration: const Duration(
+                                                  milliseconds:
+                                                      Constrains.duration,
+                                                ),
+                                              );
+                                          
+                                              if (result == true) {
+                                                controller
+                                                    .loadBookingList(
+                                                      context: context,
+                                                    );
+                                              }
+                                            },
+                                            child: const Row(
+                                              children: [
+                                                Icon(
+                                                  Ionicons
+                                                      .chatbubble_ellipses_outline,
+                                                  size: 18,
+                                                  color:
+                                                      AppColors
+                                                          .primaryColor,
+                                                ),
+                                                SizedBox(width: 6),
+                                                Text(
+                                                  'Rate a schedule',
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppColors
+                                                            .primaryColor,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                          : const Expanded(
+                                            flex: 1,
+                                            child: SizedBox(),
+                                          ),
+                                    if (travelDateTime.isAfter(
+                                      DateTime.now(),
+                                    ))
+                                      Expanded(
+                                        flex: 1,
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Ionicons.time_outline,
+                                              size: 18,
+                                              color: AppColors.primaryColor,
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              _calculateCountdown(
+                                                travelDateTime,
+                                              ),
+                                              style: const TextStyle(
+                                                color:
+                                                    AppColors.primaryColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                   
+                                  ],
+                                );
+  }
+
+  Widget _buildIsTravelPackage() {
+    return Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "*",
+                                        style: TextStyle(
+                                          color: AppColors.redColor,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          "booking_travel_package2".tr,
+                                          style: const TextStyle(
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+  }
+
+  Widget _buildIsLuckyDraw() {
+    return  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "*",
+                                        style: TextStyle(
+                                          color: AppColors.redColor,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          "Please show your e-ticket to our staff at the ticket counter to get your physical Lucky Ticket",
+                                          style: TextStyle(
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+  }
+
+  Widget _buldBusAndTime(
+    AsyncSnapshot<BookingListModel> bookingData, 
+    int index) {
+    return Row(
+        mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                          
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+                                           Image.asset(
+                                            // AssetImages.ic_boat_history ,
+                                              bookingData
+                                                            .data
+                                                            ?.body
+                                                            ?.data?[index]
+                                                            .journeyType ==
+                                                        2 ||
+                                                    bookingData
+                                                            .data
+                                                            ?.body
+                                                            ?.data?[index]
+                                                            .journeyType ==
+                                                        4
+                                                ? AssetImages.ic_boat_history : AssetImages.ic_bus_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                         
+                                          const SizedBox(width: 6),
+                                          Flexible(
+                                            child: Text(
+                                              "${bookingData.data?.body?.data?[index].transportationType}",
+                                              softWrap: true,
+                                              style: const TextStyle(
+                                                color: AppColors.textColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+
+                                           Image.asset(
+                                            AssetImages.ic_time_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                          Text(" ${DateFormat('HH:mm').format(DateFormat('HH:mm').parse((bookingData.data?.body?.data?[index].departure).toString()))}", style: TextStyle(
+                                             color: AppColors.textColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                          ),),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                );
+  }
+
+  Widget _buildCodeAndDate(AsyncSnapshot<BookingListModel> bookingData, int index) {
+    return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+                                          // const Icon(
+                                          //   AssetImages.ic_ticket_history,
+                                          //   size: 18,
+                                          //   color: AppColors.textColor,
+                                          // ),
+                                          Image.asset(
+                                            AssetImages.ic_ticket_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Flexible(
+                                            child: Text(
+                                              "${bookingData.data?.body?.data?[index].code}",
+                                              style: const TextStyle(
+                                                color: AppColors.textColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+                                         
+                                           Image.asset(
+                                            AssetImages.ic_date_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            "${bookingData.data?.body?.data?[index].travelDate}",
+                                            style: const TextStyle(
+                                              color: AppColors.textColor,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+  }
+
+  Widget _buildDestination(AsyncSnapshot<BookingListModel> bookingData, int index) {
+    return Row(
+                                  children: [
+                                   Expanded(
+                                     child: Row(
+                                      children: [
+                                         Image.asset(
+                                        bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                1
+                                            ? AssetImages.vet_logo
+                                            : bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                2
+                                            ? AssetImages.buva_sea
+                                            : bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                3
+                                            ? AssetImages.vet_air_bus_schedule
+                                            : AssetImages.buva_sea,
+                                        height: 30,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        "${bookingData.data?.body?.data?[index].destinationFrom} - ${bookingData.data?.body?.data?[index].destinationTo}",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.titleColor,
+                                        ),
+                                      ),
+                                      ],
+                                     ),
+                                     //
+                                     
+                                   ),
+                                    //
+                                     Row(
+                                       children: [
+                                         const Icon(
+                                           Ionicons.person_outline,
+                                           color: AppColors.textColor,
+                                         ),
+                                         const SizedBox(width: 6),
+                                         Text(
+                                           '${bookingData.data?.body?.data?[index].totalSeat}',
+                                           style: TextStyle(
+                                             fontSize: 14,
+                                             color: AppColors.primaryColor,
+                                             fontWeight: FontWeight.bold,
+                                           ),
+                                         ),
+                                       
+                                       ],
+                                     ),
+                                    
+                                  ],
+                                );
   }
 
   String _calculateCountdown(DateTime travelDateTime) {

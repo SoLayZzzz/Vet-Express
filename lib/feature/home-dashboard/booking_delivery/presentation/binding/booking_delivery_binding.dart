@@ -11,9 +11,16 @@ import '../controller/booking_delivery_controller.dart';
 class BookingDeliveryBinding implements Bindings {
   @override
   void dependencies() {
+    if (!Get.isRegistered<NetworkDataSource>()) {
+      Get.lazyPut(
+        () => NetworkDataSource(baseUrl: BaseUrl.BASE_URL),
+        fenix: true,
+      );
+    }
+
     if (!Get.isRegistered<BookingDeliveryNetworkRequest>()) {
       Get.lazyPut(
-        () => BookingDeliveryNetworkRequest(),
+        () => BookingDeliveryNetworkRequest(Get.find<NetworkDataSource>()),
         fenix: true,
       );
     }
@@ -35,13 +42,6 @@ class BookingDeliveryBinding implements Bindings {
     if (!Get.isRegistered<BookingDeliveryController>()) {
       Get.lazyPut(
         () => BookingDeliveryController(Get.find<BookingDeliveryUseCase>()),
-        fenix: true,
-      );
-    }
-
-    if (!Get.isRegistered<NetworkDataSource>()) {
-      Get.lazyPut(
-        () => NetworkDataSource(baseUrl: BaseUrl.BASE_URL),
         fenix: true,
       );
     }

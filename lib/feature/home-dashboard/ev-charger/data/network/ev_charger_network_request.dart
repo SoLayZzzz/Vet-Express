@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 
 import 'package:express_vet/base/network_data_source.dart';
@@ -16,13 +15,10 @@ import '../model/response/ev_station_list_response.dart';
 import '../model/response/ev_top_up_response.dart';
 import '../model/response/ev_wallet_amount_response.dart';
 import '../model/response/ev_wallet_list_response.dart';
-import 'package:get/get.dart';
 import '../../../../../base/endpoint.dart';
 import '../model/response/destination_ev.dart';
 import '../../../../../models/simple_response.dart';
-import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';
-import '../../../../../utils/loading.dart';
 
 class EvChargerNetworkRequest {
   final NetWorkDataSource ticketDataSource;
@@ -51,14 +47,6 @@ class EvChargerNetworkRequest {
         attachAuth: true,
       );
       return EvChargerResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -75,14 +63,6 @@ class EvChargerNetworkRequest {
       );
 
       return DestinationEvResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -102,14 +82,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvContactResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -129,14 +101,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvFaqResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -156,14 +120,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvPolicyResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -183,14 +139,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvSlideShowResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -210,14 +158,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvNewsFeedResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -237,14 +177,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvProvinceResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -270,14 +202,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvStationListResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -295,14 +219,6 @@ class EvChargerNetworkRequest {
       );
 
       return SimpleResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -322,14 +238,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvWalletListResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -346,14 +254,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvWalletAmountResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -391,14 +291,6 @@ class EvChargerNetworkRequest {
       );
 
       return parsed;
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -428,14 +320,6 @@ class EvChargerNetworkRequest {
       );
 
       return parsed;
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -453,14 +337,6 @@ class EvChargerNetworkRequest {
       );
 
       return EvScanQrResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }
@@ -478,14 +354,6 @@ class EvChargerNetworkRequest {
       );
 
       return SimpleResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
     } catch (_) {
       rethrow;
     }

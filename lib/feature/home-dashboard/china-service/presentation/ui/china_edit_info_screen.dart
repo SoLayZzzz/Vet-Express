@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
+
+import '../../../../../models/china/customer_china_response.dart';
 
 class EditChinaAddressScreen extends StatefulWidget {
   const EditChinaAddressScreen({super.key});
@@ -13,18 +16,45 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers with your initial text from the screenshot
-  final TextEditingController _nameController = TextEditingController(
-    text: 'VET-Account',
-  );
-  final TextEditingController _phoneController = TextEditingController(
-    text: '012 345 678',
-  );
-  final TextEditingController _addressController = TextEditingController(
-    text: 'Phnom Penh, Cambodia',
-  );
+  late final TextEditingController _nameController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _addressController;
 
-  final RxString _selectedBranch = 'ជ្រោយចង្វារ PP'.obs;
+  final RxString _selectedBranch = ''.obs;
   final List<String> _branches = ['ជ្រោយចង្វារ PP', 'Branch B', 'Branch C'];
+
+  @override
+  void initState() {
+    super.initState();
+
+    final args = Get.arguments;
+    final CustomerChinaListData? customer =
+        args is CustomerChinaListData ? args : null;
+
+    _nameController = TextEditingController(text: customer?.name ?? '');
+    _phoneController = TextEditingController(
+      text: _formatPhoneNumber(customer?.telephone ?? ''),
+    );
+    _addressController = TextEditingController(text: customer?.address ?? '');
+
+    final branchName = customer?.branchName;
+    if (branchName != null && branchName.trim().isNotEmpty) {
+      if (!_branches.contains(branchName)) {
+        _branches.insert(0, branchName);
+      }
+      _selectedBranch.value = branchName;
+    } else {
+      _selectedBranch.value = _branches.first;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +92,9 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
               _buildTextField(
                 _phoneController,
                 keyboardType: TextInputType.phone,
+                inputFormatters: <TextInputFormatter>[
+                  _PhoneNumberSpacingFormatter(),
+                ],
               ),
 
               const SizedBox(height: 20),
@@ -107,11 +140,13 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
     TextEditingController controller, {
     bool isMultiline = false,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       maxLines: isMultiline ? 4 : 1,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -183,6 +218,45 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  String _formatPhoneNumber(String input) {
+    final digits = input.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) return '';
+
+    final parts = <String>[];
+    for (var i = 0; i < digits.length; i += 3) {
+      final end = (i + 3 < digits.length) ? i + 3 : digits.length;
+      parts.add(digits.substring(i, end));
+    }
+    return parts.join(' ');
+  }
+}
+
+class _PhoneNumberSpacingFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i != 0 && i % 3 == 0) buffer.write(' ');
+      buffer.write(digits[i]);
+    }
+    final formatted = buffer.toString();
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

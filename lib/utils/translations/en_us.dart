@@ -73,7 +73,7 @@ final Map<String, String> enUS = {
         'contact_information': 'Contact Information',
         'contact_name': 'Contact name',
         'your_address': 'Your address',
-        'warehouse_address_by': 'Warehouse Address In China By:',
+        'warehouse_address_by': 'Warehouse Address In China By',
         'warehouse_details': 'Warehouse Details',
         'warehouse_name': 'Warehouse name',
         'customer_code': 'Customer code',

@@ -100,18 +100,24 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                         color: AppColors.primaryColor,
                       ),
                     ),
-                    // GestureDetector(
-                    //   onTap: () => Get.toNamed(AppRoutes.chinaEditInfo),
-                    //   child: const Icon(
-                    //     MaterialCommunityIcons.square_edit_outline,
-                    //     color: Colors.grey,
-                    //     size: 22,
-                    //   ),
-                    // ),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(
+                        AppRoutes.chinaEditInfo,
+                        arguments: customer,
+                      ),
+                      child: const Icon(
+                        MaterialCommunityIcons.square_edit_outline,
+                        color: Colors.grey,
+                        size: 22,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                _buildContactRow(AssetImages.phone, customer.telephone ?? ''),
+                _buildContactRow(
+                  AssetImages.phone,
+                  _formatPhoneNumber(customer.telephone ?? ''),
+                ),
                 _buildContactRow(
                   AssetImages.building,
                   customer.branchName ?? '',
@@ -288,13 +294,17 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                   final isCopied = _copiedItems[value] ?? false;
                   return GestureDetector(
                     onTap: () => _copyToClipboard(value),
-                    child: Icon(
-                      isCopied
-                          ? Ionicons.checkmark_done
-                          : MaterialCommunityIcons.content_copy,
-                      color: isCopied ? Colors.green : Colors.grey[400],
-                      size: 22,
-                    ),
+                    child: isCopied
+                        ? const Icon(
+                            Ionicons.checkmark_done,
+                            color: Colors.green,
+                            size: 22,
+                          )
+                        : ImageIcon(
+                            AssetImage(AssetImages.ic_copy),
+                            color: Colors.grey[400],
+                            size: 22,
+                          ),
                   );
                 }),
               ],
@@ -321,5 +331,17 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
       const Duration(seconds: 2),
       () => _copiedItems[text] = false,
     );
+  }
+
+  String _formatPhoneNumber(String input) {
+    final digits = input.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) return '';
+
+    final parts = <String>[];
+    for (var i = 0; i < digits.length; i += 3) {
+      final end = (i + 3 < digits.length) ? i + 3 : digits.length;
+      parts.add(digits.substring(i, end));
+    }
+    return parts.join(' ');
   }
 }

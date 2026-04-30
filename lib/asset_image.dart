@@ -41,7 +41,7 @@ class AssetImages {
   static const String membership = 'assets/icons/membership.png';
   static const String membership_active = 'assets/icons/membership-active.png';
 
-  static const String location = 'assets/icons/location.png';
+  static const String location = 'assets/icons/ic_location.png';
   static const String location_active = 'assets/icons/location-active.png';
 
   static const String scan = 'assets/icons/icon_scan.png';
@@ -222,6 +222,12 @@ class AssetImages {
 
   static const String ic_recieved = "assets/images/icon_recieved.png";
 
+  static const String ic_ticket_history = "assets/icons/ticket_history.png";
+  static const String ic_date_history = "assets/icons/date_history.png";
+  static const String ic_bus_history = "assets/icons/bus_history.png";
+  static const String ic_time_history = "assets/icons/time_history.png";
+  static const String ic_boat_history = "assets/icons/boat_history.png";
+
   // =========================
   // Location Dashboard
   // =========================
@@ -248,6 +254,12 @@ class AssetImages {
       "assets/images/ic_delivery_to_customer.png";
   static const String ic_call_to_customer =
       "assets/images/ic_call_to_customer.png";
+
+  // =========================
+  // China Address
+  // =========================    
+
+  static const String ic_copy = "assets/images/ic_copy.png";
 
 
 }

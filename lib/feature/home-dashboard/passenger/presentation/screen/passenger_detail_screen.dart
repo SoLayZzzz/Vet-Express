@@ -379,6 +379,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     required BuildContext context,
     required List<dynamic> selectedSeats,
     required int companyType,
+    required bool isGoingTrip,
     required List<TextEditingController> nameControllers,
     required List<String> gender,
     required List<int?> nationalityIds,
@@ -406,6 +407,14 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
             shrinkWrap: true,
             itemCount: selectedSeats.length,
             itemBuilder: (BuildContext context, int index) {
+              void syncGoingToReturnIfNeeded() {
+                if (isGoingTrip && companyType == 4) {
+                  controller.syncBuvaSeaRoundTripFromGoingToReturn(
+                    onlyIfEmpty: true,
+                  );
+                }
+              }
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
 
@@ -461,7 +470,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   //     ],
                   //   ),
                   if (companyType == 4) const SizedBox(height: 15),
-                  _buildChooseGender(gender, index),
+                  _buildChooseGender(
+                    gender,
+                    index,
+                    onChanged: syncGoingToReturnIfNeeded,
+                  ),
                   const SizedBox(height: 15),
                    const SizedBox(height: 5),
                   if (companyType == 4)
@@ -492,6 +505,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                           child: TextField(
                             controller: nameControllers[index],
                             style: const TextStyle(fontSize: 14),
+                            onChanged: (_) {
+                              syncGoingToReturnIfNeeded();
+                            },
                             decoration: InputDecoration(
                               isDense: true,
                               contentPadding: const EdgeInsets.symmetric(
@@ -507,7 +523,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                       ],
                     ),
                     const SizedBox(height: 15),
-                  _buildChooseNationality(nationalityIds, index, national),
+                  _buildChooseNationality(
+                    nationalityIds,
+                    index,
+                    national,
+                    onChanged: syncGoingToReturnIfNeeded,
+                  ),
                   const SizedBox(height: 15),
                   if (companyType == 4)
                     Row(
@@ -570,6 +591,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   dobValueControllers[index].text =
                                       DateFormat('yyyy-MM-dd').format(date);
                                   controller.update();
+                                  syncGoingToReturnIfNeeded();
                                 }
                               }
                             },
@@ -607,6 +629,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                           child: TextField(
                             controller: passportControllers[index],
                             style: const TextStyle(fontSize: 14),
+                            onChanged: (_) {
+                              syncGoingToReturnIfNeeded();
+                            },
                             decoration: InputDecoration(
                               isDense: true,
                               contentPadding: const EdgeInsets.symmetric(
@@ -634,7 +659,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     );
   }
 
-  Widget _buildChooseNationality(List<int?> nationalityIds, int index, List<int> national) {
+  Widget _buildChooseNationality(
+    List<int?> nationalityIds,
+    int index,
+    List<int> national, {
+    VoidCallback? onChanged,
+  }) {
     return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -737,6 +767,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             national[index] =
                                                 nationalityIds[index]!;
                                             controller.update();
+                                            onChanged?.call();
                                           },
                                           dropdownStyleData:
                                               const DropdownStyleData(
@@ -872,7 +903,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
   );
 }
 
-Widget _buildChooseGender(List<String> gender, int index) {
+Widget _buildChooseGender(List<String> gender, int index, {VoidCallback? onChanged}) {
   return Row(
     children: [
       _buildGenderItem(
@@ -882,9 +913,10 @@ Widget _buildChooseGender(List<String> gender, int index) {
         onTap: () {
           gender[index] = '2';
           controller.update();
+          onChanged?.call();
         },
       ),
-      const SizedBox(width: 16),
+      const SizedBox(width: 20),
       _buildGenderItem(
         value: '1',
         label: "male".tr,
@@ -892,6 +924,7 @@ Widget _buildChooseGender(List<String> gender, int index) {
         onTap: () {
           gender[index] = '1';
           controller.update();
+          onChanged?.call();
         },
       ),
     ],
@@ -3775,6 +3808,7 @@ Widget _buildChooseGender(List<String> gender, int index) {
                             context: context,
                             selectedSeats: ValueStatic.twoWaySelectedSeat,
                             companyType: ValueStatic.companyTypeTwoWay,
+                            isGoingTrip: false,
                             nameControllers: controller.state.nameTwoWay,
                             gender: controller.state.genderTwoWay,
                             nationalityIds:
@@ -4170,6 +4204,7 @@ Widget _buildChooseGender(List<String> gender, int index) {
                           context: context,
                           selectedSeats: ValueStatic.oneWaySelectedSeat,
                           companyType: ValueStatic.companyTypeOneWay,
+                          isGoingTrip: true,
                           nameControllers: controller.state.nameOneWay,
                           gender: controller.state.genderOneWay,
                           nationalityIds: controller.state.nationalityIds,

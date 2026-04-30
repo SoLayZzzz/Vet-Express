@@ -80,6 +80,7 @@ class BookingDetailDataItem {
   String? luckDrawFee;
   int? companyType;
   String? transactionId;
+  String? seatType;
   int? journeyType;
   int? totalSeat;
   List<BookingSeatDetailList>? bookingSeatDetailList;
@@ -112,6 +113,7 @@ class BookingDetailDataItem {
     this.luckDrawFee,
     this.companyType,
     this.transactionId,
+    this.seatType,
     this.journeyType,
     this.totalSeat,
     this.bookingSeatDetailList,
@@ -146,6 +148,7 @@ class BookingDetailDataItem {
         luckDrawFee: json["luckDrawFee"],
         companyType: json["companyType"],
         transactionId: json["transactionId"],
+        seatType: json["seatType"],
         journeyType: json["journeyType"],
         totalSeat: json["totalSeat"],
         bookingSeatDetailList:
@@ -186,6 +189,7 @@ class BookingDetailDataItem {
     "luckDrawFee": luckDrawFee,
     "companyType": companyType,
     "transactionId": transactionId,
+    "seatType": seatType,
     "journeyType": journeyType,
     "totalSeat": totalSeat,
     "bookingSeatDetailList":

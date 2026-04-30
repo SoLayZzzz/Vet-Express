@@ -1,14 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../../base/endpoint.dart';
 import '../../../../../base/network_data_source.dart';
 import '../model/response/seat_unavailable_response.dart';
-import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/contains.dart';
-import '../../../../../utils/loading.dart';
 
 class SeatNetworkRequest {
   final NetWorkDataSource netWorkDataSource;
@@ -20,27 +15,15 @@ class SeatNetworkRequest {
     required String date,
     required String journeyId,
   }) async {
-    try {
-      debugPrint('[Seat] getSeatLayout -> date: $date, journeyId: $journeyId');
-      final json = await netWorkDataSource.postFormUrlEncoded(
-        Endpoint.ticketSeatLayout,
-        fields: <String, String>{'date': date, 'journey': journeyId},
-        timeout: const Duration(seconds: Constrains.timeout30),
-        attachAuth: true,
-      );
-      debugPrint('[Seat] getSeatLayout <- response received');
-      return Map<dynamic, dynamic>.from(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
-    } catch (_) {
-      rethrow;
-    }
+    debugPrint('[Seat] getSeatLayout -> date: $date, journeyId: $journeyId');
+    final json = await netWorkDataSource.postFormUrlEncoded(
+      Endpoint.ticketSeatLayout,
+      fields: <String, String>{'date': date, 'journey': journeyId},
+      timeout: const Duration(seconds: Constrains.timeout30),
+      attachAuth: true,
+    );
+    debugPrint('[Seat] getSeatLayout <- response received');
+    return Map<dynamic, dynamic>.from(json);
   }
 
   Future<SeatUnavailableResponse> getUnavailable({
@@ -48,26 +31,14 @@ class SeatNetworkRequest {
     required String date,
     required String journeyId,
   }) async {
-    try {
-      debugPrint('[Seat] getUnavailable -> date: $date, journeyId: $journeyId');
-      final json = await netWorkDataSource.postFormUrlEncoded(
-        Endpoint.ticketSeatUnavailable,
-        fields: <String, String>{'date': date, 'journey': journeyId},
-        timeout: const Duration(seconds: Constrains.timeout30),
-        attachAuth: true,
-      );
-      debugPrint('[Seat] getUnavailable <- response received');
-      return SeatUnavailableResponse.fromJson(json);
-    } on TimeoutException {
-      Loading().loadingClose();
-      alertDialogOneButton(
-        title: 'timeout'.tr,
-        description: 'request_timed_out'.tr,
-        buttonText: 'ok'.tr,
-      );
-      rethrow;
-    } catch (_) {
-      rethrow;
-    }
+    debugPrint('[Seat] getUnavailable -> date: $date, journeyId: $journeyId');
+    final json = await netWorkDataSource.postFormUrlEncoded(
+      Endpoint.ticketSeatUnavailable,
+      fields: <String, String>{'date': date, 'journey': journeyId},
+      timeout: const Duration(seconds: Constrains.timeout30),
+      attachAuth: true,
+    );
+    debugPrint('[Seat] getUnavailable <- response received');
+    return SeatUnavailableResponse.fromJson(json);
   }
 }

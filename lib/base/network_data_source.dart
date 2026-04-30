@@ -9,7 +9,9 @@ import 'package:get/get_connect/http/src/request/request.dart';
 
 import 'base_url.dart';
 import '../utils/app_pref.dart';
+import '../utils/alert_dialog.dart';
 import '../utils/contains.dart';
+import '../utils/loading.dart';
 
 class NetWorkDataSource extends GetConnect {
   final String baseUrl;
@@ -87,6 +89,16 @@ class NetWorkDataSource extends GetConnect {
     return out;
   }
 
+  void _handleTimeoutUi() {
+    Loading().loadingClose();
+    if (Get.isDialogOpen == true) return;
+    alertDialogOneButton(
+      title: 'timeout'.tr,
+      description: 'request_timed_out'.tr,
+      buttonText: 'ok'.tr,
+    );
+  }
+
   Future<Map<String, dynamic>> postJson(
     String path, {
     Map<String, dynamic>? body,
@@ -95,26 +107,44 @@ class NetWorkDataSource extends GetConnect {
     Duration? timeout,
     bool attachAuth = true,
   }) async {
-    final res = await post<dynamic>(
-      path,
-      body,
-      headers: _buildHeaders(
-        headers: headers,
-        attachAuth: attachAuth,
-        isJson: true,
-      ),
-      query: queryParameters,
-      contentType: 'application/json',
-    ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
+    try {
+      final res = await post<dynamic>(
+        path,
+        body,
+        headers: _buildHeaders(
+          headers: headers,
+          attachAuth: attachAuth,
+          isJson: true,
+        ),
+        query: queryParameters,
+        contentType: 'application/json',
+      ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
 
-    if (!res.isOk) {
-      final message = res.bodyString ?? res.statusText ?? '';
-      throw HttpException('Request failed (${res.statusCode}): $message');
+      if (!res.isOk) {
+        final statusCode = res.statusCode;
+        final message = res.bodyString ?? res.statusText ?? '';
+        if (statusCode == null) {
+          final lower = message.toLowerCase();
+          if (lower.contains('timed out') || lower.contains('timeout')) {
+            throw TimeoutException(
+              message.isNotEmpty ? message : 'Request timed out',
+            );
+          }
+          if (lower.contains('socketexception')) {
+            throw SocketException(message.isNotEmpty ? message : 'Network error');
+          }
+          throw HttpException('Request failed (network): $message');
+        }
+        throw HttpException('Request failed ($statusCode): $message');
+      }
+
+      final decoded = res.body;
+      if (decoded is Map<String, dynamic>) return decoded;
+      return <String, dynamic>{'data': decoded};
+    } on TimeoutException {
+      _handleTimeoutUi();
+      rethrow;
     }
-
-    final decoded = res.body;
-    if (decoded is Map<String, dynamic>) return decoded;
-    return <String, dynamic>{'data': decoded};
   }
 
   Future<Map<String, dynamic>> postMultipart(
@@ -125,27 +155,45 @@ class NetWorkDataSource extends GetConnect {
     Duration? timeout,
     bool attachAuth = true,
   }) async {
-    final formData = FormData(fields);
-    final res = await post<dynamic>(
-      path,
-      formData,
-      headers: _buildHeaders(
-        headers: headers,
-        attachAuth: attachAuth,
-        isJson: false,
-      ),
-      query: queryParameters,
-      contentType: 'multipart/form-data',
-    ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
+    try {
+      final formData = FormData(fields);
+      final res = await post<dynamic>(
+        path,
+        formData,
+        headers: _buildHeaders(
+          headers: headers,
+          attachAuth: attachAuth,
+          isJson: false,
+        ),
+        query: queryParameters,
+        contentType: 'multipart/form-data',
+      ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
 
-    if (!res.isOk) {
-      final message = res.bodyString ?? res.statusText ?? '';
-      throw HttpException('Request failed (${res.statusCode}): $message');
+      if (!res.isOk) {
+        final statusCode = res.statusCode;
+        final message = res.bodyString ?? res.statusText ?? '';
+        if (statusCode == null) {
+          final lower = message.toLowerCase();
+          if (lower.contains('timed out') || lower.contains('timeout')) {
+            throw TimeoutException(
+              message.isNotEmpty ? message : 'Request timed out',
+            );
+          }
+          if (lower.contains('socketexception')) {
+            throw SocketException(message.isNotEmpty ? message : 'Network error');
+          }
+          throw HttpException('Request failed (network): $message');
+        }
+        throw HttpException('Request failed ($statusCode): $message');
+      }
+
+      final decoded = res.body;
+      if (decoded is Map<String, dynamic>) return decoded;
+      return <String, dynamic>{'data': decoded};
+    } on TimeoutException {
+      _handleTimeoutUi();
+      rethrow;
     }
-
-    final decoded = res.body;
-    if (decoded is Map<String, dynamic>) return decoded;
-    return <String, dynamic>{'data': decoded};
   }
 
   Future<Map<String, dynamic>> postFormUrlEncoded(
@@ -156,40 +204,58 @@ class NetWorkDataSource extends GetConnect {
     Duration? timeout,
     bool attachAuth = true,
   }) async {
-    final body = fields.entries
-        .map(
-          (e) =>
-              '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}',
-        )
-        .join('&');
+    try {
+      final body = fields.entries
+          .map(
+            (e) =>
+                '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}',
+          )
+          .join('&');
 
-    final outHeaders = _buildHeaders(
-      headers: headers,
-      attachAuth: attachAuth,
-      isJson: false,
-    );
-    outHeaders.putIfAbsent(
-      'Content-Type',
-      () => 'application/x-www-form-urlencoded',
-    );
-    outHeaders.putIfAbsent('Accept', () => 'application/json');
+      final outHeaders = _buildHeaders(
+        headers: headers,
+        attachAuth: attachAuth,
+        isJson: false,
+      );
+      outHeaders.putIfAbsent(
+        'Content-Type',
+        () => 'application/x-www-form-urlencoded',
+      );
+      outHeaders.putIfAbsent('Accept', () => 'application/json');
 
-    final res = await post<dynamic>(
-      path,
-      body,
-      headers: outHeaders,
-      query: queryParameters,
-      contentType: 'application/x-www-form-urlencoded',
-    ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
+      final res = await post<dynamic>(
+        path,
+        body,
+        headers: outHeaders,
+        query: queryParameters,
+        contentType: 'application/x-www-form-urlencoded',
+      ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
 
-    if (!res.isOk) {
-      final message = res.bodyString ?? res.statusText ?? '';
-      throw HttpException('Request failed (${res.statusCode}): $message');
+      if (!res.isOk) {
+        final statusCode = res.statusCode;
+        final message = res.bodyString ?? res.statusText ?? '';
+        if (statusCode == null) {
+          final lower = message.toLowerCase();
+          if (lower.contains('timed out') || lower.contains('timeout')) {
+            throw TimeoutException(
+              message.isNotEmpty ? message : 'Request timed out',
+            );
+          }
+          if (lower.contains('socketexception')) {
+            throw SocketException(message.isNotEmpty ? message : 'Network error');
+          }
+          throw HttpException('Request failed (network): $message');
+        }
+        throw HttpException('Request failed ($statusCode): $message');
+      }
+
+      final decoded = res.body;
+      if (decoded is Map<String, dynamic>) return decoded;
+      return <String, dynamic>{'data': decoded};
+    } on TimeoutException {
+      _handleTimeoutUi();
+      rethrow;
     }
-
-    final decoded = res.body;
-    if (decoded is Map<String, dynamic>) return decoded;
-    return <String, dynamic>{'data': decoded};
   }
 
   Future<Map<String, dynamic>> postMultipartWithFile(
@@ -202,47 +268,65 @@ class NetWorkDataSource extends GetConnect {
     Duration? timeout,
     bool attachAuth = true,
   }) async {
-    final formData = FormData(<String, dynamic>{...fields});
+    try {
+      final formData = FormData(<String, dynamic>{...fields});
 
-    final normalizedFileField = fileField ?? 'file';
-    if (filePath != null && filePath.isNotEmpty) {
-      final f = File(filePath);
-      if (await f.exists()) {
-        formData.files.add(
-          MapEntry(
-            normalizedFileField,
-            MultipartFile(
-              f,
-              filename:
-                  f.uri.pathSegments.isNotEmpty
-                      ? f.uri.pathSegments.last
-                      : 'upload',
+      final normalizedFileField = fileField ?? 'file';
+      if (filePath != null && filePath.isNotEmpty) {
+        final f = File(filePath);
+        if (await f.exists()) {
+          formData.files.add(
+            MapEntry(
+              normalizedFileField,
+              MultipartFile(
+                f,
+                filename:
+                    f.uri.pathSegments.isNotEmpty
+                        ? f.uri.pathSegments.last
+                        : 'upload',
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
+
+      final res = await post<dynamic>(
+        path,
+        formData,
+        headers: _buildHeaders(
+          headers: headers,
+          attachAuth: attachAuth,
+          isJson: false,
+        ),
+        query: queryParameters,
+        contentType: 'multipart/form-data',
+      ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
+
+      if (!res.isOk) {
+        final statusCode = res.statusCode;
+        final message = res.bodyString ?? res.statusText ?? '';
+        if (statusCode == null) {
+          final lower = message.toLowerCase();
+          if (lower.contains('timed out') || lower.contains('timeout')) {
+            throw TimeoutException(
+              message.isNotEmpty ? message : 'Request timed out',
+            );
+          }
+          if (lower.contains('socketexception')) {
+            throw SocketException(message.isNotEmpty ? message : 'Network error');
+          }
+          throw HttpException('Request failed (network): $message');
+        }
+        throw HttpException('Request failed ($statusCode): $message');
+      }
+
+      final decoded = res.body;
+      if (decoded is Map<String, dynamic>) return decoded;
+      return <String, dynamic>{'data': decoded};
+    } on TimeoutException {
+      _handleTimeoutUi();
+      rethrow;
     }
-
-    final res = await post<dynamic>(
-      path,
-      formData,
-      headers: _buildHeaders(
-        headers: headers,
-        attachAuth: attachAuth,
-        isJson: false,
-      ),
-      query: queryParameters,
-      contentType: 'multipart/form-data',
-    ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
-
-    if (!res.isOk) {
-      final message = res.bodyString ?? res.statusText ?? '';
-      throw HttpException('Request failed (${res.statusCode}): $message');
-    }
-
-    final decoded = res.body;
-    if (decoded is Map<String, dynamic>) return decoded;
-    return <String, dynamic>{'data': decoded};
   }
 }
 

@@ -11,11 +11,13 @@ import 'api/slide_show.dart';
 import 'feature/auth/data/model/response/check_version_response.dart';
 import 'models/slide_show/slide_show_response.dart';
 import 'utils/app_pref.dart';
+import 'utils/alert_dialog.dart';
 import 'utils/contains.dart';
 import 'utils/image_cache_service.dart';
 import 'ads_screen.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'routes/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,7 +40,26 @@ class _SplashScreenState extends State<SplashScreen> {
     await _initializeDeviceInfo();
     await checkVersionUpdate(Get.context!);
 
+    if (!mounted || _apiCallCompleted) return;
+
     await _loadData();
+  }
+
+  void _navigateToMenuWithTimeoutDialog() {
+    if (!mounted || _apiCallCompleted) return;
+
+    _apiCallCompleted = true;
+    setState(() => _isLoading = false);
+
+    Get.offAllNamed(AppRoutes.home);
+    Future.delayed(Duration.zero, () {
+      if (Get.isDialogOpen == true) return;
+      alertDialogOneButton(
+        title: 'timeout'.tr,
+        description: 'request_timed_out'.tr,
+        buttonText: 'ok'.tr,
+      );
+    });
   }
 
   /// Device info
@@ -115,11 +136,14 @@ class _SplashScreenState extends State<SplashScreen> {
               await box.delete(cacheKeys);
               await ImageCacheService.clearImageCache(
                 cacheKeys,
-              ); // pass which section changed
+              ); 
             }
           }
         }
       }
+    } on TimeoutException {
+      _navigateToMenuWithTimeoutDialog();
+      return;
     } catch (e) {
       log("Version check error: ${e.toString()}");
     }
@@ -152,9 +176,12 @@ class _SplashScreenState extends State<SplashScreen> {
         const Duration(seconds: 10),
         onTimeout: () {
           log("⏰ API timeout - proceeding with empty ads");
-          _navigateToAdsScreen([]);
+          _navigateToMenuWithTimeoutDialog();
         },
       );
+    } on TimeoutException {
+      log("⏰ API timeout - proceeding to menu");
+      _navigateToMenuWithTimeoutDialog();
     } catch (e) {
       log("❌ API error: $e - proceeding with empty ads");
       _navigateToAdsScreen([]);

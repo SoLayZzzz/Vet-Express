@@ -67,12 +67,13 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     required String name,
     required String dob,
   }) {
-    if (seatCount != 1) return;
     if (companyType == 4 && nameControllers.isNotEmpty) {
       if (nameControllers[0].text.trim().isEmpty && name.trim().isNotEmpty) {
         nameControllers[0].text = name.trim();
       }
     }
+
+    if (seatCount != 1) return;
 
     if (dobDisplayControllers.isNotEmpty && dobValueControllers.isNotEmpty) {
       final formattedDob = _formatDobForDisplay(dob);
@@ -824,6 +825,104 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   void createNameTwoWay(List<TextEditingController> nameTwoWay) {
     for (int i = 0; i < ValueStatic.twoWaySelectedSeat.length; i++) {
       nameTwoWay.add(TextEditingController());
+    }
+  }
+
+  void syncBuvaSeaRoundTripFromGoingToReturn({bool onlyIfEmpty = true}) {
+    if (ValueStatic.journeyType != 2) return;
+    if (ValueStatic.companyTypeOneWay != 4 || ValueStatic.companyTypeTwoWay != 4) {
+      return;
+    }
+
+    final seatCount = ValueStatic.oneWaySelectedSeat.length <
+            ValueStatic.twoWaySelectedSeat.length
+        ? ValueStatic.oneWaySelectedSeat.length
+        : ValueStatic.twoWaySelectedSeat.length;
+    if (seatCount <= 0) return;
+
+    bool changed = false;
+
+    for (int i = 0; i < seatCount; i++) {
+      if (i < state.nameOneWay.length && i < state.nameTwoWay.length) {
+        final source = state.nameOneWay[i].text.trim();
+        final target = state.nameTwoWay[i].text.trim();
+        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+          if (target != source) {
+            state.nameTwoWay[i].text = source;
+            changed = true;
+          }
+        }
+      }
+
+      if (i < state.passportOneWay.length && i < state.passportTwoWay.length) {
+        final source = state.passportOneWay[i].text.trim();
+        final target = state.passportTwoWay[i].text.trim();
+        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+          if (target != source) {
+            state.passportTwoWay[i].text = source;
+            changed = true;
+          }
+        }
+      }
+
+      if (i < state.dobOneWayList.length && i < state.dobTwoWayList.length) {
+        final source = state.dobOneWayList[i].text.trim();
+        final target = state.dobTwoWayList[i].text.trim();
+        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+          if (target != source) {
+            state.dobTwoWayList[i].text = source;
+            changed = true;
+          }
+        }
+      }
+
+      if (i < state.dobOneWay.length && i < state.dobTwoWay.length) {
+        final source = state.dobOneWay[i].text.trim();
+        final target = state.dobTwoWay[i].text.trim();
+        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+          if (target != source) {
+            state.dobTwoWay[i].text = source;
+            changed = true;
+          }
+        }
+      }
+
+      if (i < state.genderOneWay.length && i < state.genderTwoWay.length) {
+        final source = state.genderOneWay[i];
+        final target = state.genderTwoWay[i];
+        if (source != '0' && source.isNotEmpty && (!onlyIfEmpty || target == '0' || target.isEmpty)) {
+          if (target != source) {
+            state.genderTwoWay[i] = source;
+            changed = true;
+          }
+        }
+      }
+
+      if (i < state.nationalityIds.length && i < state.nationalityIdsTwoWay.length) {
+        final source = state.nationalityIds[i] ?? 0;
+        final target = state.nationalityIdsTwoWay[i] ?? 0;
+        if (source > 0 && (!onlyIfEmpty || target == 0)) {
+          if (target != source) {
+            state.nationalityIdsTwoWay[i] = source;
+            changed = true;
+          }
+        }
+      }
+
+      if (i < state.nationalOneWay.length && i < state.nationalTwoWay.length) {
+        final source = state.nationalOneWay[i];
+        final target = state.nationalTwoWay[i];
+        if (source > 0 && (!onlyIfEmpty || target == 0)) {
+          if (target != source) {
+            state.nationalTwoWay[i] = source;
+            changed = true;
+          }
+        }
+      }
+    }
+
+    if (changed) {
+      update();
     }
   }
 
