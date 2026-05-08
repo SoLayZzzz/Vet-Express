@@ -1,26 +1,23 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/feature/home-dashboard/payment/presentaion/state/payment_uistate.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/response/confirm_booking_response.dart';
-import 'package:express_vet/utils/button.dart';
 import 'package:intl/intl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-
 import 'component/payment_option_card.dart';
 import '../binding/payment_binding.dart';
 import '../controller/payment_controller.dart';
 import '../../../passenger/presentation/controller/booking.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/app_colors.dart';
-import '../../../../dash_board/presentation/screen/dashboard_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String id;
@@ -100,10 +97,20 @@ class _PaymentScreenState extends State<PaymentScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      controller.setLoop(false);
+      return;
+    }
+
     if (state == AppLifecycleState.resumed) {
       log('On Resume');
+
       if (controller.state.paymentMethodSelected == 5 &&
-          controller.state.newToken.isNotEmpty) {
+          controller.state.newToken.isNotEmpty &&
+          controller.state.acledaPaymentInitiated) {
+        controller.setLoop(true);
         controller.checkPaymentACLEDAComplete(
           context: context,
           transactionId: widget.id,
@@ -602,14 +609,15 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                 children: [
                                                   view(
                                                     "sub_total".tr,
-                                                    "\$${widget.datas.body!.orderPaymentLists![index].grandTotal}",
+                                                    "\$${widget.datas.body!.orderPaymentLists![index].total}",
                                                   ),
-                                                  //  view(
-                                                  //     "Discount platform",
-                                                  //     "\$0.0",
-                                                  //     // "\$${widget.datas.body!.confirmBookingInformation![index].}",
-                                                  //     textColor: AppColors.greyColor
-                                                  //   ),
+                                                  if (_hasVisibleAmount(widget.datas.body!.orderPaymentLists![index].discount))
+                                                   view(
+                                                      "Discount platform",
+                                                      // "\$10.0",
+                                                      "\$${widget.datas.body!.orderPaymentLists![index].discount}",
+                                                      textColor: AppColors.greyColor
+                                                    ),
                                                   if (_hasVisibleAmount(
                                                     _getTravelPackageDiscountItem(
                                                       widget
@@ -824,76 +832,81 @@ class _PaymentScreenState extends State<PaymentScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Total amount
-                   Row(
-                     children: [
-                       Text(
-                        'total_price'.tr,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        color: Colors.black, 
-                        fontWeight: FontWeight.w500,
-                        ),
-                       ),
-                       Text(
-                         "\$${totalPayableAll.toStringAsFixed(2)}",
-                         style: const TextStyle(
-fontSize: 16,
-                        color: Colors.black, 
-                        fontWeight: FontWeight.bold,
+                   Expanded(
+                    flex: 1,
+                     child: Row(
+                       children: [
+                         Text(
+                          'total_price'.tr,
+                          style: const TextStyle(
+                            fontSize: 16,
+                          color: Colors.black, 
+                          fontWeight: FontWeight.w500,
+                          ),
                          ),
-                                       ),
-                     ],
+                         Text(
+                           "\$${totalPayableAll.toStringAsFixed(2)}",
+                           style: const TextStyle(
+                     fontSize: 16,
+                          color: Colors.black, 
+                          fontWeight: FontWeight.bold,
+                           ),
+                                         ),
+                       ],
+                     ),
                    ),
                   //
                   // Button pay 
-                   SizedBox(
-                      width: 200,
-                      height: 60,
-                      child: ElevatedButton(
-                        onPressed: isPaymentSelected
-                            ? () async {
-                                if (uiState.paymentMethodSelected == 5) {
-                                  await controller.processBooking(
-                                    context: context,
-                                    transactionId: widget.id,
-                                  );
-                                  final token = controller.state.newToken;
-                                  if (token.isNotEmpty && context.mounted) {
-                                    showDialog(
-                                      barrierColor: Colors.black26,
+                   Expanded(
+                    flex: 1,
+                     child: SizedBox(
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: isPaymentSelected
+                              ? () async {
+                                  if (uiState.paymentMethodSelected == 5) {
+                                    await controller.processBooking(
                                       context: context,
-                                      builder: (dialogContext) {
-                                        return dialogOptionACLEDA(
-                                          widget.id,
-                                          token,
-                                        );
-                                      },
+                                      transactionId: widget.id,
+                                    );
+                                    final token = controller.state.newToken;
+                                    if (token.isNotEmpty && context.mounted) {
+                                      showDialog(
+                                        barrierColor: Colors.black26,
+                                        context: context,
+                                        builder: (dialogContext) {
+                                          return dialogOptionACLEDA(
+                                            widget.id,
+                                            token,
+                                          );
+                                        },
+                                      );
+                                    }
+                                  } else {
+                                    controller.processBooking(
+                                      context: context,
+                                      transactionId: widget.id,
                                     );
                                   }
-                                } else {
-                                  controller.processBooking(
-                                    context: context,
-                                    transactionId: widget.id,
-                                  );
                                 }
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
-                          disabledBackgroundColor: AppColors.greyColor,
-                          foregroundColor: Colors.white,
-                          disabledForegroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                            disabledBackgroundColor: AppColors.greyColor,
+                            foregroundColor: Colors.white,
+                            disabledForegroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: Text(
+                            'pay_now'.tr,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                           ),
                         ),
-                        child: Text(
-                          'pay_now'.tr,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                     )
+                       ),
+                   )
                  
                 ],
               ),
@@ -1099,23 +1112,6 @@ fontSize: 16,
     );
   }
 
-  // void showDialogPaymentComplete() {
-  //   alertDialogTwoButton(
-  //     title: 'your_ticket_has_been_reserved'.tr,
-  //     description: 'ticket_info1'.tr,
-  //     buttonText1: 'home'.tr,
-  //     buttonText2: 'show_ticket'.tr,
-  //     onButtonPressed1: () {
-  //       ValueStatic().clearDataTicket();
-  //       Get.offAll(() => const DashboardScreen(from: 0));
-  //     },
-  //     onButtonPressed2: () {
-  //       ValueStatic().clearDataTicket();
-  //       Get.offAll(() => const DashboardScreen(from: 2));
-  //     },
-  //   );
-  // }
-
   void showDialogPaymentFail() {
     alertDialogOneButton(
       title: 'information'.tr,
@@ -1132,36 +1128,8 @@ fontSize: 16,
     );
   }
 
-  /// Payment with Acleda
-  Future<void> payWithACLEDAMobile(transactionId, token) async {
-    await controller.payWithACLEDAMobile(
-      context: context,
-      transactionId: transactionId,
-      token: token,
-    );
-  }
 
-  Future<void> openDeepLinkACLEDA(deepLink, transactionId, token) async {
-    await controller.openDeepLinkACLEDA(deepLink);
-  }
-
-  Future<void> checkPaymentACLEDAComplete(transactionId, token) async {
-    await controller.checkPaymentACLEDAComplete(
-      context: context,
-      transactionId: transactionId,
-      token: token,
-    );
-  }
-
-  Future<void> checkTransactionACLEDAComplete(transactionId, token) async {
-    await controller.checkTransactionACLEDAComplete(
-      context: context,
-      transactionId: transactionId,
-      token: token,
-    );
-  }
-
-  Dialog dialogOptionACLEDA(transactionId, token) {
+  Widget dialogOptionACLEDA(transactionId, token) {
     return Dialog(
       elevation: 0,
       backgroundColor: const Color(0xffffffff),
@@ -1171,108 +1139,124 @@ fontSize: 16,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            InkWell(
-              onTap: () {
-                controller.onAcledaOptionTapOpenApp(
-                  context: context,
-                  transactionId: transactionId,
-                  token: token,
-                );
-                Get.back();
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        AssetImages.acleda_app,
-                        width: 54,
-                        height: 54,
-                      ),
-                      const SizedBox(width: 5),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'ACLEDA Mobile App',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              'Required ACLEDA App Installed and Registered',
-                              style: TextStyle(fontSize: 12),
-                              maxLines: 3,
-                              overflow: TextOverflow.clip,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            _buildOpenAcledaApp(transactionId, token),
             const SizedBox(height: 10),
-            InkWell(
-              onTap: () async {
-                Get.back();
-                await controller.onAcledaOptionTapXPay(
-                  context: context,
-                  transactionId: transactionId,
-                  token: token,
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        AssetImages.acleda_xpay,
-                        width: 54,
-                        height: 54,
-                      ),
-                      const SizedBox(width: 5),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'ACLEDA Card or Account number',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              'OTP will send to phone which register account or card',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            _buildOpenCartOfAceleda(transactionId, token),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildOpenCartOfAceleda(transactionId, token) {
+    return InkWell(
+            onTap: () async {
+              Get.back();
+              
+              await controller.onAcledaOptionTapXPay(
+                context: context,
+                transactionId: transactionId,
+                token: token,
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AssetImages.acleda_xpay,
+                      width: 54,
+                      height: 54,
+                    ),
+                    const SizedBox(width: 5),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ACLEDA Card or Account number',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'OTP will send to phone which register account or card',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+  }
+
+  Widget _buildOpenAcledaApp(transactionId, token) {
+    return InkWell(
+            onTap: () {
+              final type = Platform.isAndroid ? '1' : '2';
+              final requestUrl =
+                  '${BaseUrl.PAYMENT_URL}payments/acledaMobilePay/$transactionId/$token/$type';
+              debugPrint(
+                'Ac App url = $requestUrl',
+              );
+              controller.onAcledaOptionTapOpenApp(
+                context: context,
+                transactionId: transactionId,
+                token: token,
+                type: type,
+              );
+              Get.back();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AssetImages.acleda_app,
+                      width: 54,
+                      height: 54,
+                    ),
+                    const SizedBox(width: 5),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ACLEDA Mobile App',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'Required ACLEDA App Installed and Registered',
+                            style: TextStyle(fontSize: 12),
+                            maxLines: 3,
+                            overflow: TextOverflow.clip,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 }

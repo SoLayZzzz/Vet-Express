@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/utils/contains.dart';
@@ -43,6 +42,12 @@ class PaymentNetworkRequest {
     required String transactionId,
     required String token,
   }) async {
+    final base = paymentApi.baseUrl.endsWith('/')
+        ? paymentApi.baseUrl
+        : '${paymentApi.baseUrl}/';
+    debugPrint(
+      'PaymentNetworkRequest.abaMobilePay.request url=${base}payments/abaMobilePay/$transactionId/$token',
+    );
     final json = await paymentApi.postFormUrlEncoded(
       'payments/abaMobilePay/$transactionId/$token',
       fields: const <String, String>{},
@@ -52,9 +57,59 @@ class PaymentNetworkRequest {
     return ABAPayResponse.fromJson(json);
   }
 
+  Future<ABAPayResponse> acledaXpay({
+    required String transactionId,
+    required String token,
+  }) async {
+    final base = paymentApi.baseUrl.endsWith('/')
+        ? paymentApi.baseUrl
+        : '${paymentApi.baseUrl}/';
+    debugPrint(
+      '>>>>>>> PaymentNetworkRequest.acledaXpay.request url=${base}payments/acledaXpay/$transactionId/$token',
+    );
+    final json = await paymentApi.postFormUrlEncoded(
+      'payments/acledaXpay/$transactionId/$token',
+      fields: const <String, String>{},
+      attachAuth: true,
+    );
+
+    debugPrint('=====>> PaymentNetworkRequest.acledaXpay.response json=$json');
+
+    return ABAPayResponse.fromJson(json);
+  }
+
+  Future<ABAPayResponse> acledaMobilepay({
+    required String transactionId,
+    required String token,
+    required String type
+  }) async {
+    
+     final base = paymentApi.baseUrl.endsWith('/')
+        ? paymentApi.baseUrl
+        : '${paymentApi.baseUrl}/';
+    debugPrint(
+      '>>>>>>> PaymentNetworkRequest.acledaMobilepay.request url=${base}payments/acledaMobilePay/$transactionId/$token/$type',
+    );
+    
+    final json = await paymentApi.postFormUrlEncoded(
+      'payments/acledaMobilePay/$transactionId/$token/$type',
+      fields: const <String, String>{},
+      attachAuth: true,
+    );
+
+
+    return ABAPayResponse.fromJson(json);
+  }
+
   Future<Map<String, dynamic>> acledaCheckStatus({
     required String transactionId,
   }) async {
+    final base = paymentApi.baseUrl.endsWith('/')
+        ? paymentApi.baseUrl
+        : '${paymentApi.baseUrl}/';
+    debugPrint(
+      'PaymentNetworkRequest.acledaCheckStatus.request url=${base}payments/acledaCheckStatus/$transactionId',
+    );
     final json = await paymentApi.postFormUrlEncoded(
       'payments/acledaCheckStatus/$transactionId',
       fields: const <String, String>{},
@@ -68,6 +123,12 @@ class PaymentNetworkRequest {
     required String transactionId,
     required String token,
   }) async {
+    final base = paymentApi.baseUrl.endsWith('/')
+        ? paymentApi.baseUrl
+        : '${paymentApi.baseUrl}/';
+    debugPrint(
+      'PaymentNetworkRequest.acledaComplete.request url=${base}payments/acledaComplete/$transactionId/$token',
+    );
     final json = await paymentApi.postFormUrlEncoded(
       'payments/acledaComplete/$transactionId/$token',
       fields: const <String, String>{},
@@ -77,17 +138,4 @@ class PaymentNetworkRequest {
     return json;
   }
 
-  Future<ABAPayResponse> acledaMobilePay({
-    required String transactionId,
-    required String token,
-    required String type,
-  }) async {
-    final json = await paymentApi.postFormUrlEncoded(
-      'payments/acledaMobilePay/$transactionId/$token/$type',
-      fields: const <String, String>{},
-      attachAuth: true,
-    );
-
-    return ABAPayResponse.fromJson(json);
-  }
 }

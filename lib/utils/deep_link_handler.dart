@@ -1,46 +1,53 @@
 import 'dart:developer';
 import 'package:app_links/app_links.dart';
-import 'package:external_app_launcher/external_app_launcher.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_top_up_controller.dart';
+import 'package:get/get.dart';
+
 
 class DeepLinkHandler {
   static final AppLinks _appLinks = AppLinks();
+  static bool isDeepLinkHandled = false;
 
+  /// Call this once in main.dart (after GetMaterialApp)
   static Future<void> initAppLinks() async {
     try {
-      // Handle initial deep link
-      final Uri? initialLink = await _appLinks.getInitialLink();
+      // 1. Handle cold start (app was killed)
+      final initialLink = await _appLinks.getInitialLink();
+      if (initialLink != null) {
+        await _handleDeepLink(initialLink as String);
+      }
 
-      _handleDeepLink(initialLink);
-
-      // Listen for incoming deep links
-      _appLinks.uriLinkStream.listen((Uri? uri) {
-        _handleDeepLink(uri);
+      // 2. Listen for deep links while app is running
+      _appLinks.stringLinkStream.listen((data) async {
+        if (data != null) {
+          await _handleDeepLink(data);
+        }
       });
+
+      log('✅ DeepLinkHandler initialized');
     } catch (e) {
-      log('Error initializing AppLinks: $e');
+      log('❌ AppLinks init error: $e');
     }
   }
 
-  static Future<void> _handleDeepLink(Uri? uri) async {
-    if (uri != null) {
-      log('Received deep link: $uri');
-      log('Scheme: ${uri.scheme}, Host: ${uri.host}, Path: ${uri.path}');
+  static Future<void> _handleDeepLink(String data) async {
+    log('🔗 Received deep link: $data');
 
-      if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'vetapp://payment/') {
-        final productId = uri.pathSegments.last; // Extract product ID from the URI
-        log('Open Screen: $productId');
+    if (data.startsWith('vetapp://payment')) {
+      isDeepLinkHandled = true;
 
-            try {
-          // Launch an external app (example)
-          await LaunchApp.openApp(
-            androidPackageName: 'vireak_bunthan.udaya.com.vet_logistic',
-            openStore: false,
-            iosUrlScheme: 'com.UDAYA.VETLogistic',
-          );
-        } catch (e) {
-          log('Error launching app: $e');
-        }
+      // Force immediate payment status check
+      final controller = Get.find<EvTopUpController>();
+      if (controller.currentTransactionId.value.isNotEmpty) {
+        log('🔄 Deep link received → Checking payment status now');
+        await controller.checkPaymentStatusManually();
       }
     }
+  }
+
+  /// Call this after successfully showing the success screen
+  static void resetFlag() {
+    isDeepLinkHandled = false;
+    log('🔄 Deep link flag reset to false');
   }
 }

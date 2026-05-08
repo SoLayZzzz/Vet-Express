@@ -13,6 +13,12 @@ abstract class PaymentRepository {
     required String token,
   });
 
+  Future<ABAPayResponse> acledaXpay({
+    required String transactionId,
+    required String token,
+  });
+  
+
   Future<Map<String, dynamic>> acledaCheckStatus({
     required String transactionId,
   });
@@ -22,9 +28,11 @@ abstract class PaymentRepository {
     required String token,
   });
 
-  Future<ABAPayResponse> acledaMobilePay({
+
+Future<ABAPayResponse> acledaMobilePay({
     required String transactionId,
     required String token,
-    required String type,
+    required String type
   });
+
 }

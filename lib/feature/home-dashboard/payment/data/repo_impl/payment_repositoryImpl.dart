@@ -33,13 +33,33 @@ class PaymentRepositoryImpl implements PaymentRepository {
   }
 
   @override
+  Future<ABAPayResponse> acledaXpay({
+    required String transactionId,
+    required String token,
+  }) async {
+    log(
+      'PaymentRepository.acledaXpay.request '
+      'transactionId=$transactionId, token=$token',
+    );
+    final res = await networkRequest.acledaXpay(
+      transactionId: transactionId,
+      token: token,
+    );
+    log(
+      'PaymentRepository.acledaXpay.response status=${res.status}, '
+      'hasDeeplink=${(res.abapayDeeplink ?? '').isNotEmpty}',
+    );
+    return res;
+  }
+
+  @override
   Future<ABAPayResponse> abaMobilePay({
     required String transactionId,
     required String token,
   }) async {
     log(
       'PaymentRepository.abaMobilePay.request '
-      'transactionId=$transactionId, tokenLen=${token.length}',
+      'transactionId=$transactionId, token=$token',
     );
     final res = await networkRequest.abaMobilePay(
       transactionId: transactionId,
@@ -75,7 +95,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
   }) async {
     log(
       'PaymentRepository.acledaComplete.request '
-      'transactionId=$transactionId, tokenLen=${token.length}',
+      'transactionId=$transactionId, token=$token',
     );
     final res = await networkRequest.acledaComplete(
       transactionId: transactionId,
@@ -84,6 +104,12 @@ class PaymentRepositoryImpl implements PaymentRepository {
     log('PaymentRepository.acledaComplete.response status=${res['status']}');
     return res;
   }
+  
+  // @override
+  // Future<ABAPayResponse> acledaMobilePay({required String transactionId, required String token, required String type}) {
+  //   // TODO: implement acledaMobilePay
+  //   throw UnimplementedError();
+  // }
 
   @override
   Future<ABAPayResponse> acledaMobilePay({
@@ -93,9 +119,9 @@ class PaymentRepositoryImpl implements PaymentRepository {
   }) async {
     log(
       'PaymentRepository.acledaMobilePay.request '
-      'transactionId=$transactionId, tokenLen=${token.length}, type=$type',
+      'transactionId=$transactionId, token=$token, type=$type',
     );
-    final res = await networkRequest.acledaMobilePay(
+    final res = await networkRequest.acledaMobilepay(
       transactionId: transactionId,
       token: token,
       type: type,

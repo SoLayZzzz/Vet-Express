@@ -45,12 +45,11 @@ class PaymentUscase {
   Future<ABAPayResponse> acledaMobilePay({
     required String transactionId,
     required String token,
-    required String type,
+    required String type
   }) {
-    return repository.acledaMobilePay(
-      transactionId: transactionId,
-      token: token,
-      type: type,
-    );
+    return repository.acledaMobilePay(transactionId: transactionId, token: token, type: type);
   }
+
+
+  
 }

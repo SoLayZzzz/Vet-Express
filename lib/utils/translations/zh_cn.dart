@@ -660,7 +660,7 @@ final Map<String, String> zhCN = {
         'detail': "了解详情。",
         "Telephone": "电话号码 : ",
         'booking_air_bus1': 'VET 航空巴士',
-        'payment_method': '付款方式 : ',
+        'payment_method': '付款方式',
         'fare_summary': "(票价汇总)",
         'total_going': "Total going",
         'total_return': "Total return",

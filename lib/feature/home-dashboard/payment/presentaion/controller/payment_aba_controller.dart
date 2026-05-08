@@ -19,6 +19,8 @@ import '../../../../../utils/loading.dart';
 class PaymentAbaController extends GetxController {
   bool _loop = true;
   bool _initialized = false;
+  DateTime? _acledaPollStartAt;
+  final Duration _acledaMaxWait = const Duration(minutes: 3);
 
   void _scheduleRetry(
     VoidCallback callback, {
@@ -115,10 +117,16 @@ class PaymentAbaController extends GetxController {
       );
     } else if (type == 4) {
       // ACLEDA XPay
-      checkPaymentACLEDAComplete(
-        context: context,
-        transactionId: transactionId,
-        token: token,
+      _acledaPollStartAt = DateTime.now();
+      _scheduleRetry(
+        () {
+          checkPaymentACLEDAComplete(
+            context: context,
+            transactionId: transactionId,
+            token: token,
+          );
+        },
+        delay: const Duration(seconds: 2),
       );
     }
 
@@ -162,7 +170,9 @@ class PaymentAbaController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
-    debugPrint('${BaseUrl.PAYMENT_URL}payments/abaMobilePay/$transactionId/$token');
+    debugPrint(
+      '${BaseUrl.PAYMENT_URL}payments/abaMobilePay/$transactionId/$token',
+    );
 
     final response = await http.post(
       Uri.parse(
@@ -305,7 +315,7 @@ class PaymentAbaController extends GetxController {
         '${BaseUrl.PAYMENT_URL}payments/checkTerminalPaymentComplete/$transactionId/$token';
     debugPrint(
       'PaymentAbaController.checkTransactionABAComplete.request '
-      'transactionId=$transactionId, tokenLen=${token.length}, url=$requestUrl',
+      'transactionId=$transactionId, token=$token, url=$requestUrl',
     );
     Loading().loadingShow();
 
@@ -380,6 +390,16 @@ class PaymentAbaController extends GetxController {
     required String token,
   }) async {
     if (!_loop) return;
+    final startedAt = _acledaPollStartAt;
+    if (startedAt != null &&
+        DateTime.now().difference(startedAt) > _acledaMaxWait) {
+      debugPrint(
+        'Check status transaction timeout (ACLEDA) -> transactionId=$transactionId',
+      );
+      _loop = false;
+      Get.back(result: '0');
+      return;
+    }
     try {
       final response = await http
           .post(
@@ -402,11 +422,8 @@ class PaymentAbaController extends GetxController {
           debugPrint('Check status transaction == 1');
           _loop = false;
           Get.back(result: '1');
-        } else if (status == '0') {
-          debugPrint('Check status transaction == 0 (payment failed)');
-          _loop = false;
-          Get.back(result: '0');
         } else {
+          debugPrint('Check status transaction == $status (payment pending)');
           _scheduleRetry(() {
             checkPaymentACLEDAComplete(
               context: Get.context ?? context,

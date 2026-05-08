@@ -2,6 +2,8 @@
 
 import 'dart:async';
 
+import 'dart:convert';
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,6 +24,8 @@ class NetWorkDataSource extends GetConnect {
 
   @override
   void onInit() {
+    super.onInit();
+
     httpClient.timeout = const Duration(seconds: Constrains.timeout30);
 
     if (!_didLogStartupToken) {
@@ -63,8 +67,6 @@ class NetWorkDataSource extends GetConnect {
       final query = request.url.queryParameters;
       return request.copyWith(url: newUrl.replace(queryParameters: query));
     });
-
-    super.onInit();
   }
 
   Map<String, String> _buildHeaders({
@@ -138,7 +140,13 @@ class NetWorkDataSource extends GetConnect {
         throw HttpException('Request failed ($statusCode): $message');
       }
 
-      final decoded = res.body;
+      dynamic decoded = res.body;
+      decoded ??= res.bodyString;
+      if (decoded is String) {
+        try {
+          decoded = jsonDecode(decoded);
+        } catch (_) {}
+      }
       if (decoded is Map<String, dynamic>) return decoded;
       return <String, dynamic>{'data': decoded};
     } on TimeoutException {
@@ -187,7 +195,13 @@ class NetWorkDataSource extends GetConnect {
         throw HttpException('Request failed ($statusCode): $message');
       }
 
-      final decoded = res.body;
+      dynamic decoded = res.body;
+      decoded ??= res.bodyString;
+      if (decoded is String) {
+        try {
+          decoded = jsonDecode(decoded);
+        } catch (_) {}
+      }
       if (decoded is Map<String, dynamic>) return decoded;
       return <String, dynamic>{'data': decoded};
     } on TimeoutException {
@@ -249,7 +263,13 @@ class NetWorkDataSource extends GetConnect {
         throw HttpException('Request failed ($statusCode): $message');
       }
 
-      final decoded = res.body;
+      dynamic decoded = res.body;
+      decoded ??= res.bodyString;
+      if (decoded is String) {
+        try {
+          decoded = jsonDecode(decoded);
+        } catch (_) {}
+      }
       if (decoded is Map<String, dynamic>) return decoded;
       return <String, dynamic>{'data': decoded};
     } on TimeoutException {
@@ -320,7 +340,13 @@ class NetWorkDataSource extends GetConnect {
         throw HttpException('Request failed ($statusCode): $message');
       }
 
-      final decoded = res.body;
+      dynamic decoded = res.body;
+      decoded ??= res.bodyString;
+      if (decoded is String) {
+        try {
+          decoded = jsonDecode(decoded);
+        } catch (_) {}
+      }
       if (decoded is Map<String, dynamic>) return decoded;
       return <String, dynamic>{'data': decoded};
     } on TimeoutException {

@@ -1,6 +1,8 @@
-import 'dart:developer';
+import 'dart:async';
+
 import 'package:express_vet/base/state_controller.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/payment_success_screen.dart';
+import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/feature/home-dashboard/payment/data/model/response/aba_payment_response.dart';
 import 'package:express_vet/feature/home-dashboard/payment/domain/uscase/payment_uscase.dart';
 import 'package:express_vet/feature/home-dashboard/payment/presentaion/state/payment_uistate.dart';
 import 'package:express_vet/routes/app_routes.dart';
@@ -11,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../value_statics.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/loading.dart';
-import '../../../../dash_board/presentation/screen/dashboard_screen.dart';
 import '../ui/payment_aba_screen.dart';
 import '../ui/payment_wing_screen.dart';
 import '../../../passenger/data/network/passenger_network_request.dart';
@@ -27,8 +28,9 @@ class PaymentController extends StateController<PaymentUistate> {
 
   @override
   void onClose() {
-    // stop any ongoing polling loops when the screen/controller is disposed
     setLoop(false);
+    setNewToken('');
+    setAcledaPaymentInitiated(false);
     super.onClose();
   }
 
@@ -42,6 +44,7 @@ class PaymentController extends StateController<PaymentUistate> {
       showFareSummary: state.showFareSummary,
       loop: state.loop,
       newToken: state.newToken,
+      acledaPaymentInitiated: state.acledaPaymentInitiated,
     );
   }
 
@@ -52,6 +55,7 @@ class PaymentController extends StateController<PaymentUistate> {
       showFareSummary: !state.showFareSummary,
       loop: state.loop,
       newToken: state.newToken,
+      acledaPaymentInitiated: state.acledaPaymentInitiated,
     );
   }
 
@@ -62,6 +66,7 @@ class PaymentController extends StateController<PaymentUistate> {
       showFareSummary: state.showFareSummary,
       loop: state.loop,
       newToken: token,
+      acledaPaymentInitiated: state.acledaPaymentInitiated,
     );
   }
 
@@ -72,6 +77,18 @@ class PaymentController extends StateController<PaymentUistate> {
       showFareSummary: state.showFareSummary,
       loop: loop,
       newToken: state.newToken,
+      acledaPaymentInitiated: state.acledaPaymentInitiated,
+    );
+  }
+
+  void setAcledaPaymentInitiated(bool initiated) {
+    uiState.value = PaymentUistate(
+      paymentMethodId: state.paymentMethodId,
+      paymentMethodSelected: state.paymentMethodSelected,
+      showFareSummary: state.showFareSummary,
+      loop: state.loop,
+      newToken: state.newToken,
+      acledaPaymentInitiated: initiated,
     );
   }
 
@@ -148,7 +165,7 @@ class PaymentController extends StateController<PaymentUistate> {
           final token = data.body?.token;
           debugPrint(
             'PaymentController.ABA_KHQR.start '
-            'transactionId=$transactionId, tokenLen=${(token ?? '').length}',
+            'transactionId=$transactionId, token=${token ?? ''}',
           );
           await payWithABAMobile(
             context: Get.context!,
@@ -209,7 +226,7 @@ class PaymentController extends StateController<PaymentUistate> {
         } else if (state.paymentMethodSelected == 5) {
           final token = data.body?.token ?? '';
           debugPrint(
-            'PaymentController.ACLEDA_App.start transactionId=$transactionId, tokenLen=${token.length}',
+            'PaymentController.ACLEDA_App.start transactionId=$transactionId, token=$token',
           );
           setNewToken(token);
         }
@@ -239,7 +256,7 @@ class PaymentController extends StateController<PaymentUistate> {
     required String token,
   }) async {
     debugPrint(
-      'PaymentController.abaMobilePay.request transactionId=$transactionId, tokenLen=${token.length}',
+      'PaymentController.abaMobilePay.request transactionId=$transactionId, token=$token',
     );
     final data = await uscase.abaMobilePay(
       transactionId: transactionId,
@@ -269,7 +286,11 @@ class PaymentController extends StateController<PaymentUistate> {
     }
   }
 
-  Future<void> openDeepLinkACLEDA(String deepLink) async {
+  Future<void> openDeepLinkACLEDA(
+    String deepLink, {
+    String? appStoreUrl,
+    String? playStoreUrl,
+  }) async {
     try {
       final uri = Uri.tryParse(deepLink);
       if (uri == null || !uri.hasScheme) {
@@ -277,14 +298,18 @@ class PaymentController extends StateController<PaymentUistate> {
         if (GetPlatform.isAndroid) {
           await launchUrl(
             Uri.parse(
-              'https://play.google.com/store/search?q=acleda%20bank&c=apps',
+              (playStoreUrl ?? '').isNotEmpty
+                  ? playStoreUrl!
+                  : 'https://play.google.com/store/search?q=acleda%20bank&c=apps',
             ),
             mode: LaunchMode.externalApplication,
           );
         } else if (GetPlatform.isIOS) {
           await launchUrl(
             Uri.parse(
-              'https://apps.apple.com/al/app/acleda-mobile/id1196285236',
+              (appStoreUrl ?? '').isNotEmpty
+                  ? appStoreUrl!
+                  : 'https://apps.apple.com/al/app/acleda-mobile/id1196285236',
             ),
             mode: LaunchMode.externalApplication,
           );
@@ -292,22 +317,29 @@ class PaymentController extends StateController<PaymentUistate> {
         return;
       }
 
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched) {
+      final launched = await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
+      final launchedFallback = launched
+          ? true
+          : await launchUrl(
+              uri,
+              mode: LaunchMode.externalApplication,
+            );
+      if (!launchedFallback) {
         if (GetPlatform.isAndroid) {
           await launchUrl(
             Uri.parse(
-              'https://play.google.com/store/search?q=acleda%20bank&c=apps',
+              (playStoreUrl ?? '').isNotEmpty
+                  ? playStoreUrl!
+                  : 'https://play.google.com/store/search?q=acleda%20bank&c=apps',
             ),
             mode: LaunchMode.externalApplication,
           );
         } else if (GetPlatform.isIOS) {
           await launchUrl(
             Uri.parse(
-              'https://apps.apple.com/al/app/acleda-mobile/id1196285236',
+              (appStoreUrl ?? '').isNotEmpty
+                  ? appStoreUrl!
+                  : 'https://apps.apple.com/al/app/acleda-mobile/id1196285236',
             ),
             mode: LaunchMode.externalApplication,
           );
@@ -317,13 +349,19 @@ class PaymentController extends StateController<PaymentUistate> {
       if (GetPlatform.isAndroid) {
         await launchUrl(
           Uri.parse(
-            'https://play.google.com/store/search?q=acleda%20bank&c=apps',
+            (playStoreUrl ?? '').isNotEmpty
+                ? playStoreUrl!
+                : 'https://play.google.com/store/search?q=acleda%20bank&c=apps',
           ),
           mode: LaunchMode.externalApplication,
         );
       } else if (GetPlatform.isIOS) {
         await launchUrl(
-          Uri.parse('https://apps.apple.com/al/app/acleda-mobile/id1196285236'),
+          Uri.parse(
+            (appStoreUrl ?? '').isNotEmpty
+                ? appStoreUrl!
+                : 'https://apps.apple.com/al/app/acleda-mobile/id1196285236',
+          ),
           mode: LaunchMode.externalApplication,
         );
       }
@@ -336,7 +374,38 @@ class PaymentController extends StateController<PaymentUistate> {
     required String token,
   }) async {
     if (!state.loop) return;
-    final result = await uscase.acledaCheckStatus(transactionId: transactionId);
+    Map<String, dynamic> result;
+    try {
+      result = await uscase.acledaCheckStatus(transactionId: transactionId);
+    } on TimeoutException catch (e) {
+      debugPrint(
+        'PaymentController.acledaCheckStatus.timeout transactionId=$transactionId error=$e',
+      );
+      Future.delayed(const Duration(seconds: 1), () async {
+        if (state.loop) {
+          await checkPaymentACLEDAComplete(
+            context: context,
+            transactionId: transactionId,
+            token: token,
+          );
+        }
+      });
+      return;
+    } catch (e) {
+      debugPrint(
+        'PaymentController.acledaCheckStatus.error transactionId=$transactionId error=$e',
+      );
+      Future.delayed(const Duration(seconds: 1), () async {
+        if (state.loop) {
+          await checkPaymentACLEDAComplete(
+            context: context,
+            transactionId: transactionId,
+            token: token,
+          );
+        }
+      });
+      return;
+    }
     final status = '${result['status']}';
     debugPrint(
       'PaymentController.acledaCheckStatus.response status=$status for transactionId=$transactionId',
@@ -380,10 +449,25 @@ class PaymentController extends StateController<PaymentUistate> {
   }) async {
     setLoop(false);
     Loading().loadingShow();
-    final result = await uscase.acledaComplete(
-      transactionId: transactionId,
-      token: token,
-    );
+    Map<String, dynamic> result;
+    try {
+      result = await uscase.acledaComplete(
+        transactionId: transactionId,
+        token: token,
+      );
+    } on TimeoutException catch (e) {
+      Loading().loadingClose();
+      debugPrint(
+        'PaymentController.acledaComplete.timeout transactionId=$transactionId error=$e',
+      );
+      return;
+    } catch (e) {
+      Loading().loadingClose();
+      debugPrint(
+        'PaymentController.acledaComplete.error transactionId=$transactionId error=$e',
+      );
+      return;
+    }
     Loading().loadingClose();
     debugPrint(
       'PaymentController.acledaComplete.response status=${result['status']} for transactionId=$transactionId',
@@ -398,11 +482,18 @@ class PaymentController extends StateController<PaymentUistate> {
     required BuildContext context,
     required String transactionId,
     required String token,
+    required String type,
   }) async {
+    final requestUrl =
+        '${BaseUrl.PAYMENT_URL}payments/acledaMobilePay/$transactionId/$token/$type';
+    debugPrint(
+      'Ac App url = $requestUrl',
+    );
     await payWithACLEDAMobile(
       context: context,
       transactionId: transactionId,
       token: token,
+      type: type,
     );
   }
 
@@ -411,8 +502,11 @@ class PaymentController extends StateController<PaymentUistate> {
     required String transactionId,
     required String token,
   }) async {
+    final requestUrl =
+        '${BaseUrl.PAYMENT_URL}payments/acledaXpay/$transactionId/$token';
+    debugPrint('Ac Card url = $requestUrl');
     debugPrint(
-      'PaymentController.ACLEDA_XPay.start transactionId=$transactionId, tokenLen=${token.length}',
+      'Ac Card url =$requestUrl $transactionId, token=$token',
     );
     final result = await Get.to(
       () => PaymentABAScreen(
@@ -437,16 +531,45 @@ class PaymentController extends StateController<PaymentUistate> {
     required BuildContext context,
     required String transactionId,
     required String token,
+    required String type,
   }) async {
-    String type = GetPlatform.isIOS ? '2' : '1';
-    debugPrint(
-      'PaymentController.acledaMobilePay.request transactionId=$transactionId, tokenLen=${token.length}, type=$type',
-    );
-    final data = await uscase.acledaMobilePay(
-      transactionId: transactionId,
-      token: token,
-      type: type,
-    );
+   
+    late ABAPayResponse data;
+    try {
+      data = await uscase.acledaMobilePay(
+        transactionId: transactionId,
+        token: token,
+        type: type,
+      );
+      if (data.status != 1 || (data.abapayDeeplink ?? '').toString().isEmpty) {
+        data = await uscase.acledaMobilePay(
+          transactionId: transactionId,
+          token: token,
+          type: type,
+        );
+      }
+
+    } on TimeoutException catch (e) {
+      debugPrint(
+        'PaymentController.acledaMobilePay.timeout transactionId=$transactionId error=$e',
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('request_timed_out'.tr)));
+      }
+      return;
+    } catch (e) {
+      debugPrint(
+        'PaymentController.acledaMobilePay.error transactionId=$transactionId error=$e',
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('something_wrong'.tr)));
+      }
+      return;
+    }
     debugPrint(
       'PaymentController.acledaMobilePay.response status=${data.status}, '
       'hasDeeplink=${(data.abapayDeeplink ?? '').isNotEmpty}',
@@ -454,7 +577,13 @@ class PaymentController extends StateController<PaymentUistate> {
     if (data.status == 1) {
       final deep = data.abapayDeeplink ?? '';
       if (deep.isNotEmpty) {
-        await openDeepLinkACLEDA(deep);
+        setAcledaPaymentInitiated(true);
+        setLoop(true);
+        await openDeepLinkACLEDA(
+          deep,
+          appStoreUrl: data.appStore,
+          playStoreUrl: data.playStore,
+        );
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(

@@ -1,14 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:express_vet/asset_image.dart';
-import 'package:express_vet/feature/home-dashboard/passenger/presentation/controller/booking.dart';
 import 'package:express_vet/feature/location-dashboard/presentation/screen/location_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:express_vet/utils/app_colors.dart';
-import '../../../../home-dashboard/passenger/data/model/response/booking_detail_model.dart';
+import '../../data/model/response/ticket_detail_response.dart';
 import '../../../../../utils/contains.dart';
+import '../controller/ticket_detail_controller.dart';
 
 class TicketDetailScreen extends StatefulWidget {
   final int id;
@@ -20,7 +20,7 @@ class TicketDetailScreen extends StatefulWidget {
 }
 
 class _TicketDetailScreenState extends State<TicketDetailScreen> {
-  late Future<BookingDetailModel> futureBookingDetail;
+  late TicketDetailController controller;
 
   final CarouselSliderController _controller = CarouselSliderController();
   final ScrollController _scrollController = ScrollController();
@@ -29,7 +29,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
   @override
   void initState() {
     super.initState();
-    futureBookingDetail = Booking().getTicketDetail(context, widget.id);
+    controller = Get.find<TicketDetailController>();
+    controller.loadTicketDetail(context: context, id: widget.id);
     _scrollController.addListener(_handleScroll);
   }
 
@@ -53,121 +54,135 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<BookingDetailModel>(
-        future: futureBookingDetail,
-        builder: (context, bookingData) {
-          if (bookingData.hasData) {
-            final telephone = _getTelephoneForDisplay(
-              bookingData.data?.body?.data?[0].telephone,
-            );
-
-            final topPadding = MediaQuery.of(context).padding.top;
-
-            return Stack(
-              children: [
-                SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Column(
-                    children: [
-                      // * stack qr
-                      Stack(
-                        children: [
-                          // * background image
-                          SizedBox(
-                            height: 450,
-                            width: double.infinity,
-                            child: Image.asset(
-                              AssetImages.img_background_car,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-
-                          // * qrCode slider
-                          _buildQrCode(bookingData),
-
-                          // * container value
-                          _buildDestination(bookingData),
-                        ],
-                      ),
-
-                      // * detail value
-                      _buildticketDetail(bookingData),
-                    ],
-                  ),
-                ),
-
-                // * button back
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: topPadding + kToolbarHeight,
-                    decoration: BoxDecoration(
-                      color: _showAppBar
-                          ? AppColors.primaryColor
-                          : Colors.transparent,
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(height: topPadding),
-                        SizedBox(
-                          height: kToolbarHeight,
-                          child: AppBar(
-                            primary: false,
-                            toolbarHeight: kToolbarHeight,
-                            automaticallyImplyLeading: false,
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                            centerTitle: true,
-                            leading: IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: const Icon(
-                                Ionicons.chevron_back_outline,
-                                color: Colors.white,
-                              ),
-                            ),
-                            title: AnimatedOpacity(
-                              opacity: _showAppBar ? 1 : 0,
-                              duration: const Duration(milliseconds: 200),
-                              child: Text(
-                                telephone,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else if (bookingData.hasError) {}
-
+      body: Obx(() {
+        final future = controller.state.futureTicketDetail;
+        if (future == null) {
           return const Center(
             child: SizedBox(
               height: 50.0,
               width: 50.0,
-              child: CircularProgressIndicator(
-                value: null,
-                strokeWidth: 5.0,
-              ),
+              child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
             ),
           );
-        },
-      ),
+        }
+
+        return FutureBuilder<TicketDetailScreenReponse>(
+          future: future,
+          builder: (context, bookingData) {
+            if (bookingData.hasData) {
+              final telephone = _getTelephoneForDisplay(
+                bookingData.data?.body?.data?[0].telephone,
+              );
+
+              final topPadding = MediaQuery.of(context).padding.top;
+
+              return Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Column(
+                      children: [
+                        // * stack qr
+                        Stack(
+                          children: [
+                            // * background image
+                            SizedBox(
+                              height: 460,
+                              width: double.infinity,
+                              child: Image.asset(
+                                AssetImages.img_background_car,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+
+                            // * qrCode slider
+                            _buildQrCode(bookingData),
+                           
+
+                            // * container value
+                            _buildDestination(bookingData),
+                          ],
+                        ),
+
+                        // * detail value
+                        _buildticketDetail(bookingData),
+                      ],
+                    ),
+                  ),
+
+                  // * button back
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      height: topPadding + kToolbarHeight,
+                      decoration: BoxDecoration(
+                        color: _showAppBar
+                            ? AppColors.primaryColor
+                            : Colors.transparent,
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(height: topPadding),
+                          SizedBox(
+                            height: kToolbarHeight,
+                            child: AppBar(
+                              primary: false,
+                              toolbarHeight: kToolbarHeight,
+                              automaticallyImplyLeading: false,
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              centerTitle: true,
+                              leading: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                icon: const Icon(
+                                  Ionicons.chevron_back_outline,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: AnimatedOpacity(
+                                opacity: _showAppBar ? 1 : 0,
+                                duration: const Duration(milliseconds: 200),
+                                child: Text(
+                                  telephone,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            } else if (bookingData.hasError) {}
+
+            return const Center(
+              child: SizedBox(
+                height: 50.0,
+                width: 50.0,
+                child: CircularProgressIndicator(
+                  value: null,
+                  strokeWidth: 5.0,
+                ),
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 
-  Widget _buildticketDetail(AsyncSnapshot<BookingDetailModel> bookingData) {
+  Widget _buildticketDetail(AsyncSnapshot<TicketDetailScreenReponse> bookingData) {
     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20.0),
                       child: Column(
@@ -179,11 +194,13 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Image.asset(
-        bookingData.data?.body?.data![0].journeyType == 2 ||
-                bookingData.data?.body?.data![0].journeyType == 4
+        ((bookingData.data?.body?.data?[0].transportationType?.toLowerCase().contains('boat') ?? false) ||
+         (bookingData.data?.body?.data?[0].transportationType?.toLowerCase().contains('sea') ?? false) ||
+         (bookingData.data?.body?.data?[0].transportationType?.toLowerCase().contains('ferry') ?? false))
             ? AssetImages.ic_buva_sea
             : AssetImages.ic_bus_history,
-        // height: 24,
+        height: 24,
+        width: 24,
         // color: Colors.grey.shade500, // softer icon color
       ),
       const SizedBox(width: 12),
@@ -215,7 +232,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child:  Text(
-              bookingData.data?.body?.data?[0].seatType ?? "-",
+              _seatTypeText(bookingData.data?.body?.data?[0].seatType),
               // "Type of bus",
               style: TextStyle(
                 fontSize: 14,
@@ -605,7 +622,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     );
   }
 
-  Widget _buildDestination(AsyncSnapshot<BookingDetailModel> bookingData) {
+  Widget _buildDestination(AsyncSnapshot<TicketDetailScreenReponse> bookingData) {
     return Positioned(
                           bottom: 0,
                           left: 0,
@@ -651,7 +668,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         );
   }
 
-  Widget _buildQrCode(AsyncSnapshot<BookingDetailModel> bookingData) {
+  Widget _buildQrCode(AsyncSnapshot<TicketDetailScreenReponse> bookingData) {
     return Positioned(
                           top: 90,
                           left: 0,
@@ -857,5 +874,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       buffer.write(digits[i]);
     }
     return buffer.toString();
+  }
+
+  String _seatTypeText(int? seatType) {
+    if (seatType == 1) return 'SeaterBus';
+    if (seatType == 2) return 'SleeperBus';
+    return '-';
   }
 }

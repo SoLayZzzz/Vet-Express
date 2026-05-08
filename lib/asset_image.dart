@@ -138,7 +138,7 @@ class AssetImages {
   // Select Seat screen
   // =========================
 
-  static const String hostess = 'assets/images/ic_hostess.png';
+  static const String hostess = 'assets/images/hostess.png';
   static const String steering = 'assets/images/ic_steering.png';
   static const String seat_free = 'assets/images/ic_seat_free.png';
   static const String seat_selected = 'assets/images/ic_seat_select.png';
@@ -201,6 +201,7 @@ class AssetImages {
   // =========================
 
   static const String ic_tracking = "assets/images/image_tracking.png";
+  static const String user = "assets/icons/user.png";
   static const String ic_ticket = "assets/icons/icon_ticket.png";
   static const String ic_language = "assets/icons/icon_luggage.png";
   static const String ic_parcel = "assets/icons/icon_parcel.png";

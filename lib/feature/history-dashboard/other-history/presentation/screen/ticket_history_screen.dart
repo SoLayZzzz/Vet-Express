@@ -11,6 +11,7 @@ import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
 import '../controller/ticket_history_controller.dart';
+import '../binding/ticket_detail_binding.dart';
 
 class TicketHistoryScreen extends GetView<TicketHistoryController> {
   const TicketHistoryScreen({super.key});
@@ -127,6 +128,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                               .id)!
                                           .toInt(),
                                 ),
+                                binding: TicketDetailBinding(),
                                 transition: Transition.rightToLeft,
                                 duration: const Duration(
                                   milliseconds: Constrains.duration,
@@ -431,11 +433,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                       flex: 1,
                                       child: Row(
                                         children: [
-                                          // const Icon(
-                                          //   AssetImages.ic_ticket_history,
-                                          //   size: 18,
-                                          //   color: AppColors.textColor,
-                                          // ),
+                                          
                                           Image.asset(
                                             AssetImages.ic_ticket_history,
                                             width: 18,
@@ -444,7 +442,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                           const SizedBox(width: 6),
                                           Flexible(
                                             child: Text(
-                                              "${bookingData.data?.body?.data?[index].code}",
+                                              bookingData.data?.body?.data?[index].code ?? '-',
                                               style: const TextStyle(
                                                 color: AppColors.textColor,
                                                 fontSize: 14,
@@ -452,6 +450,8 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                               ),
                                             ),
                                           ),
+
+                                          
                                         ],
                                       ),
                                     ),
@@ -514,12 +514,16 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                         height: 30,
                                       ),
                                       const SizedBox(width: 10),
-                                      Text(
-                                        "${bookingData.data?.body?.data?[index].destinationFrom} - ${bookingData.data?.body?.data?[index].destinationTo}",
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.titleColor,
+                                      Expanded(
+                                        child: Text(
+                                          "${bookingData.data?.body?.data?[index].destinationFrom} - ${bookingData.data?.body?.data?[index].destinationTo}",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.titleColor,
+                                          ),
                                         ),
                                       ),
                                       ],
@@ -530,9 +534,9 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                     //
                                      Row(
                                        children: [
-                                         const Icon(
-                                           Ionicons.person_outline,
-                                           color: AppColors.textColor,
+                                         Image.asset(
+                                           AssetImages.user,
+                                           height: 20,
                                          ),
                                          const SizedBox(width: 6),
                                          Text(

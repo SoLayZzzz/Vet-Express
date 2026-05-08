@@ -41,6 +41,8 @@ class BaseUrl {
       ? 'https://oc.utlog.net/'
       : 'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
+// https://vetticket.utlog.net/payments/acledaXpay/VTCK-tsYxzqBBEQHypA7/DsquDNFD3MpvDcOLeFLONyYZUjJZFKS6wxX
+
   // Production
   // static String BASE_URL = 'https://tomapicaps.utlog.net/vetAppApi/'; //logistic
   // static String BASE_URL_TICKET =

@@ -538,7 +538,7 @@ final Map<String, String> kmKH = {
         'show_ticket': 'បង្ហាញសំបុត្រ',
         'ok': 'យល់ព្រម',
         "name": "ឈ្មោះ",
-        'payment_method': 'វិធីទូទាត់ប្រាក់ : ',
+        'payment_method': 'វិធីទូទាត់ប្រាក់',
         'show_less': "(បង្ហាញតិច)",
         'fare_summary': "(សង្ខេបតម្លៃសំបុត្រ)",
         'total_going': "តម្លៃសរុបទៅ",
