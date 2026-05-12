@@ -135,58 +135,65 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          DropdownButtonFormField<String>(
-            value:
-                selectedValue.value?.isNotEmpty == true
-                    ? selectedValue.value
-                    : null,
-            hint: Text(
-              hintKey.tr,
-              style: const TextStyle(fontSize: 14),
-            ), // Shows "Select Gender" when value is null
-            items:
-                items.map((String item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textColor,
-                      ),
+          DropdownButtonHideUnderline(
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              hint: Text(
+                hintKey.tr,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.greyColor,
+                ),
+              ),
+              value:
+                  selectedValue.value?.isNotEmpty == true &&
+                          items.contains(selectedValue.value)
+                      ? selectedValue.value
+                      : null,
+              items: items.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textColor,
                     ),
-                  );
-                }).toList(),
-            onChanged: (String? newValue) {
-              selectedValue.value = newValue;
-            },
-            decoration: InputDecoration(
-              isDense: true,
-              contentPadding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
-              hintText: hintKey.tr,
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppColors.borderColor,
-                  width: 1.0,
+                  ),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                selectedValue.value = newValue;
+              },
+              buttonStyleData: const ButtonStyleData(
+                height: 48,
+                padding: EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColors.borderColor,
+                      width: 1.0,
+                    ),
+                  ),
                 ),
               ),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppColors.borderColor,
-                  width: 1.0,
+              iconStyleData: const IconStyleData(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Icon(
+                    Icons.arrow_drop_down,
+                    color: AppColors.borderColor,
+                  ),
+                ),
+                iconSize: 24,
+              ),
+              dropdownStyleData: const DropdownStyleData(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
                 ),
               ),
-              border: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppColors.borderColor,
-                  width: 1.0,
-                ),
-              ),
-            ),
-            dropdownColor: Colors.white,
-            icon: const Icon(
-              Icons.arrow_drop_down,
-              color: AppColors.borderColor,
+              menuItemStyleData: const MenuItemStyleData(height: 40),
             ),
           ),
         ],
@@ -228,10 +235,10 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               value:
-                  selectedValue.value?.isNotEmpty == true &&
-                          items.contains(selectedValue.value)
-                      ? selectedValue.value
-                      : null,
+                  selectedValue.value != null &&
+                      items.contains(selectedValue.value)
+                  ? selectedValue.value
+                  : null,
               items:
                   items.map((String item) {
                     return DropdownMenuItem<String>(
@@ -247,7 +254,8 @@ class ProfileScreen extends StatelessWidget {
                   }).toList(),
               onChanged: onChanged,
               buttonStyleData: const ButtonStyleData(
-                padding: EdgeInsets.only(right: 10, bottom: 5),
+                height: 48,
+                padding: EdgeInsets.only(right: 10),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -258,7 +266,14 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               iconStyleData: const IconStyleData(
-                iconEnabledColor: AppColors.borderColor,
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Icon(
+                    Icons.arrow_drop_down,
+                    color: AppColors.borderColor,
+                  ),
+                ),
+                iconSize: 24,
               ),
               dropdownStyleData: const DropdownStyleData(
                 width: double.infinity,

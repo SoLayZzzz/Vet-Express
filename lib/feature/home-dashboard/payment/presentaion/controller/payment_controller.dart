@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:express_vet/base/state_controller.dart';
 import 'package:express_vet/base/base_url.dart';
@@ -120,22 +121,47 @@ class PaymentController extends StateController<PaymentUistate> {
   Future<void> processBooking({
     required BuildContext context,
     required String transactionId,
+    String? totalAmount,
   }) async {
+    final resolvedTotalAmount = (totalAmount ?? '').trim().isNotEmpty
+        ? totalAmount!.trim()
+        : ValueStatic.totalPrice.toString();
+    debugPrint('================= [Payment] processBooking (tap) =================');
     debugPrint(
-      'PaymentController.processBooking.request code=$transactionId, '
+      '[Payment] processBooking.request '
+      'code=$transactionId, '
       'paymentMethodId=${state.paymentMethodId}, '
       'paymentMethodSelected=${state.paymentMethodSelected}, '
-      'totalAmount=${ValueStatic.totalPrice}',
+      'totalAmount=$resolvedTotalAmount',
     );
+    try {
+      final requestMap = <String, dynamic>{
+        'code': transactionId.toString(),
+        'paymentMethodId': state.paymentMethodId.toString(),
+        'paymentMethodSelected': state.paymentMethodSelected,
+        'totalAmount': resolvedTotalAmount,
+      };
+      debugPrint(
+        '[Payment] processBooking.requestJson ->\n'
+        '${const JsonEncoder.withIndent('  ').convert(requestMap)}',
+      );
+    } catch (_) {}
     Loading().loadingShow();
 
     try {
       final data = await uscase.processPayment(
         code: transactionId.toString(),
         paymentMethodId: state.paymentMethodId.toString(),
-        totalAmount: ValueStatic.totalPrice.toString(),
+        totalAmount: resolvedTotalAmount,
       );
       Loading().loadingClose();
+
+      try {
+        debugPrint(
+          '[Payment] processBooking.responseJson ->\n'
+          '${const JsonEncoder.withIndent('  ').convert(data.toJson())}',
+        );
+      } catch (_) {}
 
       final rawToken = data.body?.token;
       final token = (rawToken ?? '').trim();
@@ -241,7 +267,8 @@ class PaymentController extends StateController<PaymentUistate> {
       try {
         Loading().loadingClose();
       } catch (_) {}
-      debugPrint('PaymentController.processBooking.error $e');
+      debugPrint('[Payment] processBooking.error $e');
+      debugPrint('[Payment] processBooking.stackTrace\n${StackTrace.current}');
       alertDialogOneButton(
         title: 'information'.tr,
         description: 'Failed to load to server!',

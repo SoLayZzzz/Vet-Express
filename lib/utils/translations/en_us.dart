@@ -459,7 +459,7 @@ final Map<String, String> enUS = {
         'travel_ticket_form': 'Travel Ticket From',
         'round_trip_ticket': 'Round Trip Ticket',
         'departure_date:': 'Departure Date : ',
-        'seat_number': 'Seat No.',
+        'seat_number': 'Seat number',
         'female': 'Female',
         'nationality_choose': 'Choose Nationality',
         'cambodian': 'Cambodian',

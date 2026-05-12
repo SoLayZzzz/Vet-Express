@@ -524,6 +524,19 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                       CrossAxisAlignment.start,
                                   children: [
                                     _listSeat(
+                                      label: "seat_number".tr,
+                                      value:
+                                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].seatNumber}',
+                                    ),
+
+                                    if (bookingData
+                                        .data!
+                                        .body!
+                                        .data![0]
+                                        .bookingSeatDetailList![index]
+                                        .dob!
+                                        .isNotEmpty)
+                                    _listSeat(
                                       label: 'name_pro'.tr,
                                       value:
                                           '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].name}',
@@ -538,11 +551,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                       value:
                                           '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].nationalityName}',
                                     ),
-                                    _listSeat(
-                                      label: "seat_number".tr,
-                                      value:
-                                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].seatNumber}',
-                                    ),
+
                                     if (bookingData
                                         .data!
                                         .body!
@@ -877,8 +886,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
   }
 
   String _seatTypeText(int? seatType) {
-    if (seatType == 1) return 'SeaterBus';
-    if (seatType == 2) return 'SleeperBus';
+    if (seatType == 1) return 'Seater Bus';
+    if (seatType == 2) return 'Sleeper Bus';
     return '-';
   }
 }

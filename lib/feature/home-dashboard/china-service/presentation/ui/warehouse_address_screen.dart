@@ -115,14 +115,14 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                 ),
                 const SizedBox(height: 12),
                 _buildContactRow(
-                  AssetImages.phone,
+                  AssetImages.ic_phone_china,
                   _formatPhoneNumber(customer.telephone ?? ''),
                 ),
                 _buildContactRow(
-                  AssetImages.building,
+                  AssetImages.ic_bussness_ountline,
                   customer.branchName ?? '',
                 ),
-                _buildContactRow(AssetImages.location, customer.address ?? ''),
+                _buildContactRow(AssetImages.ic_map_pin, customer.address ?? ''),
               ],
             ),
           ),
@@ -161,8 +161,8 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
           // Using Image.asset instead of Icon
           Image.asset(
             imagePath,
-            width: 18,
-            height: 18,
+            width: 20,
+            height: 20,
             // ColorFilter ensures the PNG behaves like a monochrome icon
             color: Colors.grey[600],
           ),

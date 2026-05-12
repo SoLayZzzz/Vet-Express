@@ -58,6 +58,23 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     return DateFormat('dd-MM-yyyy').format(parsed);
   }
 
+  String _formatDobForValue(String rawDob) {
+    final raw = rawDob.trim();
+    if (raw.isEmpty) return '';
+
+    DateTime? parsed = DateTime.tryParse(raw);
+    parsed ??= DateTime.tryParse(raw.replaceFirst(' ', 'T'));
+    if (parsed == null) {
+      try {
+        parsed = DateFormat('dd-MM-yyyy').parseStrict(raw);
+      } catch (_) {
+        parsed = null;
+      }
+    }
+    if (parsed == null) return raw;
+    return DateFormat('yyyy-MM-dd').format(parsed);
+  }
+
   void _applyAutofillToSeatControllers({
     required int seatCount,
     required int companyType,
@@ -67,22 +84,27 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     required String name,
     required String dob,
   }) {
+    if (seatCount <= 0) return;
+
     if (companyType == 4 && nameControllers.isNotEmpty) {
       if (nameControllers[0].text.trim().isEmpty && name.trim().isNotEmpty) {
         nameControllers[0].text = name.trim();
       }
     }
 
-    if (seatCount != 1) return;
+    if (companyType != 4) return;
 
     if (dobDisplayControllers.isNotEmpty && dobValueControllers.isNotEmpty) {
-      final formattedDob = _formatDobForDisplay(dob);
-      if (formattedDob.isNotEmpty) {
+      final formattedDobDisplay = _formatDobForDisplay(dob);
+      final formattedDobValue = _formatDobForValue(dob);
+      if (formattedDobDisplay.isNotEmpty) {
         if (dobDisplayControllers[0].text.trim().isEmpty) {
-          dobDisplayControllers[0].text = formattedDob;
+          dobDisplayControllers[0].text = formattedDobDisplay;
         }
+      }
+      if (formattedDobValue.isNotEmpty) {
         if (dobValueControllers[0].text.trim().isEmpty) {
-          dobValueControllers[0].text = formattedDob;
+          dobValueControllers[0].text = formattedDobValue;
         }
       }
     }

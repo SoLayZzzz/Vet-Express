@@ -132,6 +132,12 @@ class _PaymentScreenState extends State<PaymentScreen>
         0.0,
         (sum, item) => sum + _parseAmount(item.grandTotal),
       );
+      final apiSubTotalAll = _parseAmount(widget.datas.body?.subTotal);
+      final apiPlatformDiscountAll = _parseAmount(widget.datas.body?.discount);
+      final apiTotalAll = _parseAmount(widget.datas.body?.total);
+
+      final baseSubTotalAll =
+          apiSubTotalAll > 0 ? apiSubTotalAll : grandTotalAll;
       final selectedDiscountAmount = _getSelectedPaymentDiscountAmount(
         paymentMethods: paymentMethods,
         paymentMethodId: uiState.paymentMethodId,
@@ -148,12 +154,21 @@ class _PaymentScreenState extends State<PaymentScreen>
         orderPayments: orderPayments,
         grandTotalAll: grandTotalAll,
       );
+
+      final baseTotalAll = apiTotalAll > 0
+          ? apiTotalAll
+          : _nonNegative(
+              grandTotalAll - travelPackageDiscountAll - apiPlatformDiscountAll,
+            );
       final totalPayableAll = _nonNegative(
-        grandTotalAll -
-            travelPackageDiscountAll -
-            selectedDiscountAmount +
-            selectedServiceFeeAmount,
+        baseTotalAll - selectedDiscountAmount + selectedServiceFeeAmount,
       );
+
+      final totalAmountForApi = totalPayableAll > 0
+          ? totalPayableAll.toStringAsFixed(2)
+          : ((widget.datas.body?.total ?? '').toString().trim().isNotEmpty
+              ? widget.datas.body!.total!.toString().trim()
+              : baseTotalAll.toStringAsFixed(2));
       return PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
@@ -189,6 +204,7 @@ class _PaymentScreenState extends State<PaymentScreen>
               context,
               uiState,
               totalPayableAll: totalPayableAll,
+              totalAmountForApi: totalAmountForApi,
             ),
             body: SafeArea(
               child: Column(
@@ -222,7 +238,17 @@ class _PaymentScreenState extends State<PaymentScreen>
                             ),
                             
 
-                            _buildPaymentDetail(uiState, totalPayableAll, travelPackageDiscountAll, selectedDiscountAmount, selectedPaymentMethodName, selectedServiceFeeAmount),
+                          _buildPaymentDetail(
+                            uiState,
+                            totalPayableAll,
+                            travelPackageDiscountAll,
+                            selectedDiscountAmount,
+                            selectedPaymentMethodName,
+                            selectedServiceFeeAmount,
+                            baseSubTotalAll,
+                            apiPlatformDiscountAll,
+                            baseTotalAll,
+                          ),
                           ],
                         ),
                       ),
@@ -237,7 +263,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     });
   }
 
-  Row _buildPaymentMethodStatus(PaymentUistate uiState) {
+  Widget _buildPaymentMethodStatus(PaymentUistate uiState) {
     return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -271,7 +297,17 @@ class _PaymentScreenState extends State<PaymentScreen>
                           );
   }
 
-  Widget _buildPaymentDetail(PaymentUistate uiState, double totalPayableAll, double travelPackageDiscountAll, double selectedDiscountAmount, String selectedPaymentMethodName, double selectedServiceFeeAmount) {
+  Widget _buildPaymentDetail(
+    PaymentUistate uiState,
+    double totalPayableAll,
+    double travelPackageDiscountAll,
+    double selectedDiscountAmount,
+    String selectedPaymentMethodName,
+    double selectedServiceFeeAmount,
+    double baseSubTotalAll,
+    double apiPlatformDiscountAll,
+    double baseTotalAll,
+  ) {
     final normalizedPaymentMethodName =
         selectedPaymentMethodName.trim().toLowerCase();
     final discountTitle = normalizedPaymentMethodName.contains('wing')
@@ -314,9 +350,34 @@ class _PaymentScreenState extends State<PaymentScreen>
 
                               return isRoundTrip
                                   ///round trip
-                                  ? _buildPaymentRooundtrip(index, data, isBuvaSea, isRoundTrip, grandTotalAll, travelPackageDiscountAll, selectedDiscountAmount, discountTitle, selectedServiceFeeAmount, totalPayableAll)
+                                  ? _buildPaymentRooundtrip(
+                                      index,
+                                      data,
+                                      isBuvaSea,
+                                      isRoundTrip,
+                                      grandTotalAll,
+                                      travelPackageDiscountAll,
+                                      selectedDiscountAmount,
+                                      discountTitle,
+                                      selectedServiceFeeAmount,
+                                      totalPayableAll,
+                                      baseSubTotalAll,
+                                      apiPlatformDiscountAll,
+                                      baseTotalAll,
+                                    )
                                   ///one way
-                                  : _buildPaymentOneway(data, isBuvaSea, index, selectedDiscountAmount, discountTitle, selectedServiceFeeAmount);
+                                  : _buildPaymentOneway(
+                                      data,
+                                      isBuvaSea,
+                                      index,
+                                      selectedDiscountAmount,
+                                      discountTitle,
+                                      selectedServiceFeeAmount,
+                                      baseSubTotalAll,
+                                      apiPlatformDiscountAll,
+                                      baseTotalAll,
+                                      totalPayableAll,
+                                    );
                             },
                             separatorBuilder: (context, index) {
                               return SizedBox.shrink();
@@ -324,7 +385,21 @@ class _PaymentScreenState extends State<PaymentScreen>
                           );
   }
 
-  Widget _buildPaymentRooundtrip(int index, ConfirmBookingInformation data, bool isBuvaSea, bool isRoundTrip, double grandTotalAll, double travelPackageDiscountAll, double selectedDiscountAmount, String discountTitle, double selectedServiceFeeAmount, double totalPayableAll) {
+  Widget _buildPaymentRooundtrip(
+    int index,
+    ConfirmBookingInformation data,
+    bool isBuvaSea,
+    bool isRoundTrip,
+    double grandTotalAll,
+    double travelPackageDiscountAll,
+    double selectedDiscountAmount,
+    String discountTitle,
+    double selectedServiceFeeAmount,
+    double totalPayableAll,
+    double baseSubTotalAll,
+    double apiPlatformDiscountAll,
+    double baseTotalAll,
+  ) {
     return Column(
                                   crossAxisAlignment:
                                       CrossAxisAlignment.start,
@@ -421,8 +496,23 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                 children: [
                                                   view(
                                                     'sub_total'.tr,
-                                                    "\$${grandTotalAll.toStringAsFixed(2)}",
+                                                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
                                                   ),
+                                                  if (_hasVisibleAmount(
+                                                    apiPlatformDiscountAll,
+                                                  ))
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            vertical: 6.0,
+                                                          ),
+                                                      child: view(
+                                                        'discount'.tr,
+                                                        "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
+                                                        textColor:
+                                                            AppColors.greyColor,
+                                                      ),
+                                                    ),
                                                   const Divider(
                                                     thickness: 1,
                                                   ),
@@ -466,7 +556,12 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                             vertical: 6.0,
                                                           ),
                                                       child: view(
-                                                        "service_fee".tr,
+                                                        _getSelectedPaymentServiceFeePercent(
+                                                                  paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[],
+                                                                  paymentMethodId: controller.state.paymentMethodId,
+                                                                ) > 0
+                                                            ? "${"service_fee".tr} (${_getSelectedPaymentServiceFeePercent(paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[], paymentMethodId: controller.state.paymentMethodId)}%)"
+                                                            : "service_fee".tr,
                                                         "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
                                                       ),
                                                     ),
@@ -511,7 +606,18 @@ class _PaymentScreenState extends State<PaymentScreen>
                                 );
   }
 
-  Widget _buildPaymentOneway(ConfirmBookingInformation data, bool isBuvaSea, int index, double selectedDiscountAmount, String discountTitle, double selectedServiceFeeAmount) {
+  Widget _buildPaymentOneway(
+    ConfirmBookingInformation data,
+    bool isBuvaSea,
+    int index,
+    double selectedDiscountAmount,
+    String discountTitle,
+    double selectedServiceFeeAmount,
+    double baseSubTotalAll,
+    double apiPlatformDiscountAll,
+    double baseTotalAll,
+    double totalPayableAll,
+  ) {
     return Column(
                                   crossAxisAlignment:
                                       CrossAxisAlignment.start,
@@ -609,14 +715,15 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                 children: [
                                                   view(
                                                     "sub_total".tr,
-                                                    "\$${widget.datas.body!.orderPaymentLists![index].total}",
+                                                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
                                                   ),
-                                                  if (_hasVisibleAmount(widget.datas.body!.orderPaymentLists![index].discount))
-                                                   view(
-                                                      "Discount platform",
-                                                      // "\$10.0",
-                                                      "\$${widget.datas.body!.orderPaymentLists![index].discount}",
-                                                      textColor: AppColors.greyColor
+                                                  if (_hasVisibleAmount(
+                                                    apiPlatformDiscountAll,
+                                                  ))
+                                                    view(
+                                                      'discount'.tr,
+                                                      "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
+                                                      textColor: AppColors.greyColor,
                                                     ),
                                                   if (_hasVisibleAmount(
                                                     _getTravelPackageDiscountItem(
@@ -640,24 +747,31 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                       textColor: AppColors.greyColor
                                                     ),
                                                   // Line
-                                                  Padding(
-                                                    padding:  EdgeInsets.symmetric(vertical: 10),
-                                                    child: Container(
-                                                      height: 2,
-                                                      width: double.infinity,
-                                                      color: AppColors.lineGray,
-                                                    ),
-                                                  ), 
+                                                  // Padding(
+                                                  //   padding:  EdgeInsets.symmetric(vertical: 10),
+                                                  //   child: Container(
+                                                  //     height: 2,
+                                                  //     width: double.infinity,
+                                                  //     color: AppColors.lineGray,
+                                                  //   ),
+                                                  // ),
+                                                   const Divider(height: 10,thickness: 1,),
+                                                   
                                                   if (_hasVisibleAmount(
                                                     selectedServiceFeeAmount,
                                                   ))
                                                     view(
-                                                      "${"service_fee".tr} (${widget.datas.body!.paymentMethods?.first.discountPercent}%)",
+                                                      _getSelectedPaymentServiceFeePercent(
+                                                                paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[],
+                                                                paymentMethodId: controller.state.paymentMethodId,
+                                                              ) > 0
+                                                          ? "${"service_fee".tr} (${_getSelectedPaymentServiceFeePercent(paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[], paymentMethodId: controller.state.paymentMethodId)}%)"
+                                                          : "service_fee".tr,
                                                       "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
                                                     ),
                                                   view(
                                                     "total_ticket_price".tr,
-                                                    "\$${_nonNegative(_parseAmount(widget.datas.body!.orderPaymentLists![index].grandTotal) - _getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]) - selectedDiscountAmount + selectedServiceFeeAmount).toStringAsFixed(2)}",
+                                                    "\$${totalPayableAll.toStringAsFixed(2)}",
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ],
@@ -808,6 +922,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     BuildContext context,
     PaymentUistate uiState, {
     required double totalPayableAll,
+    required String totalAmountForApi,
   }) {
     final isPaymentSelected = uiState.paymentMethodSelected != 0;
     return SafeArea(
@@ -833,7 +948,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                 children: [
                   // Total amount
                    Expanded(
-                    flex: 1,
+                    flex: 2,
                      child: Row(
                        children: [
                          Text(
@@ -868,6 +983,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                     await controller.processBooking(
                                       context: context,
                                       transactionId: widget.id,
+                                      totalAmount: totalAmountForApi,
                                     );
                                     final token = controller.state.newToken;
                                     if (token.isNotEmpty && context.mounted) {
@@ -886,6 +1002,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                     controller.processBooking(
                                       context: context,
                                       transactionId: widget.id,
+                                      totalAmount: totalAmountForApi,
                                     );
                                   }
                                 }
@@ -1088,6 +1205,18 @@ class _PaymentScreenState extends State<PaymentScreen>
       }
     }
     return 0.0;
+  }
+
+  int _getSelectedPaymentServiceFeePercent({
+    required List<PaymentMethod> paymentMethods,
+    required int paymentMethodId,
+  }) {
+    for (final method in paymentMethods) {
+      if (method.id == paymentMethodId) {
+        return method.serviceFeePercent ?? 0;
+      }
+    }
+    return 0;
   }
 
   Future<void> popScreen() async {

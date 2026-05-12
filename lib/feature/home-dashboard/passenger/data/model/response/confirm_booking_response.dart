@@ -32,6 +32,11 @@ class Body {
   List<ConfirmBookingInformation>? confirmBookingInformation;
   List<PaymentMethod>? paymentMethods;
   int? status;
+  // Added missing fields below
+  String? subTotal;
+  String? discount;
+  String? discountPercent;
+  String? total;
 
   Body({
     this.msg,
@@ -40,6 +45,10 @@ class Body {
     this.confirmBookingInformation,
     this.paymentMethods,
     this.status,
+    this.subTotal,
+    this.discount,
+    this.discountPercent,
+    this.total,
   });
 
   factory Body.fromJson(Map<String, dynamic> json) => Body(
@@ -68,6 +77,10 @@ class Body {
               json["paymentMethods"]!.map((x) => PaymentMethod.fromJson(x)),
             ),
     status: json["status"],
+    subTotal: json["subTotal"],
+    discount: json["discount"],
+    discountPercent: json["discountPercent"],
+    total: json["total"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -88,6 +101,10 @@ class Body {
             ? []
             : List<dynamic>.from(paymentMethods!.map((x) => x.toJson())),
     "status": status,
+    "subTotal": subTotal,
+    "discount": discount,
+    "discountPercent": discountPercent,
+    "total": total,
   };
 }
 

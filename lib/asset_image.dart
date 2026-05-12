@@ -261,6 +261,9 @@ class AssetImages {
   // =========================    
 
   static const String ic_copy = "assets/images/ic_copy.png";
+  static const String ic_phone_china = "assets/icons/phone.png";
+  static const String ic_map_pin = "assets/icons/map-pin.png";
+  static const String ic_bussness_ountline = "assets/icons/business-outline.png";
 
 
 }
