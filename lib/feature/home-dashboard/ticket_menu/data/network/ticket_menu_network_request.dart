@@ -1,5 +1,6 @@
 import 'package:express_vet/base/network_data_source.dart';
 
+
 import '../../../../../base/endpoint.dart';
 import '../../../../../utils/contains.dart';
 import '../model/request/destination_request.dart';
@@ -19,6 +20,7 @@ class TicketMenuNetworkRequest {
       attachAuth: true,
       timeout: const Duration(seconds: Constrains.timeout30),
     );
+
     return DestinationResponse.fromJson(json);
   }
 

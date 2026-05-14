@@ -38,6 +38,16 @@ class Body {
   String? discountPercent;
   String? total;
 
+  // class OrderPaymentList {
+  // String? desc;
+  // String? descKh;
+  // String? grandTotal;
+  // String? discount;
+  // String? disTravel;
+  // String? luckyTicket;
+  // String? total;
+
+
   Body({
     this.msg,
     this.transactionId,

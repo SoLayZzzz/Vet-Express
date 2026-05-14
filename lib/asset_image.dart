@@ -134,6 +134,9 @@ class AssetImages {
   static const String phone = 'assets/icons/phone.png';
   static const String building = 'assets/icons/building.png';
 
+  //
+  static const String gifFlashSale = 'assets/gif/flash_sale.gif';
+
   // =========================
   // Select Seat screen
   // =========================

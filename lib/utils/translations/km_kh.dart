@@ -512,6 +512,7 @@ final Map<String, String> kmKH = {
         'search_ticket': "ស្វែងរក",
         'seat': "កៅអី",
         'seats': "កៅអី",
+        'bed': 'គ្រែ',
         'view_map': "មើលផែនទី",
 
         //payment_screen

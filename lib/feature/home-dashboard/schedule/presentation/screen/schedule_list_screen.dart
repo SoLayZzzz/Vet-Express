@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -11,6 +9,7 @@ import 'package:express_vet/routes/app_routes.dart';
 import '../../data/model/response/schedule_response.dart';
 import '../../../../../utils/alert_dialog_schedule.dart';
 import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/locale.dart';
 import '../controller/schedule_list_controller.dart';
 
 class ScheduleListScreen extends StatelessWidget {
@@ -220,6 +219,22 @@ class ScheduleListScreen extends StatelessWidget {
 
         final int usedSeats = ((item.totalSeat)! - (item.seatAvailable)!);
         final String totalSeatText = (item.totalSeat).toString();
+        final int? seatType = item.seatType;
+        String t(String key) {
+          final locale = Get.locale;
+          final localeKey = locale == null
+              ? null
+              : '${locale.languageCode}_${locale.countryCode}';
+          final fromMap =
+              localeKey == null ? null : LocaleString().keys[localeKey]?[key];
+          return fromMap ?? key.tr;
+        }
+
+        final String seatTypeLabel = seatType == 2
+            ? t('bed')
+            : seatType == 1
+                ? t('seat')
+                : t('seats');
 
         final bool hasOriginalPrice = (item.priceOriginal != '');
         final String priceOriginalText = '${item.priceOriginal}';
@@ -273,6 +288,7 @@ class ScheduleListScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.asset(brandAsset, height: 30),
+                          // Image(image: AssetImage(AssetImages.gifFlashSale), height: 40, width: 40,),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Column(
@@ -323,14 +339,28 @@ class ScheduleListScreen extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  Text(
-                                    '/$totalSeatText ${'seats'.tr}',
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: AppColors.greyColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '/$totalSeatText',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: AppColors.greyColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      //
+                                      Text(
+                                        ' $seatTypeLabel',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: AppColors.greyColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               )
@@ -389,7 +419,33 @@ class ScheduleListScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(height: 1, color: Colors.grey[300]),
+
+                // Gif flah sale
+                 SizedBox(
+                height: 10, 
+                child: Stack(
+                  alignment: Alignment.centerRight, 
+                  children: [
+                    // The Line
+                    Container(
+                      height: 1,
+                      color: Colors.grey[300],
+                    ),
+
+                      if(body[0].isflashSale == 1)
+                    Positioned(
+                      right: 10,
+                      child: Image(
+                        image: AssetImage(AssetImages.gifFlashSale),
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.contain, 
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+                
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(

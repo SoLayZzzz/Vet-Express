@@ -572,6 +572,7 @@ final Map<String, String> enUS = {
         'total_amount': "Total amount ",
         'seat': "Seat",
         'seats': "Seats",
+        'bed': "Bed",
         'view_map': "View Map",
 
         //ticket_menu

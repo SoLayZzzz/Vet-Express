@@ -41,6 +41,10 @@ class BaseUrl {
       ? 'https://oc.utlog.net/'
       : 'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
+
+  // Local url 
+  static final String base_url = 'http://192.168.3.220:8512/vetExpressTicketApiLocal/';
+
 // https://vetticket.utlog.net/payments/acledaXpay/VTCK-tsYxzqBBEQHypA7/DsquDNFD3MpvDcOLeFLONyYZUjJZFKS6wxX
 
   // Production

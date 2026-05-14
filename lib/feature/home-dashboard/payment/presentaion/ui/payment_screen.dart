@@ -132,9 +132,9 @@ class _PaymentScreenState extends State<PaymentScreen>
         0.0,
         (sum, item) => sum + _parseAmount(item.grandTotal),
       );
-      final apiSubTotalAll = _parseAmount(widget.datas.body?.subTotal);
-      final apiPlatformDiscountAll = _parseAmount(widget.datas.body?.discount);
-      final apiTotalAll = _parseAmount(widget.datas.body?.total);
+      final apiSubTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.grandTotal);
+      final apiPlatformDiscountAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.discount);
+      final apiTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.total);
 
       final baseSubTotalAll =
           apiSubTotalAll > 0 ? apiSubTotalAll : grandTotalAll;
@@ -166,8 +166,8 @@ class _PaymentScreenState extends State<PaymentScreen>
 
       final totalAmountForApi = totalPayableAll > 0
           ? totalPayableAll.toStringAsFixed(2)
-          : ((widget.datas.body?.total ?? '').toString().trim().isNotEmpty
-              ? widget.datas.body!.total!.toString().trim()
+          : ((widget.datas.body?.orderPaymentLists?.first.total ?? '').toString().trim().isNotEmpty
+              ? widget.datas.body!.orderPaymentLists!.first.total!.toString().trim()
               : baseTotalAll.toStringAsFixed(2));
       return PopScope(
         canPop: false,
@@ -248,7 +248,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                             baseSubTotalAll,
                             apiPlatformDiscountAll,
                             baseTotalAll,
-                          ),
+                          ), 
                           ],
                         ),
                       ),
@@ -713,10 +713,15 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                     CrossAxisAlignment
                                                         .start,
                                                 children: [
-                                                  view(
+                                                  // view(
+                                                  //   "sub_total".tr,
+                                                  //   "\$${baseSubTotalAll.toStringAsFixed(2)}",
+                                                  // ),
+                                                   view(
                                                     "sub_total".tr,
-                                                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
+                                                    "\$${totalPayableAll.toStringAsFixed(2)}",
                                                   ),
+                                                  
                                                   if (_hasVisibleAmount(
                                                     apiPlatformDiscountAll,
                                                   ))

@@ -639,6 +639,7 @@ final Map<String, String> zhCN = {
         'trip_info': "旅行明细",
         'seat': "座位",
         'seats': "座位",
+        'bed': '床',
         'passenger': "乘客信息",
         'news': '更新和活动',
         'skip': '跳过',
