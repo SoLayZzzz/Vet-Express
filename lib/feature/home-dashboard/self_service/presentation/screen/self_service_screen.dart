@@ -91,7 +91,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                         );
                       },
                       decoration: Style.inputText(
-                        '0123456789',
+                        'phone_number'.tr,
                         iconLeft: Ionicons.call_outline,
                       ),
                     ),

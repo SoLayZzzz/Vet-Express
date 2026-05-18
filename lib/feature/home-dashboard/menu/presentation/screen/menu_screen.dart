@@ -3,8 +3,9 @@ import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/bindding/china_service_binding.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:express_vet/feature/home-dashboard/menu/presentation/binding/menu_binding.dart';
 import 'package:express_vet/feature/home-dashboard/menu/presentation/controller/menu_controller.dart'
     as menu;
@@ -582,13 +583,93 @@ class MenuScreen extends GetView<menu.MenuController> {
   }
 
   Future<void> _launch(url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
+    final uri = Uri.tryParse(url.toString());
+    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
       ScaffoldMessenger.of(
         Get.context!,
       ).showSnackBar(SnackBar(content: Text('can_not_open'.tr)));
+      return;
     }
+
+    await Get.to(
+      () => InAppWebViewScreen(
+        initialUrl: uri.toString(),
+        title: uri.host,
+      ),
+    );
+  }
+}
+
+class InAppWebViewScreen extends StatefulWidget {
+  final String initialUrl;
+  final String? title;
+
+  const InAppWebViewScreen({
+    super.key,
+    required this.initialUrl,
+    this.title,
+  });
+
+  @override
+  State<InAppWebViewScreen> createState() => _InAppWebViewScreenState();
+}
+
+class _InAppWebViewScreenState extends State<InAppWebViewScreen> {
+  late final WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (request) {
+            final uri = Uri.tryParse(request.url);
+            if (uri == null) return NavigationDecision.prevent;
+            if (uri.scheme != 'http' && uri.scheme != 'https') {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.initialUrl));
+  }
+
+  Future<void> _handleSystemBack() async {
+    if (await _controller.canGoBack()) {
+      await _controller.goBack();
+      return;
+    }
+    Get.back();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleSystemBack();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.primaryColor,
+          foregroundColor: AppColors.whiteColor,
+          leading: IconButton(
+          icon: const Icon(
+            Ionicons.chevron_back_outline,
+            color: AppColors.whiteColor,
+          ),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+          title: Text('VPsar'),
+        ),
+        body: WebViewWidget(controller: _controller),
+      ),
+    );
   }
 }

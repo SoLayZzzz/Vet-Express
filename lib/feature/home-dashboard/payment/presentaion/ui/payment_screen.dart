@@ -74,12 +74,6 @@ class _PaymentScreenState extends State<PaymentScreen>
       iosController.setAllowsBackForwardNavigationGestures(true);
     }
 
-    // Load the initial URL
-    // _controller.loadRequest(
-    //   Uri.parse('https://example.com'), // Replace with your URL
-    // );
-
-    // Set JavaScript mode
     _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
     WidgetsBinding.instance.addObserver(this);
@@ -185,7 +179,6 @@ class _PaymentScreenState extends State<PaymentScreen>
                 icon: const Icon(
                   Icons.close,
                   color: Colors.white,
-
                 ),
                 onPressed: () {
                   popScreen();
@@ -710,17 +703,16 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                   ),
                                               child: Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  // view(
-                                                  //   "sub_total".tr,
-                                                  //   "\$${baseSubTotalAll.toStringAsFixed(2)}",
-                                                  // ),
-                                                   view(
+                                                  view(
                                                     "sub_total".tr,
-                                                    "\$${totalPayableAll.toStringAsFixed(2)}",
+                                                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
                                                   ),
+                                                  //  view(
+                                                  //   "sub_total".tr,
+                                                  //   "\$${totalPayableAll.toStringAsFixed(2)}",
+                                                  // ),
                                                   
                                                   if (_hasVisibleAmount(
                                                     apiPlatformDiscountAll,
@@ -796,6 +788,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                             },
                             child: Column(
                               children: [
+
+                                // ================
+                                // ABA KHQR
+                                // ================
                                 PaymentOptionCard(
                                   asset: AssetImages.ic_khqr,
                                   title: const Text(
@@ -821,53 +817,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                                     );
                                   },
                                 ),
-                                PaymentOptionCard(
-                                  asset: AssetImages.ic_big_visa,
-                                  title: const Text(
-                                    'Credit/Debit Card',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitleWidget: Image.asset(
-                                    AssetImages.ic_small_visa,
-                                    height: 14,
-                                  ),
-                                  value: 2,
-                                  isSelected:
-                                      uiState.paymentMethodSelected == 2,
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 6,
-                                      paymentMethodSelected: 2,
-                                    );
-                                  },
-                                ),
-                                PaymentOptionCard(
-                                  asset: AssetImages.ic_alipay,
-                                  title: const Text(
-                                    'AliPay',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitleWidget: Text(
-                                    'tap_to_pay_with_ALIPAY'.tr,
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  value: 3,
-                                  isSelected:
-                                      uiState.paymentMethodSelected == 3,
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 7,
-                                      paymentMethodSelected: 3,
-                                    );
-                                  },
-                                ),
+                               
+                                // ================
+                                // Wing Bank
+                                // ================
                                 PaymentOptionCard(
                                   asset: AssetImages.ic_wing,
                                   title: const Text(
@@ -893,6 +846,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                                     );
                                   },
                                 ),
+
+                                // ================
+                                // ACLEDA
+                                // ================
                                 PaymentOptionCard(
                                   asset: AssetImages.ic_acleda,
                                   title: const Text(
@@ -915,6 +872,61 @@ class _PaymentScreenState extends State<PaymentScreen>
                                     controller.selectPaymentMethod(
                                       paymentMethodId: 8,
                                       paymentMethodSelected: 5,
+                                    );
+                                  },
+                                ),
+
+                                // ================
+                                // Credid Card
+                                // ================
+                                 PaymentOptionCard(
+                                  asset: AssetImages.ic_big_visa,
+                                  title: const Text(
+                                    'Credit/Debit Card',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  subtitleWidget: Image.asset(
+                                    AssetImages.ic_small_visa,
+                                    height: 14,
+                                  ),
+                                  value: 2,
+                                  isSelected:
+                                      uiState.paymentMethodSelected == 2,
+                                  onTap: () {
+                                    controller.selectPaymentMethod(
+                                      paymentMethodId: 6,
+                                      paymentMethodSelected: 2,
+                                    );
+                                  },
+                                ),
+
+                                // ================
+                                // AliPay
+                                // ================
+                                PaymentOptionCard(
+                                  asset: AssetImages.ic_alipay,
+                                  title: const Text(
+                                    'AliPay',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  subtitleWidget: Text(
+                                    'tap_to_pay_with_ALIPAY'.tr,
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  value: 3,
+                                  isSelected:
+                                      uiState.paymentMethodSelected == 3,
+                                  onTap: () {
+                                    controller.selectPaymentMethod(
+                                      paymentMethodId: 7,
+                                      paymentMethodSelected: 3,
                                     );
                                   },
                                 ),
