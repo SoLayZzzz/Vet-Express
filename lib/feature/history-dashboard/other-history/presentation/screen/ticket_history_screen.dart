@@ -140,9 +140,9 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                               child: Column(
                                 children: [
                                   _buildDestination(bookingData, index),
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 10),
                                   _buildCodeAndDate(bookingData, index),
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 10),
                                   _buldBusAndTime(bookingData, index),
                                   //
                                   if (bookingData
@@ -151,7 +151,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                           ?.data?[index]
                                           .isLuckyDraw ==
                                       1)
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: 10),
                                   if (bookingData
                                           .data
                                           ?.body
@@ -166,7 +166,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                           ?.data?[index]
                                           .isTravelPackage ==
                                       1)
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: 10),
                                   if (bookingData
                                           .data
                                           ?.body
@@ -174,7 +174,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                           .isTravelPackage ==
                                       1)
                                     _buildIsTravelPackage(),
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 10),
                                   _buildRateAndTimecount(travelDateTime, bookingData, index, context),
                                 ],
                               ),
@@ -192,6 +192,206 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                     );
   }
 
+   Widget _buildDestination(AsyncSnapshot<BookingListModel> bookingData, int index) {
+    return Row(
+                                  children: [
+                                   Expanded(
+                                     child: Row(
+                                      children: [
+                                         Image.asset(
+                                        bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                1
+                                            ? AssetImages.vet_logo
+                                            : bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                2
+                                            ? AssetImages.buva_sea
+                                            : bookingData
+                                                    .data
+                                                    ?.body
+                                                    ?.data?[index]
+                                                    .journeyType ==
+                                                3
+                                            ? AssetImages.vet_air_bus_schedule
+                                            : AssetImages.buva_sea,
+                                        height: 30,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          "${bookingData.data?.body?.data?[index].destinationFrom} - ${bookingData.data?.body?.data?[index].destinationTo}",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.titleColor,
+                                          ),
+                                        ),
+                                      ),
+                                      ],
+                                     ),
+                                     //
+                                     
+                                   ),
+                                    //
+                                     Row(
+                                       children: [
+                                         Image.asset(
+                                           AssetImages.user,
+                                           height: 20,
+                                         ),
+                                         const SizedBox(width: 6),
+                                         Text(
+                                           '${bookingData.data?.body?.data?[index].totalSeat}',
+                                           style: TextStyle(
+                                             fontSize: 14,
+                                             color: AppColors.primaryColor,
+                                             fontWeight: FontWeight.bold,
+                                           ),
+                                         ),
+                                       
+                                       ],
+                                     ),
+                                    
+                                  ],
+                                );
+  }
+
+   Widget _buildCodeAndDate(AsyncSnapshot<BookingListModel> bookingData, int index) {
+    return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+                                          
+                                          Image.asset(
+                                            AssetImages.ic_ticket_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Flexible(
+                                            child: Text(
+                                              bookingData.data?.body?.data?[index].code ?? '-',
+                                              style: const TextStyle(
+                                                color: AppColors.textColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+
+                                          
+                                        ],
+                                      ),
+                                    ),
+
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+                                         
+                                           Image.asset(
+                                            AssetImages.ic_date_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            "${bookingData.data?.body?.data?[index].travelDate}",
+                                            style: const TextStyle(
+                                              color: AppColors.textColor,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+  }
+
+
+Widget _buldBusAndTime(
+    AsyncSnapshot<BookingListModel> bookingData, 
+    int index) {
+    return Row(
+        mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                          
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+                                           Image.asset(
+                                            // AssetImages.ic_boat_history ,
+                                              bookingData
+                                                            .data
+                                                            ?.body
+                                                            ?.data?[index]
+                                                            .journeyType ==
+                                                        2 ||
+                                                    bookingData
+                                                            .data
+                                                            ?.body
+                                                            ?.data?[index]
+                                                            .journeyType ==
+                                                        4
+                                                ? AssetImages.ic_boat_history : AssetImages.ic_bus_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                         
+                                          const SizedBox(width: 6),
+                                          Flexible(
+                                            child: Text(
+                                              "${bookingData.data?.body?.data?[index].transportationType}",
+                                              softWrap: true,
+                                              style: const TextStyle(
+                                                color: AppColors.textColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    Expanded(
+                                      flex: 1,
+                                      child: Row(
+                                        children: [
+
+                                           Image.asset(
+                                            AssetImages.ic_time_history,
+                                            width: 18,
+                                            height: 18,
+                                          ),
+                                          Text(" ${DateFormat('HH:mm').format(DateFormat('HH:mm').parse((bookingData.data?.body?.data?[index].departure).toString()))}", style: TextStyle(
+                                             color: AppColors.textColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                          ),),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                );
+  }
   Widget _buildRateAndTimecount(
     DateTime travelDateTime, 
     AsyncSnapshot<BookingListModel> bookingData, 
@@ -355,205 +555,11 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                   );
   }
 
-  Widget _buldBusAndTime(
-    AsyncSnapshot<BookingListModel> bookingData, 
-    int index) {
-    return Row(
-        mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                          
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
-                                           Image.asset(
-                                            // AssetImages.ic_boat_history ,
-                                              bookingData
-                                                            .data
-                                                            ?.body
-                                                            ?.data?[index]
-                                                            .journeyType ==
-                                                        2 ||
-                                                    bookingData
-                                                            .data
-                                                            ?.body
-                                                            ?.data?[index]
-                                                            .journeyType ==
-                                                        4
-                                                ? AssetImages.ic_boat_history : AssetImages.ic_bus_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                         
-                                          const SizedBox(width: 6),
-                                          Flexible(
-                                            child: Text(
-                                              "${bookingData.data?.body?.data?[index].transportationType}",
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+  
 
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
+ 
 
-                                           Image.asset(
-                                            AssetImages.ic_time_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                          Text(" ${DateFormat('HH:mm').format(DateFormat('HH:mm').parse((bookingData.data?.body?.data?[index].departure).toString()))}", style: TextStyle(
-                                             color: AppColors.textColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                          ),),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                );
-  }
-
-  Widget _buildCodeAndDate(AsyncSnapshot<BookingListModel> bookingData, int index) {
-    return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
-                                          
-                                          Image.asset(
-                                            AssetImages.ic_ticket_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Flexible(
-                                            child: Text(
-                                              bookingData.data?.body?.data?[index].code ?? '-',
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-
-                                          
-                                        ],
-                                      ),
-                                    ),
-
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
-                                         
-                                           Image.asset(
-                                            AssetImages.ic_date_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            "${bookingData.data?.body?.data?[index].travelDate}",
-                                            style: const TextStyle(
-                                              color: AppColors.textColor,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-  }
-
-  Widget _buildDestination(AsyncSnapshot<BookingListModel> bookingData, int index) {
-    return Row(
-                                  children: [
-                                   Expanded(
-                                     child: Row(
-                                      children: [
-                                         Image.asset(
-                                        bookingData
-                                                    .data
-                                                    ?.body
-                                                    ?.data?[index]
-                                                    .journeyType ==
-                                                1
-                                            ? AssetImages.vet_logo
-                                            : bookingData
-                                                    .data
-                                                    ?.body
-                                                    ?.data?[index]
-                                                    .journeyType ==
-                                                2
-                                            ? AssetImages.buva_sea
-                                            : bookingData
-                                                    .data
-                                                    ?.body
-                                                    ?.data?[index]
-                                                    .journeyType ==
-                                                3
-                                            ? AssetImages.vet_air_bus_schedule
-                                            : AssetImages.buva_sea,
-                                        height: 30,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          "${bookingData.data?.body?.data?[index].destinationFrom} - ${bookingData.data?.body?.data?[index].destinationTo}",
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.titleColor,
-                                          ),
-                                        ),
-                                      ),
-                                      ],
-                                     ),
-                                     //
-                                     
-                                   ),
-                                    //
-                                     Row(
-                                       children: [
-                                         Image.asset(
-                                           AssetImages.user,
-                                           height: 20,
-                                         ),
-                                         const SizedBox(width: 6),
-                                         Text(
-                                           '${bookingData.data?.body?.data?[index].totalSeat}',
-                                           style: TextStyle(
-                                             fontSize: 14,
-                                             color: AppColors.primaryColor,
-                                             fontWeight: FontWeight.bold,
-                                           ),
-                                         ),
-                                       
-                                       ],
-                                     ),
-                                    
-                                  ],
-                                );
-  }
+ 
 
   String _calculateCountdown(DateTime travelDateTime) {
     DateTime now = DateTime.now();

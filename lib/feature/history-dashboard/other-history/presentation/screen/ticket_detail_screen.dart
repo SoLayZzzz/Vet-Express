@@ -275,7 +275,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                          
                           _item(
                             label: 'Email'.tr,
-                            value: 'email@example.com',
+                            value: bookingData.data?.body?.data?[0].email ?? '-',
                             color: AppColors.secondaryColor
                           ),
                           _item(
@@ -544,7 +544,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                     _listSeat(
                                       label: 'gender'.tr,
                                       value:
-                                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].gender}',
+                                          bookingData.data!.body!.data![0].bookingSeatDetailList![index].gender == 'Male' ? 'male'.tr : 'female'.tr,
                                     ),
                                     _listSeat(
                                       label: 'nationality'.tr,
@@ -638,40 +638,35 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                           right: 0,
                           child: Container(
                             color: const Color(0xff000000).withValues(alpha: 0.8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "${(bookingData.data?.body?.data?[0].destinationFrom).toString()} - ${(bookingData.data?.body?.data?[0].destinationTo).toString()}",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "${(bookingData.data?.body?.data?[0].destinationFrom).toString()} - ${(bookingData.data?.body?.data?[0].destinationTo).toString()}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    (bookingData.data?.body?.data?[0].code)
-                                        .toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                ),
+                                Text(
+                                  (bookingData.data?.body?.data?[0].code)
+                                      .toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    "${(bookingData.data?.body?.data?[0].travelDate)}  (${(bookingData.data?.body?.data?[0].departure)})"
-                                        .toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                ),
+                                Text(
+                                  "${(bookingData.data?.body?.data?[0].travelDate)}  (${(bookingData.data?.body?.data?[0].departure)})"
+                                      .toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         );
@@ -679,7 +674,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
   Widget _buildQrCode(AsyncSnapshot<TicketDetailScreenReponse> bookingData) {
     return Positioned(
-                          top: 90,
+                          top: 110,
                           left: 0,
                           right: 0,
                           child: SizedBox(

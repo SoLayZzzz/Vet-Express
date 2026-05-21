@@ -103,6 +103,7 @@ class Data {
   String? transactionId;
   int? totalSeat;
   int? seatType;
+  String? email;
   List<BookingSeatDetailList>? bookingSeatDetailList;
 
   Data(
@@ -135,6 +136,7 @@ class Data {
       this.transactionId,
       this.totalSeat,
       this.seatType,
+      this.email,
       this.bookingSeatDetailList});
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -167,6 +169,7 @@ class Data {
     transactionId = json['transactionId'];
     totalSeat = json['totalSeat'];
     seatType = json['seatType'];
+    email = json['email'];
     if (json['bookingSeatDetailList'] != null) {
       bookingSeatDetailList = <BookingSeatDetailList>[];
       json['bookingSeatDetailList'].forEach((v) {
@@ -206,6 +209,7 @@ class Data {
     data['transactionId'] = transactionId;
     data['totalSeat'] = totalSeat;
     data['seatType'] = seatType;
+    data['email'] = email;
     if (bookingSeatDetailList != null) {
       data['bookingSeatDetailList'] =
           bookingSeatDetailList!.map((v) => v.toJson()).toList();

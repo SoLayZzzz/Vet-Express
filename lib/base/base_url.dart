@@ -20,6 +20,10 @@ class BaseUrl {
   // static String PAYMENT_URL = 'https://qacl.udaya-tech.com/0430_CamTicket/';
   // static String BASE_URL_UPLOAD_IMAGE =
   //     'https://qacl.udaya-tech.com/0412_VETOc_Web/';
+
+  // Local url 
+  // http://localhost:8512/vetExpressTicketApiLocal/swagger-ui.html#/16.%20Booking/saveBookingUsingPOST
+  // http://localhost:8512/vetExpressTicketApiLocal/swagger-ui.html#/03.%20Destinations/getDestinationFromListUsingPOST
   
   static const String _flavor = String.fromEnvironment('FLAVOR', defaultValue: 'qa');
   static final String BASE_URL = _flavor == 'prod'
@@ -41,9 +45,6 @@ class BaseUrl {
       ? 'https://oc.utlog.net/'
       : 'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
-
-  // Local url 
-  static final String base_url = 'http://192.168.3.220:8512/vetExpressTicketApiLocal/';
 
 // https://vetticket.utlog.net/payments/acledaXpay/VTCK-tsYxzqBBEQHypA7/DsquDNFD3MpvDcOLeFLONyYZUjJZFKS6wxX
 

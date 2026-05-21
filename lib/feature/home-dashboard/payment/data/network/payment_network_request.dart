@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer' as developer;
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/utils/contains.dart';
@@ -22,10 +24,19 @@ class PaymentNetworkRequest {
       'totalAmount': totalAmount,
     };
     try {
-      debugPrint(
-        'PaymentNetworkRequest.processPayment.request '
-        'url=${ticketApi.baseUrl}${Endpoint.ticketBookingProcessPayment} '
-        'fields=$fields',
+      final fullUrl = '${ticketApi.baseUrl}${Endpoint.ticketBookingProcessPayment}';
+      final prettyFields = const JsonEncoder.withIndent('  ').convert(fields);
+      final encodedBody = fields.entries
+          .map((e) =>
+              '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}')
+          .join('&');
+      developer.log(
+        'REQUEST processPayment\n'
+        'POST $fullUrl\n'
+        'Content-Type: application/x-www-form-urlencoded\n'
+        'Fields (json):\n$prettyFields\n'
+        'Body (encoded): $encodedBody',
+        name: 'PAYMENT',
       );
     } catch (_) {}
     final json = await ticketApi.postFormUrlEncoded(
