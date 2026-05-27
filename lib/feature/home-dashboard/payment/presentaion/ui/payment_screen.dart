@@ -500,7 +500,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                             vertical: 6.0,
                                                           ),
                                                       child: view(
-                                                        'discount'.tr,
+                                                        'discount_platform'.tr,
                                                         "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
                                                         textColor:
                                                             AppColors.greyColor,
@@ -709,16 +709,12 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                     "sub_total".tr,
                                                     "\$${baseSubTotalAll.toStringAsFixed(2)}",
                                                   ),
-                                                  //  view(
-                                                  //   "sub_total".tr,
-                                                  //   "\$${totalPayableAll.toStringAsFixed(2)}",
-                                                  // ),
                                                   
                                                   if (_hasVisibleAmount(
                                                     apiPlatformDiscountAll,
                                                   ))
                                                     view(
-                                                      'discount'.tr,
+                                                      'discount_platform'.tr,
                                                       "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
                                                       textColor: AppColors.greyColor,
                                                     ),

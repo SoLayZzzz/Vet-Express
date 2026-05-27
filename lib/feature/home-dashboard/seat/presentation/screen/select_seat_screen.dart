@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:express_vet/feature/home-dashboard/seat/presentation/controller/select_seat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -200,18 +201,19 @@ class SelectSeatScreen extends StatelessWidget {
                       }
 
                       return Center(
-                        child: SizedBox(
-                          height: 50.0,
-                          width: 50.0,
-                          child: CircularProgressIndicator(
-                            value: null,
-                            color:
-                                ValueStatic.ticketType == '3'
-                                    ? AppColors.airBusColor
-                                    : AppColors.primaryColor,
-                            strokeWidth: 5.0,
-                          ),
-                        ),
+                        child: SeatSkeleton()
+                        // SizedBox(
+                        //   height: 50.0,
+                        //   width: 50.0,
+                        //   child: CircularProgressIndicator(
+                        //     value: null,
+                        //     color:
+                        //         ValueStatic.ticketType == '3'
+                        //             ? AppColors.airBusColor
+                        //             : AppColors.primaryColor,
+                        //     strokeWidth: 5.0,
+                        //   ),
+                        // ),
                       );
                     },
                   );

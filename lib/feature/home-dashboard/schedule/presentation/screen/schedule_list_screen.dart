@@ -1,4 +1,5 @@
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -79,9 +80,9 @@ class ScheduleListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBodyHaveDiscount(ScheduleListController controller) {
-    return _buildBody(controller, applyFivePercentDiscount: true);
-  }
+  // Widget _buildBodyHaveDiscount(ScheduleListController controller) {
+  //   return _buildBody(controller, applyFivePercentDiscount: true);
+  // }
 
   Widget _buildBodyNoDiscount(ScheduleListController controller) {
     return _buildBody(controller, applyFivePercentDiscount: false);
@@ -96,20 +97,7 @@ class ScheduleListScreen extends StatelessWidget {
         future: controller.state.futureSchedule,
         builder: (context, scheduleData) {
           if (scheduleData.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: SizedBox(
-                height: 50.0,
-                width: 50.0,
-                child: CircularProgressIndicator(
-                  value: null,
-                  color:
-                      ValueStatic.ticketType == '3'
-                          ? AppColors.airBusColor
-                          : AppColors.primaryColor,
-                  strokeWidth: 5.0,
-                ),
-              ),
-            );
+            return ScheduleSkeleton();        
           }
           if (scheduleData.hasData &&
               scheduleData.data!.header!.result == true &&
@@ -118,7 +106,7 @@ class ScheduleListScreen extends StatelessWidget {
               return SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 60),
                     _buildLocationFromTo(controller),

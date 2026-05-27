@@ -536,6 +536,7 @@ final Map<String, String> enUS = {
         'total_return': "Total return",
         'service_fee': "Service Fee",
         'total_mn': 'Total',
+        'discount_platform': "Discount platform",
 
         //schedule_list_one_way
         'remaining_seat': 'Remaining Seat',

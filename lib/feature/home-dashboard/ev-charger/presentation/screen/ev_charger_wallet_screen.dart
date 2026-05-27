@@ -1,4 +1,5 @@
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_wallet_list_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -17,7 +18,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
       body: Obx(() {
         // Loading state (only for initial load)
         if (controller.isLoading.value && !controller.hasWalletData) {
-          return const Center(child: CircularProgressIndicator());
+          return const EvWalletSkeleton();
         }
 
         return CustomScrollView(

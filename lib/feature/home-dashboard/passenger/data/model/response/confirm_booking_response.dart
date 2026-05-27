@@ -32,21 +32,8 @@ class Body {
   List<ConfirmBookingInformation>? confirmBookingInformation;
   List<PaymentMethod>? paymentMethods;
   int? status;
-  // Added missing fields below
-  // String? subTotal;
-  // String? discount;
-  // String? discountPercent;
-  // String? total;
-
-  // class OrderPaymentList {
-  // String? desc;
-  // String? descKh;
-  // String? grandTotal;
-  // String? discount;
-  // String? disTravel;
-  // String? luckyTicket;
-  // String? total;
-
+  String? totalAmount;
+  String? totalDiscount;
 
   Body({
     this.msg,
@@ -55,10 +42,8 @@ class Body {
     this.confirmBookingInformation,
     this.paymentMethods,
     this.status,
-    // this.subTotal,
-    // this.discount,
-    // this.discountPercent,
-    // this.total,
+    this.totalAmount,
+    this.totalDiscount,
   });
 
   factory Body.fromJson(Map<String, dynamic> json) => Body(
@@ -87,10 +72,8 @@ class Body {
               json["paymentMethods"]!.map((x) => PaymentMethod.fromJson(x)),
             ),
     status: json["status"],
-    // subTotal: json["subTotal"],
-    // discount: json["discount"],
-    // discountPercent: json["discountPercent"],
-    // total: json["total"],
+    totalAmount: json["totalAmount"],
+    totalDiscount: json["totalDiscount"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -111,10 +94,8 @@ class Body {
             ? []
             : List<dynamic>.from(paymentMethods!.map((x) => x.toJson())),
     "status": status,
-    // "subTotal": subTotal,
-    // "discount": discount,
-    // "discountPercent": discountPercent,
-    // "total": total,
+    "totalAmount": totalAmount,
+    "totalDiscount": totalDiscount,
   };
 }
 

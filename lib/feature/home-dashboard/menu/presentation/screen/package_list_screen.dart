@@ -1,3 +1,4 @@
+import 'package:express_vet/components/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
@@ -117,7 +118,7 @@ class _PackageListScreenState extends State<PackageListScreen> {
                         },
                       );
                     }
-                    return const Text('');
+                    return const PackageListContentSkeleton();
                   },
                 ),
                 const SizedBox(height: 12),
@@ -321,17 +322,7 @@ class _PackageListScreenState extends State<PackageListScreen> {
                       );
                     }
 
-                    return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      width: double.infinity,
-                      child: const Center(
-                        child: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    );
+                    return const PackageListItemsSkeleton();
                   },
                 ),
               ],

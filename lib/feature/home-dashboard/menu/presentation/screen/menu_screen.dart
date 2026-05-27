@@ -208,7 +208,8 @@ class MenuScreen extends GetView<menu.MenuController> {
             //   await _launch('https://www.vtenh.com/km/');
             // }),
             _buildServiceView(AssetImages.vpsar, 'v_phsar'.tr, () async {
-              await _launch('https://www.facebook.com/VPhsarCambodia');
+              // await _launch('https://www.facebook.com/VPhsarCambodia');
+              await _launch('http://192.168.1.123:5173/?profile=eyJmdWxsbmFtZSI6IlllbSBIZWEiLCJwaG9uZSI6IjA5NiAyNiAzNSA5NDUifQ==');
             }),
           ],
         ),
@@ -673,3 +674,4 @@ class _InAppWebViewScreenState extends State<InAppWebViewScreen> {
     );
   }
 }
+

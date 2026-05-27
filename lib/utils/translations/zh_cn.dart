@@ -393,6 +393,7 @@ final Map<String, String> zhCN = {
         "ticket_price": "票价",
         "sub_total": "小计",
         "discount": "优惠",
+        'discount_platform': "平台折扣",
         "grand_total": "总计",
         "total_vat": "增值税总额",
         "ticket_qr": "登机时请出示二维码",

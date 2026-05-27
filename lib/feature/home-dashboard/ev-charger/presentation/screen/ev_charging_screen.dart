@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -31,7 +32,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
             s.isLoadingWalletBalance;
 
         if (isInitialLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const EVSkeleton();
         }
 
         return _buildBody();

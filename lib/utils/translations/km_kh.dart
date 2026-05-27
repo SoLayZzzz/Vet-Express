@@ -546,6 +546,7 @@ final Map<String, String> kmKH = {
         'total_return': "តម្លៃសរុបត្រលប់",
         'service_fee': "ថ្លៃសេវា",
         'total_mn': 'សរុបចុងក្រោយ',
+        'discount_platform': "បញ្ចុះតម្លៃ",
 
         //schedule_list_one_way
         'remaining_seat': 'កៅអីដែលនៅសល់',

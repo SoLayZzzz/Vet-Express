@@ -241,7 +241,7 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'ACLEDA',
+                              'ACLEDA PAY / KHQR',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.titleColor,
@@ -250,7 +250,7 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              'tap_to_pay_acleda'.tr,
+                              'Bank Account / Wallet Account',
                               style: const TextStyle(
                                 fontSize: 10,
                                 color: AppColors.textColor,

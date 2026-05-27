@@ -1,4 +1,5 @@
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -56,24 +57,13 @@ class SelectDestinationScreen extends GetView<SelectDestinationController> {
           ),
         ),
       ),
+      
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
-            return Center(
-              child: SizedBox(
-                height: 50.0,
-                width: 50.0,
-                child: CircularProgressIndicator(
-                  value: null,
-                  color:
-                      ValueStatic.ticketType == '3'
-                          ? AppColors.airBusColor
-                          : AppColors.primaryColor,
-                  strokeWidth: 5.0,
-                ),
-              ),
-            );
+            return SkeletonLoadingList();
           }
+          
 
           if (controller.items.isEmpty) {
             return Center(

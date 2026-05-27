@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:express_vet/feature/home-dashboard/payment/presentaion/controller/payment_aba_package_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -447,13 +448,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.7,
             width: double.infinity,
-            child: const Center(
-              child: SizedBox(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(),
-              ),
-            ),
+            child: const PackageInfoSkeleton(),
           );
         },
       ),

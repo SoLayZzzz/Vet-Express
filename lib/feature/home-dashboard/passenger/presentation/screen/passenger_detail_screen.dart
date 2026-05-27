@@ -9,6 +9,7 @@ import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:express_vet/feature/home-dashboard/schedule/presentation/screen/ticket_schedule_car_detail_map_screen.dart';
 import '../controller/passenger_deatail_controller.dart';
 import '../../../../../api/travel_package.dart';
@@ -962,16 +963,7 @@ Widget _buildChooseGender(List<String> gender, int index, {VoidCallback? onChang
       future: controller.state.initialLoadFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return Center(
-            child: CircularProgressIndicator(
-              value: null,
-              color:
-                  ValueStatic.ticketType == '3'
-                      ? AppColors.airBusColor
-                      : AppColors.primaryColor,
-              strokeWidth: 3.0,
-            ),
-          );
+          return const PassengerSkeleton();
         }
 
         return GetBuilder<PassengerDetailController>(
