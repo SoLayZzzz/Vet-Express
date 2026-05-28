@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_station_list_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,10 @@ import '../../../../../utils/app_colors.dart';
 
 class EvAllStationScreen extends GetView<EvStationController> {
   const EvAllStationScreen({super.key});
+
+  void _openSearchScreen() {
+    Get.to(() => const EvStationSearchScreen());
+  }
 
   void _onStationSelected(EvStationListDatum station) {
     if (station.lats != null && station.longs != null) {
@@ -33,11 +38,15 @@ class EvAllStationScreen extends GetView<EvStationController> {
 
   void _showProvinceFilterDialog() {
     controller.filteredProvinces.assignAll(controller.allProvinces);
-    Get.dialog(const ProvinceFilterDialog());
+    Get.to(() => const EvProvinceFilterScreen());
   }
 
   @override
   Widget build(BuildContext context) {
+    controller.autoOpenPanelOnEnter();
+    final screenHeight = MediaQuery.of(context).size.height / 1.1;
+    final safeTop = MediaQuery.of(context).padding.top;
+    final reservedTop = safeTop + (screenHeight * 0.02) + 80;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBarVET().appBar(context, "ev_charger".tr),
@@ -111,7 +120,10 @@ class EvAllStationScreen extends GetView<EvStationController> {
                           ),
                           const SizedBox(width: 4),
                           GestureDetector(
-                            onTap: controller.clearProvinceFilter,
+                            onTap: () async {
+                              controller.clearProvinceFilter();
+                              await controller.resetMapToDefaultView();
+                            },
                             child: const Icon(
                               Icons.close,
                               size: 14,
@@ -124,48 +136,14 @@ class EvAllStationScreen extends GetView<EvStationController> {
                   ),
 
                 // Search Badge (if searching)
-                if (controller.searchQuery.value.isNotEmpty)
-                  Positioned(
-                    top: MediaQuery.of(context).size.height * 0.12,
-                    left: controller.selectedProvince.value != null ? 120 : 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '"${controller.searchQuery.value}"',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: controller.clearSearch,
-                            child: const Icon(
-                              Icons.close,
-                              size: 14,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                
 
                 // Sliding Up Panel
                 SlidingUpPanel(
                   controller: controller.panelController,
                   minHeight: 0,
-                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                  maxHeight: (screenHeight - reservedTop).clamp(0.0, screenHeight),
+                  snapPoint: 0.5,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
@@ -281,58 +259,59 @@ class EvAllStationScreen extends GetView<EvStationController> {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              controller.panelController.open();
-              FocusScope.of(
-                Get.context!,
-              ).requestFocus(controller.searchFocusNode);
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: controller.searchController.text.isNotEmpty ? 0 : 12,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+            onTap: _openSearchScreen,
+            child: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller.searchController,
+              builder: (context, value, _) {
+                final searchText = value.text.trim();
+                final hasValue = searchText.isNotEmpty;
+
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: hasValue ? 0 : 12,
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextField(
-                      controller: controller.searchController,
-                      focusNode: controller.searchFocusNode,
-                      decoration: InputDecoration(
-                        hintText: 'search_station'.tr,
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
                       ),
-                      style: const TextStyle(fontSize: 16),
-                      onTap: () {
-                        controller.panelController.open();
-                      },
-                    ),
+                    ],
                   ),
-                  if (controller.searchController.text.isNotEmpty)
-                    IconButton(
-                      icon: const Icon(Icons.clear, size: 20),
-                      onPressed: () {
-                        controller.searchController.clear();
-                        controller.clearSearch();
-                      },
-                    ),
-                ],
-              ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search, color: Colors.grey),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          searchText.isEmpty
+                              ? 'search_station'.tr
+                              : searchText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color:
+                                searchText.isEmpty ? Colors.grey : Colors.black,
+                          ),
+                        ),
+                      ),
+                      if (hasValue)
+                        IconButton(
+                          icon: const Icon(Icons.clear, size: 20),
+                          onPressed: () async {
+                            controller.clearAllFilters();
+                            await controller.resetMapToDefaultView();
+                          },
+                        ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -434,7 +413,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
               return _buildErrorState();
             }
 
-            final stations = controller.allStations;
+            final stations = controller.stationsForMap;
 
             if (stations.isEmpty) {
               if (controller.searchQuery.value.isNotEmpty ||
@@ -451,7 +430,17 @@ class EvAllStationScreen extends GetView<EvStationController> {
               itemCount: stations.length,
               itemBuilder: (context, index) {
                 final station = stations[index];
-                return _buildStationCard(station);
+                final selectedId = controller.selectedStationId.value;
+                final isSelected =
+                    selectedId != null && station.id != null && selectedId == station.id;
+                final child = _buildStationCard(station, isSelected: isSelected);
+                if (station.id == null) {
+                  return child;
+                }
+                return KeyedSubtree(
+                  key: controller.stationItemKey(station.id!),
+                  child: child,
+                );
               },
             );
           }),
@@ -460,12 +449,16 @@ class EvAllStationScreen extends GetView<EvStationController> {
     );
   }
 
-  Widget _buildStationCard(EvStationListDatum station) {
+  Widget _buildStationCard(EvStationListDatum station, {required bool isSelected}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border:
+            isSelected
+                ? Border.all(color: AppColors.primaryColor, width: 1)
+                : null,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withValues(alpha: 0.1),
@@ -601,10 +594,15 @@ class EvAllStationScreen extends GetView<EvStationController> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
+                        
+                      ],
+                    ),
 
-                        const SizedBox(width: 16),
+                     const SizedBox(height: 8),
 
-                        Icon(
+                    Row(
+                      children: [
+                          Icon(
                           Icons.attach_money,
                           size: 16,
                           color: Colors.blueGrey[700],
@@ -617,14 +615,15 @@ class EvAllStationScreen extends GetView<EvStationController> {
                             fontSize: 12,
                           ),
                         ),
+                         const SizedBox(width: 10),
                         Text(
-                          "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'}\$/kWh",
-                          style: const TextStyle(
-                            color: Color(0xFFE65100),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
+                              "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'}\$/kWh",
+                              style: const TextStyle(
+                                color: Color(0xFFE65100),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
                       ],
                     ),
 
@@ -772,6 +771,353 @@ class EvAllStationScreen extends GetView<EvStationController> {
             child: Text('clear_filters'.tr),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class EvStationSearchScreen extends GetView<EvStationController> {
+  const EvStationSearchScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBarVET().appBar(context, 'search_station'.tr),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller.searchController,
+              builder: (context, value, _) {
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: value.text.isNotEmpty ? 0 : 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search, color: Colors.grey),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextField(
+                          controller: controller.searchController,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: 'search_station'.tr,
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      if (value.text.isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.clear, size: 20),
+                          onPressed: () {
+                            controller.searchController.clear();
+                            controller.clearSearch();
+                          },
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (controller.hasError.value) {
+                return Center(child: Text(controller.errorMessage.value));
+              }
+
+              final stations = controller.allStations;
+              if (stations.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              return ListView.separated(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                itemCount: stations.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final station = stations[index];
+                  return InkWell(
+                    onTap: () async {
+                      final stationName = station.name?.trim() ?? '';
+
+                      if (stationName.isNotEmpty) {
+                        controller.searchController.text = stationName;
+                        controller.searchQuery.value = stationName;
+                        controller.isSearching.value = true;
+
+                        await controller.fetchEvStations(
+                          searchText: stationName,
+                          provinceId: controller.selectedProvince.value?.id,
+                        );
+                      }
+
+                      if (station.id != null) {
+                        controller.selectedStationId.value = station.id;
+                      }
+                      if (station.lats != null && station.longs != null) {
+                        controller.moveToStation(
+                          LatLng(
+                            double.parse(station.lats!),
+                            double.parse(station.longs!),
+                          ),
+                        );
+                      }
+                      Get.back();
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        controller.openPanelToDefaultPosition();
+                        controller.revealSelectedStationInPanel();
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                  
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.ev_station,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  station.name ?? 'Unknown Station',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  station.address ?? '',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class EvProvinceFilterScreen extends GetView<EvStationController> {
+  const EvProvinceFilterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    if (controller.filteredProvinces.isEmpty &&
+        controller.provinceSearchController.text.trim().isEmpty) {
+      controller.filteredProvinces.assignAll(controller.allProvinces);
+    }
+    return Scaffold(
+      appBar: AppBarVET().appBar(context, 'select_province'.tr),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: controller.provinceSearchController,
+                builder: (context, value, _) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: value.text.isNotEmpty ? 0 : 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.search, color: Colors.grey),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: TextField(
+                            controller: controller.provinceSearchController,
+                            autofocus: true,
+                            decoration: InputDecoration(
+                              hintText: 'search_province'.tr,
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        if (value.text.isNotEmpty)
+                          IconButton(
+                            icon: const Icon(Icons.clear, size: 20),
+                            onPressed: controller.clearProvinceSearch,
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoadingProvinces.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final allProvinces = controller.allProvinces;
+                  if (allProvinces.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  if (controller.filteredProvinces.isEmpty &&
+                      controller.provinceSearchController.text.isNotEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemCount: controller.filteredProvinces.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final province = controller.filteredProvinces[index];
+                      final isSelected =
+                          controller.selectedProvince.value?.id == province.id;
+
+                      return InkWell(
+                        onTap: () {
+                          controller.selectProvince(province);
+                          Get.back();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
+
+                            borderRadius: BorderRadius.circular(12),
+                          
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor.withValues(
+                                    alpha: 0.12,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Image.asset(
+                                  AssetImages.location,
+                                  color: isSelected ? AppColors.primaryColor : AppColors.primaryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      province.nameEn ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      province.nameKh ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (isSelected)
+                                const Icon(
+                                  Icons.check,
+                                  color: AppColors.primaryColor,
+                                )
+                              else
+                                const Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.grey,
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

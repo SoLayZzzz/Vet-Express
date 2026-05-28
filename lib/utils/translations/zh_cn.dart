@@ -83,7 +83,7 @@ final Map<String, String> zhCN = {
         // 'ev_charger': '充电站',
         // 'ev_charger1': '充电站',
         // 'search_station': '查找充电站',
-        // 'ev_station': '充电站',
+        'ev_station': '充电站',
         // 'select_province': '选择省份',
         // 'search_province': '查询省份',
         // 'direction': '方向',

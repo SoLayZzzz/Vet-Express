@@ -33,11 +33,14 @@ class BaseUrl {
       ? 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'
       : 'https://qacltom.udaya-tech.com/vetExpressTicketApiQA/';
   static final String BASE_URL_EV = _flavor == 'prod'
-      ? 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'
+      ? 'https://newpapi.utebi.com/vetEvChargerCustomerAPi/'
       : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
   static final String BASE_URL_SLIDE_IMAGE = _flavor == 'prod'
       ? 'https://oc.utlog.net/public/slide_photo/'
       : 'https://qacltom.udaya-tech.com/UtLogVET/slide_photo/';
+  static final String BASE_URL_SLIDE_IMAGE_EV = _flavor == 'prod'
+      ? 'https://newpapisystem.utebi.com/vetEvChargerFrontendAPi/'
+      : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
   static final String PAYMENT_URL = _flavor == 'prod'
       ? 'https://vetticket.utlog.net/'
       : 'https://qacl.udaya-tech.com/0430_CamTicket/';

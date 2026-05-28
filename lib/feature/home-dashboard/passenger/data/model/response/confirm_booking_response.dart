@@ -34,6 +34,7 @@ class Body {
   int? status;
   String? totalAmount;
   String? totalDiscount;
+  String? subTotal;
 
   Body({
     this.msg,
@@ -44,6 +45,7 @@ class Body {
     this.status,
     this.totalAmount,
     this.totalDiscount,
+    this.subTotal,
   });
 
   factory Body.fromJson(Map<String, dynamic> json) => Body(
@@ -74,6 +76,7 @@ class Body {
     status: json["status"],
     totalAmount: json["totalAmount"],
     totalDiscount: json["totalDiscount"],
+    subTotal: json["subTotal"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -96,6 +99,7 @@ class Body {
     "status": status,
     "totalAmount": totalAmount,
     "totalDiscount": totalDiscount,
+    "subTotal": subTotal,
   };
 }
 

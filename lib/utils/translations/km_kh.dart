@@ -82,7 +82,7 @@ final Map<String, String> kmKH = {
         // 'ev_charger': 'ស្ថានីយ៍\nបញ្ចូលអគ្គិសនី',
         // 'ev_charger1': 'ស្ថានីយ៍បញ្ចូលអគ្គិសនី',
         // 'search_station': 'ស្វែងរកស្ថានីយ៍',
-        // 'ev_station': 'ស្ថានីយ៍ EV',
+        'ev_station': 'ស្ថានីយ៍ EV',
         // 'select_province': 'ជ្រើសរើសខេត្ត',
         // 'search_province': 'ស្វែងរកខេត្ដ',
         // 'direction': 'ទិសដៅ',

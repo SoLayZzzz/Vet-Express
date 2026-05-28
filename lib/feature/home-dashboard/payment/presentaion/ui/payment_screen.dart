@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/response/confirm_booking_response.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -126,9 +127,11 @@ class _PaymentScreenState extends State<PaymentScreen>
         0.0,
         (sum, item) => sum + _parseAmount(item.grandTotal),
       );
-      final apiSubTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.grandTotal);
-      final apiPlatformDiscountAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.discount);
-      final apiTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.total);
+      // final apiSubTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.grandTotal);
+      final apiSubTotalAll = _parseAmount(widget.datas.body?.subTotal);
+       final apiPlatformDiscountAll = _parseAmount(widget.datas.body?.totalDiscount);
+      // final apiTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.total);
+      final apiTotalAll = _parseAmount(widget.datas.body?.totalAmount);
 
       final baseSubTotalAll =
           apiSubTotalAll > 0 ? apiSubTotalAll : grandTotalAll;
@@ -213,7 +216,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                             //* choose payment
                             Text(
                               'choose_payment'.tr,
-                              style: const TextStyle(
+                              style:  TextStyle(
                                 fontSize: 16,
                                 color: AppColors.titleColor,
                                 fontWeight: FontWeight.w600,
@@ -262,9 +265,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                             children: [
                               Text(
                                 "payment_method".tr,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -282,7 +285,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                     : "",
                                 style: TextStyle(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   color: AppColors.primaryColor,
                                 ),
                               ),
@@ -311,71 +314,72 @@ class _PaymentScreenState extends State<PaymentScreen>
       (sum, item) => sum + _parseAmount(item.grandTotal),
     );
 
-    return ListView.separated(
-                            scrollDirection: Axis.vertical,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            primary: false,
-                            itemCount:
-                                widget
-                                    .datas
-                                    .body!
-                                    .confirmBookingInformation!
-                                    .length,
-                            itemBuilder: (context, index) {
-                              final data =
-                                  widget
-                                      .datas
-                                      .body!
-                                      .confirmBookingInformation![index];
-                              final isRoundTrip =
-                                  widget
-                                      .datas
-                                      .body!
-                                      .confirmBookingInformation!
-                                      .length ==
-                                  2;
-                              final companyTypeForSegment =
-                                  index == 0
-                                      ? ValueStatic.companyTypeOneWay
-                                      : ValueStatic.companyTypeTwoWay;
-                              final isBuvaSea = companyTypeForSegment == 4;
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        final interTheme = theme.copyWith(
+          textTheme: GoogleFonts.interTextTheme(theme.textTheme),
+          primaryTextTheme: GoogleFonts.interTextTheme(theme.primaryTextTheme),
+        );
 
-                              return isRoundTrip
-                                  ///round trip
-                                  ? _buildPaymentRooundtrip(
-                                      index,
-                                      data,
-                                      isBuvaSea,
-                                      isRoundTrip,
-                                      grandTotalAll,
-                                      travelPackageDiscountAll,
-                                      selectedDiscountAmount,
-                                      discountTitle,
-                                      selectedServiceFeeAmount,
-                                      totalPayableAll,
-                                      baseSubTotalAll,
-                                      apiPlatformDiscountAll,
-                                      baseTotalAll,
-                                    )
-                                  ///one way
-                                  : _buildPaymentOneway(
-                                      data,
-                                      isBuvaSea,
-                                      index,
-                                      selectedDiscountAmount,
-                                      discountTitle,
-                                      selectedServiceFeeAmount,
-                                      baseSubTotalAll,
-                                      apiPlatformDiscountAll,
-                                      baseTotalAll,
-                                      totalPayableAll,
-                                    );
-                            },
-                            separatorBuilder: (context, index) {
-                              return SizedBox.shrink();
-                            },
-                          );
+        return Theme(
+          data: interTheme,
+          child: ListView.separated(
+            scrollDirection: Axis.vertical,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            primary: false,
+            itemCount:
+                widget.datas.body!.confirmBookingInformation!.length,
+            itemBuilder: (context, index) {
+              final data =
+                  widget.datas.body!.confirmBookingInformation![index];
+              final isRoundTrip =
+                  widget.datas.body!.confirmBookingInformation!.length == 2;
+              final companyTypeForSegment =
+                  index == 0
+                      ? ValueStatic.companyTypeOneWay
+                      : ValueStatic.companyTypeTwoWay;
+              final isBuvaSea = companyTypeForSegment == 4;
+
+              return isRoundTrip
+                  ///round trip
+                  ? _buildPaymentRooundtrip(
+                      index,
+                      data,
+                      isBuvaSea,
+                      isRoundTrip,
+                      grandTotalAll,
+                      travelPackageDiscountAll,
+                      selectedDiscountAmount,
+                      discountTitle,
+                      selectedServiceFeeAmount,
+                      totalPayableAll,
+                      baseSubTotalAll,
+                      apiPlatformDiscountAll,
+                      baseTotalAll,
+                    )
+                  ///one way
+                  : _buildPaymentOneway(
+                      data,
+                      isBuvaSea,
+                      index,
+                      selectedDiscountAmount,
+                      discountTitle,
+                      selectedServiceFeeAmount,
+                      baseSubTotalAll,
+                      apiPlatformDiscountAll,
+                      baseTotalAll,
+                      totalPayableAll,
+                    );
+            },
+            separatorBuilder: (context, index) {
+              return SizedBox.shrink();
+            },
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildPaymentRooundtrip(
@@ -413,7 +417,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                             Text(
                                               '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
                                               style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
+                                                fontWeight: FontWeight.w500,
                                                 fontSize: 16,
                                               ),
                                             ),
@@ -491,21 +495,21 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                     'sub_total'.tr,
                                                     "\$${baseSubTotalAll.toStringAsFixed(2)}",
                                                   ),
-                                                  if (_hasVisibleAmount(
-                                                    apiPlatformDiscountAll,
-                                                  ))
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 6.0,
-                                                          ),
-                                                      child: view(
-                                                        'discount_platform'.tr,
-                                                        "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
-                                                        textColor:
-                                                            AppColors.greyColor,
-                                                      ),
-                                                    ),
+                                                  // if (_hasVisibleAmount(
+                                                  //   apiPlatformDiscountAll,
+                                                  // ))
+                                                  //   Padding(
+                                                  //     padding:
+                                                  //         const EdgeInsets.symmetric(
+                                                  //           vertical: 6.0,
+                                                  //         ),
+                                                  //     child: view(
+                                                  //       'discount_platform'.tr,
+                                                  //       "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
+                                                  //       textColor:
+                                                  //           AppColors.greyColor,
+                                                  //     ),
+                                                  //   ),
                                                   const Divider(
                                                     thickness: 1,
                                                   ),
@@ -623,7 +627,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                             Text(
                                               '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
                                               style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
+                                                fontWeight: FontWeight.w500,
                                                 fontSize: 16,
                                               ),
                                             ),
@@ -710,14 +714,14 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                     "\$${baseSubTotalAll.toStringAsFixed(2)}",
                                                   ),
                                                   
-                                                  if (_hasVisibleAmount(
-                                                    apiPlatformDiscountAll,
-                                                  ))
-                                                    view(
-                                                      'discount_platform'.tr,
-                                                      "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
-                                                      textColor: AppColors.greyColor,
-                                                    ),
+                                                  // if (_hasVisibleAmount(
+                                                  //   apiPlatformDiscountAll,
+                                                  // ))
+                                                  //   view(
+                                                  //     'discount_platform'.tr,
+                                                  //     "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
+                                                  //     textColor: AppColors.greyColor,
+                                                  //   ),
                                                   if (_hasVisibleAmount(
                                                     _getTravelPackageDiscountItem(
                                                       widget
@@ -765,7 +769,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                   view(
                                                     "total_ticket_price".tr,
                                                     "\$${totalPayableAll.toStringAsFixed(2)}",
-                                                    fontWeight: FontWeight.bold,
+                                                    fontWeight: FontWeight.w600,
                                                   ),
                                                 ],
                                                 ),
@@ -967,9 +971,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                          Text(
                           'total_price'.tr,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                           color: Colors.black, 
-                          fontWeight: FontWeight.w500,
+                          // fontWeight: FontWeight.w500,
                           ),
                          ),
                          Text(
@@ -977,7 +981,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                            style: const TextStyle(
                      fontSize: 16,
                           color: Colors.black, 
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                            ),
                                          ),
                        ],
@@ -986,9 +990,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                   //
                   // Button pay 
                    Expanded(
-                    flex: 1,
+                    flex: 2,
                      child: SizedBox(
-                        height: 60,
+                        height: 50,
                         child: ElevatedButton(
                           onPressed: isPaymentSelected
                               ? () async {
@@ -1022,11 +1026,15 @@ class _PaymentScreenState extends State<PaymentScreen>
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryColor,
-                            disabledBackgroundColor: AppColors.greyColor,
+                            disabledBackgroundColor: Colors.transparent,
                             foregroundColor: Colors.white,
-                            disabledForegroundColor: Colors.white,
+                            disabledForegroundColor: AppColors.titleColor,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: AppColors.primaryColor,
+                                width: 1
+                              ),
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
@@ -1097,7 +1105,6 @@ class _PaymentScreenState extends State<PaymentScreen>
             title,
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w500,
               color: textColor,
             ),
           ),

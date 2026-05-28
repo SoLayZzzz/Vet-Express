@@ -14,10 +14,19 @@ class EvStationController extends GetxController {
 
   EvStationController(this.useCase);
 
+  static const double _defaultPanelOpenPosition = 0.5;
+  static const LatLng _defaultMapCenter = LatLng(
+    11.578036036368854,
+    104.922274625954,
+  );
+  static const double _defaultMapZoom = 6;
+
   final PanelController panelController = PanelController();
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
   Timer? _searchDebounce;
+
+  bool _didAutoOpenPanel = false;
 
   // Station related variables
   var evStationResponse = Rxn<EvStationListResponse>();
@@ -48,6 +57,9 @@ class EvStationController extends GetxController {
   var showFavoriteAnimation = false.obs;
   var favoriteStationName = ''.obs;
 
+  final RxnInt selectedStationId = RxnInt();
+  final Map<int, GlobalKey> _stationItemKeys = <int, GlobalKey>{};
+
   // Track favorite operations to prevent duplicates
   final Set<int> _pendingFavoriteOperations = <int>{};
 
@@ -65,6 +77,22 @@ class EvStationController extends GetxController {
     super.onInit();
   }
 
+  Future<void> _moveMapToFirstStation(
+    List<EvStationListDatum> stations, {
+    double zoom = 13,
+  }) async {
+    for (final s in stations) {
+      final latStr = s.lats;
+      final lngStr = s.longs;
+      if (latStr == null || lngStr == null) continue;
+      final lat = double.tryParse(latStr);
+      final lng = double.tryParse(lngStr);
+      if (lat == null || lng == null) continue;
+      await moveToStation(LatLng(lat, lng), zoom: zoom);
+      break;
+    }
+  }
+
   @override
   void onClose() {
     _searchDebounce?.cancel();
@@ -77,10 +105,50 @@ class EvStationController extends GetxController {
     super.onClose();
   }
 
+  GlobalKey stationItemKey(int stationId) {
+    return _stationItemKeys.putIfAbsent(stationId, () => GlobalKey());
+  }
+
+  void revealSelectedStationInPanel() {
+    final id = selectedStationId.value;
+    if (id == null) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final key = _stationItemKeys[id];
+      final ctx = key?.currentContext;
+      if (ctx == null) return;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        alignment: 0.1,
+      );
+    });
+  }
+
   void _onSearchFocusChanged() {
     if (searchFocusNode.hasFocus) {
-      panelController.open();
+      openPanelToDefaultPosition();
     }
+  }
+
+  void openPanelToDefaultPosition() {
+    try {
+      panelController.animatePanelToPosition(
+        _defaultPanelOpenPosition,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    } catch (_) {}
+  }
+
+  void autoOpenPanelOnEnter() {
+    if (_didAutoOpenPanel) return;
+    _didAutoOpenPanel = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      openPanelToDefaultPosition();
+    });
   }
 
   void _onSearchChanged() {
@@ -229,13 +297,17 @@ class EvStationController extends GetxController {
 
     if (query.isEmpty && selectedProvince.value == null) {
       // If no search and no province filter, show all stations
-      fetchEvStations();
+      fetchEvStations().then((_) {
+        _moveMapToFirstStation(stationsForMap);
+      });
     } else {
       // Search with current province filter
       fetchEvStations(
         searchText: query.isEmpty ? null : query,
         provinceId: selectedProvince.value?.id,
-      );
+      ).then((_) {
+        _moveMapToFirstStation(stationsForMap);
+      });
     }
   }
 
@@ -258,22 +330,28 @@ class EvStationController extends GetxController {
   }
 
   // Select province and filter stations
-  void selectProvince(EvProvinceDatum? province) {
+  Future<void> selectProvince(EvProvinceDatum? province) async {
     selectedProvince.value = province;
 
+    final query = searchController.text.trim();
+
     // Fetch stations with province filter
-    fetchEvStations(
-      searchText: searchQuery.value.isEmpty ? null : searchQuery.value,
+    await fetchEvStations(
+      searchText: query.isEmpty ? null : query,
       provinceId: province?.id,
     );
+
+    await _moveMapToFirstStation(stationsForMap);
   }
 
   void clearProvinceFilter() {
     selectedProvince.value = null;
 
+    final query = searchController.text.trim();
+
     // Fetch all stations or with current search
     fetchEvStations(
-      searchText: searchQuery.value.isEmpty ? null : searchQuery.value,
+      searchText: query.isEmpty ? null : query,
     );
   }
 
@@ -335,12 +413,23 @@ class EvStationController extends GetxController {
   }
 
   /// Move to specific station
-  Future<void> moveToStation(LatLng position) async {
+  Future<void> moveToStation(LatLng position, {double zoom = 15}) async {
     try {
       final controller = await mapController.future;
-      await controller.animateCamera(CameraUpdate.newLatLngZoom(position, 15));
+      await controller.animateCamera(CameraUpdate.newLatLngZoom(position, zoom));
     } catch (e) {
       debugPrint('Error moving to station: $e');
+    }
+  }
+
+  Future<void> resetMapToDefaultView() async {
+    try {
+      final controller = await mapController.future;
+      await controller.animateCamera(
+        CameraUpdate.newLatLngZoom(_defaultMapCenter, _defaultMapZoom),
+      );
+    } catch (e) {
+      debugPrint('Error resetting map: $e');
     }
   }
 
@@ -370,7 +459,22 @@ class EvStationController extends GetxController {
   bool get status => evStationResponse.value?.body?.status ?? false;
 
   /// Get stations for map markers
-  List<EvStationListDatum> get stationsForMap => allStations;
+  List<EvStationListDatum> get stationsForMap {
+    final provinceId = selectedProvince.value?.id;
+    final query = searchController.text.trim().toLowerCase();
+
+    return allStations.where((station) {
+      if (provinceId != null && station.provinceId != provinceId) {
+        return false;
+      }
+      if (query.isEmpty) {
+        return true;
+      }
+      final name = (station.name ?? '').toLowerCase();
+      final address = (station.address ?? '').toLowerCase();
+      return name.contains(query) || address.contains(query);
+    }).toList();
+  }
 
   /// Build markers for Google Map
   Set<Marker> buildMarkers(Function(EvStationListDatum) onStationSelected) {
@@ -404,8 +508,9 @@ class EvStationController extends GetxController {
 
   /// Refresh data
   void refreshData() {
+    final query = searchController.text.trim();
     fetchEvStations(
-      searchText: searchQuery.value.isEmpty ? null : searchQuery.value,
+      searchText: query.isEmpty ? null : query,
       provinceId: selectedProvince.value?.id,
     );
     fetchEvProvinces(1, 100);
@@ -420,7 +525,10 @@ class EvStationController extends GetxController {
 
   /// Clear all filters
   void clearAllFilters() {
+    _searchDebounce?.cancel();
     selectedProvince.value = null;
+    selectedStationId.value = null;
+    searchController.clear();
     searchQuery.value = '';
     isSearching.value = false;
     provinceSearchController.clear();

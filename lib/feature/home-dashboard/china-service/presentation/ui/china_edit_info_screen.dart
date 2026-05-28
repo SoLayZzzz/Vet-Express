@@ -106,7 +106,7 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
               _buildTextField(_addressController, isMultiline: true),
 
               const SizedBox(height: 40),
-              // _buildSaveButton(),
+              _buildSaveButton(),
             ],
           ),
         ),

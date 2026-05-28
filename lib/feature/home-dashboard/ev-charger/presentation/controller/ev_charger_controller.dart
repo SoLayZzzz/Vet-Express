@@ -192,7 +192,7 @@ class EvChargerController extends StateController<EvChargerUiState> {
           if (imageUrl.startsWith('http')) return imageUrl;
           final clean =
               imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
-          return "${BaseUrl.BASE_URL_EV}$clean";
+          return "${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}$clean";
         })
         .toList();
   }

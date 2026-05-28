@@ -754,16 +754,26 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                     ),
                                                   )
                                                   .toList(),
-                                          value:
-                                              nationalityIds[index] != null
-                                                  ? data.data?.body!.data
-                                                      ?.firstWhere(
-                                                        (item) =>
-                                                            item.id ==
-                                                            nationalityIds[index],
-                                                      )
-                                                      .name
-                                                  : null,
+                                          value: () {
+                                            final selectedId =
+                                                nationalityIds[index];
+                                            if (selectedId == null) {
+                                              return null;
+                                            }
+                                            final list = data
+                                                .data
+                                                ?.body
+                                                ?.data;
+                                            if (list == null || list.isEmpty) {
+                                              return null;
+                                            }
+                                            for (final item in list) {
+                                              if (item.id == selectedId) {
+                                                return item.name;
+                                              }
+                                            }
+                                            return null;
+                                          }(),
                                           onChanged: (value) {
                                             nationalityIds[index] =
                                                 data.data?.body!.data
@@ -924,7 +934,7 @@ Widget _buildChooseGender(List<String> gender, int index, {VoidCallback? onChang
           onChanged?.call();
         },
       ),
-      const SizedBox(width: 20),
+      const SizedBox(width: 30),
       _buildGenderItem(
         value: '1',
         label: "male".tr,

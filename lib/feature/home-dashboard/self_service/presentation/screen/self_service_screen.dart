@@ -16,6 +16,17 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
 
   final _formKey = GlobalKey<FormState>();
 
+  Widget _requiredLabel(String text, TextStyle style) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(text: text, style: style),
+          TextSpan(text: ' *', style: style.copyWith(color: Colors.red)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,9 +55,9 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text(
+                    _requiredLabel(
                       'sender_telephone'.tr,
-                      style: const TextStyle(color: Colors.grey),
+                      const TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 5),
                     TextFormField(
@@ -70,9 +81,9 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text(
+                    _requiredLabel(
                       'receiver_telephone'.tr,
-                      style: const TextStyle(color: Colors.grey),
+                      const TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 5),
                     TextFormField(
@@ -143,7 +154,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                 );
                               },
                               decoration: Style.inputText(
-                                'province_city'.tr,
+                                '${'province_city'.tr} *',
                                 iconRight: Ionicons.chevron_forward_outline,
                               ),
                             ),
@@ -189,7 +200,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                 );
                               },
                               decoration: Style.inputText(
-                                'location'.tr,
+                                '${'location'.tr} *',
                                 iconRight: Ionicons.chevron_forward_outline,
                               ),
                             ),
@@ -207,9 +218,9 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text(
+                    _requiredLabel(
                       'items_price'.tr,
-                      style: const TextStyle(color: Colors.grey),
+                      const TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 5),
                     TextFormField(
@@ -239,9 +250,9 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                _requiredLabel(
                                   'amount'.tr,
-                                  style: const TextStyle(color: Colors.grey),
+                                  const TextStyle(color: Colors.grey),
                                 ),
                                 const SizedBox(height: 5),
                                 TextFormField(
@@ -271,9 +282,9 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                _requiredLabel(
                                   'unit'.tr,
-                                  style: const TextStyle(color: Colors.grey),
+                                  const TextStyle(color: Colors.grey),
                                 ),
                                 const SizedBox(height: 5),
                                 TextFormField(

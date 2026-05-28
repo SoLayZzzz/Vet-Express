@@ -64,94 +64,107 @@ class _TicketScheduleCarDetailMapScreenState
                           _mapController = controller;
                         },
                       ),
-                    Positioned(
-                      left: 10,
-                      child: Container(
-                        height: 48,
-                        width: 48,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.close, size: 24),
-                        ),
+                    _buttonClose(context),
+                    _buttonRoteToGoogleMapApp(context),
+                  ],
+                ),
+              ),
+            ),
+            
+            _buildAddressDetail(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddressDetail() {
+    return Positioned(
+            left: 1,
+            right: 1,
+            bottom: 1,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.name,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Positioned(
-                      right: 10,
-                      bottom: MediaQuery.of(context).size.height * 1 / 7,
-                      child: Container(
-                        height: 48,
-                        width: 48,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Address: ",
+                          style: TextStyle(fontSize: 14),
                         ),
-                        child: IconButton(
-                          onPressed: () {
-                            _openGoogleMaps();
-                          },
-                          icon: Image.asset(
-                            "assets/images/ic_to_map.png",
-                            height: 24,
-                          ),
-                        ),
-                      ),
+                        const SizedBox(width: 5),
+                        Expanded(child: Text(widget.address)),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-            Positioned(
-              left: 1,
-              right: 1,
-              bottom: 1,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.name,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+          );
+  }
+
+  Widget _buttonRoteToGoogleMapApp(BuildContext context) {
+    return Positioned(
+                    right: 10,
+                    bottom: MediaQuery.of(context).size.height * 1 / 7,
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          _openGoogleMaps();
+                        },
+                        icon: Image.asset(
+                          "assets/images/ic_to_map.png",
+                          height: 24,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Address: ",
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(child: Text(widget.address)),
-                        ],
+                    ),
+                  );
+  }
+
+  Widget _buttonClose(BuildContext context) {
+    return Positioned(
+                    left: 10,
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.close, size: 24),
+                      ),
+                    ),
+                  );
   }
 
   void _openGoogleMaps() async {

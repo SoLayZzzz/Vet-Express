@@ -1054,7 +1054,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
       if (state.genderOneWay.isNotEmpty &&
           (g == 1 || g == 2) &&
-          state.genderOneWay[0] == '0') {
+          (state.genderOneWay[0] == '0' || state.genderOneWay[0].isEmpty)) {
         state.genderOneWay[0] = g.toString();
       }
       if (state.nationalOneWay.isNotEmpty &&
@@ -1071,7 +1071,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
       if (state.genderTwoWay.isNotEmpty &&
           (g == 1 || g == 2) &&
-          state.genderTwoWay[0] == '0') {
+          (state.genderTwoWay[0] == '0' || state.genderTwoWay[0].isEmpty)) {
         state.genderTwoWay[0] = g.toString();
       }
       if (state.nationalTwoWay.isNotEmpty &&
@@ -1193,5 +1193,26 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     for (final c in state.nameTwoWay) {
       c.dispose();
     }
+
+    state.genderOneWay.clear();
+    state.nationalOneWay.clear();
+    state.nationalityIds.clear();
+    state.dobOneWay.clear();
+    state.dobOneWayList.clear();
+    state.passportOneWay.clear();
+    state.nameOneWay.clear();
+
+    state.genderTwoWay.clear();
+    state.nationalTwoWay.clear();
+    state.nationalityIdsTwoWay.clear();
+    state.dobTwoWay.clear();
+    state.dobTwoWayList.clear();
+    state.passportTwoWay.clear();
+    state.nameTwoWay.clear();
+
+    state.boardingPointOneway.clear();
+    state.dropOffPointOneway.clear();
+    state.boardingPointTwoWay.clear();
+    state.dropOffPointTwoWay.clear();
   }
 }

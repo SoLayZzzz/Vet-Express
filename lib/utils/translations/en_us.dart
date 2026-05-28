@@ -95,7 +95,7 @@ final Map<String, String> enUS = {
         // 'ev_charger': 'Charging Station',
         // 'ev_charger1': 'Charging Station',
         // 'search_station': 'Search Station',
-        // 'ev_station': 'EV Station',
+        'ev_station': 'EV Station',
         // 'select_province': 'Select Province',
         // 'search_province': 'Search Province',
         // 'direction': 'Direction',
@@ -571,9 +571,9 @@ final Map<String, String> enUS = {
         'view_details': 'View Details',
         'total_ticket_price': 'Total',
         'total_amount': "Total amount ",
-        'seat': "Seat",
+        'seat': "Seats",
         'seats': "Seats",
-        'bed': "Bed",
+        'bed': "Beds",
         'view_map': "View Map",
 
         //ticket_menu
