@@ -68,6 +68,8 @@ class EvStationListDatum {
   String? phoneNumber;
   String? description;
   String? address;
+  String? imageUrl;
+  String? imageName;
   String? lats;
   String? longs;
   bool? isFavorite;
@@ -82,6 +84,8 @@ class EvStationListDatum {
     this.phoneNumber,
     this.description,
     this.address,
+    this.imageUrl,
+    this.imageName,
     this.lats,
     this.longs,
     this.isFavorite,
@@ -98,6 +102,8 @@ class EvStationListDatum {
         phoneNumber: json["phoneNumber"],
         description: json["description"],
         address: json["address"],
+        imageUrl: json["imageUrl"],
+        imageName: json["imageName"],
         lats: json["lats"],
         longs: json["longs"],
         isFavorite: json["isFavorite"],
@@ -113,6 +119,8 @@ class EvStationListDatum {
     "phoneNumber": phoneNumber,
     "description": description,
     "address": address,
+    "imageUrl": imageUrl,
+    "imageName": imageName,
     "lats": lats,
     "longs": longs,
     "isFavorite": isFavorite,

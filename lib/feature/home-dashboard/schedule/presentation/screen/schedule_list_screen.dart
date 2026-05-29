@@ -97,7 +97,7 @@ class ScheduleListScreen extends StatelessWidget {
         future: controller.state.futureSchedule,
         builder: (context, scheduleData) {
           if (scheduleData.connectionState == ConnectionState.waiting) {
-            return ScheduleSkeleton();        
+            return ScheduleSkeleton();
           }
           if (scheduleData.hasData &&
               scheduleData.data!.header!.result == true &&
@@ -210,17 +210,19 @@ class ScheduleListScreen extends StatelessWidget {
         final int? seatType = item.seatType;
         String t(String key) {
           final locale = Get.locale;
-          final localeKey = locale == null
-              ? null
-              : '${locale.languageCode}_${locale.countryCode}';
+          final localeKey =
+              locale == null
+                  ? null
+                  : '${locale.languageCode}_${locale.countryCode}';
           final fromMap =
               localeKey == null ? null : LocaleString().keys[localeKey]?[key];
           return fromMap ?? key.tr;
         }
 
-        final String seatTypeLabel = seatType == 2
-            ? t('bed')
-            : seatType == 1
+        final String seatTypeLabel =
+            seatType == 2
+                ? t('bed')
+                : seatType == 1
                 ? t('seat')
                 : t('seats');
 
@@ -409,31 +411,29 @@ class ScheduleListScreen extends StatelessWidget {
                 ),
 
                 // Gif flah sale
-                 SizedBox(
-                height: 10, 
-                child: Stack(
-                  alignment: Alignment.centerRight, 
-                  children: [
-                    // The Line
-                    Container(
-                      height: 1,
-                      color: Colors.grey[300],
-                    ),
+                SizedBox(
+                  height: 10,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.centerRight,
+                    children: [
+                      // The Line
+                      Container(height: 1, color: Colors.grey[300]),
 
-                      if(body[0].isflashSale == 1)
-                    Positioned(
-                      right: 10,
-                      child: Image(
-                        image: AssetImage(AssetImages.gifFlashSale),
-                        height: 40,
-                        width: 40,
-                        fit: BoxFit.contain, 
-                      ),
-                    ),
-                  ],
+                      if (item.isflashSale == 1)
+                        Positioned(
+                          right: 10,
+                          child: Image(
+                            image: AssetImage(AssetImages.gifFlashSale),
+                            height: 40,
+                            width: 40,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-                
+
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(
@@ -623,7 +623,7 @@ class ScheduleListScreen extends StatelessWidget {
       child: Column(
         children: [
           RatingBarIndicator(
-            rating: scheduleData.data?.body?[index].totalRate ?? 0.0,
+            rating: (scheduleData.data?.body?[index].totalRate ?? 0).toDouble(),
             itemBuilder: (context, _) => Icon(Icons.star, color: Colors.orange),
             itemCount: 5,
             itemSize: 14,

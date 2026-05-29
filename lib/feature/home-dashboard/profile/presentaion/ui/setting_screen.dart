@@ -28,6 +28,8 @@ class SettingScreen extends StatelessWidget {
               return skeletonLoading(context);
             }
             final user = userController.userMeResponse.value;
+            final imageUrl = user?.body?.filename ?? '';
+            final refreshToken = userController.profileRefreshToken.value;
             return SliverAppBar(
               expandedHeight: 260.0,
               pinned: true,
@@ -53,7 +55,7 @@ class SettingScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 50),
-                        user?.body?.filename?.isEmpty ?? true
+                        imageUrl.isEmpty
                             ? CircleAvatar(
                               backgroundColor: const Color(0xFFC6C6C6),
                               radius: 63,
@@ -61,7 +63,12 @@ class SettingScreen extends StatelessWidget {
                             )
                             : ClipOval(
                               child: CachedNetworkImage(
-                                imageUrl: user!.body!.filename!,
+                                key: ValueKey('$imageUrl-$refreshToken'),
+                                imageUrl: _cacheBustedUrl(
+                                  imageUrl,
+                                  refreshToken,
+                                ),
+                                cacheKey: '$imageUrl-$refreshToken',
                                 placeholder: (context, url) => placeHolderImg(),
                                 errorWidget:
                                     (context, url, error) => placeHolderImg(),
@@ -99,11 +106,12 @@ class SettingScreen extends StatelessWidget {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 view(Ionicons.person_outline, "view_pf".tr, () async {
-                  Get.to(
+                  await Get.to(
                     () => ProfileScreen(),
                     transition: Transition.rightToLeft,
                     duration: const Duration(milliseconds: Constrains.duration),
                   );
+                  await userController.fetchUserMe();
                 }),
                 view(Ionicons.receipt_outline, "condition-ticket".tr, () {
                   Get.to(
@@ -269,6 +277,11 @@ class SettingScreen extends StatelessWidget {
         fit: BoxFit.cover,
       ),
     );
+  }
+
+  String _cacheBustedUrl(String url, int refreshToken) {
+    final separator = url.contains('?') ? '&' : '?';
+    return '$url${separator}v=$refreshToken';
   }
 
   void deleteAccount(context) {

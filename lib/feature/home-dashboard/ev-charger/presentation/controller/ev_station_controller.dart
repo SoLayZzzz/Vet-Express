@@ -48,6 +48,7 @@ class EvStationController extends GetxController {
   final Location location = Location();
   final Rx<BitmapDescriptor?> markerIcon = Rx<BitmapDescriptor?>(null);
   final Rx<LatLng?> currentPosition = Rx<LatLng?>(null);
+  var isLocationLoading = true.obs;
 
   // Search state
   final RxString searchQuery = ''.obs;
@@ -350,14 +351,13 @@ class EvStationController extends GetxController {
     final query = searchController.text.trim();
 
     // Fetch all stations or with current search
-    fetchEvStations(
-      searchText: query.isEmpty ? null : query,
-    );
+    fetchEvStations(searchText: query.isEmpty ? null : query);
   }
 
   /// Get user current location
   Future<void> _getUserLocation() async {
     try {
+      isLocationLoading(true);
       bool serviceEnabled = await location.serviceEnabled();
       if (!serviceEnabled && !await location.requestService()) return;
 
@@ -373,6 +373,8 @@ class EvStationController extends GetxController {
       }
     } catch (e) {
       debugPrint('Location error: $e');
+    } finally {
+      isLocationLoading(false);
     }
   }
 
@@ -416,7 +418,9 @@ class EvStationController extends GetxController {
   Future<void> moveToStation(LatLng position, {double zoom = 15}) async {
     try {
       final controller = await mapController.future;
-      await controller.animateCamera(CameraUpdate.newLatLngZoom(position, zoom));
+      await controller.animateCamera(
+        CameraUpdate.newLatLngZoom(position, zoom),
+      );
     } catch (e) {
       debugPrint('Error moving to station: $e');
     }

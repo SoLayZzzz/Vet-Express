@@ -20,10 +20,13 @@ class NetWorkDataSource extends GetConnect {
 
   static bool _didLogStartupToken = false;
 
-  NetWorkDataSource({String? baseUrl}) : baseUrl = baseUrl ?? BaseUrl.BASE_URL;
+  NetWorkDataSource({String? baseUrl})
+    : baseUrl = baseUrl ?? BaseUrl.BASE_URL,
+      super(allowAutoSignedCert: true);
 
   @override
   void onInit() {
+    allowAutoSignedCert = true;
     super.onInit();
 
     httpClient.timeout = const Duration(seconds: Constrains.timeout30);
@@ -133,7 +136,9 @@ class NetWorkDataSource extends GetConnect {
             );
           }
           if (lower.contains('socketexception')) {
-            throw SocketException(message.isNotEmpty ? message : 'Network error');
+            throw SocketException(
+              message.isNotEmpty ? message : 'Network error',
+            );
           }
           throw HttpException('Request failed (network): $message');
         }
@@ -188,7 +193,9 @@ class NetWorkDataSource extends GetConnect {
             );
           }
           if (lower.contains('socketexception')) {
-            throw SocketException(message.isNotEmpty ? message : 'Network error');
+            throw SocketException(
+              message.isNotEmpty ? message : 'Network error',
+            );
           }
           throw HttpException('Request failed (network): $message');
         }
@@ -256,7 +263,9 @@ class NetWorkDataSource extends GetConnect {
             );
           }
           if (lower.contains('socketexception')) {
-            throw SocketException(message.isNotEmpty ? message : 'Network error');
+            throw SocketException(
+              message.isNotEmpty ? message : 'Network error',
+            );
           }
           throw HttpException('Request failed (network): $message');
         }
@@ -333,7 +342,9 @@ class NetWorkDataSource extends GetConnect {
             );
           }
           if (lower.contains('socketexception')) {
-            throw SocketException(message.isNotEmpty ? message : 'Network error');
+            throw SocketException(
+              message.isNotEmpty ? message : 'Network error',
+            );
           }
           throw HttpException('Request failed (network): $message');
         }

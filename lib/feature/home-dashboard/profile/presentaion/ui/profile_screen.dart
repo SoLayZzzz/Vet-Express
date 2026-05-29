@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import '../controller/profile_controller.dart';
+import '../../../../../controller/user_controller.dart';
 import '../../../../auth/data/model/response/nationality_response.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/button.dart';
@@ -316,50 +317,71 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileImage(ProfileController controller) {
-    return Align(
-      alignment: Alignment.center,
-      child: InkWell(
-        onTap: controller.showImageSourceOptions,
-        child: Container(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.borderColor,
-                spreadRadius: 0.5,
-                blurRadius: 4.0,
-              ),
-            ],
-          ),
-          width: 130,
-          height: 130,
-          child: ClipOval(
-            child:
-                controller.image.value == null
-                    ? (controller
-                                .userMeResponse
-                                .value
-                                ?.body
-                                ?.filename
-                                ?.isEmpty ??
-                            true
-                        ? Image.asset(
-                          AssetImages.img_user_profile,
-                          fit: BoxFit.cover,
-                        )
-                        : CachedNetworkImage(
-                          imageUrl:
-                              controller.userMeResponse.value!.body!.filename!,
-                          placeholder: (context, url) => placeHolderImg(),
-                          errorWidget:
-                              (context, url, error) => placeHolderImg(),
-                          fit: BoxFit.cover,
-                        ))
-                    : Image.file(controller.image.value!, fit: BoxFit.cover),
+    final UserController? userController =
+        Get.isRegistered<UserController>() ? Get.find<UserController>() : null;
+
+    return Obx(() {
+      final imageUrl = controller.userMeResponse.value?.body?.filename ?? '';
+      final refreshToken = userController?.profileRefreshToken.value ?? 0;
+      final localImage = controller.image.value;
+
+      return Align(
+        alignment: Alignment.center,
+        child: InkWell(
+          onTap: controller.showImageSourceOptions,
+          child: Container(
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.borderColor,
+                  spreadRadius: 0.5,
+                  blurRadius: 4.0,
+                ),
+              ],
+            ),
+            width: 130,
+            height: 130,
+            child: ClipOval(
+              child:
+                  localImage != null
+                      ? Image.file(
+                        localImage,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        width: 130,
+                        height: 130,
+                      )
+                      : (imageUrl.isEmpty
+                          ? Image.asset(
+                            AssetImages.img_user_profile,
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                            width: 130,
+                            height: 130,
+                          )
+                          : CachedNetworkImage(
+                            key: ValueKey('$imageUrl-$refreshToken'),
+                            imageUrl: _cacheBustedUrl(imageUrl, refreshToken),
+                            cacheKey: '$imageUrl-$refreshToken',
+                            placeholder: (context, url) => placeHolderImg(),
+                            errorWidget:
+                                (context, url, error) => placeHolderImg(),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                            width: 130,
+                            height: 130,
+                          )),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
+  }
+
+  String _cacheBustedUrl(String url, int refreshToken) {
+    final separator = url.contains('?') ? '&' : '?';
+    return '$url${separator}v=$refreshToken';
   }
 
   Widget _buildTextField(
@@ -455,12 +477,12 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget placeHolderImg() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(15),
-      child: const Image(
-        image: AssetImage(AssetImages.img_user_profile),
-        fit: BoxFit.cover,
-      ),
+    return const Image(
+      image: AssetImage(AssetImages.img_user_profile),
+      fit: BoxFit.cover,
+      alignment: Alignment.center,
+      width: 130,
+      height: 130,
     );
   }
 }

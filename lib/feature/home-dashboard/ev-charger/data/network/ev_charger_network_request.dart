@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:convert';
 
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
@@ -46,6 +46,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      debugPrint('fetchTicketEvStationList response: ${jsonEncode(json)}');
       return EvChargerResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -61,7 +62,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchTicketProvinceList response: ${jsonEncode(json)}');
       return DestinationEvResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -80,7 +81,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchEvContactUs response: ${jsonEncode(json)}');
       return EvContactResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -99,7 +100,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchEvFaqs response: ${jsonEncode(json)}');
       return EvFaqResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -118,7 +119,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchEvPolicy response: ${jsonEncode(json)}');
       return EvPolicyResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -137,7 +138,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchEvSlideShows response: ${jsonEncode(json)}');
       return EvSlideShowResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -156,7 +157,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchEvNewsFeed response: ${jsonEncode(json)}');
       return EvNewsFeedResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -175,7 +176,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchEvProvinceList response: ${jsonEncode(json)}');
       return EvProvinceResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -200,7 +201,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('fetchEvStationList response: ${jsonEncode(json)}');
       return EvStationListResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -217,7 +218,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('addStationFavorite response: ${jsonEncode(json)}');
       return SimpleResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -236,6 +237,8 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      debugPrint('fetchWalletList response: ${jsonEncode(json)}');
+      debugPrint('Wallet List: ${json['body']['data']}');
 
       return EvWalletListResponse.fromJson(json);
     } catch (_) {
@@ -252,6 +255,8 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      debugPrint('fetchWalletAmount response: ${jsonEncode(json)}');
+      debugPrint('Wallet Amount: ${json['body']['data']}');
 
       return EvWalletAmountResponse.fromJson(json);
     } catch (_) {
@@ -266,8 +271,10 @@ class EvChargerNetworkRequest {
   }) async {
     try {
       final body =
-          EvWalletTopUpRequest(amount: amount, paymentMethod: paymentMethod)
-              .toJson();
+          EvWalletTopUpRequest(
+            amount: amount,
+            paymentMethod: paymentMethod,
+          ).toJson();
       debugPrint(
         'EvChargerNetworkRequest.walletTopUp.request '
         'url=${evDataSource.baseUrl}${Endpoint.evSaleOrderWalletTopUp} '
@@ -279,6 +286,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      debugPrint('walletTopUp response: ${jsonEncode(json)}');
       final parsed = EvTopUpResponse.fromJson(json);
       debugPrint(
         'EvChargerNetworkRequest.walletTopUp.response '
@@ -310,6 +318,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      debugPrint('walletTopUpStatus response: ${jsonEncode(json)}');
       final parsed = EvTopUpResponse.fromJson(json);
       debugPrint(
         'EvChargerNetworkRequest.walletTopUpStatus.response '
@@ -335,7 +344,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('scanQrFindSaleOrder response: ${jsonEncode(json)}');
       return EvScanQrResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -352,7 +361,7 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-
+      debugPrint('confirmPayment response: ${jsonEncode(json)}');
       return SimpleResponse.fromJson(json);
     } catch (_) {
       rethrow;

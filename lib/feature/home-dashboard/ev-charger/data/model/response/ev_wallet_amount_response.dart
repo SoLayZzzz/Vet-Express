@@ -30,7 +30,7 @@ class EvWalletAmountResponse {
 class EvWalletAmountBody {
   bool? status;
   String? message;
-  double? data;
+  String? data;
 
   EvWalletAmountBody({this.status, this.message, this.data});
 
@@ -38,7 +38,7 @@ class EvWalletAmountBody {
       EvWalletAmountBody(
         status: json["status"],
         message: json["message"],
-        data: json["data"],
+        data: json["data"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {

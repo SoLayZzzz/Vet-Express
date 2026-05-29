@@ -22,6 +22,9 @@ class EvFavoriteScreen extends GetView<EvStationController> {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'favorites'.tr),
       body: Obx(() {
+        controller.currentPosition.value;
+        controller.isLocationLoading.value;
+
         if (controller.isLoading.value && controller.favoriteStations.isEmpty) {
           return _buildLoadingState();
         }
@@ -268,13 +271,22 @@ class EvFavoriteScreen extends GetView<EvStationController> {
                         ),
 
                         // Distance Text
-                        Text(
-                          _calculateDistance(station.lats, station.longs),
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 13,
-                          ),
-                        ),
+                        controller.isLocationLoading.value
+                            ? Container(
+                              width: 50,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            )
+                            : Text(
+                              _calculateDistance(station.lats, station.longs),
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 13,
+                              ),
+                            ),
                       ],
                     ),
                   ],
@@ -288,26 +300,40 @@ class EvFavoriteScreen extends GetView<EvStationController> {
   }
 
   String _calculateDistance(String? lat, String? lng) {
-    if (lat == null || lng == null) return 'N/A km';
+    if (lat == null || lng == null) {
+      debugPrint('Distance Calculation (Fav): lat or lng is null');
+      return 'N/A km';
+    }
 
-    // Simple distance calculation - you can implement actual distance calculation here
-    // This is a placeholder implementation
+    final stationLat = double.tryParse(lat.trim());
+    final stationLng = double.tryParse(lng.trim());
+    if (stationLat == null || stationLng == null) {
+      debugPrint(
+        'Distance Calculation (Fav): failed to parse lat="$lat" or lng="$lng"',
+      );
+      return 'N/A km';
+    }
+
     if (controller.currentPosition.value != null) {
       final userLat = controller.currentPosition.value!.latitude;
       final userLng = controller.currentPosition.value!.longitude;
-      final stationLat = double.parse(lat);
-      final stationLng = double.parse(lng);
 
-      // Simple distance calculation (Haversine formula would be better)
       final distance = _calculateSimpleDistance(
         userLat,
         userLng,
         stationLat,
         stationLng,
       );
-      return '${distance.toStringAsFixed(1)} km';
+      final result = '${distance.toStringAsFixed(1)} km';
+      debugPrint(
+        'Distance Calculation (Fav): station($stationLat, $stationLng), user($userLat, $userLng) -> $result',
+      );
+      return result;
     }
 
+    debugPrint(
+      'Distance Calculation (Fav): currentPosition is null, station($stationLat, $stationLng)',
+    );
     return 'N/A km';
   }
 

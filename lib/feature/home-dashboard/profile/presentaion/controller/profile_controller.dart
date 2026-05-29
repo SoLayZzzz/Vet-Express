@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -255,11 +254,14 @@ class ProfileController extends GetxController {
             // Refresh global user store so other screens react immediately
             try {
               if (Get.isRegistered<UserController>()) {
-                await Get.find<UserController>().fetchUserMe();
+                final userController = Get.find<UserController>();
+                await userController.fetchUserMe();
+                userMeResponse.value = userController.userMeResponse.value;
               }
             } catch (_) {}
 
             image.value = null;
+            imagePath.value = null;
             _captureInitialSnapshot();
           } else {
             if (invalidType == 1) {

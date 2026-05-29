@@ -185,7 +185,7 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
     });
   }
 
-  void applySelectedScheduleData(ScheduleResponseBody data) {
+  void applySelectedScheduleData(Body data) {
     if (state.isBack) {
       ValueStatic.departureBackTime = (data.departure).toString();
       ValueStatic.carBackType = (data.transportationType).toString();
@@ -207,13 +207,13 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
     }
   }
 
-  void openSelectSeat(ScheduleResponseBody data) {
+  void openSelectSeat(Body data) {
     applySelectedScheduleData(data);
 
     final args = Get.arguments as Map<dynamic, dynamic>?;
     final flowId = (args?['flowId'] as String?) ?? '';
 
-    debugPrint('ScheduleResponseBody: ${jsonEncode(data.toJson())}');
+    debugPrint('Body: ${jsonEncode(data.toJson())}');
     debugPrint("args: $args");
 
     Get.toNamed(

@@ -141,7 +141,8 @@ class EvChargerController extends StateController<EvChargerUiState> {
     if (relativeUrl.startsWith('http')) return relativeUrl;
     final cleanUrl =
         relativeUrl.startsWith('/') ? relativeUrl.substring(1) : relativeUrl;
-    return "${BaseUrl.BASE_URL_EV}$cleanUrl";
+    // Use BASE_URL_SLIDE_IMAGE_EV which hosts static assets
+    return "${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}$cleanUrl";
   }
 
   String getIconUrl(EvContactDatum contact) => getFullIconUrl(contact.iconUrl);
@@ -322,6 +323,7 @@ class EvChargerController extends StateController<EvChargerUiState> {
 
   double get walletBalance {
     final amount = state.walletAmountResponse?.body?.data;
-    return (amount ?? 0).toDouble();
+    if (amount == null) return 0.0;
+    return double.tryParse(amount) ?? 0.0;
   }
 }

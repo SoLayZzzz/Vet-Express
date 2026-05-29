@@ -55,7 +55,7 @@ class EvWalletController extends GetxController {
       final response = await useCase.fetchWalletAmount(context: Get.context!);
 
       if (response.body?.status == true) {
-        totalBalance.value = (response.body?.data ?? 0).toDouble();
+        totalBalance.value = double.tryParse(response.body?.data ?? '') ?? 0.0;
       } else {
         errorMessage.value =
             response.body?.message ?? 'Failed to fetch balance';

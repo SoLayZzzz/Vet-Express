@@ -141,12 +141,16 @@ class EvPolicyController extends GetxController {
 
   /// Construct full URL from relative path
   String _constructFullUrl(String relativePath) {
+    if (relativePath.startsWith('http://') ||
+        relativePath.startsWith('https://')) {
+      return relativePath;
+    }
     // Remove leading slash to avoid double slashes
     String cleanPath =
         relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
 
-    // BASE_URL_EV already has trailing slash
-    return "${BaseUrl.BASE_URL_EV}$cleanPath";
+    // Use BASE_URL_SLIDE_IMAGE_EV (similar to slideshow) which hosts static assets
+    return "${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}$cleanPath";
   }
 
   /// Fallback HTML content if fetching fails

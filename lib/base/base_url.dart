@@ -21,35 +21,44 @@ class BaseUrl {
   // static String BASE_URL_UPLOAD_IMAGE =
   //     'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
-  // Local url 
+  // Local url
   // http://localhost:8512/vetExpressTicketApiLocal/swagger-ui.html#/16.%20Booking/saveBookingUsingPOST
   // http://localhost:8512/vetExpressTicketApiLocal/swagger-ui.html#/03.%20Destinations/getDestinationFromListUsingPOST
-  
-  static const String _flavor = String.fromEnvironment('FLAVOR', defaultValue: 'qa');
-  static final String BASE_URL = _flavor == 'prod'
-      ? 'https://tomapicaps.utlog.net/vetAppApi/'
-      : 'https://qacltom.udaya-tech.com/UtLogVET/';
-  static final String BASE_URL_TICKET = _flavor == 'prod'
-      ? 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'
-      : 'https://qacltom.udaya-tech.com/vetExpressTicketApiQA/';
-  static final String BASE_URL_EV = _flavor == 'prod'
-      ? 'https://newpapi.utebi.com/vetEvChargerCustomerAPi/'
-      : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
-  static final String BASE_URL_SLIDE_IMAGE = _flavor == 'prod'
-      ? 'https://oc.utlog.net/public/slide_photo/'
-      : 'https://qacltom.udaya-tech.com/UtLogVET/slide_photo/';
-  static final String BASE_URL_SLIDE_IMAGE_EV = _flavor == 'prod'
-      ? 'https://newpapisystem.utebi.com/vetEvChargerFrontendAPi/'
-      : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
-  static final String PAYMENT_URL = _flavor == 'prod'
-      ? 'https://vetticket.utlog.net/'
-      : 'https://qacl.udaya-tech.com/0430_CamTicket/';
-  static final String BASE_URL_UPLOAD_IMAGE = _flavor == 'prod'
-      ? 'https://oc.utlog.net/'
-      : 'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
+  static const String _flavor = String.fromEnvironment(
+    'FLAVOR',
+    defaultValue: 'qa',
+  );
+  static final String BASE_URL =
+      _flavor == 'prod'
+          ? 'https://tomapicaps.utlog.net/vetAppApi/'
+          : 'https://qacltom.udaya-tech.com/UtLogVET/';
+  static final String BASE_URL_TICKET =
+      _flavor == 'prod'
+          ? 'https://vettkexpapp.utlog.net/vetExpressTicketApi/'
+          : 'https://qacltom.udaya-tech.com/vetExpressTicketApiQA/';
+  static final String BASE_URL_EV =
+      _flavor == 'prod'
+          ? 'https://newpapi.utebi.com/vetEvChargerCustomerAPi/'
+          : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
+  static final String BASE_URL_SLIDE_IMAGE =
+      _flavor == 'prod'
+          ? 'https://oc.utlog.net/public/slide_photo/'
+          : 'https://qacltom.udaya-tech.com/UtLogVET/slide_photo/';
+  static final String BASE_URL_SLIDE_IMAGE_EV =
+      _flavor == 'prod'
+          ? 'https://newpapisystem.utebi.com/vetEvChargerFrontendAPi/'
+          : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
+  static final String PAYMENT_URL =
+      _flavor == 'prod'
+          ? 'https://vetticket.utlog.net/'
+          : 'https://qacl.udaya-tech.com/0430_CamTicket/';
+  static final String BASE_URL_UPLOAD_IMAGE =
+      _flavor == 'prod'
+          ? 'https://oc.utlog.net/'
+          : 'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
-// https://vetticket.utlog.net/payments/acledaXpay/VTCK-tsYxzqBBEQHypA7/DsquDNFD3MpvDcOLeFLONyYZUjJZFKS6wxX
+  // https://vetticket.utlog.net/payments/acledaXpay/VTCK-tsYxzqBBEQHypA7/DsquDNFD3MpvDcOLeFLONyYZUjJZFKS6wxX
 
   // Production
   // static String BASE_URL = 'https://tomapicaps.utlog.net/vetAppApi/'; //logistic

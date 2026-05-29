@@ -21,13 +21,16 @@ class ProfileWidget extends StatelessWidget {
         return skeleton();
       } else if (userController.userMeResponse.value != null) {
         final user = userController.userMeResponse.value!;
+        final imageUrl = user.body?.filename ?? '';
+        final refreshToken = userController.profileRefreshToken.value;
         return InkWell(
-          onTap: () {
-            Get.to(
+          onTap: () async {
+            await Get.to(
               () => const SettingScreen(),
               transition: Transition.rightToLeft,
               duration: const Duration(milliseconds: 350),
             );
+            await userController.fetchUserMe();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -43,9 +46,14 @@ class ProfileWidget extends StatelessWidget {
                       backgroundColor: AppColors.whiteColor,
                       child: ClipOval(
                         child:
-                            (user.body?.filename?.isNotEmpty ?? false
+                            imageUrl.isNotEmpty
                                 ? CachedNetworkImage(
-                                  imageUrl: user.body?.filename ?? '',
+                                  key: ValueKey('$imageUrl-$refreshToken'),
+                                  imageUrl: _cacheBustedUrl(
+                                    imageUrl,
+                                    refreshToken,
+                                  ),
+                                  cacheKey: '$imageUrl-$refreshToken',
                                   placeholder: (context, url) => placeHolder(),
                                   errorWidget:
                                       (context, url, error) => placeHolder(),
@@ -53,7 +61,7 @@ class ProfileWidget extends StatelessWidget {
                                   width: 126,
                                   height: 126,
                                 )
-                                : placeHolder()),
+                                : placeHolder(),
                       ),
                     ),
                   ),
@@ -97,6 +105,11 @@ class ProfileWidget extends StatelessWidget {
       return input;
     }
     return input[0].toUpperCase() + input.substring(1);
+  }
+
+  String _cacheBustedUrl(String url, int refreshToken) {
+    final separator = url.contains('?') ? '&' : '?';
+    return '$url${separator}v=$refreshToken';
   }
 
   Widget skeleton() {

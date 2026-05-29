@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_station_list_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -136,19 +137,22 @@ class EvAllStationScreen extends GetView<EvStationController> {
                   ),
 
                 // Search Badge (if searching)
-                
 
                 // Sliding Up Panel
                 SlidingUpPanel(
                   controller: controller.panelController,
-                  minHeight: 0,
-                  maxHeight: (screenHeight - reservedTop).clamp(0.0, screenHeight),
+                  minHeight: 120.0,
+                  isDraggable: false,
+                  maxHeight: (screenHeight - reservedTop).clamp(
+                    0.0,
+                    screenHeight,
+                  ),
                   snapPoint: 0.5,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                   ),
-                  panel: _buildStationPanel(),
+                  panel: _buildStationPanel(context),
                   body: Container(),
                   onPanelClosed: () {
                     controller.searchFocusNode.unfocus();
@@ -288,9 +292,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          searchText.isEmpty
-                              ? 'search_station'.tr
-                              : searchText,
+                          searchText.isEmpty ? 'search_station'.tr : searchText,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -355,46 +357,72 @@ class EvAllStationScreen extends GetView<EvStationController> {
     );
   }
 
-  Widget _buildStationPanel() {
+  Widget _buildStationPanel(BuildContext context) {
     return Column(
       children: [
-        // Drag handle
         GestureDetector(
-          onTap: () {
-            controller.panelController.close();
+          behavior: HitTestBehavior.opaque,
+          onVerticalDragUpdate: (details) {
+            if (controller.panelController.isAttached) {
+              double screenHeight = MediaQuery.of(context).size.height;
+              double newPos =
+                  controller.panelController.panelPosition +
+                  (-details.delta.dy / screenHeight);
+              controller.panelController.panelPosition = newPos.clamp(0.5, 1.0);
+            }
           },
-          child: Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Header
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
+          onVerticalDragEnd: (details) {
+            if (controller.panelController.isAttached) {
+              double currentPos = controller.panelController.panelPosition;
+              if (currentPos > 0.75) {
+                controller.panelController.open();
+              } else {
+                controller.panelController.animatePanelToPosition(0.5);
+              }
+            }
+          },
+          child: Column(
             children: [
-              Expanded(
-                child: Text(
-                  'ev_station'.tr,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+              // Drag handle
+              GestureDetector(
+                onTap: () {
+                  controller.panelController.close();
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  controller.panelController.close();
-                },
-                icon: const Icon(Icons.close),
+
+              const SizedBox(height: 16),
+
+              // Header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'ev_station'.tr,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        controller.panelController.close();
+                      },
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -405,6 +433,10 @@ class EvAllStationScreen extends GetView<EvStationController> {
         // Station List
         Expanded(
           child: Obx(() {
+            // Watch currentPosition and isLocationLoading to update distance calculations when location is fetched
+            controller.currentPosition.value;
+            controller.isLocationLoading.value;
+
             if (controller.isLoading.value) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -432,8 +464,13 @@ class EvAllStationScreen extends GetView<EvStationController> {
                 final station = stations[index];
                 final selectedId = controller.selectedStationId.value;
                 final isSelected =
-                    selectedId != null && station.id != null && selectedId == station.id;
-                final child = _buildStationCard(station, isSelected: isSelected);
+                    selectedId != null &&
+                    station.id != null &&
+                    selectedId == station.id;
+                final child = _buildStationCard(
+                  station,
+                  isSelected: isSelected,
+                );
                 if (station.id == null) {
                   return child;
                 }
@@ -449,7 +486,10 @@ class EvAllStationScreen extends GetView<EvStationController> {
     );
   }
 
-  Widget _buildStationCard(EvStationListDatum station, {required bool isSelected}) {
+  Widget _buildStationCard(
+    EvStationListDatum station, {
+    required bool isSelected,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -479,9 +519,10 @@ class EvAllStationScreen extends GetView<EvStationController> {
                 bottomLeft: Radius.circular(12),
               ),
               child: Image.network(
-                "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=200",
+                "https://newpapisystem.utebi.com/vetEvChargerFrontendAPi" +
+                    station.imageUrl.toString(),
                 width: 110,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     width: 110,
@@ -594,15 +635,14 @@ class EvAllStationScreen extends GetView<EvStationController> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        
                       ],
                     ),
 
-                     const SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
                     Row(
                       children: [
-                          Icon(
+                        Icon(
                           Icons.attach_money,
                           size: 16,
                           color: Colors.blueGrey[700],
@@ -615,15 +655,15 @@ class EvAllStationScreen extends GetView<EvStationController> {
                             fontSize: 12,
                           ),
                         ),
-                         const SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Text(
-                              "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'}\$/kWh",
-                              style: const TextStyle(
-                                color: Color(0xFFE65100),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
+                          "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'}\$/kWh",
+                          style: const TextStyle(
+                            color: Color(0xFFE65100),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
                     ),
 
@@ -661,13 +701,22 @@ class EvAllStationScreen extends GetView<EvStationController> {
 
                         const Spacer(),
 
-                        Text(
-                          _calculateDistance(station.lats, station.longs),
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 13,
-                          ),
-                        ),
+                        controller.isLocationLoading.value
+                            ? Container(
+                              width: 50,
+                              height: 14,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            )
+                            : Text(
+                              _calculateDistance(station.lats, station.longs),
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 13,
+                              ),
+                            ),
                       ],
                     ),
                   ],
@@ -681,13 +730,23 @@ class EvAllStationScreen extends GetView<EvStationController> {
   }
 
   String _calculateDistance(String? lat, String? lng) {
-    if (lat == null || lng == null) return 'N/A km';
+    if (lat == null || lng == null) {
+      debugPrint('Distance Calculation: lat or lng is null');
+      return 'N/A km';
+    }
+
+    final stationLat = double.tryParse(lat.trim());
+    final stationLng = double.tryParse(lng.trim());
+    if (stationLat == null || stationLng == null) {
+      debugPrint(
+        'Distance Calculation: failed to parse lat="$lat" or lng="$lng"',
+      );
+      return 'N/A km';
+    }
 
     if (controller.currentPosition.value != null) {
       final userLat = controller.currentPosition.value!.latitude;
       final userLng = controller.currentPosition.value!.longitude;
-      final stationLat = double.parse(lat);
-      final stationLng = double.parse(lng);
 
       final distance = _calculateSimpleDistance(
         userLat,
@@ -695,9 +754,16 @@ class EvAllStationScreen extends GetView<EvStationController> {
         stationLat,
         stationLng,
       );
-      return '${distance.toStringAsFixed(1)} km';
+      final result = '${distance.toStringAsFixed(1)} km';
+      debugPrint(
+        'Distance Calculation: station($stationLat, $stationLng), user($userLat, $userLng) -> $result',
+      );
+      return result;
     }
 
+    debugPrint(
+      'Distance Calculation: currentPosition is null, station($stationLat, $stationLng)',
+    );
     return 'N/A km';
   }
 
@@ -892,14 +958,16 @@ class EvStationSearchScreen extends GetView<EvStationController> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                  
+
                       child: Row(
                         children: [
                           Container(
                             height: 40,
                             width: 40,
                             decoration: BoxDecoration(
-                              color: AppColors.primaryColor.withValues(alpha: 0.12),
+                              color: AppColors.primaryColor.withValues(
+                                alpha: 0.12,
+                              ),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
@@ -934,10 +1002,7 @@ class EvStationSearchScreen extends GetView<EvStationController> {
                               ],
                             ),
                           ),
-                          const Icon(
-                            Icons.chevron_right,
-                            color: Colors.grey,
-                          ),
+                          const Icon(Icons.chevron_right, color: Colors.grey),
                         ],
                       ),
                     ),
@@ -1048,9 +1113,7 @@ class EvProvinceFilterScreen extends GetView<EvStationController> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
-
                             borderRadius: BorderRadius.circular(12),
-                          
                           ),
                           child: Row(
                             children: [
@@ -1065,7 +1128,10 @@ class EvProvinceFilterScreen extends GetView<EvStationController> {
                                 ),
                                 child: Image.asset(
                                   AssetImages.location,
-                                  color: isSelected ? AppColors.primaryColor : AppColors.primaryColor,
+                                  color:
+                                      isSelected
+                                          ? AppColors.primaryColor
+                                          : AppColors.primaryColor,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -1079,9 +1145,10 @@ class EvProvinceFilterScreen extends GetView<EvStationController> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 16,
-                                        fontWeight: isSelected
-                                            ? FontWeight.w700
-                                            : FontWeight.w600,
+                                        fontWeight:
+                                            isSelected
+                                                ? FontWeight.w700
+                                                : FontWeight.w600,
                                       ),
                                     ),
                                     const SizedBox(height: 2),

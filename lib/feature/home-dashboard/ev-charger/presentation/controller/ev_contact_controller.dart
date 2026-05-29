@@ -83,8 +83,8 @@ class EvContactController extends StateController<EvContactUiState> {
     String cleanUrl =
         relativeUrl.startsWith('/') ? relativeUrl.substring(1) : relativeUrl;
 
-    // BASE_URL_EV already has trailing slash
-    return "${BaseUrl.BASE_URL_EV}$cleanUrl";
+    // Use BASE_URL_SLIDE_IMAGE_EV which hosts static assets
+    return "${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}$cleanUrl";
   }
 
   /// Get icon URL with base URL

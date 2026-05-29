@@ -11,6 +11,7 @@ class UserController extends GetxController {
   var userMeResponse = Rxn<UserMeResponse>();
   var isLoading = true.obs;
   var hasError = false.obs;
+  var profileRefreshToken = 0.obs;
 
   @override
   void onInit() {
@@ -24,6 +25,7 @@ class UserController extends GetxController {
       hasError(false);
       var response = await authUseCase.getUserMe();
       userMeResponse.value = response;
+      profileRefreshToken.value++;
     } catch (e) {
       hasError(true);
     } finally {
