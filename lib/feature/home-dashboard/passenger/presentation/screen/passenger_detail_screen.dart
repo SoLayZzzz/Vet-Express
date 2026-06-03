@@ -316,7 +316,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     );
   }
 
-  boarding.Body? _resolveSelectedPoint(List<boarding.Body> items, int selectedIndex) {
+  boarding.Body? _resolveSelectedPoint(
+    List<boarding.Body> items,
+    int selectedIndex,
+  ) {
     if (items.isEmpty) return null;
     if (items.length == 1) return items[0];
     if (selectedIndex >= 0 && selectedIndex < items.length) {
@@ -362,10 +365,10 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
       alignment: Alignment.centerRight,
       child: TextButton(
         style: TextButton.styleFrom(
-    padding: EdgeInsets.zero, 
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap, 
-    minimumSize: Size.zero, 
-  ),
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          minimumSize: Size.zero,
+        ),
         onPressed: () {
           _openPointMap(context, item);
         },
@@ -484,7 +487,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                     onChanged: syncGoingToReturnIfNeeded,
                   ),
                   const SizedBox(height: 15),
-                   const SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   if (companyType == 4)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -530,7 +533,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   _buildChooseNationality(
                     nationalityIds,
                     index,
@@ -596,8 +599,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                 } else {
                                   dobDisplayControllers[index].text =
                                       DateFormat('dd-MM-yyyy').format(date);
-                                  dobValueControllers[index].text =
-                                      DateFormat('yyyy-MM-dd').format(date);
+                                  dobValueControllers[index].text = DateFormat(
+                                    'yyyy-MM-dd',
+                                  ).format(date);
                                   controller.update();
                                   syncGoingToReturnIfNeeded();
                                 }
@@ -631,7 +635,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             ),
                           ),
                         ),
-                       
+
                         Expanded(
                           flex: 2,
                           child: TextField(
@@ -674,281 +678,245 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     VoidCallback? onChanged,
   }) {
     return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Text.rich(
-                        TextSpan(
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: 'nationality'.tr,
-                              style: const TextStyle(
-                                color: AppColors.textColor,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          flex: 1,
+          child: Text.rich(
+            TextSpan(
+              children: <TextSpan>[
+                TextSpan(
+                  text: 'nationality'.tr,
+                  style: const TextStyle(color: AppColors.textColor),
+                ),
+                const TextSpan(
+                  text: ' *',
+                  style: TextStyle(color: AppColors.redColor),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: FutureBuilder<NationalityResponse>(
+            future: controller.state.futureNationality,
+            builder: (context, data) {
+              if (data.hasData) {
+                if ((data.data?.header?.result) == true &&
+                    (data.data?.header?.statusCode) == 200) {
+                  if ((data.data?.body)!.status == true &&
+                      (data.data?.body)!.data!.isNotEmpty) {
+                    return Column(
+                      children: [
+                        InputDecorator(
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            border: Style.outlineInputBorder(),
+                            enabledBorder: Style.outlineInputBorder(),
+                            focusedBorder: Style.outlineInputBorder(),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              iconStyleData: const IconStyleData(
+                                iconEnabledColor: AppColors.borderColor,
                               ),
-                            ),
-                            const TextSpan(
-                              text: ' *',
-                              style: TextStyle(color: AppColors.redColor),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: FutureBuilder<NationalityResponse>(
-                        future: controller.state.futureNationality,
-                        builder: (context, data) {
-                          if (data.hasData) {
-                            if ((data.data?.header?.result) == true &&
-                                (data.data?.header?.statusCode) == 200) {
-                              if ((data.data?.body)!.status == true &&
-                                  (data.data?.body)!.data!.isNotEmpty) {
-                                return Column(
-                                  children: [
-                                    InputDecorator(
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 4,
-                                            ),
-                                        border: Style.outlineInputBorder(),
-                                        enabledBorder:
-                                            Style.outlineInputBorder(),
-                                        focusedBorder:
-                                            Style.outlineInputBorder(),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          iconStyleData: const IconStyleData(
-                                            iconEnabledColor:
-                                                AppColors.borderColor,
-                                          ),
-                                          isExpanded: true,
-                                          hint: Text(
-                                            'select_nation'.tr,
+                              isExpanded: true,
+                              hint: Text(
+                                'select_nation'.tr,
+                                style: const TextStyle(fontSize: 14),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              items:
+                                  data.data?.body!.data
+                                      ?.map(
+                                        (item) => DropdownMenuItem<String>(
+                                          value: item.name,
+                                          child: Text(
+                                            "${item.name}",
                                             style: const TextStyle(
                                               fontSize: 14,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          items:
-                                              data.data?.body!.data
-                                                  ?.map(
-                                                    (
-                                                      item,
-                                                    ) => DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value: item.name,
-                                                      child: Text(
-                                                        "${item.name}",
-                                                        style:
-                                                            const TextStyle(
-                                                              fontSize: 14,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                  .toList(),
-                                          value: () {
-                                            final selectedId =
-                                                nationalityIds[index];
-                                            if (selectedId == null) {
-                                              return null;
-                                            }
-                                            final list = data
-                                                .data
-                                                ?.body
-                                                ?.data;
-                                            if (list == null || list.isEmpty) {
-                                              return null;
-                                            }
-                                            for (final item in list) {
-                                              if (item.id == selectedId) {
-                                                return item.name;
-                                              }
-                                            }
-                                            return null;
-                                          }(),
-                                          onChanged: (value) {
-                                            nationalityIds[index] =
-                                                data.data?.body!.data
-                                                    ?.firstWhere(
-                                                      (item) =>
-                                                          item.name == value,
-                                                    )
-                                                    .id;
-                                            national[index] =
-                                                nationalityIds[index]!;
-                                            controller.update();
-                                            onChanged?.call();
-                                          },
-                                          dropdownStyleData:
-                                              const DropdownStyleData(
-                                                width: double.infinity,
-                                              ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                                height: 40,
-                                              ),
-                                          dropdownSearchData: DropdownSearchData(
-                                            searchController:
-                                                controller
-                                                    .state
-                                                    .nationalityController,
-                                            searchInnerWidgetHeight: 50,
-                                            searchInnerWidget: Container(
-                                              height: 60,
-                                              padding: const EdgeInsets.only(
-                                                top: 8,
-                                                bottom: 4,
-                                                right: 8,
-                                                left: 8,
-                                              ),
-                                              child: TextFormField(
-                                                expands: true,
-                                                maxLines: null,
-                                                controller:
-                                                    controller
-                                                        .state
-                                                        .nationalityController,
-                                                decoration: InputDecoration(
-                                                  isDense: true,
-                                                  contentPadding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 8,
-                                                      ),
-                                                  hintText:
-                                                      'search_nation'.tr,
-                                                  hintStyle: const TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                  border:
-                                                      Style.outlineInputBorder(),
-                                                  enabledBorder:
-                                                      Style.outlineInputBorder(),
-                                                  focusedBorder:
-                                                      Style.outlineInputBorder(),
-                                                ),
-                                              ),
-                                            ),
-                                            searchMatchFn: (
-                                              item,
-                                              searchValue,
-                                            ) {
-                                              return item.value
-                                                  .toString()
-                                                  .toLowerCase()
-                                                  .contains(
-                                                    searchValue.toLowerCase(),
-                                                  );
-                                            },
-                                          ),
-                                          onMenuStateChange: (isOpen) {
-                                            if (!isOpen) {
-                                              controller
-                                                  .state
-                                                  .nationalityController
-                                                  .clear();
-                                            }
-                                          },
                                         ),
-                                      ),
+                                      )
+                                      .toList(),
+                              value: () {
+                                final selectedId = nationalityIds[index];
+                                if (selectedId == null) {
+                                  return null;
+                                }
+                                final list = data.data?.body?.data;
+                                if (list == null || list.isEmpty) {
+                                  return null;
+                                }
+                                for (final item in list) {
+                                  if (item.id == selectedId) {
+                                    return item.name;
+                                  }
+                                }
+                                return null;
+                              }(),
+                              onChanged: (value) {
+                                nationalityIds[index] =
+                                    data.data?.body!.data
+                                        ?.firstWhere(
+                                          (item) => item.name == value,
+                                        )
+                                        .id;
+                                national[index] = nationalityIds[index]!;
+                                controller.update();
+                                onChanged?.call();
+                              },
+                              dropdownStyleData: const DropdownStyleData(
+                                width: double.infinity,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                              ),
+                              dropdownSearchData: DropdownSearchData(
+                                searchController:
+                                    controller.state.nationalityController,
+                                searchInnerWidgetHeight: 50,
+                                searchInnerWidget: Container(
+                                  height: 60,
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    bottom: 4,
+                                    right: 8,
+                                    left: 8,
+                                  ),
+                                  child: TextFormField(
+                                    expands: true,
+                                    maxLines: null,
+                                    controller:
+                                        controller.state.nationalityController,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 8,
+                                          ),
+                                      hintText: 'search_nation'.tr,
+                                      hintStyle: const TextStyle(fontSize: 12),
+                                      border: Style.outlineInputBorder(),
+                                      enabledBorder: Style.outlineInputBorder(),
+                                      focusedBorder: Style.outlineInputBorder(),
                                     ),
-                                  ],
-                                );
-                              }
-                            }
-                          } else if (data.hasError) {
-                            return const Text('');
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ),
-                  ],
-                );
+                                  ),
+                                ),
+                                searchMatchFn: (item, searchValue) {
+                                  return item.value
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(searchValue.toLowerCase());
+                                },
+                              ),
+                              onMenuStateChange: (isOpen) {
+                                if (!isOpen) {
+                                  controller.state.nationalityController
+                                      .clear();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                }
+              } else if (data.hasError) {
+                return const Text('');
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildGenderItem({
-  required String value,
-  required String label,
-  required String groupValue,
-  required VoidCallback onTap,
-}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          height: 18,
-          width: 18,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: groupValue == value
-                    ? AppColors.primaryColor
-                    : AppColors.deepGrey,
-              width: 2,
+    required String value,
+    required String label,
+    required String groupValue,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 18,
+            width: 18,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color:
+                    groupValue == value
+                        ? AppColors.primaryColor
+                        : AppColors.deepGrey,
+                width: 2,
+              ),
             ),
-          ),
-          child: Center(
-            child: Container(
-              height: 8,
-              width: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: groupValue == value
-                    ? AppColors.primaryColor
-                    : Colors.transparent,
+            child: Center(
+              child: Container(
+                height: 8,
+                width: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color:
+                      groupValue == value
+                          ? AppColors.primaryColor
+                          : Colors.transparent,
+                ),
               ),
             ),
           ),
+          const SizedBox(width: 10),
+          Text(label, style: const TextStyle(fontSize: 14)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChooseGender(
+    List<String> gender,
+    int index, {
+    VoidCallback? onChanged,
+  }) {
+    return Row(
+      children: [
+        _buildGenderItem(
+          value: '2',
+          label: "female".tr,
+          groupValue: gender[index],
+          onTap: () {
+            gender[index] = '2';
+            controller.update();
+            onChanged?.call();
+          },
         ),
-        const SizedBox(width: 10),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14),
+        const SizedBox(width: 30),
+        _buildGenderItem(
+          value: '1',
+          label: "male".tr,
+          groupValue: gender[index],
+          onTap: () {
+            gender[index] = '1';
+            controller.update();
+            onChanged?.call();
+          },
         ),
       ],
-    ),
-  );
-}
-
-Widget _buildChooseGender(List<String> gender, int index, {VoidCallback? onChanged}) {
-  return Row(
-    children: [
-      _buildGenderItem(
-        value: '2',
-        label: "female".tr,
-        groupValue: gender[index],
-        onTap: () {
-          gender[index] = '2';
-          controller.update();
-          onChanged?.call();
-        },
-      ),
-      const SizedBox(width: 30),
-      _buildGenderItem(
-        value: '1',
-        label: "male".tr,
-        groupValue: gender[index],
-        onTap: () {
-          gender[index] = '1';
-          controller.update();
-          onChanged?.call();
-        },
-      ),
-    ],
-  );
-}
-
+    );
+  }
 
   FutureBuilder<void> _buildPassengerHaveDiscount() {
     controller.forceZeroDiscount = false;
@@ -2501,7 +2469,7 @@ Widget _buildChooseGender(List<String> gender, int index, {VoidCallback? onChang
                                               'total_mn'.tr,
                                               style: const TextStyle(
                                                 fontSize: 16,
-                                              fontWeight: FontWeight.w400,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             const Spacer(),
@@ -2768,7 +2736,8 @@ Widget _buildChooseGender(List<String> gender, int index, {VoidCallback? onChang
                                                     'total_mn'.tr,
                                                     style: const TextStyle(
                                                       fontSize: 16,
-                                                     fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                     ),
                                                   ),
                                                   const Spacer(),
@@ -3212,884 +3181,747 @@ Widget _buildChooseGender(List<String> gender, int index, {VoidCallback? onChang
 
   Widget _buildPassengerTwoway(BuildContext context) {
     return SliverList(
-                        delegate: SliverChildListDelegate([
-                          Container(
-                            margin: const EdgeInsets.only(top: 15.0),
-                            padding: const EdgeInsets.all(15),
-                            color: AppColors.whiteColor,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text.rich(
-                                  TextSpan(
+      delegate: SliverChildListDelegate([
+        Container(
+          margin: const EdgeInsets.only(top: 15.0),
+          padding: const EdgeInsets.all(15),
+          color: AppColors.whiteColor,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: ValueStatic.desTo,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: AppColors.titleColor,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' - ',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ValueStatic.desfrom,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // const SizedBox(height: 10),
+              // Text(
+              //   'departure_date:'.tr + ValueStatic.backDate,
+              //   style: const TextStyle(
+              //     fontWeight: FontWeight.w400,
+              //     fontSize: 14,
+              //     color: AppColors.titleColor,
+              //   ),
+              // ),
+
+              //* boarding point two way
+              FutureBuilder<boarding.CarPointResponse>(
+                future: controller.state.futureBoardingPointTwoWay,
+                builder: (context, data) {
+                  if (data.hasData) {
+                    if ((data.data?.header?.result) == true &&
+                        (data.data?.header?.statusCode) == 200) {
+                      if ((data.data?.body)!.isNotEmpty) {
+                        if (data.data?.body?.length == 1) {
+                          ValueStatic.boardingPointTwoWayId =
+                              (data.data?.body?[0].id).toString();
+                          ValueStatic.boardingPointTwoWay =
+                              (data.data?.body?[0].name).toString();
+                        }
+
+                        if (ValueStatic.dropOffPointOneWayId.isNotEmpty) {
+                          _callGetData(context, isConfirm: false);
+                        }
+
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
                                     children: [
-                                      TextSpan(
-                                        text: ValueStatic.desTo,
+                                      Text(
+                                        'boarding_point'.tr,
                                         style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w400,
                                           fontSize: 14,
                                           color: AppColors.titleColor,
                                         ),
                                       ),
-                                      TextSpan(
-                                        text: ' - ',
+                                      const SizedBox(width: 5),
+                                      (data.data?.body?.length != 1)
+                                          ? const Text(
+                                            "*",
+                                            style: TextStyle(color: Colors.red),
+                                          )
+                                          : const SizedBox(),
+                                    ],
+                                  ),
+                                  //
+                                  _viewMapButtonForSelection(
+                                    context: context,
+                                    items: data.data?.body ?? [],
+                                    selectedIndex:
+                                        controller
+                                            .state
+                                            .isSelectIndexBoardingTwoWay
+                                            .value,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            (data.data?.body?.length != 1)
+                                ? _pointPicker(
+                                  context: context,
+                                  decoration: Style.inputText(''),
+                                  dialogTitle: 'boarding_point'.tr,
+                                  items: data.data?.body ?? [],
+                                  selectedIndex:
+                                      controller
+                                          .state
+                                          .isSelectIndexBoardingTwoWay
+                                          .value,
+                                  onSelectedIndexChanged: (value) {
+                                    controller
+                                        .state
+                                        .isSelectIndexBoardingTwoWay
+                                        .value = value;
+                                  },
+                                  selectedName:
+                                      controller
+                                          .state
+                                          .selectBoardingPointTwoWay
+                                          .value,
+                                  onSelectedNameChanged: (value) {
+                                    controller
+                                        .state
+                                        .selectBoardingPointTwoWay
+                                        .value = value;
+                                  },
+                                  selectedAddress:
+                                      controller
+                                          .state
+                                          .selectBoardingPointAddressTwoWay
+                                          .value,
+                                  onSelectedAddressChanged: (value) {
+                                    controller
+                                        .state
+                                        .selectBoardingPointAddressTwoWay
+                                        .value = value;
+                                  },
+                                  defaultName: 'select_boarding'.tr,
+                                  onClearSelection: () {
+                                    controller
+                                        .state
+                                        .isSelectIndexBoardingTwoWay
+                                        .value = -1;
+                                    controller
+                                        .state
+                                        .selectBoardingPointTwoWay
+                                        .value = 'select_boarding'.tr;
+                                    controller
+                                        .state
+                                        .selectBoardingPointAddressTwoWay
+                                        .value = '';
+                                    ValueStatic.boardingPointTwoWayId = '';
+                                  },
+                                  onValueStaticSelected: (item) {
+                                    ValueStatic.boardingPointTwoWayId =
+                                        (item.id).toString();
+                                    ValueStatic.boardingPointTwoWay =
+                                        (item.name).toString();
+                                  },
+                                )
+                                : InputDecorator(
+                                  decoration: Style.inputText(''),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${(data.data?.body?[0].name)}",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
+                                          color: AppColors.textColor,
                                         ),
                                       ),
-                                      TextSpan(
-                                        text: ValueStatic.desfrom,
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        "${data.data?.body?[0].address}",
                                         style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w400,
                                           fontSize: 14,
+                                          color: AppColors.textColor,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                // const SizedBox(height: 10),
-                                // Text(
-                                //   'departure_date:'.tr + ValueStatic.backDate,
-                                //   style: const TextStyle(
-                                //     fontWeight: FontWeight.w400,
-                                //     fontSize: 14,
-                                //     color: AppColors.titleColor,
-                                //   ),
-                                // ),
+                          ],
+                        );
+                      }
+                    }
+                  } else if (data.hasError) {
+                    return const Text('');
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
 
-                                //* boarding point two way
-                                FutureBuilder<boarding.CarPointResponse>(
-                                  future:
-                                      controller
-                                          .state
-                                          .futureBoardingPointTwoWay,
-                                  builder: (context, data) {
-                                    if (data.hasData) {
-                                      if ((data.data?.header?.result) ==
-                                              true &&
-                                          (data.data?.header?.statusCode) ==
-                                              200) {
-                                        if ((data.data?.body)!.isNotEmpty) {
-                                          if (data.data?.body?.length == 1) {
-                                            ValueStatic
-                                                    .boardingPointTwoWayId =
-                                                (data.data?.body?[0].id)
-                                                    .toString();
-                                            ValueStatic.boardingPointTwoWay =
-                                                (data.data?.body?[0].name)
-                                                    .toString();
-                                          }
+              //* drop off two way
+              FutureBuilder<boarding.CarPointResponse>(
+                future: controller.state.futureDropOffPointTwoWay,
+                builder: (context, data) {
+                  if (data.hasData) {
+                    if ((data.data?.header?.result) == true &&
+                        (data.data?.header?.statusCode) == 200) {
+                      if ((data.data?.body)!.isNotEmpty) {
+                        if (data.data?.body?.length == 1) {
+                          ValueStatic.dropOffPointTwoWayId =
+                              (data.data?.body?[0].id).toString();
+                          ValueStatic.dropOffPointTwoWay =
+                              (data.data?.body?[0].name).toString();
+                        }
 
-                                          if (ValueStatic
-                                              .dropOffPointOneWayId
-                                              .isNotEmpty) {
-                                            _callGetData(
-                                              context,
-                                              isConfirm: false,
-                                            );
-                                          }
+                        if (ValueStatic.boardingPointOneWayId.isNotEmpty) {
+                          _callGetData(context, isConfirm: false);
+                        }
 
-                                          return Column(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                      'boarding_point'.tr,
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        fontSize: 14,
-                                                        color:
-                                                            AppColors
-                                                                .titleColor,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 5),
-                                                    (data
-                                                                .data
-                                                                ?.body
-                                                                ?.length !=
-                                                            1)
-                                                        ? const Text(
-                                                          "*",
-                                                          style: TextStyle(
-                                                            color: Colors.red,
-                                                          ),
-                                                        )
-                                                        : const SizedBox(),
-                                                      ],
-                                                    ),
-                                                        //
-                                                         _viewMapButtonForSelection(
-                                                context: context,
-                                                items: data.data?.body ?? [],
-                                                selectedIndex:
-                                                    controller
-                                                        .state
-                                                        .isSelectIndexBoardingTwoWay
-                                                        .value,
-                                                                                              ),
-                                                  ],
-                                                ),
-                                              ),
-                                              (data.data?.body?.length != 1)
-                                                  ? _pointPicker(
-                                                    context: context,
-                                                    decoration: Style.inputText(''),
-                                                    dialogTitle:
-                                                        'boarding_point'.tr,
-                                                    items:
-                                                        data.data?.body ?? [],
-                                                    selectedIndex: controller
-                                                        .state
-                                                        .isSelectIndexBoardingTwoWay
-                                                        .value,
-                                                    onSelectedIndexChanged: (
-                                                      value,
-                                                    ) {
-                                                      controller
-                                                          .state
-                                                          .isSelectIndexBoardingTwoWay
-                                                          .value = value;
-                                                    },
-                                                    selectedName: controller
-                                                        .state
-                                                        .selectBoardingPointTwoWay
-                                                        .value,
-                                                    onSelectedNameChanged: (
-                                                      value,
-                                                    ) {
-                                                      controller
-                                                          .state
-                                                          .selectBoardingPointTwoWay
-                                                          .value = value;
-                                                    },
-                                                    selectedAddress: controller
-                                                        .state
-                                                        .selectBoardingPointAddressTwoWay
-                                                        .value,
-                                                    onSelectedAddressChanged: (
-                                                      value,
-                                                    ) {
-                                                      controller
-                                                          .state
-                                                          .selectBoardingPointAddressTwoWay
-                                                          .value = value;
-                                                    },
-                                                    defaultName:
-                                                        'select_boarding'.tr,
-                                                    onClearSelection: () {
-                                                      controller
-                                                          .state
-                                                          .isSelectIndexBoardingTwoWay
-                                                          .value = -1;
-                                                      controller
-                                                              .state
-                                                              .selectBoardingPointTwoWay
-                                                              .value =
-                                                          'select_boarding'.tr;
-                                                      controller
-                                                          .state
-                                                          .selectBoardingPointAddressTwoWay
-                                                          .value = '';
-                                                      ValueStatic
-                                                          .boardingPointTwoWayId = '';
-                                                    },
-                                                    onValueStaticSelected: (
-                                                      item,
-                                                    ) {
-                                                      ValueStatic
-                                                              .boardingPointTwoWayId =
-                                                          (item.id).toString();
-                                                      ValueStatic
-                                                              .boardingPointTwoWay =
-                                                          (item.name).toString();
-                                                    },
-                                                  )
-                                                  : InputDecorator(
-                                                    decoration: Style.inputText(''),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "${(data.data?.body?[0].name)}",
-                                                          style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .textColor,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 8,
-                                                        ),
-                                                        Text(
-                                                          "${data.data?.body?[0].address}",
-                                                          style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .textColor,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                             
-                                            ],
-                                          );
-                                        }
-                                      }
-                                    } else if (data.hasError) {
-                                      return const Text('');
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
-
-                                //* drop off two way
-                                FutureBuilder<boarding.CarPointResponse>(
-                                  future:
-                                      controller
-                                          .state
-                                          .futureDropOffPointTwoWay,
-                                  builder: (context, data) {
-                                    if (data.hasData) {
-                                      if ((data.data?.header?.result) ==
-                                              true &&
-                                          (data.data?.header?.statusCode) ==
-                                              200) {
-                                        if ((data.data?.body)!.isNotEmpty) {
-                                          if (data.data?.body?.length == 1) {
-                                            ValueStatic.dropOffPointTwoWayId =
-                                                (data.data?.body?[0].id)
-                                                    .toString();
-                                            ValueStatic.dropOffPointTwoWay =
-                                                (data.data?.body?[0].name)
-                                                    .toString();
-                                          }
-
-                                          if (ValueStatic
-                                              .boardingPointOneWayId
-                                              .isNotEmpty) {
-                                            _callGetData(
-                                              context,
-                                              isConfirm: false,
-                                            );
-                                          }
-
-                                          return Column(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                      'drop_off_point'.tr,
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize: 14,
-                                                          color:
-                                                              AppColors
-                                                                  .titleColor,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      (data
-                                                                  .data
-                                                                  ?.body
-                                                                  ?.length !=
-                                                              1)
-                                                          ? const Text(
-                                                            "*",
-                                                            style: TextStyle(
-                                                              color: Colors.red,
-                                                            ),
-                                                          )
-                                                          : const SizedBox(),
-                                                      ],
-                                                    ),
-                                                        //
-                                                         _viewMapButtonForSelection(
-                                                context: context,
-                                                items: data.data?.body ?? [],
-                                                selectedIndex:
-                                                    controller
-                                                        .state
-                                                        .isSelectIndexDropOffTwoWay
-                                                        .value,
-                                                                                              ),
-                                                  ],
-                                                ),
-                                              ),
-                                              (data.data?.body?.length != 1)
-                                                  ? _pointPicker(
-                                                    context: context,
-                                                    decoration: Style.inputText(''),
-                                                    dialogTitle:
-                                                        'drop_off_point'.tr,
-                                                    items:
-                                                        data.data?.body ?? [],
-                                                    selectedIndex: controller
-                                                        .state
-                                                        .isSelectIndexDropOffTwoWay
-                                                        .value,
-                                                    onSelectedIndexChanged: (
-                                                      value,
-                                                    ) {
-                                                      controller
-                                                          .state
-                                                          .isSelectIndexDropOffTwoWay
-                                                          .value = value;
-                                                    },
-                                                    selectedName: controller
-                                                        .state
-                                                        .selectDropPointTwoWay
-                                                        .value,
-                                                    onSelectedNameChanged: (
-                                                      value,
-                                                    ) {
-                                                      controller
-                                                          .state
-                                                          .selectDropPointTwoWay
-                                                          .value = value;
-                                                    },
-                                                    selectedAddress: controller
-                                                        .state
-                                                        .selectDropPointAddressTwoWay
-                                                        .value,
-                                                    onSelectedAddressChanged: (
-                                                      value,
-                                                    ) {
-                                                      controller
-                                                          .state
-                                                          .selectDropPointAddressTwoWay
-                                                          .value = value;
-                                                    },
-                                                    defaultName:
-                                                        'select_drop'.tr,
-                                                    onClearSelection: () {
-                                                      controller
-                                                          .state
-                                                          .isSelectIndexDropOffTwoWay
-                                                          .value = -1;
-                                                      controller
-                                                              .state
-                                                              .selectDropPointTwoWay
-                                                              .value =
-                                                          'select_drop'.tr;
-                                                      controller
-                                                          .state
-                                                          .selectDropPointAddressTwoWay
-                                                          .value = '';
-                                                      ValueStatic
-                                                          .dropOffPointTwoWayId = '';
-                                                    },
-                                                    onValueStaticSelected: (
-                                                      item,
-                                                    ) {
-                                                      ValueStatic
-                                                              .dropOffPointTwoWayId =
-                                                          (item.id).toString();
-                                                      ValueStatic
-                                                              .dropOffPointTwoWay =
-                                                          (item.name).toString();
-                                                    },
-                                                  )
-                                                  : InputDecorator(
-                                                    decoration: Style.inputText(''),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "${(data.data?.body?[0].name)}",
-                                                          style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .textColor,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 8,
-                                                        ),
-                                                        Text(
-                                                          "${data.data?.body?[0].address}",
-                                                          style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .textColor,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                             
-                                            ],
-                                          );
-                                        }
-                                      }
-                                    } else if (data.hasError) {
-                                      return const Text('');
-                                    }
-                                    return Center(
-                                      child: SizedBox(
-                                        height: 30.0,
-                                        width: 30.0,
-                                        child: CircularProgressIndicator(
-                                          value: null,
-                                          color:
-                                              ValueStatic.ticketType == '3'
-                                                  ? AppColors.airBusColor
-                                                  : AppColors.primaryColor,
-                                          strokeWidth: 3.0,
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'drop_off_point'.tr,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: AppColors.titleColor,
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
-                              ],
+                                      const SizedBox(width: 5),
+                                      (data.data?.body?.length != 1)
+                                          ? const Text(
+                                            "*",
+                                            style: TextStyle(color: Colors.red),
+                                          )
+                                          : const SizedBox(),
+                                    ],
+                                  ),
+                                  //
+                                  _viewMapButtonForSelection(
+                                    context: context,
+                                    items: data.data?.body ?? [],
+                                    selectedIndex:
+                                        controller
+                                            .state
+                                            .isSelectIndexDropOffTwoWay
+                                            .value,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                            (data.data?.body?.length != 1)
+                                ? _pointPicker(
+                                  context: context,
+                                  decoration: Style.inputText(''),
+                                  dialogTitle: 'drop_off_point'.tr,
+                                  items: data.data?.body ?? [],
+                                  selectedIndex:
+                                      controller
+                                          .state
+                                          .isSelectIndexDropOffTwoWay
+                                          .value,
+                                  onSelectedIndexChanged: (value) {
+                                    controller
+                                        .state
+                                        .isSelectIndexDropOffTwoWay
+                                        .value = value;
+                                  },
+                                  selectedName:
+                                      controller
+                                          .state
+                                          .selectDropPointTwoWay
+                                          .value,
+                                  onSelectedNameChanged: (value) {
+                                    controller
+                                        .state
+                                        .selectDropPointTwoWay
+                                        .value = value;
+                                  },
+                                  selectedAddress:
+                                      controller
+                                          .state
+                                          .selectDropPointAddressTwoWay
+                                          .value,
+                                  onSelectedAddressChanged: (value) {
+                                    controller
+                                        .state
+                                        .selectDropPointAddressTwoWay
+                                        .value = value;
+                                  },
+                                  defaultName: 'select_drop'.tr,
+                                  onClearSelection: () {
+                                    controller
+                                        .state
+                                        .isSelectIndexDropOffTwoWay
+                                        .value = -1;
+                                    controller
+                                        .state
+                                        .selectDropPointTwoWay
+                                        .value = 'select_drop'.tr;
+                                    controller
+                                        .state
+                                        .selectDropPointAddressTwoWay
+                                        .value = '';
+                                    ValueStatic.dropOffPointTwoWayId = '';
+                                  },
+                                  onValueStaticSelected: (item) {
+                                    ValueStatic.dropOffPointTwoWayId =
+                                        (item.id).toString();
+                                    ValueStatic.dropOffPointTwoWay =
+                                        (item.name).toString();
+                                  },
+                                )
+                                : InputDecorator(
+                                  decoration: Style.inputText(''),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${(data.data?.body?[0].name)}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: AppColors.textColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        "${data.data?.body?[0].address}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: AppColors.textColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                          ],
+                        );
+                      }
+                    }
+                  } else if (data.hasError) {
+                    return const Text('');
+                  }
+                  return Center(
+                    child: SizedBox(
+                      height: 30.0,
+                      width: 30.0,
+                      child: CircularProgressIndicator(
+                        value: null,
+                        color:
+                            ValueStatic.ticketType == '3'
+                                ? AppColors.airBusColor
+                                : AppColors.primaryColor,
+                        strokeWidth: 3.0,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
 
-                          //* customer info
-                          _travelInformationSection(
-                            context: context,
-                            selectedSeats: ValueStatic.twoWaySelectedSeat,
-                            companyType: ValueStatic.companyTypeTwoWay,
-                            isGoingTrip: false,
-                            nameControllers: controller.state.nameTwoWay,
-                            gender: controller.state.genderTwoWay,
-                            nationalityIds:
-                                controller.state.nationalityIdsTwoWay,
-                            national: controller.state.nationalTwoWay,
-                            dobDisplayControllers:
-                                controller.state.dobTwoWayList,
-                            dobValueControllers: controller.state.dobTwoWay,
-                            passportControllers:
-                                controller.state.passportTwoWay,
-                          ),
-                        ]),
-                      );
+        //* customer info
+        _travelInformationSection(
+          context: context,
+          selectedSeats: ValueStatic.twoWaySelectedSeat,
+          companyType: ValueStatic.companyTypeTwoWay,
+          isGoingTrip: false,
+          nameControllers: controller.state.nameTwoWay,
+          gender: controller.state.genderTwoWay,
+          nationalityIds: controller.state.nationalityIdsTwoWay,
+          national: controller.state.nationalTwoWay,
+          dobDisplayControllers: controller.state.dobTwoWayList,
+          dobValueControllers: controller.state.dobTwoWay,
+          passportControllers: controller.state.passportTwoWay,
+        ),
+      ]),
+    );
   }
 
   Widget _buildPassengerOneway(BuildContext context) {
     return SliverList(
-                      delegate: SliverChildListDelegate([
-                        Container(
-                          margin: const EdgeInsets.only(top: 15.0),
-                          padding: const EdgeInsets.all(15),
-                          color: AppColors.whiteColor,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //* destination
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: ValueStatic.desfrom,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                        color: AppColors.titleColor,
+      delegate: SliverChildListDelegate([
+        Container(
+          margin: const EdgeInsets.only(top: 15.0),
+          padding: const EdgeInsets.all(15),
+          color: AppColors.whiteColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //* destination
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: ValueStatic.desfrom,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: AppColors.titleColor,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' - ',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: AppColors.titleColor,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ValueStatic.desTo,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: AppColors.titleColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // const SizedBox(height: 10),
+
+              // //* departure date
+              // Text(
+              //   'departure_date:'.tr + ValueStatic.goDate,
+              //   style: const TextStyle(
+              //     fontSize: 14,
+              //     color: AppColors.textColor,
+              //   ),
+              // ),
+
+              //* boarding point
+              FutureBuilder<boarding.CarPointResponse>(
+                future: controller.state.futureBoardingPointOneWay,
+                builder: (context, data) {
+                  if (data.hasData) {
+                    if ((data.data?.header?.result) == true &&
+                        (data.data?.header?.statusCode) == 200) {
+                      if ((data.data?.body)!.isNotEmpty) {
+                        if (data.data?.body?.length == 1) {
+                          ValueStatic.boardingPointOneWayId =
+                              (data.data?.body?[0].id).toString();
+                          ValueStatic.boardingPointOneWay =
+                              (data.data?.body?[0].name).toString();
+                        }
+
+                        if (ValueStatic.dropOffPointOneWayId.isNotEmpty) {
+                          _callGetData(context, isConfirm: false);
+                        }
+
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'boarding_point'.tr,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.titleColor,
+                                        ),
                                       ),
-                                    ),
-                                    TextSpan(
-                                      text: ' - ',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                        color: AppColors.titleColor,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: ValueStatic.desTo,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                        color: AppColors.titleColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                      const SizedBox(width: 5),
+                                      (data.data?.body?.length != 1)
+                                          ? const Text(
+                                            "*",
+                                            style: TextStyle(color: Colors.red),
+                                          )
+                                          : const SizedBox(),
+                                    ],
+                                  ),
+
+                                  _viewMapButtonForSelection(
+                                    context: context,
+                                    items: data.data?.body ?? [],
+                                    selectedIndex:
+                                        controller
+                                            .state
+                                            .isSelectedIndexBoardingOneWay
+                                            .value,
+                                  ),
+                                ],
                               ),
-                              // const SizedBox(height: 10),
+                            ),
+                            _pointPicker(
+                              context: context,
+                              decoration: Style.inputText(''),
+                              dialogTitle: 'boarding_point'.tr,
+                              items: data.data?.body ?? [],
+                              selectedIndex:
+                                  controller
+                                      .state
+                                      .isSelectedIndexBoardingOneWay
+                                      .value,
+                              onSelectedIndexChanged: (value) {
+                                controller
+                                    .state
+                                    .isSelectedIndexBoardingOneWay
+                                    .value = value;
+                              },
+                              selectedName:
+                                  controller
+                                      .state
+                                      .selectedBoardingPointOneWay
+                                      .value,
+                              onSelectedNameChanged: (value) {
+                                controller
+                                    .state
+                                    .selectedBoardingPointOneWay
+                                    .value = value;
+                              },
+                              selectedAddress:
+                                  controller
+                                      .state
+                                      .selectedBoardingPointAddressOneWay
+                                      .value,
+                              onSelectedAddressChanged: (value) {
+                                controller
+                                    .state
+                                    .selectedBoardingPointAddressOneWay
+                                    .value = value;
+                              },
+                              defaultName: 'select_boarding'.tr,
+                              onClearSelection: () {
+                                controller
+                                    .state
+                                    .isSelectedIndexBoardingOneWay
+                                    .value = -1;
+                                controller
+                                    .state
+                                    .selectedBoardingPointOneWay
+                                    .value = 'select_boarding'.tr;
+                                controller
+                                    .state
+                                    .selectedBoardingPointAddressOneWay
+                                    .value = '';
+                                ValueStatic.boardingPointOneWayId = '';
+                              },
+                              onValueStaticSelected: (item) {
+                                ValueStatic.boardingPointOneWayId =
+                                    (item.id).toString();
+                                ValueStatic.boardingPointOneWay =
+                                    (item.name).toString();
+                              },
+                              isDisabled: (item) {
+                                return (item.isAllow ?? 1) == 0;
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                    }
+                  } else if (data.hasError) {
+                    return const Text('');
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
 
-                              // //* departure date
-                              // Text(
-                              //   'departure_date:'.tr + ValueStatic.goDate,
-                              //   style: const TextStyle(
-                              //     fontSize: 14,
-                              //     color: AppColors.textColor,
-                              //   ),
-                              // ),
+              //* drop off point
+              FutureBuilder<boarding.CarPointResponse>(
+                future: controller.state.futureDropOffPointOneWay,
+                builder: (context, data) {
+                  if (data.hasData) {
+                    if ((data.data?.header?.result) == true &&
+                        (data.data?.header?.statusCode) == 200) {
+                      if ((data.data?.body)!.isNotEmpty) {
+                        if (data.data?.body?.length == 1) {
+                          ValueStatic.dropOffPointOneWayId =
+                              (data.data?.body?[0].id).toString();
+                          ValueStatic.dropOffPointOneWay =
+                              (data.data?.body?[0].name).toString();
+                        }
 
-                              //* boarding point
-                              FutureBuilder<boarding.CarPointResponse>(
-                                future:
-                                    controller
-                                        .state
-                                        .futureBoardingPointOneWay,
-                                builder: (context, data) {
-                                  if (data.hasData) {
-                                    if ((data.data?.header?.result) == true &&
-                                        (data.data?.header?.statusCode) ==
-                                            200) {
-                                      if ((data.data?.body)!.isNotEmpty) {
-                                        if (data.data?.body?.length == 1) {
-                                          ValueStatic.boardingPointOneWayId =
-                                              (data.data?.body?[0].id)
-                                                  .toString();
-                                          ValueStatic.boardingPointOneWay =
-                                              (data.data?.body?[0].name)
-                                                  .toString();
-                                        }
+                        if (ValueStatic.boardingPointOneWayId.isNotEmpty) {
+                          _callGetData(context, isConfirm: false);
+                        }
 
-                                        if (ValueStatic
-                                            .dropOffPointOneWayId
-                                            .isNotEmpty) {
-                                          _callGetData(
-                                            context,
-                                            isConfirm: false,
-                                          );
-                                        }
-
-                                        return Column(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 10),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Row(children: [
-                                                    Text(
-                                                    'boarding_point'.tr,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color:
-                                                          AppColors
-                                                              .titleColor,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  (data.data?.body?.length !=
-                                                          1)
-                                                      ? const Text(
-                                                        "*",
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      )
-                                                      : const SizedBox(),
-                                                  ],),
-                                              
-                                                    _viewMapButtonForSelection(
-                                                      context: context,
-                                                      items: data.data?.body ?? [],
-                                                      selectedIndex:
-                                                          controller
-                                                              .state
-                                                              .isSelectedIndexBoardingOneWay
-                                                              .value,
-                                                                                          ),
-                                                ],
-                                              
-                                                
-                                              ),
-                                            ),
-                                            _pointPicker(
-                                              context: context,
-                                              decoration: Style.inputText(''),
-                                              dialogTitle:
-                                                  'boarding_point'.tr,
-                                              items: data.data?.body ?? [],
-                                              selectedIndex:
-                                                  controller
-                                                      .state
-                                                      .isSelectedIndexBoardingOneWay
-                                                      .value,
-                                              onSelectedIndexChanged: (
-                                                value,
-                                              ) {
-                                                controller
-                                                    .state
-                                                    .isSelectedIndexBoardingOneWay
-                                                    .value = value;
-                                              },
-                                              selectedName:
-                                                  controller
-                                                      .state
-                                                      .selectedBoardingPointOneWay
-                                                      .value,
-                                              onSelectedNameChanged: (value) {
-                                                controller
-                                                    .state
-                                                    .selectedBoardingPointOneWay
-                                                    .value = value;
-                                              },
-                                              selectedAddress:
-                                                  controller
-                                                      .state
-                                                      .selectedBoardingPointAddressOneWay
-                                                      .value,
-                                              onSelectedAddressChanged: (
-                                                value,
-                                              ) {
-                                                controller
-                                                    .state
-                                                    .selectedBoardingPointAddressOneWay
-                                                    .value = value;
-                                              },
-                                              defaultName:
-                                                  'select_boarding'.tr,
-                                              onClearSelection: () {
-                                                controller
-                                                    .state
-                                                    .isSelectedIndexBoardingOneWay
-                                                    .value = -1;
-                                                controller
-                                                    .state
-                                                    .selectedBoardingPointOneWay
-                                                    .value = 'select_boarding'
-                                                        .tr;
-                                                controller
-                                                    .state
-                                                    .selectedBoardingPointAddressOneWay
-                                                    .value = '';
-                                                ValueStatic
-                                                    .boardingPointOneWayId = '';
-                                              },
-                                              onValueStaticSelected: (item) {
-                                                ValueStatic
-                                                        .boardingPointOneWayId =
-                                                    (item.id).toString();
-                                                ValueStatic
-                                                        .boardingPointOneWay =
-                                                    (item.name).toString();
-                                              },
-                                              isDisabled: (item) {
-                                                return (item.isAllow ?? 1) ==
-                                                    0;
-                                              },
-                                            ),
-                                            
-                                          ],
-                                        );
-                                      }
-                                    }
-                                  } else if (data.hasError) {
-                                    return const Text('');
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                              ),
-
-                              //* drop off point
-                              FutureBuilder<boarding.CarPointResponse>(
-                                future:
-                                    controller.state.futureDropOffPointOneWay,
-                                builder: (context, data) {
-                                  if (data.hasData) {
-                                    if ((data.data?.header?.result) == true &&
-                                        (data.data?.header?.statusCode) ==
-                                            200) {
-                                      if ((data.data?.body)!.isNotEmpty) {
-                                        if (data.data?.body?.length == 1) {
-                                          ValueStatic.dropOffPointOneWayId =
-                                              (data.data?.body?[0].id)
-                                                  .toString();
-                                          ValueStatic.dropOffPointOneWay =
-                                              (data.data?.body?[0].name)
-                                                  .toString();
-                                        }
-
-                                        if (ValueStatic
-                                            .boardingPointOneWayId
-                                            .isNotEmpty) {
-                                          _callGetData(
-                                            context,
-                                            isConfirm: false,
-                                          );
-                                        }
-
-                                        return Column(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 10),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Row(children: [
-                                                    Text(
-                                                    'drop_off_point'.tr,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color:
-                                                          AppColors
-                                                              .titleColor,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  (data.data?.body?.length !=
-                                                          1)
-                                                      ? const Text(
-                                                        "*",
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      )
-                                                      : const SizedBox(),
-                                                  ],),
-                                                      
-                                               _viewMapButtonForSelection(
-                                                context: context,
-                                                items: data.data?.body ?? [],
-                                                selectedIndex:
-                                                    controller
-                                                        .state
-                                                        .isSelectedIndexBoardingOneWay
-                                                        .value,
-                                                                                          ),
-                                                ],
-                                              ),
-                                            ),
-                                            _pointPicker(
-                                              context: context,
-                                              decoration: Style.inputText(''),
-                                              dialogTitle:
-                                                  'drop_off_point'.tr,
-                                              items: data.data?.body ?? [],
-                                              selectedIndex:
-                                                  controller
-                                                      .state
-                                                      .isSelectedIndexDropOffOneWay
-                                                      .value,
-                                              onSelectedIndexChanged: (
-                                                value,
-                                              ) {
-                                                controller
-                                                    .state
-                                                    .isSelectedIndexDropOffOneWay
-                                                    .value = value;
-                                              },
-                                              selectedName:
-                                                  controller
-                                                      .state
-                                                      .selectedDropPointOneWay
-                                                      .value,
-                                              onSelectedNameChanged: (value) {
-                                                controller
-                                                    .state
-                                                    .selectedDropPointOneWay
-                                                    .value = value;
-                                              },
-                                              selectedAddress:
-                                                  controller
-                                                      .state
-                                                      .selectedDropPointAddressOneWay
-                                                      .value,
-                                              onSelectedAddressChanged: (
-                                                value,
-                                              ) {
-                                                controller
-                                                    .state
-                                                    .selectedDropPointAddressOneWay
-                                                    .value = value;
-                                              },
-                                              defaultName: 'select_drop'.tr,
-                                              onClearSelection: () {
-                                                controller
-                                                    .state
-                                                    .isSelectedIndexDropOffOneWay
-                                                    .value = -1;
-                                                controller
-                                                    .state
-                                                    .selectedDropPointOneWay
-                                                    .value = 'select_drop'.tr;
-                                                controller
-                                                    .state
-                                                    .selectedDropPointAddressOneWay
-                                                    .value = '';
-                                                ValueStatic
-                                                    .dropOffPointOneWayId = '';
-                                              },
-                                              onValueStaticSelected: (item) {
-                                                ValueStatic
-                                                        .dropOffPointOneWayId =
-                                                    (item.id).toString();
-                                                ValueStatic
-                                                        .dropOffPointOneWay =
-                                                    (item.name).toString();
-                                              },
-                                            ),
-                                           
-                                          ],
-                                        );
-                                      }
-                                    }
-                                  } else if (data.hasError) {
-                                    return const Text('');
-                                  }
-
-                                  return Center(
-                                    child: SizedBox(
-                                      height: 30.0,
-                                      width: 30.0,
-                                      child: CircularProgressIndicator(
-                                        value: null,
-                                        color:
-                                            ValueStatic.ticketType == '3'
-                                                ? AppColors.airBusColor
-                                                : AppColors.primaryColor,
-                                        strokeWidth: 3.0,
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'drop_off_point'.tr,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.titleColor,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+                                      const SizedBox(width: 5),
+                                      (data.data?.body?.length != 1)
+                                          ? const Text(
+                                            "*",
+                                            style: TextStyle(color: Colors.red),
+                                          )
+                                          : const SizedBox(),
+                                    ],
+                                  ),
 
-                        //* customer info
-                        _travelInformationSection(
-                          context: context,
-                          selectedSeats: ValueStatic.oneWaySelectedSeat,
-                          companyType: ValueStatic.companyTypeOneWay,
-                          isGoingTrip: true,
-                          nameControllers: controller.state.nameOneWay,
-                          gender: controller.state.genderOneWay,
-                          nationalityIds: controller.state.nationalityIds,
-                          national: controller.state.nationalOneWay,
-                          dobDisplayControllers:
-                              controller.state.dobOneWayList,
-                          dobValueControllers: controller.state.dobOneWay,
-                          passportControllers:
-                              controller.state.passportOneWay,
-                        ),
-                      ]),
-                    );
+                                  _viewMapButtonForSelection(
+                                    context: context,
+                                    items: data.data?.body ?? [],
+                                    selectedIndex:
+                                        controller
+                                            .state
+                                            .isSelectedIndexBoardingOneWay
+                                            .value,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            _pointPicker(
+                              context: context,
+                              decoration: Style.inputText(''),
+                              dialogTitle: 'drop_off_point'.tr,
+                              items: data.data?.body ?? [],
+                              selectedIndex:
+                                  controller
+                                      .state
+                                      .isSelectedIndexDropOffOneWay
+                                      .value,
+                              onSelectedIndexChanged: (value) {
+                                controller
+                                    .state
+                                    .isSelectedIndexDropOffOneWay
+                                    .value = value;
+                              },
+                              selectedName:
+                                  controller
+                                      .state
+                                      .selectedDropPointOneWay
+                                      .value,
+                              onSelectedNameChanged: (value) {
+                                controller.state.selectedDropPointOneWay.value =
+                                    value;
+                              },
+                              selectedAddress:
+                                  controller
+                                      .state
+                                      .selectedDropPointAddressOneWay
+                                      .value,
+                              onSelectedAddressChanged: (value) {
+                                controller
+                                    .state
+                                    .selectedDropPointAddressOneWay
+                                    .value = value;
+                              },
+                              defaultName: 'select_drop'.tr,
+                              onClearSelection: () {
+                                controller
+                                    .state
+                                    .isSelectedIndexDropOffOneWay
+                                    .value = -1;
+                                controller.state.selectedDropPointOneWay.value =
+                                    'select_drop'.tr;
+                                controller
+                                    .state
+                                    .selectedDropPointAddressOneWay
+                                    .value = '';
+                                ValueStatic.dropOffPointOneWayId = '';
+                              },
+                              onValueStaticSelected: (item) {
+                                ValueStatic.dropOffPointOneWayId =
+                                    (item.id).toString();
+                                ValueStatic.dropOffPointOneWay =
+                                    (item.name).toString();
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                    }
+                  } else if (data.hasError) {
+                    return const Text('');
+                  }
+
+                  return Center(
+                    child: SizedBox(
+                      height: 30.0,
+                      width: 30.0,
+                      child: CircularProgressIndicator(
+                        value: null,
+                        color:
+                            ValueStatic.ticketType == '3'
+                                ? AppColors.airBusColor
+                                : AppColors.primaryColor,
+                        strokeWidth: 3.0,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+
+        //* customer info
+        _travelInformationSection(
+          context: context,
+          selectedSeats: ValueStatic.oneWaySelectedSeat,
+          companyType: ValueStatic.companyTypeOneWay,
+          isGoingTrip: true,
+          nameControllers: controller.state.nameOneWay,
+          gender: controller.state.genderOneWay,
+          nationalityIds: controller.state.nationalityIds,
+          national: controller.state.nationalOneWay,
+          dobDisplayControllers: controller.state.dobOneWayList,
+          dobValueControllers: controller.state.dobOneWay,
+          passportControllers: controller.state.passportOneWay,
+        ),
+      ]),
+    );
   }
 
   Widget _buildButtonToPaymentScreen(BuildContext context) {

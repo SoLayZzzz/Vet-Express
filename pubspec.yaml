@@ -61,6 +61,7 @@ dependencies:
   uuid: ^4.5.1
   widget_zoom: ^0.0.4
   permission_handler: ^11.3.1
+  like_button: ^2.0.5
 
   # component:
   #  git:

@@ -179,6 +179,7 @@ final Map<String, String> enUS = {
         "provinces_found": "{{count}} provinces found",
         "no_provinces_available": "No provinces available",
         "no_provinces_found": "No provinces found",
+        "no_stations_found": "No stations found",
         "try_different_search": "Try different search",
         "clear_filter": "Clear filter",
         "close": "Close",
@@ -562,7 +563,8 @@ final Map<String, String> enUS = {
         'unavailable': 'Unavailable',
         'next': 'Next',
         'next1': 'Continue',
-        'choose_seat': 'Choose Seat',
+        'choose_seat': 'Choose Seats',
+        'choose_bed': 'Choose Beds',
         'number_of_seat': 'Number of seat not same',
 
         //ticket_history

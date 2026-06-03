@@ -6,6 +6,7 @@ import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:like_button/like_button.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../controller/ev_station_controller.dart';
@@ -161,99 +162,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
               ],
             );
           }),
-
-          // Favorite Success Animation
-          Obx(() {
-            if (controller.showFavoriteAnimation.value) {
-              return _buildFavoriteAnimation();
-            }
-            return const SizedBox.shrink();
-          }),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFavoriteAnimation() {
-    return Positioned.fill(
-      child: IgnorePointer(
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          color: Colors.black.withValues(
-            alpha: controller.showFavoriteAnimation.value ? 0.5 : 0.0,
-          ),
-          child: Center(
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 300),
-              opacity: controller.showFavoriteAnimation.value ? 1.0 : 0.0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Boom Fire Animation with scaling
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.elasticOut,
-                    // transform:
-                    //     Matrix4.identity()..scale(
-                    //       controller.showFavoriteAnimation.value ? 1.2 : 0.8,
-                    //     ),
-                    transform: Matrix4.diagonal3Values(
-                      controller.showFavoriteAnimation.value ? 1.2 : 0.8,
-                      controller.showFavoriteAnimation.value ? 1.2 : 0.8,
-                      1.0,
-                    ),
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                      size: 80,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Success Message with fade-in
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'added_to_favorites'.tr,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          controller.favoriteStationName.value,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -386,7 +295,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
               // Drag handle
               GestureDetector(
                 onTap: () {
-                  controller.panelController.close();
+                  controller.openPanelToDefaultPosition();
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 12),
@@ -417,7 +326,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
                     ),
                     IconButton(
                       onPressed: () {
-                        controller.panelController.close();
+                        controller.openPanelToDefaultPosition();
                       },
                       icon: const Icon(Icons.close),
                     ),
@@ -560,42 +469,19 @@ class EvAllStationScreen extends GetView<EvStationController> {
                         // Facebook-style heart button with instant feedback
                         GetBuilder<EvStationController>(
                           builder: (controller) {
-                            return GestureDetector(
-                              onTap: () {
+                            return FavoriteButton(
+                              isLiked: station.isFavorite ?? false,
+                              size: 22,
+                              onTap: (bool isLiked) async {
                                 if (station.id != null) {
-                                  controller.toggleFavorite(
+                                  await controller.toggleFavorite(
                                     station.id!,
                                     station.name ?? 'Unknown Station',
                                   );
+                                  return !isLiked;
                                 }
+                                return isLiked;
                               },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeInOut,
-                                padding: const EdgeInsets.all(4),
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 300),
-                                  transitionBuilder: (child, animation) {
-                                    return ScaleTransition(
-                                      scale: animation,
-                                      child: child,
-                                    );
-                                  },
-                                  child: Icon(
-                                    station.isFavorite ?? false
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    key: ValueKey(
-                                      station.isFavorite,
-                                    ), // Important for animation
-                                    color:
-                                        (station.isFavorite ?? false)
-                                            ? const Color(0xFFE65100)
-                                            : Colors.grey,
-                                    size: 22,
-                                  ),
-                                ),
-                              ),
                             );
                           },
                         ),
@@ -657,7 +543,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'}\$/kWh",
+                          "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'} KHR/kWh",
                           style: const TextStyle(
                             color: Color(0xFFE65100),
                             fontWeight: FontWeight.bold,
@@ -826,11 +712,6 @@ class EvAllStationScreen extends GetView<EvStationController> {
             'no_stations_found'.tr,
             style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'try_different_search'.tr,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: controller.clearAllFilters,
@@ -914,7 +795,26 @@ class EvStationSearchScreen extends GetView<EvStationController> {
 
               final stations = controller.allStations;
               if (stations.isEmpty) {
-                return const SizedBox.shrink();
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.search_off,
+                        size: 64,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'no_stations_found'.tr,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
 
               return ListView.separated(
@@ -1093,7 +993,26 @@ class EvProvinceFilterScreen extends GetView<EvStationController> {
 
                   if (controller.filteredProvinces.isEmpty &&
                       controller.provinceSearchController.text.isNotEmpty) {
-                    return const SizedBox.shrink();
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.search_off,
+                            size: 64,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'no_provinces_found'.tr,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
                   return ListView.separated(
@@ -1262,14 +1181,6 @@ class ProvinceFilterDialog extends GetView<EvStationController> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    if (controller.provinceSearchController.text.isNotEmpty)
-                      TextButton(
-                        onPressed: controller.clearProvinceSearch,
-                        child: Text(
-                          'clear_search'.tr,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ),
                   ],
                 ),
               );
@@ -1324,19 +1235,6 @@ class ProvinceFilterDialog extends GetView<EvStationController> {
                             fontSize: 16,
                             color: Colors.grey,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'try_different_search'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: controller.clearSearch,
-                          child: Text('clear_search'.tr),
                         ),
                       ],
                     ),
@@ -1449,6 +1347,43 @@ class ProvinceFilterDialog extends GetView<EvStationController> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class FavoriteButton extends StatelessWidget {
+  final bool isLiked;
+  final double size;
+  final Future<bool?> Function(bool)? onTap;
+
+  const FavoriteButton({
+    super.key,
+    required this.isLiked,
+    this.size = 22.0,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LikeButton(
+      size: size,
+      isLiked: isLiked,
+      onTap: onTap,
+      circleColor: const CircleColor(
+        start: Color(0xff00ddff),
+        end: Color(0xff0099cc),
+      ),
+      bubblesColor: const BubblesColor(
+        dotPrimaryColor: Colors.pink,
+        dotSecondaryColor: Colors.white,
+      ),
+      likeBuilder: (bool isLiked) {
+        return Icon(
+          Icons.favorite,
+          color: isLiked ? Colors.red : Colors.grey.withValues(alpha: 0.5),
+          size: size,
+        );
+      },
     );
   }
 }

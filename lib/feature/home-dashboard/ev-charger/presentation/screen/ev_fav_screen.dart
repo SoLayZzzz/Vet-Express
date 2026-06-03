@@ -1,6 +1,7 @@
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:like_button/like_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../controller/ev_station_controller.dart';
 import '../../data/model/response/ev_station_list_response.dart';
@@ -163,12 +164,8 @@ class EvFavoriteScreen extends GetView<EvStationController> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        // LOGIC FROM CODE 2 INTEGRATED HERE
-                        Icon(
-                          Icons.favorite,
-                          color: Color(0xFFE65100),
-                          size: 22,
-                        ),
+
+                        Icon(Icons.favorite, color: Colors.red, size: 22),
                       ],
                     ),
 
@@ -224,11 +221,9 @@ class EvFavoriteScreen extends GetView<EvStationController> {
                           ),
                         ),
                         Text(
-                          "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'}\$/kWh",
+                          "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'} KHR/kWh",
                           style: const TextStyle(
-                            color: Color(
-                              0xFFE65100,
-                            ), // Matching the orange price in screenshot
+                            color: Color(0xFFE65100),
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),

@@ -43,6 +43,7 @@ class AssetImages {
 
   static const String location = 'assets/icons/ic_location.png';
   static const String location_active = 'assets/icons/location-active.png';
+  static const String location_in_active = 'assets/icons/location_inactive.png';
 
   static const String scan = 'assets/icons/icon_scan.png';
 
@@ -261,14 +262,11 @@ class AssetImages {
 
   // =========================
   // China Address
-  // =========================    
+  // =========================
 
   static const String ic_copy = "assets/images/ic_copy.png";
   static const String ic_phone_china = "assets/icons/phone.png";
   static const String ic_map_pin = "assets/icons/map-pin.png";
-  static const String ic_bussness_ountline = "assets/icons/business-outline.png";
-
-
+  static const String ic_bussness_ountline =
+      "assets/icons/business-outline.png";
 }
-
-

@@ -49,22 +49,41 @@ class SelectSeatScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 20.0,
-                right: 15,
-                left: 15,
-                bottom: 12,
-              ),
-              child: Text(
-                'choose_seat'.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: AppColors.titleColor,
+            Obx(() {
+              return Padding(
+                padding: const EdgeInsets.only(
+                  top: 20.0,
+                  right: 15,
+                  left: 15,
+                  bottom: 12,
                 ),
-              ),
-            ),
+                child: FutureBuilder<Map<dynamic, dynamic>>(
+                  future: controller.state.futureSeatLayout,
+                  builder: (context, seatData) {
+                    int seatType = 1;
+                    if (seatData.hasData) {
+                      final data = seatData.data;
+                      final body = data?['body'];
+                      if (body is List && body.isNotEmpty) {
+                        final first = body[0];
+                        seatType =
+                            (first['seatType'] is int)
+                                ? first['seatType'] as int
+                                : 1;
+                      }
+                    }
+                    return Text(
+                      seatType == 2 ? 'choose_bed'.tr : 'choose_seat'.tr,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.titleColor,
+                      ),
+                    );
+                  },
+                ),
+              );
+            }),
             Padding(
               padding: const EdgeInsets.only(bottom: 12.0, left: 15, right: 15),
               child: Row(
@@ -201,7 +220,7 @@ class SelectSeatScreen extends StatelessWidget {
                       }
 
                       return Center(
-                        child: SeatSkeleton()
+                        child: SeatSkeleton(),
                         // SizedBox(
                         //   height: 50.0,
                         //   width: 50.0,

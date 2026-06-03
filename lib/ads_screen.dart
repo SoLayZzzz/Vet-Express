@@ -24,6 +24,7 @@ class _AdsScreenState extends State<AdsScreen>
   late AnimationController _controller;
   int activeIndex = 0;
   bool _shouldAutoNavigate = true;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
@@ -69,6 +70,10 @@ class _AdsScreenState extends State<AdsScreen>
 
   /// Navigate based on login status (called after ads finish)
   void _navigateBasedOnLoginStatus() {
+    if (_hasNavigated) return;
+    _hasNavigated = true;
+    _shouldAutoNavigate = false;
+
     // Use AppPref instead of direct SharedPreferences
     final isLoggedIn = AppPref.isLoggedIn();
 

@@ -519,6 +519,8 @@ class AuthController extends StateController<AuthUiState> {
     required String username,
     required String password,
   }) async {
+    if (uiState.value.isLoading.value) return;
+
     uiState.value.isLoading.value = true;
     uiState.value.errorMessage.value = '';
     Loading().loadingShow();

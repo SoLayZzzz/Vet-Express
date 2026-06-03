@@ -76,7 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 buildNavItem(
                   selectedIndex == 4
                       ? AssetImages.location_active
-                      : AssetImages.location,
+                      : AssetImages.location_in_active,
                   'location'.tr,
                   4,
                 ),

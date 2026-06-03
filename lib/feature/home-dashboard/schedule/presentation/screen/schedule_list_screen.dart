@@ -103,21 +103,10 @@ class ScheduleListScreen extends StatelessWidget {
               scheduleData.data!.header!.result == true &&
               scheduleData.data!.header!.statusCode == 200) {
             if ((scheduleData.data?.body ?? []).isNotEmpty) {
-              return SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 60),
-                    _buildLocationFromTo(controller),
-                    const SizedBox(height: 6),
-                    _buildScheduleList(
-                      scheduleData,
-                      controller,
-                      applyFivePercentDiscount: applyFivePercentDiscount,
-                    ),
-                  ],
-                ),
+              return _buildScheduleList(
+                scheduleData,
+                controller,
+                applyFivePercentDiscount: applyFivePercentDiscount,
               );
             }
             if ((scheduleData.data?.body ?? []).isEmpty) {
@@ -158,11 +147,22 @@ class ScheduleListScreen extends StatelessWidget {
     final itemCount = body?.length ?? 0;
 
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: itemCount,
+      physics: const BouncingScrollPhysics(),
+      itemCount: itemCount + 1,
       itemBuilder: (BuildContext context, int index) {
-        final item = body![index];
+        if (index == 0) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 60),
+              _buildLocationFromTo(controller),
+              const SizedBox(height: 6),
+            ],
+          );
+        }
+
+        final int itemIndex = index - 1;
+        final item = body![itemIndex];
 
         if (controller.state.isBack) {
           ValueStatic.seatPriceBack = (item.price).toString();
@@ -422,11 +422,11 @@ class ScheduleListScreen extends StatelessWidget {
 
                       if (item.isflashSale == 1)
                         Positioned(
-                          right: 10,
+                          right: 30,
                           child: Image(
                             image: AssetImage(AssetImages.gifFlashSale),
-                            height: 40,
-                            width: 40,
+                            height: 48,
+                            width: 48,
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -439,7 +439,7 @@ class ScheduleListScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      gotoRateReview(controller, scheduleData, index),
+                      gotoRateReview(controller, scheduleData, itemIndex),
                       InkWell(
                         onTap: () async {
                           controller.applySelectedScheduleData(item);
@@ -449,7 +449,7 @@ class ScheduleListScreen extends StatelessWidget {
 
                           await gotoScheduleDetail(
                             scheduleData,
-                            index,
+                            itemIndex,
                             controller,
                             flowId,
                           );

@@ -143,32 +143,6 @@ class Booking {
           response.header?.result == true) {
         if (response.body?.status == 2) {
           Get.offAllNamed(AppRoutes.ticketpaymentSuccessScreen);
-          // alertDialogTwoButton(
-          //   title: 'your_ticket_has_been_reserved'.tr,
-          //   description: 'ticket_info1'.tr,
-          //   buttonText1: 'home'.tr,
-          //   buttonText2: 'show_ticket'.tr,
-          //   onButtonPressed1: () {
-          //     ValueStatic().clearDataTicket();
-          //     Navigator.pushAndRemoveUntil(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => const DashboardScreen(from: 0),
-          //       ),
-          //       (Route<dynamic> route) => false,
-          //     );
-          //   },
-          //   onButtonPressed2: () {
-          //     ValueStatic().clearDataTicket();
-          //     Navigator.pushAndRemoveUntil(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => const DashboardScreen(from: 2),
-          //       ),
-          //       (Route<dynamic> route) => false,
-          //     );
-          //   },
-          // );
         } else {
           if (response.body?.msg == 'Data have been saved.') {
             ValueStatic.luckyDraw = luckyDraw;
@@ -198,11 +172,17 @@ class Booking {
           }
         }
       }
-    } on TimeoutException {
-      rethrow;
-    } catch (_) {
+    } on TimeoutException catch (e) {
       Loading().loadingClose();
-      rethrow;
+      debugPrint('[Booking] confirmBooking timeout: $e');
+    } catch (e) {
+      Loading().loadingClose();
+      debugPrint('[Booking] confirmBooking error: $e');
+      alertDialogOneButton(
+        title: 'information'.tr,
+        description: 'Failed to load to server!'.tr,
+        buttonText: 'ok'.tr,
+      );
     }
   }
 
@@ -288,11 +268,17 @@ class Booking {
           );
         }
       }
-    } on TimeoutException {
-      rethrow;
-    } catch (_) {
+    } on TimeoutException catch (e) {
       Loading().loadingClose();
-      rethrow;
+      debugPrint('[Booking] cancelBooking timeout: $e');
+    } catch (e) {
+      Loading().loadingClose();
+      debugPrint('[Booking] cancelBooking error: $e');
+      alertDialogOneButton(
+        title: 'information'.tr,
+        description: 'Failed to load to server!'.tr,
+        buttonText: 'ok'.tr,
+      );
     }
   }
 

@@ -116,9 +116,9 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text(
+                    _requiredLabel(
                       'name_of_the_location'.tr,
-                      style: const TextStyle(color: Colors.grey),
+                      const TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 5),
                     SizedBox(
@@ -130,11 +130,13 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                             width: MediaQuery.of(context).size.width / 2.4,
                             child: TextFormField(
                               onTap: () async {
+                                FocusScope.of(context).unfocus();
                                 await Get.toNamed(
                                   AppRoutes.selfServiceSelect,
                                   arguments: {'selectType': 'province'},
                                 );
                                 controller.syncSelectionFieldsFromValueStatic();
+                                _formKey.currentState?.validate();
                               },
                               controller:
                                   controller.uiState.value.provinceController,
@@ -154,7 +156,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                 );
                               },
                               decoration: Style.inputText(
-                                '${'province_city'.tr} *',
+                                '${'province_city'.tr} ',
                                 iconRight: Ionicons.chevron_forward_outline,
                               ),
                             ),
@@ -164,6 +166,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                             width: MediaQuery.of(context).size.width / 2.4,
                             child: TextFormField(
                               onTap: () async {
+                                FocusScope.of(context).unfocus();
                                 //print(ValueStatic.provinceName);
                                 if (ValueStatic.provinceName == "" ||
                                     ValueStatic.provinceName.isEmpty) {
@@ -180,6 +183,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
 
                                   controller
                                       .syncSelectionFieldsFromValueStatic();
+                                  _formKey.currentState?.validate();
                                 }
                               },
                               controller:
@@ -200,7 +204,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                 );
                               },
                               decoration: Style.inputText(
-                                '${'location'.tr} *',
+                                '${'location'.tr} ',
                                 iconRight: Ionicons.chevron_forward_outline,
                               ),
                             ),
@@ -289,6 +293,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                 const SizedBox(height: 5),
                                 TextFormField(
                                   onTap: () async {
+                                    FocusScope.of(context).unfocus();
                                     await Get.toNamed(
                                       AppRoutes.selfServiceSelect,
                                       arguments: {'selectType': 'uom'},
@@ -296,6 +301,7 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
 
                                     controller
                                         .syncSelectionFieldsFromValueStatic();
+                                    _formKey.currentState?.validate();
                                   },
                                   controller:
                                       controller.uiState.value.unitController,

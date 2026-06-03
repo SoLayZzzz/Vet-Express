@@ -100,6 +100,7 @@ class ValueStatic {
     ValueStatic.companyTypeTwoWay = 0;
     ValueStatic.vehicleTypeOneWay = 0;
     ValueStatic.vehicleTypeTwoWay = 0;
+    ValueStatic.travelPackageDis = 0;
   }
 
   // Self service

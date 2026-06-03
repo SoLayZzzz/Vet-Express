@@ -129,7 +129,9 @@ class _PaymentScreenState extends State<PaymentScreen>
       );
       // final apiSubTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.grandTotal);
       final apiSubTotalAll = _parseAmount(widget.datas.body?.subTotal);
-       final apiPlatformDiscountAll = _parseAmount(widget.datas.body?.totalDiscount);
+      final apiPlatformDiscountAll = _parseAmount(
+        widget.datas.body?.totalDiscount,
+      );
       // final apiTotalAll = _parseAmount(widget.datas.body?.orderPaymentLists?.first.total);
       final apiTotalAll = _parseAmount(widget.datas.body?.totalAmount);
 
@@ -152,20 +154,29 @@ class _PaymentScreenState extends State<PaymentScreen>
         grandTotalAll: grandTotalAll,
       );
 
-      final baseTotalAll = apiTotalAll > 0
-          ? apiTotalAll
-          : _nonNegative(
-              grandTotalAll - travelPackageDiscountAll - apiPlatformDiscountAll,
-            );
+      final baseTotalAll =
+          apiTotalAll > 0
+              ? apiTotalAll
+              : _nonNegative(
+                grandTotalAll -
+                    travelPackageDiscountAll -
+                    apiPlatformDiscountAll,
+              );
       final totalPayableAll = _nonNegative(
         baseTotalAll - selectedDiscountAmount + selectedServiceFeeAmount,
       );
 
-      final totalAmountForApi = totalPayableAll > 0
-          ? totalPayableAll.toStringAsFixed(2)
-          : ((widget.datas.body?.orderPaymentLists?.first.total ?? '').toString().trim().isNotEmpty
-              ? widget.datas.body!.orderPaymentLists!.first.total!.toString().trim()
-              : baseTotalAll.toStringAsFixed(2));
+      final totalAmountForApi =
+          totalPayableAll > 0
+              ? totalPayableAll.toStringAsFixed(2)
+              : ((widget.datas.body?.orderPaymentLists?.first.total ?? '')
+                      .toString()
+                      .trim()
+                      .isNotEmpty
+                  ? widget.datas.body!.orderPaymentLists!.first.total!
+                      .toString()
+                      .trim()
+                  : baseTotalAll.toStringAsFixed(2));
       return PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
@@ -179,10 +190,7 @@ class _PaymentScreenState extends State<PaymentScreen>
               elevation: 0.0,
               backgroundColor: AppColors.primaryColor,
               leading: IconButton(
-                icon: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                ),
+                icon: const Icon(Icons.close, color: Colors.white),
                 onPressed: () {
                   popScreen();
                 },
@@ -216,7 +224,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                             //* choose payment
                             Text(
                               'choose_payment'.tr,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 color: AppColors.titleColor,
                                 fontWeight: FontWeight.w600,
@@ -227,24 +235,22 @@ class _PaymentScreenState extends State<PaymentScreen>
                             _buildSelectBankOption(uiState),
 
                             //* payment type
-                            
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               child: _buildPaymentMethodStatus(uiState),
                             ),
-                            
 
-                          _buildPaymentDetail(
-                            uiState,
-                            totalPayableAll,
-                            travelPackageDiscountAll,
-                            selectedDiscountAmount,
-                            selectedPaymentMethodName,
-                            selectedServiceFeeAmount,
-                            baseSubTotalAll,
-                            apiPlatformDiscountAll,
-                            baseTotalAll,
-                          ), 
+                            _buildPaymentDetail(
+                              uiState,
+                              totalPayableAll,
+                              travelPackageDiscountAll,
+                              selectedDiscountAmount,
+                              selectedPaymentMethodName,
+                              selectedServiceFeeAmount,
+                              baseSubTotalAll,
+                              apiPlatformDiscountAll,
+                              baseTotalAll,
+                            ),
                           ],
                         ),
                       ),
@@ -261,36 +267,33 @@ class _PaymentScreenState extends State<PaymentScreen>
 
   Widget _buildPaymentMethodStatus(PaymentUistate uiState) {
     return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "payment_method".tr,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                uiState.paymentMethodSelected == 1
-                                    ? "ABA KHQR"
-                                    : uiState.paymentMethodSelected == 2
-                                    ? "Credit/Debit Card"
-                                    : uiState.paymentMethodSelected == 3
-                                    ? "AliPay"
-                                    : uiState.paymentMethodSelected == 4
-                                    ? "Wing Bank"
-                                    : uiState.paymentMethodSelected == 5
-                                    ? "ACLEDA"
-                                    : "",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ],
-                          );
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "payment_method".tr,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          uiState.paymentMethodSelected == 1
+              ? "ABA KHQR"
+              : uiState.paymentMethodSelected == 2
+              ? "Credit/Debit Card"
+              : uiState.paymentMethodSelected == 3
+              ? "AliPay"
+              : uiState.paymentMethodSelected == 4
+              ? "Wing Bank"
+              : uiState.paymentMethodSelected == 5
+              ? "ACLEDA"
+              : "",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.primaryColor,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildPaymentDetail(
@@ -306,9 +309,10 @@ class _PaymentScreenState extends State<PaymentScreen>
   ) {
     final normalizedPaymentMethodName =
         selectedPaymentMethodName.trim().toLowerCase();
-    final discountTitle = normalizedPaymentMethodName.contains('wing')
-        ? 'discount_wing'.tr
-        : "${"discount".tr} $selectedPaymentMethodName";
+    final discountTitle =
+        normalizedPaymentMethodName.contains('wing')
+            ? 'discount_wing'.tr
+            : "${"discount".tr} $selectedPaymentMethodName";
     final grandTotalAll = (widget.datas.body?.orderPaymentLists ?? []).fold(
       0.0,
       (sum, item) => sum + _parseAmount(item.grandTotal),
@@ -329,11 +333,9 @@ class _PaymentScreenState extends State<PaymentScreen>
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             primary: false,
-            itemCount:
-                widget.datas.body!.confirmBookingInformation!.length,
+            itemCount: widget.datas.body!.confirmBookingInformation!.length,
             itemBuilder: (context, index) {
-              final data =
-                  widget.datas.body!.confirmBookingInformation![index];
+              final data = widget.datas.body!.confirmBookingInformation![index];
               final isRoundTrip =
                   widget.datas.body!.confirmBookingInformation!.length == 2;
               final companyTypeForSegment =
@@ -345,33 +347,33 @@ class _PaymentScreenState extends State<PaymentScreen>
               return isRoundTrip
                   ///round trip
                   ? _buildPaymentRooundtrip(
-                      index,
-                      data,
-                      isBuvaSea,
-                      isRoundTrip,
-                      grandTotalAll,
-                      travelPackageDiscountAll,
-                      selectedDiscountAmount,
-                      discountTitle,
-                      selectedServiceFeeAmount,
-                      totalPayableAll,
-                      baseSubTotalAll,
-                      apiPlatformDiscountAll,
-                      baseTotalAll,
-                    )
+                    index,
+                    data,
+                    isBuvaSea,
+                    isRoundTrip,
+                    grandTotalAll,
+                    travelPackageDiscountAll,
+                    selectedDiscountAmount,
+                    discountTitle,
+                    selectedServiceFeeAmount,
+                    totalPayableAll,
+                    baseSubTotalAll,
+                    apiPlatformDiscountAll,
+                    baseTotalAll,
+                  )
                   ///one way
                   : _buildPaymentOneway(
-                      data,
-                      isBuvaSea,
-                      index,
-                      selectedDiscountAmount,
-                      discountTitle,
-                      selectedServiceFeeAmount,
-                      baseSubTotalAll,
-                      apiPlatformDiscountAll,
-                      baseTotalAll,
-                      totalPayableAll,
-                    );
+                    data,
+                    isBuvaSea,
+                    index,
+                    selectedDiscountAmount,
+                    discountTitle,
+                    selectedServiceFeeAmount,
+                    baseSubTotalAll,
+                    apiPlatformDiscountAll,
+                    baseTotalAll,
+                    totalPayableAll,
+                  );
             },
             separatorBuilder: (context, index) {
               return SizedBox.shrink();
@@ -398,209 +400,138 @@ class _PaymentScreenState extends State<PaymentScreen>
     double baseTotalAll,
   ) {
     return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    // Display trip destination
-                                    if (index == 1)
-                                      Padding(
-                                        padding:  EdgeInsets.symmetric(
-                                          vertical: 6,
-                                        ),
-                                        child: Divider(thickness: 1),
-                                      ),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Display trip destination
+        if (index == 1)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 6),
+            child: Divider(thickness: 1),
+          ),
 
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                            Text(
-                                              '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              ),
-                                            ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            ),
 
-                                            ListView.separated(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  data
-                                                      .bookingSeatDetailList!
-                                                      .length,
-                                              itemBuilder: (context, i) {
-                                                final seatDetail =
-                                                    data.bookingSeatDetailList![i];
-                                                return Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    if (isBuvaSea)
-                                                      view(
-                                                        'name_pro'.tr,
-                                                        seatDetail.name,
-                                                      ),
-                                                    view(
-                                                      'seat_number'.tr,
-                                                      seatDetail.seatNumber,
-                                                    ),
-                                                    view(
-                                                      'gender'.tr,
-                                                      seatDetail.gender,
-                                                    ),
-                                                    view(
-                                                      'nationality'.tr,
-                                                      seatDetail
-                                                          .nationalityName,
-                                                    ),
-                                                    if (seatDetail
-                                                        .dob!
-                                                        .isNotEmpty)
-                                                      view(
-                                                        'dob'.tr,
-                                                        _formatDobForDisplay(
-                                                          seatDetail.dob!,
-                                                        ),
-                                                      ),
-                                                    if (seatDetail
-                                                        .passport!
-                                                        .isNotEmpty)
-                                                      view(
-                                                        'passport'.tr,
-                                                        seatDetail
-                                                            .passport!,
-                                                      ),
-                                                  ],
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (_, __) => Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          vertical: 8.0,
-                                                        ),
-                                                    child: Image.asset(
-                                                      AssetImages.line,
-                                                    ),
-                                                  ),
-                                            ),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.bookingSeatDetailList!.length,
+              itemBuilder: (context, i) {
+                final seatDetail = data.bookingSeatDetailList![i];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isBuvaSea) view('name_pro'.tr, seatDetail.name),
+                    view('seat_number'.tr, seatDetail.seatNumber),
+                    view('gender'.tr, seatDetail.gender),
+                    view('nationality'.tr, seatDetail.nationalityName),
+                    if (seatDetail.dob!.isNotEmpty)
+                      view('dob'.tr, _formatDobForDisplay(seatDetail.dob!)),
+                    if (seatDetail.passport!.isNotEmpty)
+                      view('passport'.tr, seatDetail.passport!),
+                  ],
+                );
+              },
+              separatorBuilder:
+                  (_, __) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Image.asset(AssetImages.line),
+                  ),
+            ),
 
-                                            if (isRoundTrip && index == 1)
-                                              Column(
-                                                children: [
-                                                  view(
-                                                    'sub_total'.tr,
-                                                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
-                                                  ),
-                                                  // if (_hasVisibleAmount(
-                                                  //   apiPlatformDiscountAll,
-                                                  // ))
-                                                  //   Padding(
-                                                  //     padding:
-                                                  //         const EdgeInsets.symmetric(
-                                                  //           vertical: 6.0,
-                                                  //         ),
-                                                  //     child: view(
-                                                  //       'discount_platform'.tr,
-                                                  //       "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
-                                                  //       textColor:
-                                                  //           AppColors.greyColor,
-                                                  //     ),
-                                                  //   ),
-                                                  const Divider(
-                                                    thickness: 1,
-                                                  ),
-                                                  
-                                                  if (_hasVisibleAmount(
-                                                    travelPackageDiscountAll,
-                                                  ))
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 6.0,
-                                                          ),
-                                                      child: view(
-                                                        'discount_travel'.tr,
-                                                        "\$${travelPackageDiscountAll.toStringAsFixed(2)}",
-                                                        textColor:
-                                                            AppColors.greyColor,
-                                                      ),
-                                                    ),
-                                                  if (_hasVisibleAmount(
-                                                    selectedDiscountAmount,
-                                                  ))
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 6.0,
-                                                          ),
-                                                      child: view(
-                                                        discountTitle,
-                                                        "\$${selectedDiscountAmount.toStringAsFixed(2)}",
-                                                        textColor:
-                                                            AppColors.greyColor,
-                                                      ),
-                                                    ),
-                                                  if (_hasVisibleAmount(
-                                                    selectedServiceFeeAmount,
-                                                  ))
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            vertical: 6.0,
-                                                          ),
-                                                      child: view(
-                                                        _getSelectedPaymentServiceFeePercent(
-                                                                  paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[],
-                                                                  paymentMethodId: controller.state.paymentMethodId,
-                                                                ) > 0
-                                                            ? "${"service_fee".tr} (${_getSelectedPaymentServiceFeePercent(paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[], paymentMethodId: controller.state.paymentMethodId)}%)"
-                                                            : "service_fee".tr,
-                                                        "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
-                                                      ),
-                                                    ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          vertical: 6.0,
-                                                        ),
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          "total_mn".tr,
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w400,
-                                                            color:
-                                                                AppColors
-                                                                    .textColor,
-                                                          ),
-                                                        ),
-                                                        const Spacer(),
-                                                        Text(
-                                                          "\$${totalPayableAll.toStringAsFixed(2)}",
-                                                          style: const TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold,
+            if (isRoundTrip && index == 1)
+              Column(
+                children: [
+                  view(
+                    'sub_total'.tr,
+                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
+                  ),
+                  // if (_hasVisibleAmount(
+                  //   apiPlatformDiscountAll,
+                  // ))
+                  //   Padding(
+                  //     padding:
+                  //         const EdgeInsets.symmetric(
+                  //           vertical: 6.0,
+                  //         ),
+                  //     child: view(
+                  //       'discount_platform'.tr,
+                  //       "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
+                  //       textColor:
+                  //           AppColors.greyColor,
+                  //     ),
+                  //   ),
+                  const Divider(thickness: 1),
 
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                          ],
-                                        ),
-                                  ],
-                                );
+                  if (_hasVisibleAmount(widget.datas.body?.totalDiscountTravel))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: view(
+                        'discount_travel'.tr,
+                        "\$${widget.datas.body!.totalDiscountTravel}",
+                        textColor: AppColors.greyColor,
+                      ),
+                    ),
+                  if (_hasVisibleAmount(selectedDiscountAmount))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: view(
+                        discountTitle,
+                        "\$${selectedDiscountAmount.toStringAsFixed(2)}",
+                        textColor: AppColors.greyColor,
+                      ),
+                    ),
+                  if (_hasVisibleAmount(selectedServiceFeeAmount))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: view(
+                        _getSelectedPaymentServiceFeePercent(
+                                  paymentMethods:
+                                      widget.datas.body?.paymentMethods ??
+                                      <PaymentMethod>[],
+                                  paymentMethodId:
+                                      controller.state.paymentMethodId,
+                                ) >
+                                0
+                            ? "${"service_fee".tr} (${_getSelectedPaymentServiceFeePercent(paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[], paymentMethodId: controller.state.paymentMethodId)}%)"
+                            : "service_fee".tr,
+                        "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "total_mn".tr,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textColor,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          "\$${totalPayableAll.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildPaymentOneway(
@@ -616,323 +547,230 @@ class _PaymentScreenState extends State<PaymentScreen>
     double totalPayableAll,
   ) {
     return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            ),
 
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                            Text(
-                                              '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              ),
-                                            ),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.bookingSeatDetailList!.length,
+              itemBuilder: (context, i) {
+                final seatDetail = data.bookingSeatDetailList![i];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isBuvaSea) view('name_pro'.tr, seatDetail.name),
+                    view('seat_number'.tr, seatDetail.seatNumber),
+                    view('gender'.tr, seatDetail.gender),
+                    view('nationality'.tr, seatDetail.nationalityName),
+                    if (seatDetail.dob!.isNotEmpty)
+                      view('dob'.tr, _formatDobForDisplay(seatDetail.dob!)),
+                    if (seatDetail.passport!.isNotEmpty)
+                      view('passport'.tr, seatDetail.passport!),
+                  ],
+                );
+              },
+              separatorBuilder:
+                  (_, __) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Image.asset(AssetImages.line),
+                  ),
+            ),
 
-                                            ListView.separated(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  data
-                                                      .bookingSeatDetailList!
-                                                      .length,
-                                              itemBuilder: (context, i) {
-                                                final seatDetail =
-                                                    data.bookingSeatDetailList![i];
-                                                return Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    if (isBuvaSea)
-                                                      view(
-                                                        'name_pro'.tr,
-                                                        seatDetail.name,
-                                                      ),
-                                                    view(
-                                                      'seat_number'.tr,
-                                                      seatDetail.seatNumber,
-                                                    ),
-                                                    view(
-                                                      'gender'.tr,
-                                                      seatDetail.gender,
-                                                    ),
-                                                    view(
-                                                      'nationality'.tr,
-                                                      seatDetail
-                                                          .nationalityName,
-                                                    ),
-                                                    if (seatDetail
-                                                        .dob!
-                                                        .isNotEmpty)
-                                                      view(
-                                                        'dob'.tr,
-                                                        _formatDobForDisplay(
-                                                          seatDetail.dob!,
-                                                        ),
-                                                      ),
-                                                    if (seatDetail
-                                                        .passport!
-                                                        .isNotEmpty)
-                                                      view(
-                                                        'passport'.tr,
-                                                        seatDetail
-                                                            .passport!,
-                                                      ),
-                                                  ],
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (_, __) => Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          vertical: 8.0,
-                                                        ),
-                                                    child: Image.asset(
-                                                      AssetImages.line,
-                                                    ),
-                                                  ),
-                                            ),
+            // Display order payment details
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  view(
+                    "sub_total".tr,
+                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
+                  ),
 
-                                            // Display order payment details
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(
-                                                    top: 10.0,
-                                                    bottom: 10.0,
-                                                  ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  view(
-                                                    "sub_total".tr,
-                                                    "\$${baseSubTotalAll.toStringAsFixed(2)}",
-                                                  ),
-                                                  
-                                                  // if (_hasVisibleAmount(
-                                                  //   apiPlatformDiscountAll,
-                                                  // ))
-                                                  //   view(
-                                                  //     'discount_platform'.tr,
-                                                  //     "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
-                                                  //     textColor: AppColors.greyColor,
-                                                  //   ),
-                                                  if (_hasVisibleAmount(
-                                                    _getTravelPackageDiscountItem(
-                                                      widget
-                                                          .datas
-                                                          .body!
-                                                          .orderPaymentLists![index],
-                                                    ),
-                                                  ))
-                                                    view(
-                                                      'discount_travel'.tr,
-                                                      "\$${_getTravelPackageDiscountItem(widget.datas.body!.orderPaymentLists![index]).toStringAsFixed(2)}",
-                                                       textColor: AppColors.greyColor
-                                                    ),
-                                                  if (_hasVisibleAmount(
-                                                    selectedDiscountAmount,
-                                                  ))
-                                                    view(
-                                                      discountTitle,
-                                                      "\$${selectedDiscountAmount.toStringAsFixed(2)}",
-                                                      textColor: AppColors.greyColor
-                                                    ),
-                                                  // Line
-                                                  // Padding(
-                                                  //   padding:  EdgeInsets.symmetric(vertical: 10),
-                                                  //   child: Container(
-                                                  //     height: 2,
-                                                  //     width: double.infinity,
-                                                  //     color: AppColors.lineGray,
-                                                  //   ),
-                                                  // ),
-                                                   const Divider(height: 10,thickness: 1,),
-                                                   
-                                                  if (_hasVisibleAmount(
-                                                    selectedServiceFeeAmount,
-                                                  ))
-                                                    view(
-                                                      _getSelectedPaymentServiceFeePercent(
-                                                                paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[],
-                                                                paymentMethodId: controller.state.paymentMethodId,
-                                                              ) > 0
-                                                          ? "${"service_fee".tr} (${_getSelectedPaymentServiceFeePercent(paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[], paymentMethodId: controller.state.paymentMethodId)}%)"
-                                                          : "service_fee".tr,
-                                                      "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
-                                                    ),
-                                                  view(
-                                                    "total_ticket_price".tr,
-                                                    "\$${totalPayableAll.toStringAsFixed(2)}",
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ],
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                  ],
-                                );
+                  // if (_hasVisibleAmount(
+                  //   apiPlatformDiscountAll,
+                  // ))
+                  //   view(
+                  //     'discount_platform'.tr,
+                  //     "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
+                  //     textColor: AppColors.greyColor,
+                  //   ),
+                  if (_hasVisibleAmount(
+                    _getTravelPackageDiscountItem(
+                      widget.datas.body!.orderPaymentLists![index],
+                    ),
+                  ))
+                    view(
+                      'discount_travel'.tr,
+                      "\$${widget.datas.body!.totalDiscountTravel}",
+                      textColor: AppColors.greyColor,
+                    ),
+                  if (_hasVisibleAmount(selectedDiscountAmount))
+                    view(
+                      discountTitle,
+                      "\$${selectedDiscountAmount.toStringAsFixed(2)}",
+                      textColor: AppColors.greyColor,
+                    ),
+                  const Divider(height: 10, thickness: 1),
+
+                  if (_hasVisibleAmount(selectedServiceFeeAmount))
+                    view(
+                      _getSelectedPaymentServiceFeePercent(
+                                paymentMethods:
+                                    widget.datas.body?.paymentMethods ??
+                                    <PaymentMethod>[],
+                                paymentMethodId:
+                                    controller.state.paymentMethodId,
+                              ) >
+                              0
+                          ? "${"service_fee".tr} (${_getSelectedPaymentServiceFeePercent(paymentMethods: widget.datas.body?.paymentMethods ?? <PaymentMethod>[], paymentMethodId: controller.state.paymentMethodId)}%)"
+                          : "service_fee".tr,
+                      "\$${selectedServiceFeeAmount.toStringAsFixed(2)}",
+                    ),
+                  view(
+                    "total_ticket_price".tr,
+                    "\$${totalPayableAll.toStringAsFixed(2)}",
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildSelectBankOption(PaymentUistate uiState) {
     return RadioGroup<int>(
-                            groupValue: uiState.paymentMethodSelected,
-                            onChanged: (value) {
-                              _onPaymentGroupChanged(value);
-                            },
-                            child: Column(
-                              children: [
+      groupValue: uiState.paymentMethodSelected,
+      onChanged: (value) {
+        _onPaymentGroupChanged(value);
+      },
+      child: Column(
+        children: [
+          // ================
+          // ABA KHQR
+          // ================
+          PaymentOptionCard(
+            asset: AssetImages.ic_khqr,
+            title: const Text(
+              'ABA KHQR',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitleWidget: Text(
+              'tap_to_pay_with_KHQR'.tr,
+              style: const TextStyle(fontSize: 10, color: Colors.grey),
+            ),
+            value: 1,
+            isSelected: uiState.paymentMethodSelected == 1,
+            onTap: () {
+              controller.selectPaymentMethod(
+                paymentMethodId: 5,
+                paymentMethodSelected: 1,
+              );
+            },
+          ),
 
-                                // ================
-                                // ABA KHQR
-                                // ================
-                                PaymentOptionCard(
-                                  asset: AssetImages.ic_khqr,
-                                  title: const Text(
-                                    'ABA KHQR',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitleWidget: Text(
-                                    'tap_to_pay_with_KHQR'.tr,
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  value: 1,
-                                  isSelected:
-                                      uiState.paymentMethodSelected == 1,
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 5,
-                                      paymentMethodSelected: 1,
-                                    );
-                                  },
-                                ),
-                               
-                                // ================
-                                // Wing Bank
-                                // ================
-                                PaymentOptionCard(
-                                  asset: AssetImages.ic_wing,
-                                  title: const Text(
-                                    'Wing Bank',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitleWidget: Text(
-                                    'tap_to_pay_wing'.tr,
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  value: 4,
-                                  isSelected:
-                                      uiState.paymentMethodSelected == 4,
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 4,
-                                      paymentMethodSelected: 4,
-                                    );
-                                  },
-                                ),
+          // ================
+          // Wing Bank
+          // ================
+          PaymentOptionCard(
+            asset: AssetImages.ic_wing,
+            title: const Text(
+              'Wing Bank',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitleWidget: Text(
+              'tap_to_pay_wing'.tr,
+              style: const TextStyle(fontSize: 10, color: Colors.grey),
+            ),
+            value: 4,
+            isSelected: uiState.paymentMethodSelected == 4,
+            onTap: () {
+              controller.selectPaymentMethod(
+                paymentMethodId: 4,
+                paymentMethodSelected: 4,
+              );
+            },
+          ),
 
-                                // ================
-                                // ACLEDA
-                                // ================
-                                PaymentOptionCard(
-                                  asset: AssetImages.ic_acleda,
-                                  title: const Text(
-                                    'ACLEDA',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitleWidget: Text(
-                                    'tap_to_pay_acleda'.tr,
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  value: 5,
-                                  isSelected:
-                                      uiState.paymentMethodSelected == 5,
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 8,
-                                      paymentMethodSelected: 5,
-                                    );
-                                  },
-                                ),
+          // ================
+          // ACLEDA
+          // ================
+          PaymentOptionCard(
+            asset: AssetImages.ic_acleda,
+            title: const Text(
+              'ACLEDA',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitleWidget: Text(
+              'tap_to_pay_acleda'.tr,
+              style: const TextStyle(fontSize: 10, color: Colors.grey),
+            ),
+            value: 5,
+            isSelected: uiState.paymentMethodSelected == 5,
+            onTap: () {
+              controller.selectPaymentMethod(
+                paymentMethodId: 8,
+                paymentMethodSelected: 5,
+              );
+            },
+          ),
 
-                                // ================
-                                // Credid Card
-                                // ================
-                                 PaymentOptionCard(
-                                  asset: AssetImages.ic_big_visa,
-                                  title: const Text(
-                                    'Credit/Debit Card',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitleWidget: Image.asset(
-                                    AssetImages.ic_small_visa,
-                                    height: 14,
-                                  ),
-                                  value: 2,
-                                  isSelected:
-                                      uiState.paymentMethodSelected == 2,
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 6,
-                                      paymentMethodSelected: 2,
-                                    );
-                                  },
-                                ),
+          // ================
+          // Credid Card
+          // ================
+          PaymentOptionCard(
+            asset: AssetImages.ic_big_visa,
+            title: const Text(
+              'Credit/Debit Card',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitleWidget: Image.asset(AssetImages.ic_small_visa, height: 14),
+            value: 2,
+            isSelected: uiState.paymentMethodSelected == 2,
+            onTap: () {
+              controller.selectPaymentMethod(
+                paymentMethodId: 6,
+                paymentMethodSelected: 2,
+              );
+            },
+          ),
 
-                                // ================
-                                // AliPay
-                                // ================
-                                PaymentOptionCard(
-                                  asset: AssetImages.ic_alipay,
-                                  title: const Text(
-                                    'AliPay',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  subtitleWidget: Text(
-                                    'tap_to_pay_with_ALIPAY'.tr,
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  value: 3,
-                                  isSelected:
-                                      uiState.paymentMethodSelected == 3,
-                                  onTap: () {
-                                    controller.selectPaymentMethod(
-                                      paymentMethodId: 7,
-                                      paymentMethodSelected: 3,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
+          // ================
+          // AliPay
+          // ================
+          PaymentOptionCard(
+            asset: AssetImages.ic_alipay,
+            title: const Text(
+              'AliPay',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitleWidget: Text(
+              'tap_to_pay_with_ALIPAY'.tr,
+              style: const TextStyle(fontSize: 10, color: Colors.grey),
+            ),
+            value: 3,
+            isSelected: uiState.paymentMethodSelected == 3,
+            onTap: () {
+              controller.selectPaymentMethod(
+                paymentMethodId: 7,
+                paymentMethodSelected: 3,
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildButtonPay(
@@ -943,113 +781,107 @@ class _PaymentScreenState extends State<PaymentScreen>
   }) {
     final isPaymentSelected = uiState.paymentMethodSelected != 0;
     return SafeArea(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-    color: AppColors.whiteColor,
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: 0.1), 
-        offset: const Offset(0, -1), 
-        blurRadius: 1,
-        spreadRadius: 0,
-      ),
-    ],
-  ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 10,
-              ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: AppColors.whiteColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              offset: const Offset(0, -1),
+              blurRadius: 1,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Total amount
+            Expanded(
+              flex: 2,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Total amount
-                   Expanded(
-                    flex: 2,
-                     child: Row(
-                       children: [
-                         Text(
-                          'total_price'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          color: Colors.black, 
-                          // fontWeight: FontWeight.w500,
-                          ),
-                         ),
-                         Text(
-                           "\$${totalPayableAll.toStringAsFixed(2)}",
-                           style: const TextStyle(
-                     fontSize: 16,
-                          color: Colors.black, 
-                          fontWeight: FontWeight.w600,
-                           ),
-                                         ),
-                       ],
-                     ),
-                   ),
-                  //
-                  // Button pay 
-                   Expanded(
-                    flex: 2,
-                     child: SizedBox(
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: isPaymentSelected
-                              ? () async {
-                                  if (uiState.paymentMethodSelected == 5) {
-                                    await controller.processBooking(
-                                      context: context,
-                                      transactionId: widget.id,
-                                      totalAmount: totalAmountForApi,
-                                    );
-                                    final token = controller.state.newToken;
-                                    if (token.isNotEmpty && context.mounted) {
-                                      showDialog(
-                                        barrierColor: Colors.black26,
-                                        context: context,
-                                        builder: (dialogContext) {
-                                          return dialogOptionACLEDA(
-                                            widget.id,
-                                            token,
-                                          );
-                                        },
-                                      );
-                                    }
-                                  } else {
-                                    controller.processBooking(
-                                      context: context,
-                                      transactionId: widget.id,
-                                      totalAmount: totalAmountForApi,
-                                    );
-                                  }
-                                }
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryColor,
-                            disabledBackgroundColor: Colors.transparent,
-                            foregroundColor: Colors.white,
-                            disabledForegroundColor: AppColors.titleColor,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                color: AppColors.primaryColor,
-                                width: 1
-                              ),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: Text(
-                            'pay_now'.tr,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                       ),
-                   )
-                 
+                  Text(
+                    'total_price'.tr,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      // fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    "\$${totalPayableAll.toStringAsFixed(2)}",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ),
             ),
-          );
+            //
+            // Button pay
+            Expanded(
+              flex: 2,
+              child: SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed:
+                      isPaymentSelected
+                          ? () async {
+                            if (uiState.paymentMethodSelected == 5) {
+                              await controller.processBooking(
+                                context: context,
+                                transactionId: widget.id,
+                                totalAmount: totalAmountForApi,
+                              );
+                              final token = controller.state.newToken;
+                              if (token.isNotEmpty && context.mounted) {
+                                showDialog(
+                                  barrierColor: Colors.black26,
+                                  context: context,
+                                  builder: (dialogContext) {
+                                    return dialogOptionACLEDA(widget.id, token);
+                                  },
+                                );
+                              }
+                            } else {
+                              controller.processBooking(
+                                context: context,
+                                transactionId: widget.id,
+                                totalAmount: totalAmountForApi,
+                              );
+                            }
+                          }
+                          : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    disabledBackgroundColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    disabledForegroundColor: AppColors.titleColor,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(color: AppColors.primaryColor, width: 1),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Text(
+                    'pay_now'.tr,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _onPaymentGroupChanged(int? value) {
@@ -1097,7 +929,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     FontWeight? fontWeight = FontWeight.w400,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 7.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1106,6 +938,7 @@ class _PaymentScreenState extends State<PaymentScreen>
             style: TextStyle(
               fontSize: 16,
               color: textColor,
+              fontFamily: 'Inter',
             ),
           ),
           Text(
@@ -1114,6 +947,7 @@ class _PaymentScreenState extends State<PaymentScreen>
               fontSize: 16,
               fontWeight: fontWeight,
               color: textColor,
+              fontFamily: 'Inter',
             ),
           ),
         ],
@@ -1277,7 +1111,6 @@ class _PaymentScreenState extends State<PaymentScreen>
     );
   }
 
-
   Widget dialogOptionACLEDA(transactionId, token) {
     return Dialog(
       elevation: 0,
@@ -1299,113 +1132,103 @@ class _PaymentScreenState extends State<PaymentScreen>
 
   Widget _buildOpenCartOfAceleda(transactionId, token) {
     return InkWell(
-            onTap: () async {
-              Get.back();
-              
-              await controller.onAcledaOptionTapXPay(
-                context: context,
-                transactionId: transactionId,
-                token: token,
-              );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
+      onTap: () async {
+        Get.back();
+
+        await controller.onAcledaOptionTapXPay(
+          context: context,
+          transactionId: transactionId,
+          token: token,
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Image.asset(AssetImages.acleda_xpay, width: 54, height: 54),
+              const SizedBox(width: 5),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      AssetImages.acleda_xpay,
-                      width: 54,
-                      height: 54,
-                    ),
-                    const SizedBox(width: 5),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'ACLEDA Card or Account number',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            'OTP will send to phone which register account or card',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ],
+                    Text(
+                      'ACLEDA Card or Account number',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'OTP will send to phone which register account or card',
+                      style: TextStyle(fontSize: 12),
                     ),
                   ],
                 ),
               ),
-            ),
-          );
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildOpenAcledaApp(transactionId, token) {
     return InkWell(
-            onTap: () {
-              final type = Platform.isAndroid ? '1' : '2';
-              final requestUrl =
-                  '${BaseUrl.PAYMENT_URL}payments/acledaMobilePay/$transactionId/$token/$type';
-              debugPrint(
-                'Ac App url = $requestUrl',
-              );
-              controller.onAcledaOptionTapOpenApp(
-                context: context,
-                transactionId: transactionId,
-                token: token,
-                type: type,
-              );
-              Get.back();
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
+      onTap: () {
+        final type = Platform.isAndroid ? '1' : '2';
+        final requestUrl =
+            '${BaseUrl.PAYMENT_URL}payments/acledaMobilePay/$transactionId/$token/$type';
+        debugPrint('Ac App url = $requestUrl');
+        controller.onAcledaOptionTapOpenApp(
+          context: context,
+          transactionId: transactionId,
+          token: token,
+          type: type,
+        );
+        Get.back();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Image.asset(AssetImages.acleda_app, width: 54, height: 54),
+              const SizedBox(width: 5),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      AssetImages.acleda_app,
-                      width: 54,
-                      height: 54,
-                    ),
-                    const SizedBox(width: 5),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'ACLEDA Mobile App',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            'Required ACLEDA App Installed and Registered',
-                            style: TextStyle(fontSize: 12),
-                            maxLines: 3,
-                            overflow: TextOverflow.clip,
-                          ),
-                        ],
+                    Text(
+                      'ACLEDA Mobile App',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Required ACLEDA App Installed and Registered',
+                      style: TextStyle(fontSize: 12),
+                      maxLines: 3,
+                      overflow: TextOverflow.clip,
                     ),
                   ],
                 ),
               ),
-            ),
-          );
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
