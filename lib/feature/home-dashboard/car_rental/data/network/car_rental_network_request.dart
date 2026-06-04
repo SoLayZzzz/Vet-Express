@@ -1,4 +1,5 @@
 import 'package:express_vet/base/network_data_source.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../base/endpoint.dart';
 import '../../../../../utils/contains.dart';
@@ -40,12 +41,14 @@ class CarRentalNetworkRequest {
     required dynamic context,
     required CarRentalAddRequestBody body,
   }) async {
+    debugPrint('[CarRental] addCarRental -> fields: ${body.toFormFields()}');
     final json = await netWorkDataSource.postMultipart(
       Endpoint.vehicleRentalAdd,
       fields: body.toFormFields(),
       timeout: const Duration(seconds: Constrains.timeout30),
       attachAuth: true,
     );
+    debugPrint('[CarRental] addCarRental <- response received: $json');
     return CarRentalAddResponse.fromJson(json);
   }
 }

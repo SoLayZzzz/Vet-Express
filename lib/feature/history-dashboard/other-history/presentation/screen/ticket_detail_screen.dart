@@ -97,7 +97,6 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
                             // * qrCode slider
                             _buildQrCode(bookingData),
-                           
 
                             // * container value
                             _buildDestination(bookingData),
@@ -119,9 +118,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       duration: const Duration(milliseconds: 200),
                       height: topPadding + kToolbarHeight,
                       decoration: BoxDecoration(
-                        color: _showAppBar
-                            ? AppColors.primaryColor
-                            : Colors.transparent,
+                        color:
+                            _showAppBar
+                                ? AppColors.primaryColor
+                                : Colors.transparent,
                       ),
                       child: Column(
                         children: [
@@ -170,10 +170,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               child: SizedBox(
                 height: 50.0,
                 width: 50.0,
-                child: CircularProgressIndicator(
-                  value: null,
-                  strokeWidth: 5.0,
-                ),
+                child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
               ),
             );
           },
@@ -182,607 +179,554 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     );
   }
 
-  Widget _buildticketDetail(AsyncSnapshot<TicketDetailScreenReponse> bookingData) {
+  Widget _buildticketDetail(
+    AsyncSnapshot<TicketDetailScreenReponse> bookingData,
+  ) {
     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20.0),
-                      child: Column(
-                        children: [
-                          // Header of ticket detail
-                          Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 15),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Image.asset(
-        ((bookingData.data?.body?.data?[0].transportationType?.toLowerCase().contains('boat') ?? false) ||
-         (bookingData.data?.body?.data?[0].transportationType?.toLowerCase().contains('sea') ?? false) ||
-         (bookingData.data?.body?.data?[0].transportationType?.toLowerCase().contains('ferry') ?? false))
-            ? AssetImages.ic_buva_sea
-            : AssetImages.ic_bus_history,
-        height: 24,
-        width: 24,
-        // color: Colors.grey.shade500, // softer icon color
-      ),
-      const SizedBox(width: 12),
-
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: Column(
         children: [
-          /// Title
-          Text(
-            (bookingData.data?.body?.data?[0].transportationType)
-                .toString(),
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              // color: Colors.grey.shade800, 
+          // Header of ticket detail
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset(
+                  ((bookingData.data?.body?.data?[0].transportationType
+                                  ?.toLowerCase()
+                                  .contains('boat') ??
+                              false) ||
+                          (bookingData.data?.body?.data?[0].transportationType
+                                  ?.toLowerCase()
+                                  .contains('sea') ??
+                              false) ||
+                          (bookingData.data?.body?.data?[0].transportationType
+                                  ?.toLowerCase()
+                                  .contains('ferry') ??
+                              false))
+                      ? AssetImages.ic_buva_sea
+                      : AssetImages.ic_bus_history,
+                  height: 24,
+                  width: 24,
+                  // color: Colors.grey.shade500, // softer icon color
+                ),
+                const SizedBox(width: 12),
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Title
+                    Text(
+                      (bookingData.data?.body?.data?[0].transportationType)
+                          .toString(),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        // color: Colors.grey.shade800,
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    /// Subtitle (pill style)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE6EBFF),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        _seatTypeText(
+                          bookingData.data?.body?.data?[0].seatType,
+                        ),
+                        // "Type of bus",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF4A56A6),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          _item(
+            label: "transaction_id".tr,
+            value:
+                (bookingData.data?.body?.data?[0].transactionId)
+                        .toString()
+                        .isEmpty
+                    ? '-'
+                    : (bookingData.data?.body?.data?[0].transactionId)
+                        .toString(),
+          ),
+          _item(
+            label: "booking_date".tr,
+            value: (bookingData.data?.body?.data?[0].bookingDate).toString(),
+          ),
+
+          _item(
+            label: 'Email'.tr,
+            value: bookingData.data?.body?.data?[0].email ?? '-',
+            color: AppColors.secondaryColor,
+          ),
+          _item(
+            label: 'telephone_num'.tr,
+            value: _getTelephoneForDisplay(
+              bookingData.data?.body?.data?[0].telephone,
+            ),
+            color: AppColors.secondaryColor,
+          ),
+
+          _item(
+            label: "payment".tr,
+            value: (bookingData.data?.body?.data?[0].paymentType).toString(),
+            color: AppColors.secondaryColor,
+          ),
+
+          const SizedBox(height: 12),
+
+          // * destination
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // * boarding point
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "boarding_point".tr,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                          if ((bookingData
+                                      .data
+                                      ?.body
+                                      ?.data?[0]
+                                      .boardingPointLat)
+                                  .toString() !=
+                              '')
+                            InkWell(
+                              onTap: () {
+                                Get.to(
+                                  () => LocationDetailScreen(
+                                    lats:
+                                        (bookingData
+                                                .data
+                                                ?.body
+                                                ?.data?[0]
+                                                .boardingPointLat)
+                                            .toString(),
+                                    longs:
+                                        (bookingData
+                                                .data
+                                                ?.body
+                                                ?.data?[0]
+                                                .boardingPointLong)
+                                            .toString(),
+                                    type: 3,
+                                    nameKh: '',
+                                    name: '',
+                                    telephone: '',
+                                  ),
+                                  transition: Transition.rightToLeft,
+                                  duration: const Duration(
+                                    milliseconds: Constrains.duration,
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'view_map'.tr,
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: AppColors.viewMapColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "${(bookingData.data?.body?.data?[0].boardingPoint).toString()} (${(bookingData.data?.body?.data?[0].departure).toString()})",
+                        style: const TextStyle(
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        ". ${(bookingData.data?.body?.data?[0].boardingPointAddress).toString()}",
+                        style: const TextStyle(color: AppColors.textColor),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // * drop off point
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "drop_off_point".tr,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                          if ((bookingData.data?.body?.data?[0].dropOffPointLat)
+                                  .toString() !=
+                              '')
+                            InkWell(
+                              onTap: () {
+                                Get.to(
+                                  () => LocationDetailScreen(
+                                    lats:
+                                        (bookingData
+                                                .data
+                                                ?.body
+                                                ?.data?[0]
+                                                .dropOffPointLat)
+                                            .toString(),
+                                    longs:
+                                        (bookingData
+                                                .data
+                                                ?.body
+                                                ?.data?[0]
+                                                .dropOffPointLong)
+                                            .toString(),
+                                    type: 3,
+                                    nameKh: '',
+                                    name: '',
+                                    telephone: '',
+                                  ),
+                                  transition: Transition.rightToLeft,
+                                  duration: const Duration(
+                                    milliseconds: Constrains.duration,
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'view_map'.tr,
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.viewMapColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "${(bookingData.data?.body?.data?[0].dropOffPoint).toString()} (${(bookingData.data?.body?.data?[0].arrival).toString()})",
+                        style: const TextStyle(
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        ". ${(bookingData.data?.body?.data?[0].dropOffPointAddress).toString()}",
+                        style: const TextStyle(color: AppColors.textColor),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
 
-          const SizedBox(height: 6),
+          //* bookingSeatDetailList
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: ListView.separated(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount:
+                  bookingData
+                      .data!
+                      .body!
+                      .data![0]
+                      .bookingSeatDetailList!
+                      .length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _listSeat(
+                      label: "seat_number".tr,
+                      value:
+                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].seatNumber}',
+                    ),
 
-          /// Subtitle (pill style)
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 6,
+                    if (bookingData
+                        .data!
+                        .body!
+                        .data![0]
+                        .bookingSeatDetailList![index]
+                        .dob!
+                        .isNotEmpty)
+                      _listSeat(
+                        label: 'name_pro'.tr,
+                        value:
+                            '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].name}',
+                      ),
+                    _listSeat(
+                      label: 'gender'.tr,
+                      value:
+                          bookingData
+                                      .data!
+                                      .body!
+                                      .data![0]
+                                      .bookingSeatDetailList![index]
+                                      .gender ==
+                                  'Male'
+                              ? 'male'.tr
+                              : 'female'.tr,
+                    ),
+                    _listSeat(
+                      label: 'nationality'.tr,
+                      value:
+                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].nationalityName}',
+                    ),
+
+                    if (bookingData
+                        .data!
+                        .body!
+                        .data![0]
+                        .bookingSeatDetailList![index]
+                        .dob!
+                        .isNotEmpty)
+                      _listSeat(
+                        label: 'dob'.tr,
+                        value:
+                            '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].dob}',
+                      ),
+                    if (bookingData
+                        .data!
+                        .body!
+                        .data![0]
+                        .bookingSeatDetailList![index]
+                        .passport!
+                        .isNotEmpty)
+                      _listSeat(
+                        label: 'passport'.tr,
+                        value:
+                            '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].passport}',
+                      ),
+                  ],
+                );
+              },
+              separatorBuilder:
+                  (BuildContext context, int index) => const Divider(),
             ),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE6EBFF), 
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child:  Text(
-              _seatTypeText(bookingData.data?.body?.data?[0].seatType),
-              // "Type of bus",
-              style: TextStyle(
-                fontSize: 14,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF4A56A6), 
-              ),
+          ),
+
+          // * price
+          Image.asset(AssetImages.line),
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              children: [
+                _listPrice(
+                  label: "sub_total".tr,
+                  value: (bookingData.data?.body?.data?[0].subTotal).toString(),
+                ),
+                const SizedBox(height: 10),
+                _listPrice(
+                  label: "discount".tr,
+                  value: (bookingData.data?.body?.data?[0].discount).toString(),
+                ),
+                const SizedBox(height: 10),
+                _listPrice(
+                  label: "total_ticket_price".tr,
+                  value:
+                      (bookingData.data?.body?.data?[0].totalAmount).toString(),
+                ),
+              ],
             ),
           ),
         ],
       ),
-    ],
-  ),
-),
-                          const SizedBox(height: 10),
-                           _item(
-                            label: "transaction_id".tr,
-                            value:
-                                (bookingData
-                                            .data
-                                            ?.body
-                                            ?.data?[0]
-                                            .transactionId)
-                                        .toString()
-                                        .isEmpty
-                                    ? '-'
-                                    : (bookingData
-                                            .data
-                                            ?.body
-                                            ?.data?[0]
-                                            .transactionId)
-                                        .toString(),
-                          ),
-                          _item(
-                            label: "booking_date".tr,
-                            value:
-                                (bookingData.data?.body?.data?[0].bookingDate)
-                                    .toString(),
-                          ),
-                         
-                          _item(
-                            label: 'Email'.tr,
-                            value: bookingData.data?.body?.data?[0].email ?? '-',
-                            color: AppColors.secondaryColor
-                          ),
-                          _item(
-                            label: 'telephone_num'.tr,
-                            value:
-                                _getTelephoneForDisplay(
-                                  bookingData.data?.body?.data?[0].telephone,
-                                ),
-                            color: AppColors.secondaryColor
-                          ),
-
-                          _item(
-                            label: "payment".tr,
-                            value:
-                                (bookingData.data?.body?.data?[0].paymentType)
-                                    .toString(),
-                            color: AppColors.secondaryColor,
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          // * destination
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // * boarding point
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "boarding_point".tr,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          if ((bookingData
-                                                      .data
-                                                      ?.body
-                                                      ?.data?[0]
-                                                      .boardingPointLat)
-                                                  .toString() !=
-                                              '')
-                                            InkWell(
-                                              onTap: () {
-                                                Get.to(
-                                                  () => LocationDetailScreen(
-                                                    lats:
-                                                        (bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[0]
-                                                                .boardingPointLat)
-                                                            .toString(),
-                                                    longs:
-                                                        (bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[0]
-                                                                .boardingPointLong)
-                                                            .toString(),
-                                                    type: 3,
-                                                    nameKh: '',
-                                                    name: '',
-                                                    telephone: '',
-                                                  ),
-                                                  transition:
-                                                      Transition.rightToLeft,
-                                                  duration: const Duration(
-                                                    milliseconds:
-                                                        Constrains.duration,
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                'view_map'.tr,
-                                                style: const TextStyle(
-                                                  color: AppColors.luckyTicketColor,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        "${(bookingData.data?.body?.data?[0].boardingPoint).toString()} (${(bookingData.data?.body?.data?[0].departure).toString()})",
-                                        style: const TextStyle(
-                                          color: AppColors.textColor,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        ". ${(bookingData.data?.body?.data?[0].boardingPointAddress).toString()}",
-                                        style: const TextStyle(
-                                          color: AppColors.textColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                // * drop off point
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "drop_off_point".tr,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          if ((bookingData
-                                                      .data
-                                                      ?.body
-                                                      ?.data?[0]
-                                                      .dropOffPointLat)
-                                                  .toString() !=
-                                              '')
-                                            InkWell(
-                                              onTap: () {
-                                                Get.to(
-                                                  () => LocationDetailScreen(
-                                                    lats:
-                                                        (bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[0]
-                                                                .dropOffPointLat)
-                                                            .toString(),
-                                                    longs:
-                                                        (bookingData
-                                                                .data
-                                                                ?.body
-                                                                ?.data?[0]
-                                                                .dropOffPointLong)
-                                                            .toString(),
-                                                    type: 3,
-                                                    nameKh: '',
-                                                    name: '',
-                                                    telephone: '',
-                                                  ),
-                                                  transition:
-                                                      Transition.rightToLeft,
-                                                  duration: const Duration(
-                                                    milliseconds:
-                                                        Constrains.duration,
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                'view_map'.tr,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColors.luckyTicketColor,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        "${(bookingData.data?.body?.data?[0].dropOffPoint).toString()} (${(bookingData.data?.body?.data?[0].arrival).toString()})",
-                                        style: const TextStyle(
-                                          color: AppColors.textColor,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        ". ${(bookingData.data?.body?.data?[0].dropOffPointAddress).toString()}",
-                                        style: const TextStyle(
-                                          color: AppColors.textColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          //* bookingSeatDetailList
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: ListView.separated(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  bookingData
-                                      .data!
-                                      .body!
-                                      .data![0]
-                                      .bookingSeatDetailList!
-                                      .length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    _listSeat(
-                                      label: "seat_number".tr,
-                                      value:
-                                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].seatNumber}',
-                                    ),
-
-                                    if (bookingData
-                                        .data!
-                                        .body!
-                                        .data![0]
-                                        .bookingSeatDetailList![index]
-                                        .dob!
-                                        .isNotEmpty)
-                                    _listSeat(
-                                      label: 'name_pro'.tr,
-                                      value:
-                                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].name}',
-                                    ),
-                                    _listSeat(
-                                      label: 'gender'.tr,
-                                      value:
-                                          bookingData.data!.body!.data![0].bookingSeatDetailList![index].gender == 'Male' ? 'male'.tr : 'female'.tr,
-                                    ),
-                                    _listSeat(
-                                      label: 'nationality'.tr,
-                                      value:
-                                          '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].nationalityName}',
-                                    ),
-
-                                    if (bookingData
-                                        .data!
-                                        .body!
-                                        .data![0]
-                                        .bookingSeatDetailList![index]
-                                        .dob!
-                                        .isNotEmpty)
-                                      _listSeat(
-                                        label: 'dob'.tr,
-                                        value:
-                                            '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].dob}',
-                                      ),
-                                    if (bookingData
-                                        .data!
-                                        .body!
-                                        .data![0]
-                                        .bookingSeatDetailList![index]
-                                        .passport!
-                                        .isNotEmpty)
-                                      _listSeat(
-                                        label: 'passport'.tr,
-                                        value:
-                                            '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].passport}',
-                                      ),
-                                  ],
-                                );
-                              },
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      const Divider(),
-                            ),
-                          ),
-
-                          // * price
-                          Image.asset(AssetImages.line),
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              children: [
-                                _listPrice(
-                                  label: "sub_total".tr,
-                                  value:
-                                      (bookingData
-                                              .data
-                                              ?.body
-                                              ?.data?[0]
-                                              .subTotal)
-                                          .toString(),
-                                ),
-                                const SizedBox(height: 10),
-                                _listPrice(
-                                  label: "discount".tr,
-                                  value:
-                                      (bookingData
-                                              .data
-                                              ?.body
-                                              ?.data?[0]
-                                              .discount)
-                                          .toString(),
-                                ),
-                                const SizedBox(height: 10),
-                                _listPrice(
-                                  label: "total_ticket_price".tr,
-                                  value:
-                                      (bookingData
-                                              .data
-                                              ?.body
-                                              ?.data?[0]
-                                              .totalAmount)
-                                          .toString(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+    );
   }
 
-  Widget _buildDestination(AsyncSnapshot<TicketDetailScreenReponse> bookingData) {
+  Widget _buildDestination(
+    AsyncSnapshot<TicketDetailScreenReponse> bookingData,
+  ) {
     return Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            color: const Color(0xff000000).withValues(alpha: 0.8),
-                            child: Column(
-                              children: [
-                                Text(
-                                  "${(bookingData.data?.body?.data?[0].destinationFrom).toString()} - ${(bookingData.data?.body?.data?[0].destinationTo).toString()}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  (bookingData.data?.body?.data?[0].code)
-                                      .toString(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "${(bookingData.data?.body?.data?[0].travelDate)}  (${(bookingData.data?.body?.data?[0].departure)})"
-                                      .toString(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        color: const Color(0xff000000).withValues(alpha: 0.8),
+        child: Column(
+          children: [
+            Text(
+              "${(bookingData.data?.body?.data?[0].destinationFrom).toString()} - ${(bookingData.data?.body?.data?[0].destinationTo).toString()}",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              (bookingData.data?.body?.data?[0].code).toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              "${(bookingData.data?.body?.data?[0].travelDate)}  (${(bookingData.data?.body?.data?[0].departure)})"
+                  .toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildQrCode(AsyncSnapshot<TicketDetailScreenReponse> bookingData) {
     return Positioned(
-                          top: 110,
-                          left: 0,
-                          right: 0,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: CarouselSlider.builder(
-                              carouselController: _controller,
-                              itemCount:
-                                  (bookingData
-                                          .data
-                                          ?.body
-                                          ?.data?[0]
-                                          .bookingSeatDetailList)!
-                                      .length,
-                              options: CarouselOptions(
-                                height: 250,
-                                initialPage: 0,
-                                viewportFraction: 1,
-                                enableInfiniteScroll: false,
-                              ),
-                              itemBuilder: (context, i, realIndex) {
-                                final isFirstIndex = i == 0;
-                                final isLastIndex =
-                                    i ==
-                                    (bookingData
-                                                .data
-                                                ?.body
-                                                ?.data?[0]
-                                                .bookingSeatDetailList)!
-                                            .length -
-                                        1;
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    !isFirstIndex
-                                        ? Container(
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                          ),
-                                          child: IconButton(
-                                            onPressed: back,
-                                            icon: const Icon(
-                                              Icons.arrow_back,
-                                              size: 24,
-                                            ),
-                                          ),
-                                        )
-                                        : const SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                        ),
-                                    Container(
-                                      color: Colors.white,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 7,
-                                          horizontal: 15,
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            QrImageView(
-                                              data:
-                                                  '${(bookingData.data?.body?.data?[0].code).toString()}_${(bookingData.data?.body?.data?[0].bookingSeatDetailList)![i].seatNumber}',
-                                              version: QrVersions.auto,
-                                              size: 200.0,
-                                            ),
-                                            Text(
-                                              // '${(bookingData.data?.body?.data?[0].bookingSeatDetailList?[i].seatNumber).toString()}-${(bookingData.data?.body?.data?[0].bookingSeatDetailList?[i].gender).toString() == 'Male' ? 'male'.tr : 'female'.tr}',
-                                              (bookingData.data?.body?.data?[0].bookingSeatDetailList?[i].seatNumber).toString(),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    !isLastIndex
-                                        ? Container(
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                          ),
-                                          child: IconButton(
-                                            onPressed: next,
-                                            icon: const Icon(
-                                              Icons.arrow_forward,
-                                            ),
-                                          ),
-                                        )
-                                        : const SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                        ),
-                                  ],
-                                );
-                              },
-                            ),
+      top: 110,
+      left: 0,
+      right: 0,
+      child: SizedBox(
+        width: double.infinity,
+        child: CarouselSlider.builder(
+          carouselController: _controller,
+          itemCount:
+              (bookingData.data?.body?.data?[0].bookingSeatDetailList)!.length,
+          options: CarouselOptions(
+            height: 250,
+            initialPage: 0,
+            viewportFraction: 1,
+            enableInfiniteScroll: false,
+          ),
+          itemBuilder: (context, i, realIndex) {
+            final isFirstIndex = i == 0;
+            final isLastIndex =
+                i ==
+                (bookingData.data?.body?.data?[0].bookingSeatDetailList)!
+                        .length -
+                    1;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                !isFirstIndex
+                    ? Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: IconButton(
+                        onPressed: back,
+                        icon: const Icon(Icons.arrow_back, size: 24),
+                      ),
+                    )
+                    : const SizedBox(width: 50, height: 50),
+                Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 7,
+                      horizontal: 15,
+                    ),
+                    child: Column(
+                      children: [
+                        QrImageView(
+                          data:
+                              '${(bookingData.data?.body?.data?[0].code).toString()}_${(bookingData.data?.body?.data?[0].bookingSeatDetailList)![i].seatNumber}',
+                          version: QrVersions.auto,
+                          size: 200.0,
+                        ),
+                        Text(
+                          // '${(bookingData.data?.body?.data?[0].bookingSeatDetailList?[i].seatNumber).toString()}-${(bookingData.data?.body?.data?[0].bookingSeatDetailList?[i].gender).toString() == 'Male' ? 'male'.tr : 'female'.tr}',
+                          (bookingData
+                                  .data
+                                  ?.body
+                                  ?.data?[0]
+                                  .bookingSeatDetailList?[i]
+                                  .seatNumber)
+                              .toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
-                        );
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                !isLastIndex
+                    ? Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: IconButton(
+                        onPressed: next,
+                        icon: const Icon(Icons.arrow_forward),
+                      ),
+                    )
+                    : const SizedBox(width: 50, height: 50),
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
 
   _listPrice({required String label, required String value}) {
@@ -821,35 +765,35 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     );
   }
 
-  Widget _item
-  ({required String label, 
-  required String value,
-  Color? color = Colors.black
+  Widget _item({
+    required String label,
+    required String value,
+    Color? color = Colors.black,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.black54,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
+
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

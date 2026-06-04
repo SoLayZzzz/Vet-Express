@@ -29,7 +29,7 @@ class GoodsTransferHistoryScreen
         child: Stack(
           children: [
             _buildTabBarSelect(context),
-            
+
             Obx(() {
               if (!controller.isFiltering.value) return const SizedBox.shrink();
               return Positioned.fill(
@@ -54,86 +54,93 @@ class GoodsTransferHistoryScreen
   }
 
   Widget _buildTabBarSelect(BuildContext context) {
-  return Column(
-    children: [
-      Container(
-        color: Colors.white,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          height: 54, // Fixed height for a consistent "pill" look
-          decoration: BoxDecoration(
-            color: const Color(0XFFE6E8EA), // Light gray background
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Stack(
-            children: [
-              // 1. Static Vertical Dividers
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                child: Row(
-                  children: [
-                    Expanded(child: SizedBox()),
-                    VerticalDivider(color: Colors.black12, thickness: 1),
-                    Expanded(child: SizedBox()),
-                    VerticalDivider(color: Colors.black12, thickness: 1),
-                    Expanded(child: SizedBox()),
-                  ],
-                ),
-              ),
-              
-              // 2. The Actual TabBar
-              Padding(
-                padding: const EdgeInsets.all(4), // Space between gray bar and white pill
-                child: TabBar(
-                  controller: controller.tabController,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.black54,
-                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
-                  dividerColor: Colors.transparent,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  
-                  // The White Floating Pill
-                  indicator: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            height: 54, // Fixed height for a consistent "pill" look
+            decoration: BoxDecoration(
+              color: const Color(0XFFE6E8EA), // Light gray background
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Stack(
+              children: [
+                // 1. Static Vertical Dividers
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Row(
+                    children: [
+                      Expanded(child: SizedBox()),
+                      VerticalDivider(color: Colors.black12, thickness: 1),
+                      Expanded(child: SizedBox()),
+                      VerticalDivider(color: Colors.black12, thickness: 1),
+                      Expanded(child: SizedBox()),
                     ],
                   ),
-                  
-                  tabs: [
-                    Tab(text: 'sending'.tr),
-                    Tab(text: 'receiving'.tr),
-                    Tab(text: 'vet_self_service'.tr),
-                  ],
                 ),
-              ),
+
+                // 2. The Actual TabBar
+                Padding(
+                  padding: const EdgeInsets.all(
+                    4,
+                  ), // Space between gray bar and white pill
+                  child: TabBar(
+                    controller: controller.tabController,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.black54,
+                    labelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                    ),
+                    dividerColor: Colors.transparent,
+                    indicatorSize: TabBarIndicatorSize.tab,
+
+                    // The White Floating Pill
+                    indicator: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+
+                    tabs: [
+                      Tab(text: 'sending'.tr),
+                      Tab(text: 'receiving'.tr),
+                      Tab(text: 'vet_self_service'.tr),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // 3. Tab Content
+        SizedBox(height: 10),
+        Expanded(
+          child: TabBarView(
+            controller: controller.tabController,
+            children: [
+              _transferTab(context: context, type: 1),
+              _transferTab(context: context, type: 2),
+              _selfServiceTab(context: context),
             ],
           ),
         ),
-      ),
-      
-      // 3. Tab Content
-      SizedBox(height: 10),
-      Expanded(
-        child: TabBarView(
-          controller: controller.tabController,
-          children: [
-            _transferTab(context: context, type: 1),
-            _transferTab(context: context, type: 2),
-            _selfServiceTab(context: context),
-          ],
-        ),
-      ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 
   Widget _selfServiceTab({required BuildContext context}) {
     return Obx(() {
@@ -333,51 +340,53 @@ class GoodsTransferHistoryScreen
     });
   }
 
-Widget _transferTab({required BuildContext context, required int type}) {
-  return Obx(() {
-    final future = type == 1 ? controller.state.futureSending : controller.state.futureReceiving;
+  Widget _transferTab({required BuildContext context, required int type}) {
+    return Obx(() {
+      final future =
+          type == 1
+              ? controller.state.futureSending
+              : controller.state.futureReceiving;
 
-    if (future == null) {
-      controller.loadTransferList(context: context, type: type);
-      return const Center(child: CircularProgressIndicator());
-    }
+      if (future == null) {
+        controller.loadTransferList(context: context, type: type);
+        return const Center(child: CircularProgressIndicator());
+      }
 
-    return FutureBuilder<TransferListResponse>(
-      future: future,
-      builder: (context, data) {
-        if (data.hasData && (data.data?.body?.data?.isNotEmpty ?? false)) {
-          return Stack(
-            children: [
-              ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: data.data!.body!.data!.length,
-                itemBuilder: (context, index) {
-                  return TransferItemCard(
-                    item: data.data!.body!.data![index],
-                    type: type,
-                  );
-                },
+      return FutureBuilder<TransferListResponse>(
+        future: future,
+        builder: (context, data) {
+          if (data.hasData && (data.data?.body?.data?.isNotEmpty ?? false)) {
+            return Stack(
+              children: [
+                ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: data.data!.body!.data!.length,
+                  itemBuilder: (context, index) {
+                    return TransferItemCard(
+                      item: data.data!.body!.data![index],
+                      type: type,
+                    );
+                  },
+                ),
+
+                _filterButton(context: context),
+              ],
+            );
+          }
+          return Center(
+            child: Text(
+              'no_data'.tr,
+              style: const TextStyle(
+                fontSize: 16,
+                color: AppColors.primaryColor,
+                fontWeight: FontWeight.w500,
               ),
-              
-              _filterButton(context: context),
-            ],
-          );
-        }
-        return Center(
-          child: Text(
-            'no_data'.tr,
-            style: const TextStyle(
-              fontSize: 16,
-              color: AppColors.primaryColor,
-              fontWeight: FontWeight.w500,
             ),
-          ),
-        );
-      },
-    );
-  });
-}
-  
+          );
+        },
+      );
+    });
+  }
 
   Widget _surveyButton({
     required BuildContext context,
@@ -468,9 +477,6 @@ Widget _transferTab({required BuildContext context, required int type}) {
   // }
 }
 
-
-
-
 class TransferItemCard extends StatefulWidget {
   final dynamic item; // Replace 'dynamic' with your specific model type
   final int type;
@@ -486,187 +492,217 @@ class _TransferItemCardState extends State<TransferItemCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        // borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            // 1. Header
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.item.code ?? "",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  _returnStatus(widget.item.status),
-                  style: TextStyle(
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            )
+    return GestureDetector(
+      onTap: () {
+        _onTrackOrderPressed();
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 15,),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          // borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
-        
-            // 2. Body Section (Gray Background)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          child: Column(
+            children: [
+              // 1. Header
+              Row(
                 children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: AppColors.deepBlue,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Image.asset(AssetImages.ic_recieved), // Ensure this exists
-                  ),
-                  const SizedBox(width: 12),
                   Expanded(
-                    child: 
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Local NO. ${widget.item.id}",
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                                ),
-                                const SizedBox(height: 5),
-                                Text("${widget.item.destinationFromEn}", style: TextStyle(fontSize: 12)),
-                                Text("${widget.item.destinationToEn}", style: TextStyle(fontSize: 12)),
-                                Text("${widget.item.senderTelephone}", style: TextStyle(fontSize: 12)),
-                                              
-                              ],
-                            ),
-                            //
-                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                               children: [
-                                Text('${'qty'.tr}: ${widget.item.qty}/1',style: const TextStyle(fontSize: 12))
-                               ],
-                             ),
-                            
-                          ],
-                        ),
-                    
-                      
+                    child: Text(
+                      // widget.item.code ?? "",
+                      widget.item?.date ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        fontFamily: "Inter"
+                      ),
+                    ),
                   ),
-        
+                  const SizedBox(width: 8),
+                  Text(
+                    _returnStatus(widget.item.status),
+                    style: TextStyle(
+                      fontFamily: "Inter",
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ),
-            ),
-             Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-               child: Container(height: 1.5, color: Colors.grey[300]),
-             ),
-        
-        
-            // 3. Dropdown Fee Details (Animated)
-            AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: isExpanded
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+
+              SizedBox(height: 10),
+      
+              // 2. Body Section (Gray Background)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: AppColors.deepBlue,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(AssetImages.ic_recieved),
+                      ), // Ensure this exists
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          
-                          _buildFeeRow('tranfer_fee_ch'.tr, '\$10.50'),
-                          _buildFeeRow('packing_fee'.tr, '\$0.50'),
-                          _buildFeeRow('tranfer_fee_kh'.tr, '\$0.00'),
-                          _buildFeeRow('delivery_fee'.tr, '\$0.00'),
-                          
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Image.asset(AssetImages.line),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Local NO. ${widget.item.code}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  fontFamily: "Inter"
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                "${widget.item.destinationFromEn}",
+                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                              ),
+                                Text(
+                                "${widget.item.senderTelephone}",
+                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                              ),
+                              Text(
+                                "${widget.item.destinationToEn}",
+                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                              ),
+                              Text(
+                                "${widget.item.receiverTelephone}",
+                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                              ),
+                            ],
+                          ),
+                          //
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                '${'qty'.tr}: ${widget.item.qty}/1',
+                                style: const TextStyle(fontSize: 12, fontFamily: "Inter"),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-        
-            // 4. Total Bar (Clickable)
-            InkWell(
-              onTap: () => setState(() => isExpanded = !isExpanded),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                     Text("total_price".tr, style: TextStyle(fontWeight: FontWeight.w500)),
-                    Row(
-                      children: [
-                        const Text(
-                          "\$11.00",
-                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          // isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_right,
-                          Icons.keyboard_arrow_right,
-                          color: Colors.grey,
-                        ),
-                      ],
                     ),
                   ],
                 ),
               ),
-            ),
-        
-            // 5. Action Buttons
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-
-                  Expanded(child: _buildBtn(
-                    "unpaid".tr, 
-                    (){},
-                    isOutline: true)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildBtn(
-                      "track_order".tr,
-                      _onTrackOrderPressed,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: _buildBtn("pay_now".tr, (){
-                    Get.toNamed(AppRoutes.parcelPayment);
-                  })),
-                ],
-              ),
-            ),
-          ],
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              //   child: Container(height: 1.5, color: Colors.grey[300]),
+              // ),
+      
+              // 3. Dropdown Fee Details (Animated)
+              // AnimatedSize(
+              //   duration: const Duration(milliseconds: 300),
+              //   curve: Curves.easeInOut,
+              //   child:
+              //       isExpanded
+              //           ? Padding(
+              //             padding: const EdgeInsets.symmetric(
+              //               horizontal: 12,
+              //               vertical: 8,
+              //             ),
+              //             child: Column(
+              //               children: [
+              //                 _buildFeeRow('tranfer_fee_ch'.tr, '\$10.50'),
+              //                 _buildFeeRow('packing_fee'.tr, '\$0.50'),
+              //                 _buildFeeRow('tranfer_fee_kh'.tr, '\$0.00'),
+              //                 _buildFeeRow('delivery_fee'.tr, '\$0.00'),
+      
+              //                 Padding(
+              //                   padding: EdgeInsets.symmetric(vertical: 10),
+              //                   child: Image.asset(AssetImages.line),
+              //                 ),
+              //               ],
+              //             ),
+              //           )
+              //           : const SizedBox.shrink(),
+              // ),
+      
+              // 4. Total Bar (Clickable)
+              // InkWell(
+              //   onTap: () => setState(() => isExpanded = !isExpanded),
+              //   child: Padding(
+              //     padding: EdgeInsets.symmetric(horizontal: 10),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: [
+              //         Text(
+              //           "total_price".tr,
+              //           style: TextStyle(fontWeight: FontWeight.w500),
+              //         ),
+              //         Row(
+              //           children: [
+              //             const Text(
+              //               "\$11.00",
+              //               style: TextStyle(
+              //                 color: Colors.red,
+              //                 fontWeight: FontWeight.bold,
+              //                 fontSize: 16,
+              //               ),
+              //             ),
+              //             const SizedBox(width: 4),
+              //             Icon(
+              //               // isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_right,
+              //               Icons.keyboard_arrow_right,
+              //               color: Colors.grey,
+              //             ),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+      
+              // 5. Action Buttons
+              // Padding(
+              //   padding: const EdgeInsets.all(10),
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //         child: _buildBtn("unpaid".tr, () {}, isOutline: true),
+              //       ),
+              //       const SizedBox(width: 8),
+              //       Expanded(
+              //         child: _buildBtn("track_order".tr, _onTrackOrderPressed),
+              //       ),
+              //       const SizedBox(width: 8),
+              //       Expanded(
+              //         child: _buildBtn("pay_now".tr, () {
+              //           Get.toNamed(AppRoutes.parcelPayment);
+              //         }),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );
@@ -685,9 +721,15 @@ class _TransferItemCardState extends State<TransferItemCard> {
     );
   }
 
-  Widget _buildBtn(String title, VoidCallback? onTap, {bool isOutline = false}) {
+  Widget _buildBtn(
+    String title,
+    VoidCallback? onTap, {
+    bool isOutline = false,
+  }) {
     return InkWell(
-      onTap: (){onTap?.call();},
+      onTap: () {
+        onTap?.call();
+      },
       child: Container(
         height: 38,
         decoration: BoxDecoration(
@@ -737,25 +779,24 @@ class _TransferItemCardState extends State<TransferItemCard> {
   }
 
   String _returnStatus(dynamic statusValue) {
-  final status = _parseStatus(statusValue);
+    final status = _parseStatus(statusValue);
 
-  debugPrint(
-    'Transfer status raw=$statusValue parsed=$status type=${statusValue.runtimeType}',
-  );
+    debugPrint(
+      'Transfer status raw=$statusValue parsed=$status type=${statusValue.runtimeType}',
+    );
 
-  final statusMap = {
-    1: "posting".tr,
-    2: "shipping".tr,
-    3: "arrival".tr,
-    4: "received".tr,
-    5: "transit".tr,
-    6: "delivery".tr,
-    7: "call".tr,
-  };
+    final statusMap = {
+      1: "posting".tr,
+      2: "shipping".tr,
+      3: "arrival".tr,
+      4: "received".tr,
+      5: "transit".tr,
+      6: "delivery".tr,
+      7: "call".tr,
+    };
 
-  return statusMap[status] ?? 'Status: $status';
-}
-
+    return statusMap[status] ?? 'Status: $status';
+  }
 }
 
 

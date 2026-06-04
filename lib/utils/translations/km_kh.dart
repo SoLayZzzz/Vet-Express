@@ -78,8 +78,8 @@ final Map<String, String> kmKH = {
 
   //EV
   // 'coming_soon': "ដំណើរការឆាប់ៗនេះ",
-  // 'ev_charger': 'ស្ថានីយ៍\nបញ្ចូលអគ្គិសនី',
-  // 'ev_charger1': 'ស្ថានីយ៍បញ្ចូលអគ្គិសនី',
+  'ev_charger': 'ស្ថានីយ៍\nបញ្ចូលអគ្គិសនី',
+  'ev_charger1': 'ស្ថានីយ៍បញ្ចូលអគ្គិសនី',
   // 'search_station': 'ស្វែងរកស្ថានីយ៍',
   'ev_station': 'ស្ថានីយ៍ EV',
   // 'select_province': 'ជ្រើសរើសខេត្ត',
@@ -107,8 +107,8 @@ final Map<String, String> kmKH = {
   "make_first_transaction": "ធ្វើប្រតិបត្តិការដំបូងរបស់អ្នក",
   "no_transactions_found": "រកមិនឃើញប្រតិបត្តិការ",
   "clear_filters": "សម្អាតការចម្រាញ់",
-  "ev_charger": "ឧបករណ៍សាកថ្ម EV",
-  "ev_charger1": 'ឧបករណ៍\nសាកថ្ម EV',
+  // "ev_charger": "ឧបករណ៍សាកថ្ម EV",
+  // "ev_charger1": 'ឧបករណ៍\nសាកថ្ម EV',
   "favorites": "ទីតាំងដែលចូលចិត្ត",
   "news_feed": "ព័ត៌មានថ្មីៗ",
   "view_all": "មើលទាំងអស់",

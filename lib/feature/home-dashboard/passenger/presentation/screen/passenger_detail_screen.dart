@@ -376,10 +376,13 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
           'view_map'.tr,
           style: TextStyle(
             fontSize: 14,
+            fontFamily: "Inter",
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.italic,
             color:
                 ValueStatic.ticketType == '3'
                     ? AppColors.airBusColor
-                    : AppColors.primaryColor,
+                    : AppColors.viewMapColor,
           ),
         ),
       ),
@@ -487,52 +490,51 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                     onChanged: syncGoingToReturnIfNeeded,
                   ),
                   const SizedBox(height: 15),
-                  const SizedBox(height: 5),
-                  if (companyType == 4)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Text.rich(
-                            TextSpan(
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'name_pro'.tr,
-                                  style: const TextStyle(
-                                    color: AppColors.textColor,
-                                  ),
+                  if (companyType == 4) const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Text.rich(
+                          TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: 'name_pro'.tr,
+                                style: const TextStyle(
+                                  color: AppColors.textColor,
                                 ),
-                                const TextSpan(
-                                  text: ' *',
-                                  style: TextStyle(color: AppColors.redColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: TextField(
-                            controller: nameControllers[index],
-                            style: const TextStyle(fontSize: 14),
-                            onChanged: (_) {
-                              syncGoingToReturnIfNeeded();
-                            },
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 15,
                               ),
-                              hintText: 'name_pro'.tr,
-                              enabledBorder: Style.outlineInputBorder(),
-                              focusedBorder: Style.outlineInputBorder(),
-                            ),
+                              const TextSpan(
+                                text: ' *',
+                                style: TextStyle(color: AppColors.redColor),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: TextField(
+                          controller: nameControllers[index],
+                          style: const TextStyle(fontSize: 14),
+                          onChanged: (_) {
+                            syncGoingToReturnIfNeeded();
+                          },
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 15,
+                            ),
+                            hintText: 'name_pro'.tr,
+                            enabledBorder: Style.outlineInputBorder(),
+                            focusedBorder: Style.outlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 15),
                   _buildChooseNationality(
                     nationalityIds,
@@ -962,6 +964,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
               children: [
                 Expanded(
                   child: CustomScrollView(
+                    key: const PageStorageKey<String>(
+                      'passenger_detail_scroll_key',
+                    ),
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    cacheExtent: 1000,
                     physics: const BouncingScrollPhysics(),
                     slivers: <Widget>[
                       //* Contact Info
@@ -2014,23 +2022,23 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                     return Column(
                                       children: [
-                                        if (shouldShowSubTotal)
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'sub_total'.tr,
-                                                style: const TextStyle(
-                                                  color: AppColors.textColor,
-                                                ),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                '\$${subTotal.toStringAsFixed(2)}',
-                                              ),
-                                            ],
-                                          ),
+                                        // if (shouldShowSubTotal)
+                                        //   Row(
+                                        //     children: [
+                                        //       Text(
+                                        //         'sub_total'.tr,
+                                        //         style: const TextStyle(
+                                        //           color: AppColors.textColor,
+                                        //         ),
+                                        //       ),
+                                        //       const Spacer(),
+                                        //       Text(
+                                        //         '\$${subTotal.toStringAsFixed(2)}',
+                                        //       ),
+                                        //     ],
+                                        //   ),
                                         if (_shouldShowAmount(discount))
-                                          const SizedBox(height: 10),
+                                          // const SizedBox(height: 10),
                                         if (_shouldShowAmount(discount))
                                           Row(
                                             children: [
@@ -2114,23 +2122,23 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                                     return Column(
                                       children: [
-                                        if (shouldShowSubTotal)
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'sub_total'.tr,
-                                                style: const TextStyle(
-                                                  color: AppColors.textColor,
-                                                ),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                '\$${subTotal.toStringAsFixed(2)}',
-                                              ),
-                                            ],
-                                          ),
+                                        // if (shouldShowSubTotal)
+                                        //   Row(
+                                        //     children: [
+                                        //       Text(
+                                        //         'sub_total'.tr,
+                                        //         style: const TextStyle(
+                                        //           color: AppColors.textColor,
+                                        //         ),
+                                        //       ),
+                                        //       const Spacer(),
+                                        //       Text(
+                                        //         '\$${subTotal.toStringAsFixed(2)}',
+                                        //       ),
+                                        //     ],
+                                        //   ),
                                         if (_shouldShowAmount(discount))
-                                          const SizedBox(height: 10),
+                                          // const SizedBox(height: 10),
                                         if (_shouldShowAmount(discount))
                                           Row(
                                             children: [
@@ -2160,7 +2168,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           ),
                                         if (shouldShowGrandTotal)
                                           const SizedBox(height: 10),
-                                        if (shouldShowGrandTotal)
+                                        // if (shouldShowGrandTotal)
                                           Row(
                                             children: [
                                               Text(
@@ -2193,24 +2201,24 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
-                                    if (shouldShowSubTotal)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'sub_total'.tr,
-                                            style: const TextStyle(
-                                              color: AppColors.textColor,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Text(
-                                            ValueStatic.seatPriceGoDiscount
-                                                ? '\$${(double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}'
-                                                : '\$${(double.parse(ValueStatic.totalPrice) * 0.95).toStringAsFixed(2)}',
-                                          ),
-                                        ],
-                                      ),
-                                    const SizedBox(height: 10),
+                                    // if (shouldShowSubTotal)
+                                    //   Row(
+                                    //     children: [
+                                    //       Text(
+                                    //         'sub_total'.tr,
+                                    //         style: const TextStyle(
+                                    //           color: AppColors.textColor,
+                                    //         ),
+                                    //       ),
+                                    //       const Spacer(),
+                                    //       Text(
+                                    //         ValueStatic.seatPriceGoDiscount
+                                    //             ? '\$${(double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}'
+                                    //             : '\$${(double.parse(ValueStatic.totalPrice) * 0.95).toStringAsFixed(2)}',
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         Text(
@@ -2254,19 +2262,19 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
-                                    if (shouldShowSubTotal)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'sub_total'.tr,
-                                            style: const TextStyle(
-                                              color: AppColors.textColor,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Text('\$${ValueStatic.totalPrice}'),
-                                        ],
-                                      ),
+                                    // if (shouldShowSubTotal)
+                                    //   Row(
+                                    //     children: [
+                                    //       Text(
+                                    //         'sub_total'.tr,
+                                    //         style: const TextStyle(
+                                    //           color: AppColors.textColor,
+                                    //         ),
+                                    //       ),
+                                    //       const Spacer(),
+                                    //       Text('\$${ValueStatic.totalPrice}'),
+                                    //     ],
+                                    //   ),
                                     if (controller
                                                 .state
                                                 .isTravelPackage
@@ -2537,19 +2545,19 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   !forceZeroDiscount)
                                 Column(
                                   children: [
-                                    if (shouldShowSubTotal)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'sub_total'.tr,
-                                            style: const TextStyle(
-                                              color: AppColors.textColor,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Text('\$${ValueStatic.totalPrice}'),
-                                        ],
-                                      ),
+                                    // if (shouldShowSubTotal)
+                                    //   Row(
+                                    //     children: [
+                                    //       Text(
+                                    //         'sub_total'.tr,
+                                    //         style: const TextStyle(
+                                    //           color: AppColors.textColor,
+                                    //         ),
+                                    //       ),
+                                    //       const Spacer(),
+                                    //       Text('\$${ValueStatic.totalPrice}'),
+                                    //     ],
+                                    //   ),
                                     if (controller
                                                 .state
                                                 .isTravelPackage
@@ -3287,6 +3295,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                 ],
                               ),
                             ),
+
                             (data.data?.body?.length != 1)
                                 ? _pointPicker(
                                   context: context,
@@ -3303,6 +3312,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .state
                                         .isSelectIndexBoardingTwoWay
                                         .value = value;
+                                    controller.update();
                                   },
                                   selectedName:
                                       controller
@@ -3314,6 +3324,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .state
                                         .selectBoardingPointTwoWay
                                         .value = value;
+                                    controller.update();
                                   },
                                   selectedAddress:
                                       controller
@@ -3325,6 +3336,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .state
                                         .selectBoardingPointAddressTwoWay
                                         .value = value;
+                                    controller.update();
                                   },
                                   defaultName: 'select_boarding'.tr,
                                   onClearSelection: () {
@@ -3341,6 +3353,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .selectBoardingPointAddressTwoWay
                                         .value = '';
                                     ValueStatic.boardingPointTwoWayId = '';
+                                    controller.update();
                                   },
                                   onValueStaticSelected: (item) {
                                     ValueStatic.boardingPointTwoWayId =
@@ -3408,7 +3421,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         return Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -3461,6 +3474,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .state
                                         .isSelectIndexDropOffTwoWay
                                         .value = value;
+                                    controller.update();
                                   },
                                   selectedName:
                                       controller
@@ -3472,6 +3486,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .state
                                         .selectDropPointTwoWay
                                         .value = value;
+                                    controller.update();
                                   },
                                   selectedAddress:
                                       controller
@@ -3483,6 +3498,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .state
                                         .selectDropPointAddressTwoWay
                                         .value = value;
+                                    controller.update();
                                   },
                                   defaultName: 'select_drop'.tr,
                                   onClearSelection: () {
@@ -3499,6 +3515,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         .selectDropPointAddressTwoWay
                                         .value = '';
                                     ValueStatic.dropOffPointTwoWayId = '';
+                                    controller.update();
                                   },
                                   onValueStaticSelected: (item) {
                                     ValueStatic.dropOffPointTwoWayId =
@@ -3619,16 +3636,6 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   ],
                 ),
               ),
-              // const SizedBox(height: 10),
-
-              // //* departure date
-              // Text(
-              //   'departure_date:'.tr + ValueStatic.goDate,
-              //   style: const TextStyle(
-              //     fontSize: 14,
-              //     color: AppColors.textColor,
-              //   ),
-              // ),
 
               //* boarding point
               FutureBuilder<boarding.CarPointResponse>(
@@ -3703,6 +3710,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     .state
                                     .isSelectedIndexBoardingOneWay
                                     .value = value;
+                                controller.update();
                               },
                               selectedName:
                                   controller
@@ -3714,6 +3722,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     .state
                                     .selectedBoardingPointOneWay
                                     .value = value;
+                                controller.update();
                               },
                               selectedAddress:
                                   controller
@@ -3725,6 +3734,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     .state
                                     .selectedBoardingPointAddressOneWay
                                     .value = value;
+                                controller.update();
                               },
                               defaultName: 'select_boarding'.tr,
                               onClearSelection: () {
@@ -3741,6 +3751,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     .selectedBoardingPointAddressOneWay
                                     .value = '';
                                 ValueStatic.boardingPointOneWayId = '';
+                                controller.update();
                               },
                               onValueStaticSelected: (item) {
                                 ValueStatic.boardingPointOneWayId =
@@ -3785,7 +3796,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         return Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -3815,7 +3826,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     selectedIndex:
                                         controller
                                             .state
-                                            .isSelectedIndexBoardingOneWay
+                                            .isSelectedIndexDropOffOneWay
                                             .value,
                                   ),
                                 ],
@@ -3836,6 +3847,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     .state
                                     .isSelectedIndexDropOffOneWay
                                     .value = value;
+                                controller.update();
                               },
                               selectedName:
                                   controller
@@ -3845,6 +3857,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               onSelectedNameChanged: (value) {
                                 controller.state.selectedDropPointOneWay.value =
                                     value;
+                                controller.update();
                               },
                               selectedAddress:
                                   controller
@@ -3856,6 +3869,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     .state
                                     .selectedDropPointAddressOneWay
                                     .value = value;
+                                controller.update();
                               },
                               defaultName: 'select_drop'.tr,
                               onClearSelection: () {
@@ -3870,6 +3884,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     .selectedDropPointAddressOneWay
                                     .value = '';
                                 ValueStatic.dropOffPointOneWayId = '';
+                                controller.update();
                               },
                               onValueStaticSelected: (item) {
                                 ValueStatic.dropOffPointOneWayId =

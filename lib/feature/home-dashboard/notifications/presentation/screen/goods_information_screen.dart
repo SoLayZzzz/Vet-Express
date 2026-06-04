@@ -89,7 +89,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
           },
         ),
       ),
-      bottomNavigationBar: _buildTotalBottomNavigationBar(),
+      // bottomNavigationBar: _buildTotalBottomNavigationBar(),
     );
   }
 
@@ -457,45 +457,50 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
         children: [
           // 1. Tracking Section
           _labelRow('${'track_code'.tr}:', '${data?.code}'),
-          _labelRow('${'track_china_no'.tr}:', '-'),
+          // _labelRow('${'track_china_no'.tr}:', '-'),
           
-          const SizedBox(height: 16),
-           Text('${'item_detail'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          // const SizedBox(height: 16),
+          //  Text('${'item_detail'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
+          // const SizedBox(height: 8),
 
-          // 2. Fees Grid
-          Column(
-            children: [
-              _buildItemDetailsRow('${'tranfer_fee_ch'.tr}:', '\$10.50', '${'packing_fee'.tr}:', '\$0.50'),
-              _buildItemDetailsRow('${'tranfer_fee_kh'.tr}:', '\$0.00', '${'delivery_fee'.tr}:', '\$0.00'),
-            ],
-          ),
+          // // 2. Fees Grid
+          // Column(
+          //   children: [
+          //     _buildItemDetailsRow('${'tranfer_fee_ch'.tr}:', '\$10.50', '${'packing_fee'.tr}:', '\$0.50'),
+          //     _buildItemDetailsRow('${'tranfer_fee_kh'.tr}:', '\$0.00', '${'delivery_fee'.tr}:', '\$0.00'),
+          //   ],
+          // ),
 
-          const SizedBox(height: 16),
-           Text('${'item_size'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          // const SizedBox(height: 16),
+          //  Text('${'item_size'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
+          // const SizedBox(height: 8),
 
           // 3. Size Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('${'width'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
-              Text('${'length'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
-              Text('${'height'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text('${'width'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
+          //     Text('${'length'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
+          //     Text('${'height'.tr}: 120CM', style: const TextStyle(fontSize: 13)),
+          //   ],
+          // ),
 
           const SizedBox(height: 16),
-           Text('${'item_weight'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text('${'weight'.tr}: 1.20KG'),
+          //  Text('${'item_weight'.tr}:', style: TextStyle(fontWeight: FontWeight.bold)),
+          // const SizedBox(height: 8),
+          // Text('${'weight'.tr}: 1.20KG'),
 
-          const SizedBox(height: 20),
+          // const SizedBox(height: 20),
 
           // 4. Stylized Info Boxes
-          _buildInfoBox('${'qty'.tr}:', '${data?.qty} Package'),
+          _buildInfoBox('${'qty'.tr}:', '${data?.qty} ${data?.typeId}'),
           const SizedBox(height: 10),
-          _buildInfoBox('${'from'.tr}:', '${data?.destinationFromEn}'),
+          _buildReceiverBox(
+            label: '${'from'.tr}:',
+            phoneNumber: '${data?.senderTelephone}',
+            toLabel: '${'to'.tr}:',
+            destination: '${data?.destinationFromEn}',
+          ),
           const SizedBox(height: 10),
           _buildReceiverBox(
             label: '${'receiver'.tr}:',

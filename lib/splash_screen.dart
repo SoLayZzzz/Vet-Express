@@ -17,7 +17,6 @@ import 'utils/image_cache_service.dart';
 import 'ads_screen.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'routes/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -51,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
     _apiCallCompleted = true;
     setState(() => _isLoading = false);
 
-    Get.offAllNamed(AppRoutes.home);
+    Get.offAll(() => const AdsScreen(images: []));
     Future.delayed(Duration.zero, () {
       if (Get.isDialogOpen == true) return;
       alertDialogOneButton(

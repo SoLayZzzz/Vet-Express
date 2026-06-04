@@ -130,7 +130,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                                   'phone_number_is_incorrect'.tr,
                                 );
                               },
-                              decoration: Style.inputText('phone'.tr),
+                              decoration: Style.inputText('phone_number'.tr),
                             ),
                           ),
                         ],
@@ -488,9 +488,9 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                             body: body,
                             successDetails: [
                               {'name'.tr: nameController.text},
-                              {'phone'.tr: phoneController.text},
-                              {'from'.tr: ValueStatic.provinceRentalFromId},
-                              {'to'.tr: ValueStatic.provinceRentalToId},
+                              {'phone_number'.tr: phoneController.text},
+                              {'from'.tr: ValueStatic.provinceRentalFromName},
+                              {'to'.tr: ValueStatic.provinceRentalToName},
                               {'departure_date'.tr: goDate},
                               {'return_date'.tr: backDate},
                               {'car_type'.tr: RentalCarInfoScreen.carType},

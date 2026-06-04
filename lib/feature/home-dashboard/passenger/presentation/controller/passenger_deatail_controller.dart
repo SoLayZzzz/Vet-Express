@@ -86,7 +86,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   }) {
     if (seatCount <= 0) return;
 
-    if (companyType == 4 && nameControllers.isNotEmpty) {
+    if (companyType != 4 && nameControllers.isNotEmpty) {
       if (nameControllers[0].text.trim().isEmpty && name.trim().isNotEmpty) {
         nameControllers[0].text = name.trim();
       }
@@ -1067,41 +1067,51 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       final user = Get.find<UserController>();
       final g = user.gender; // 1 male, 2 female
       final natId = user.nationalityId; // >0 valid
+      final profileFullName =
+          user.userMeResponse.value?.body?.name?.trim() ?? '';
 
       syncUserProfileToForm();
       _ensurePassengerSelectionSlots();
 
-      if (state.genderOneWay.isNotEmpty &&
-          (g == 1 || g == 2) &&
-          (state.genderOneWay[0] == '0' || state.genderOneWay[0].isEmpty)) {
-        state.genderOneWay[0] = g.toString();
+      if (ValueStatic.companyTypeOneWay != 4) {
+        if (state.genderOneWay.isNotEmpty &&
+            (g == 1 || g == 2) &&
+            (state.genderOneWay[0] == '0' || state.genderOneWay[0].isEmpty)) {
+          state.genderOneWay[0] = g.toString();
+        }
       }
-      if (state.nationalOneWay.isNotEmpty &&
-          natId > 0 &&
-          state.nationalOneWay[0] == 0) {
-        state.nationalOneWay[0] = natId;
-      }
-      if (state.nationalityIds.isNotEmpty && natId > 0) {
-        final current = state.nationalityIds[0] ?? 0;
-        if (current == 0) {
-          state.nationalityIds[0] = natId;
+      if (ValueStatic.companyTypeOneWay != 4) {
+        if (state.nationalOneWay.isNotEmpty &&
+            natId > 0 &&
+            state.nationalOneWay[0] == 0) {
+          state.nationalOneWay[0] = natId;
+        }
+        if (state.nationalityIds.isNotEmpty && natId > 0) {
+          final current = state.nationalityIds[0] ?? 0;
+          if (current == 0) {
+            state.nationalityIds[0] = natId;
+          }
         }
       }
 
-      if (state.genderTwoWay.isNotEmpty &&
-          (g == 1 || g == 2) &&
-          (state.genderTwoWay[0] == '0' || state.genderTwoWay[0].isEmpty)) {
-        state.genderTwoWay[0] = g.toString();
+      if (ValueStatic.companyTypeTwoWay != 4) {
+        if (state.genderTwoWay.isNotEmpty &&
+            (g == 1 || g == 2) &&
+            (state.genderTwoWay[0] == '0' || state.genderTwoWay[0].isEmpty)) {
+          state.genderTwoWay[0] = g.toString();
+        }
       }
-      if (state.nationalTwoWay.isNotEmpty &&
-          natId > 0 &&
-          state.nationalTwoWay[0] == 0) {
-        state.nationalTwoWay[0] = natId;
-      }
-      if (state.nationalityIdsTwoWay.isNotEmpty && natId > 0) {
-        final current = state.nationalityIdsTwoWay[0] ?? 0;
-        if (current == 0) {
-          state.nationalityIdsTwoWay[0] = natId;
+      if (ValueStatic.companyTypeTwoWay != 4) {
+        if (state.nationalTwoWay.isNotEmpty &&
+            natId > 0 &&
+            state.nationalTwoWay[0] == 0) {
+          state.nationalTwoWay[0] = natId;
+        }
+        if (state.nationalityIdsTwoWay.isNotEmpty && natId > 0) {
+          final current = state.nationalityIdsTwoWay[0] ?? 0;
+          if (current == 0) {
+            state.nationalityIdsTwoWay[0] = natId;
+          }
         }
       }
 
@@ -1111,7 +1121,10 @@ class PassengerDetailController extends StateController<PassengerUistate> {
         nameControllers: state.nameOneWay,
         dobDisplayControllers: state.dobOneWayList,
         dobValueControllers: state.dobOneWay,
-        name: ValueStatic.username,
+        name:
+            ValueStatic.companyTypeOneWay == 4
+                ? profileFullName
+                : ValueStatic.username,
         dob: user.dob,
       );
       _applyAutofillToSeatControllers(
@@ -1120,7 +1133,10 @@ class PassengerDetailController extends StateController<PassengerUistate> {
         nameControllers: state.nameTwoWay,
         dobDisplayControllers: state.dobTwoWayList,
         dobValueControllers: state.dobTwoWay,
-        name: ValueStatic.username,
+        name:
+            ValueStatic.companyTypeTwoWay == 4
+                ? profileFullName
+                : ValueStatic.username,
         dob: user.dob,
       );
 

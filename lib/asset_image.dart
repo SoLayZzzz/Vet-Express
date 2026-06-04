@@ -225,7 +225,8 @@ class AssetImages {
   static const String ic_card_ticket_vip_background =
       "assets/icons/card_ticket_vip_background.png";
 
-  static const String ic_recieved = "assets/images/icon_recieved.png";
+  // static const String ic_recieved = "assets/images/icon_recieved.png";
+  static const String ic_recieved = "assets/icons/send.png";
 
   static const String ic_ticket_history = "assets/icons/ticket_history.png";
   static const String ic_date_history = "assets/icons/date_history.png";
