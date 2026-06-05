@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';
 import 'package:express_vet/models/boarding_point.dart';
@@ -183,10 +184,15 @@ class PassengerNetworkRequest {
         },
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
+
+        
       );
 
       return PaymentResponse.fromJson(json);
-    } catch (_) {
+    } catch (e) {
+      debugPrint(
+          'PassengerNetworkRequest.processPayment.error ${e.toString()}',
+        );
       rethrow;
     }
   }
@@ -210,7 +216,10 @@ class PassengerNetworkRequest {
       );
 
       return CheckPromotionCodeResponse.fromJson(json);
-    } catch (_) {
+    } catch (e) {
+      debugPrint(
+          'PassengerNetworkRequest.checkCoupon.error ${e.toString()}',
+        );
       rethrow;
     }
   }
@@ -229,16 +238,52 @@ class PassengerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      try {
-        debugPrint(
-          'PassengerNetworkRequest.checkTicketStatus.response ${json.toString()}',
-        );
-      } catch (_) {
-        // ignore logging errors
-      }
       return WingResponse.fromJson(json);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('PassengerNetworkRequest.checkTicketStatus.error $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> bookingComplete({
+    required BuildContext context,
+    required String reference,
+    required String transactionId,
+  }) async {
+    final fields = <String, String>{
+      'reference': reference,
+      'trasactionId': transactionId,
+      'transactionId': transactionId,
+    };
+    final fullUrl = '${networkDataSource.baseUrl}${Endpoint.bookingComplete}';
+
+    try {
+      final json = await networkDataSource.postFormUrlEncoded(
+        Endpoint.bookingComplete,
+        fields: fields,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+
+      final prettyFields = const JsonEncoder.withIndent('  ').convert(fields);
+      final prettyResponse = const JsonEncoder.withIndent('  ').convert(json);
+
+      debugPrint(
+        '--------------------------------------------------\n'
+        '🚀 REQUEST: bookingComplete\n'
+        '🛣️ Endpoint: /${Endpoint.bookingComplete}\n'
+        '🔗 URL: $fullUrl\n'
+        '📦 Fields:\n$prettyFields\n'
+        '--------------------------------------------------\n'
+        '📥 RESPONSE:\n$prettyResponse\n'
+        '--------------------------------------------------',
+      );
+
+      return json;
+    } catch (e) {
+      debugPrint('PassengerNetworkRequest.bookingComplete.error: $e');
       rethrow;
     }
   }
 }
+

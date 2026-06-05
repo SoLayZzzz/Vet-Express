@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import '../controller/profile_controller.dart';
@@ -75,9 +76,10 @@ class ProfileScreen extends StatelessWidget {
               'phone_number_info',
               controller.phoneNumberController,
               'phone_number_info',
-              TextInputType.number,
+              TextInputType.phone,
               CheckInput().validatePhone,
               controller.isTelephoneReadOnly.value,
+              [PhoneNumberFormatter()],
             ),
             _buildTextField(
               'email',
@@ -151,18 +153,19 @@ class ProfileScreen extends StatelessWidget {
                           items.contains(selectedValue.value)
                       ? selectedValue.value
                       : null,
-              items: items.map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textColor,
-                    ),
-                  ),
-                );
-              }).toList(),
+              items:
+                  items.map((String item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textColor,
+                        ),
+                      ),
+                    );
+                  }).toList(),
               onChanged: (String? newValue) {
                 selectedValue.value = newValue;
               },
@@ -190,9 +193,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               dropdownStyleData: const DropdownStyleData(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                ),
+                decoration: BoxDecoration(color: Colors.white),
               ),
               menuItemStyleData: const MenuItemStyleData(height: 40),
             ),
@@ -237,9 +238,9 @@ class ProfileScreen extends StatelessWidget {
               ),
               value:
                   selectedValue.value != null &&
-                      items.contains(selectedValue.value)
-                  ? selectedValue.value
-                  : null,
+                          items.contains(selectedValue.value)
+                      ? selectedValue.value
+                      : null,
               items:
                   items.map((String item) {
                     return DropdownMenuItem<String>(
@@ -391,6 +392,7 @@ class ProfileScreen extends StatelessWidget {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
     bool isReadOnly = false,
+    List<TextInputFormatter>? inputFormatters,
   ]) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, top: 20),
@@ -411,6 +413,7 @@ class ProfileScreen extends StatelessWidget {
             autofocus: false,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: const TextStyle(fontSize: 14, color: AppColors.textColor),
             validator: validator,
             readOnly: isReadOnly,
@@ -467,9 +470,7 @@ class ProfileScreen extends StatelessWidget {
                     ? AppColors.primaryColor
                     : AppColors.greyColor,
             onPressed:
-                controller.canSave.value
-                    ? controller.updateProfile
-                    : () {},
+                controller.canSave.value ? controller.updateProfile : () {},
           ),
         ),
       ),

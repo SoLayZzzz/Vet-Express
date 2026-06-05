@@ -7,6 +7,7 @@ import 'package:widget_zoom/widget_zoom.dart';
 import '../../../../../models/travel_package/buy_travel_package_list_response.dart';
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/check_input.dart';
 import '../controller/package_history_controller.dart';
 
 class PackageHistoryScreen extends GetView<PackageHistoryController> {
@@ -100,7 +101,9 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                             ),
                             _itemDetail(
                               Ionicons.call_outline,
-                              '${models.telephone}',
+                              CheckInput.formatPhoneNumber(
+                                models.telephone ?? '',
+                              ),
                               Ionicons.flag_outline,
                               '${models.nationalityName}',
                             ),

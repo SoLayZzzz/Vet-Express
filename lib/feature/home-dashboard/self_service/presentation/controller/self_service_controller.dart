@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
+import 'package:express_vet/utils/check_input.dart';
 
 import '../../domain/uscase/self_service_usecase.dart';
 
@@ -40,7 +41,7 @@ class SelfServiceController extends StateController<SelfServiceUistate> {
   }
 
   void initSelfServiceFormDefaults() {
-    uiState.value.phoneSenderController.text = ValueStatic.phone;
+    uiState.value.phoneSenderController.text = CheckInput.formatPhoneNumber(ValueStatic.phone);
     if (uiState.value.amountController.text.isEmpty) {
       uiState.value.amountController.text = '1';
     }

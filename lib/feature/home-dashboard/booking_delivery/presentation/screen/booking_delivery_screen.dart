@@ -47,7 +47,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
       GoodsTransferActionBinding().dependencies();
     }
     goodsTransferActionController = Get.find<GoodsTransferActionController>();
-    phoneController.text = ValueStatic.phone;
+    phoneController.text = CheckInput.formatPhoneNumber(ValueStatic.phone);
   }
 
   @override
@@ -97,10 +97,11 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           autofocus: false,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.phone,
+                          inputFormatters: [PhoneNumberFormatter()],
                           style: const TextStyle(fontSize: 14),
                           validator: (String? value) {
                             return CheckInput().checkLength(
-                              value!,
+                              (value ?? '').replaceAll(' ', ''),
                               9,
                               'phone_r'.tr,
                               'phone_in'.tr,
@@ -429,7 +430,9 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                                   onTap: () {
                                     deliverySelected.value = 2;
                                   },
-                                  child: provinceDelivery(deliverySelected.value),
+                                  child: provinceDelivery(
+                                    deliverySelected.value,
+                                  ),
                                 ),
                               ),
                             ],
@@ -564,13 +567,16 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                               context: context,
                               body: GoodsTransferAddRequestBody(
                                 filePath: _image.value?.path,
-                                itemName: itemTypeController.text.toString(),
-                                lats: BookingDeliveryScreen.lats.toString(),
-                                longs: BookingDeliveryScreen.longs.toString(),
+                                itemName: itemTypeController.text,
+                                lats: BookingDeliveryScreen.lats,
+                                longs: BookingDeliveryScreen.longs,
                                 qtyType: itemTypeSelected.value.toString(),
                                 senderAddr: senderAddr,
                                 serviceType: deliverySelected.value.toString(),
-                                telephone: phoneController.text.toString(),
+                                telephone: phoneController.text.replaceAll(
+                                  ' ',
+                                  '',
+                                ),
                               ),
                               onSuccess: () {
                                 Navigator.pushAndRemoveUntil(

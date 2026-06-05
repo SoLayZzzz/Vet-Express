@@ -328,7 +328,7 @@ class ChinaController extends StateController<ChinaUiState> {
       address: address,
       branchId: branchId,
       name: name,
-      telephone: telephone,
+      telephone: telephone.replaceAll(' ', ''),
     );
   }
 
@@ -342,7 +342,7 @@ class ChinaController extends StateController<ChinaUiState> {
       address: address,
       branchId: branchId,
       name: name,
-      telephone: telephone,
+      telephone: telephone.replaceAll(' ', ''),
     );
   }
 

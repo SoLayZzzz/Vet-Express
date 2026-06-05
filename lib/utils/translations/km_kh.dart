@@ -753,6 +753,8 @@ final Map<String, String> kmKH = {
   // internet check
   'connection': 'មិនមានអ៊ីនធឺណិត',
   'no_internet_connection': 'សូមឆែកការភ្ជាប់អ៊ីនធឺណិតរបស់អ្នក',
+  'back_online': 'មានអ៊ីនធឺណិតឡើងវិញ',
+  'internet_connection_restored': 'ការភ្ជាប់អ៊ីនធឺណិតត្រូវបានស្ដារឡើងវិញ',
 
   // delete account
   'successful': 'ជោគជ័យ',

@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/app_bar.dart';
+import 'package:express_vet/utils/check_input.dart';
 
 class LocationDetailScreen extends StatefulWidget {
   final String lats;
@@ -96,7 +97,8 @@ class LocationDetailScreenState extends State<LocationDetailScreen> {
   ) {
     markers.clear();
 
-    if ((type == 1 && iconBranch != null) || (type != 1 && iconAgency != null)) {
+    if ((type == 1 && iconBranch != null) ||
+        (type != 1 && iconAgency != null)) {
       markers.add(
         Marker(
           markerId: MarkerId(LatLng(lats, longs).toString()),
@@ -145,21 +147,22 @@ class LocationDetailScreenState extends State<LocationDetailScreen> {
           children: [
             Expanded(
               child: GoogleMap(
-                markers: widget.type != 3
-                    ? getMarkers(
-                        double.parse(widget.lats),
-                        double.parse(widget.longs),
-                        widget.nameKh,
-                        widget.name,
-                        widget.type,
-                      )
-                    : getMarkersType3(
-                        double.parse(widget.lats),
-                        double.parse(widget.longs),
-                        widget.nameKh,
-                        widget.name,
-                        widget.type,
-                      ),
+                markers:
+                    widget.type != 3
+                        ? getMarkers(
+                          double.parse(widget.lats),
+                          double.parse(widget.longs),
+                          widget.nameKh,
+                          widget.name,
+                          widget.type,
+                        )
+                        : getMarkersType3(
+                          double.parse(widget.lats),
+                          double.parse(widget.longs),
+                          widget.nameKh,
+                          widget.name,
+                          widget.type,
+                        ),
                 mapType: MapType.normal,
                 initialCameraPosition: CameraPosition(
                   target: LatLng(
@@ -261,7 +264,7 @@ class LocationDetailScreenState extends State<LocationDetailScreen> {
                                     child: Row(
                                       children: [
                                         Text(
-                                          phone,
+                                          CheckInput.formatPhoneNumber(phone),
                                           style: const TextStyle(
                                             color: AppColors.primaryColor,
                                             fontWeight: FontWeight.w500,

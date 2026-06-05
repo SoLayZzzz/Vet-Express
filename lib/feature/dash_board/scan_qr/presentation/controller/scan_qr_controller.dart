@@ -64,6 +64,7 @@ class ScanQrController extends StateController<ScanQrUiState>
       facing: CameraFacing.back,
       torchEnabled: false,
     );
+    scannerController.addListener(_onScannerStateChanged);
   }
 
   void setScanFrom(int scanFrom) {
@@ -178,6 +179,8 @@ class ScanQrController extends StateController<ScanQrUiState>
     _cameraStartRetryTimer?.cancel();
     _cameraStartRetryTimer = null;
 
+    scannerController.removeListener(_onScannerStateChanged);
+
     scannerController
         .stop()
         .then((_) => scannerController.dispose())
@@ -243,10 +246,17 @@ class ScanQrController extends StateController<ScanQrUiState>
     }
   }
 
+  void _onScannerStateChanged() {
+    if (_isDisposed) return;
+    final isTorchOn = scannerController.value.torchState == TorchState.on;
+    if (uiState.value.flash != isTorchOn) {
+      uiState.value = uiState.value.copyWith(flash: isTorchOn);
+    }
+  }
+
   Future<void> toggleFlash() async {
     try {
       await scannerController.toggleTorch();
-      uiState.value = state.copyWith(flash: !state.flash);
     } catch (e) {
       debugPrint('Error toggling torch: $e');
       _displayDialog('information'.tr, 'flash_error'.tr);

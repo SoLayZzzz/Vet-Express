@@ -568,6 +568,8 @@ final Map<String, String> zhCN = {
   "memeber_code": "会员码",
   "connection": "无连接",
   "no_internet_connection": "检查您的互联网连接",
+  "back_online": "网络已连接",
+  "internet_connection_restored": "互联网连接已恢复",
   "successful": "成功",
   "not_successful": "不成功",
   "successful_delete": "成功删除账户",

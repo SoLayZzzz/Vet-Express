@@ -8,6 +8,7 @@ import 'package:express_vet/routes/app_routes.dart';
 import '../../data/model/reponse/membership_response.dart';
 import '../../../../models/saving_point/saving_point_response.dart';
 import '../../../../utils/app_colors.dart';
+import '../../../../utils/check_input.dart';
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 
 import '../binding/member_ship_binding.dart';
@@ -142,7 +143,7 @@ class _LogisticMemberScreenState extends State<LogisticMemberScreen> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  "${membershipData.data!.body!.data![0].telephone}",
+                                                  CheckInput.formatPhoneNumber(membershipData.data!.body!.data![0].telephone ?? ''),
                                                   style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,

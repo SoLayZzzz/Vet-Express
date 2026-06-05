@@ -123,10 +123,13 @@ class PaymentController extends StateController<PaymentUistate> {
     required String transactionId,
     String? totalAmount,
   }) async {
-    final resolvedTotalAmount = (totalAmount ?? '').trim().isNotEmpty
-        ? totalAmount!.trim()
-        : ValueStatic.totalPrice.toString();
-    debugPrint('================= [Payment] processBooking (tap) =================');
+    final resolvedTotalAmount =
+        (totalAmount ?? '').trim().isNotEmpty
+            ? totalAmount!.trim()
+            : ValueStatic.totalPrice.toString();
+    debugPrint(
+      '================= [Payment] processBooking (tap) =================',
+    );
     debugPrint(
       '[Payment] processBooking.request '
       'code=$transactionId, '
@@ -211,6 +214,13 @@ class PaymentController extends StateController<PaymentUistate> {
           );
           debugPrint('PaymentController.ABA_Card.result=$result');
           if (result == '1') {
+            debugPrint(
+              '--------------------------------------------------\n'
+              '✅ PAYMENT SUCCESS / COMPLETE\n'
+              '💳 Method: Credit/Debit Card\n'
+              '🆔 Transaction ID: $transactionId\n'
+              '--------------------------------------------------'
+            );
             // showDialogPaymentComplete(context);
             Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
           } else {
@@ -229,6 +239,13 @@ class PaymentController extends StateController<PaymentUistate> {
           );
           debugPrint('PaymentController.Alipay.result=$result');
           if (result == '1') {
+            debugPrint(
+              '--------------------------------------------------\n'
+              '✅ PAYMENT SUCCESS / COMPLETE\n'
+              '💳 Method: Alipay\n'
+              '🆔 Transaction ID: $transactionId\n'
+              '--------------------------------------------------'
+            );
             // showDialogPaymentComplete(context);
             Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
           } else {
@@ -244,6 +261,13 @@ class PaymentController extends StateController<PaymentUistate> {
           );
           debugPrint('PaymentController.Wing.result=$result');
           if (result == '1') {
+            debugPrint(
+              '--------------------------------------------------\n'
+              '✅ PAYMENT SUCCESS / COMPLETE\n'
+              '💳 Method: Wing Bank\n'
+              '🆔 Transaction ID: $transactionId\n'
+              '--------------------------------------------------'
+            );
             // showDialogPaymentComplete(context);
             Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
           } else {
@@ -306,6 +330,13 @@ class PaymentController extends StateController<PaymentUistate> {
     );
     debugPrint('PaymentController.ABA_KHQR.result=$result');
     if (result == '1') {
+      debugPrint(
+        '--------------------------------------------------\n'
+        '✅ PAYMENT SUCCESS / COMPLETE\n'
+        '💳 Method: ABA KHQR\n'
+        '🆔 Transaction ID: $transactionId\n'
+        '--------------------------------------------------'
+      );
       // showDialogPaymentComplete(context);
       Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
     } else {
@@ -344,13 +375,14 @@ class PaymentController extends StateController<PaymentUistate> {
         return;
       }
 
-      final launched = await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
-      final launchedFallback = launched
-          ? true
-          : await launchUrl(
-              uri,
-              mode: LaunchMode.externalApplication,
-            );
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalNonBrowserApplication,
+      );
+      final launchedFallback =
+          launched
+              ? true
+              : await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!launchedFallback) {
         if (GetPlatform.isAndroid) {
           await launchUrl(
@@ -500,6 +532,13 @@ class PaymentController extends StateController<PaymentUistate> {
       'PaymentController.acledaComplete.response status=${result['status']} for transactionId=$transactionId',
     );
     if (result['status'] == 1) {
+      debugPrint(
+        '--------------------------------------------------\n'
+        '✅ PAYMENT SUCCESS / COMPLETE\n'
+        '💳 Method: ACLEDA Bank App\n'
+        '🆔 Transaction ID: $transactionId\n'
+        '--------------------------------------------------'
+      );
       // showDialogPaymentComplete(Get.context!);
       Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
     }
@@ -513,9 +552,7 @@ class PaymentController extends StateController<PaymentUistate> {
   }) async {
     final requestUrl =
         '${BaseUrl.PAYMENT_URL}payments/acledaMobilePay/$transactionId/$token/$type';
-    debugPrint(
-      'Ac App url = $requestUrl',
-    );
+    debugPrint('Ac App url = $requestUrl');
     await payWithACLEDAMobile(
       context: context,
       transactionId: transactionId,
@@ -532,9 +569,7 @@ class PaymentController extends StateController<PaymentUistate> {
     final requestUrl =
         '${BaseUrl.PAYMENT_URL}payments/acledaXpay/$transactionId/$token';
     debugPrint('Ac Card url = $requestUrl');
-    debugPrint(
-      'Ac Card url =$requestUrl $transactionId, token=$token',
-    );
+    debugPrint('Ac Card url =$requestUrl $transactionId, token=$token');
     final result = await Get.to(
       () => PaymentABAScreen(
         transactionId: transactionId,
@@ -546,9 +581,15 @@ class PaymentController extends StateController<PaymentUistate> {
     );
     debugPrint('PaymentController.ACLEDA_XPay.result=$result');
     if (result == '1') {
+      debugPrint(
+        '--------------------------------------------------\n'
+        '✅ PAYMENT SUCCESS / COMPLETE\n'
+        '💳 Method: ACLEDA XPay\n'
+        '🆔 Transaction ID: $transactionId\n'
+        '--------------------------------------------------'
+      );
       // showDialogPaymentComplete(context);
       Get.toNamed(AppRoutes.ticketpaymentSuccessScreen);
-
     } else {
       showDialogPaymentFail(context, transactionId);
     }
@@ -560,7 +601,6 @@ class PaymentController extends StateController<PaymentUistate> {
     required String token,
     required String type,
   }) async {
-   
     late ABAPayResponse data;
     try {
       data = await uscase.acledaMobilePay(
@@ -575,7 +615,6 @@ class PaymentController extends StateController<PaymentUistate> {
           type: type,
         );
       }
-
     } on TimeoutException catch (e) {
       debugPrint(
         'PaymentController.acledaMobilePay.timeout transactionId=$transactionId error=$e',
@@ -627,23 +666,6 @@ class PaymentController extends StateController<PaymentUistate> {
     }
   }
 
-  // void showDialogPaymentComplete(BuildContext context) {
-  //   alertDialogTwoButton(
-  //     title: 'your_ticket_has_been_reserved'.tr,
-  //     description: 'ticket_info1'.tr,
-  //     buttonText1: 'home'.tr,
-  //     buttonText2: 'show_ticket'.tr,
-  //     onButtonPressed1: () {
-  //       ValueStatic().clearDataTicket();
-  //       Get.offAll(() => const DashboardScreen(from: 0));
-  //     },
-  //     onButtonPressed2: () {
-  //       ValueStatic().clearDataTicket();
-  //       Get.offAll(() => const DashboardScreen(from: 2));
-  //     },
-  //   );
-  // }
-
   void showDialogPaymentFail(BuildContext context, String transactionId) {
     alertDialogOneButton(
       title: 'information'.tr,
@@ -654,5 +676,3 @@ class PaymentController extends StateController<PaymentUistate> {
     _cancelBookingSilently(context, transactionId);
   }
 }
-
-// https://qacl.udaya-tech.com/0430_CamTicket/payments/wingNewApiPaymentPro/VTCK-iCeZgcqETUvwmw9/UxIVUCILfrEVEYnxUGJOEVQnUXDEX1VDqLQ

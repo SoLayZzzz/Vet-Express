@@ -17,6 +17,7 @@ class ForgotPasswordScreen extends GetView<AuthController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'forgot_pass'.tr),
+      bottomNavigationBar: _buttonContinue(context),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -31,7 +32,6 @@ class ForgotPasswordScreen extends GetView<AuthController> {
                 children: [
                   const Center(
                     child: Image(
-
                       image: AssetImage(AssetImages.ic_forgot_password),
                       color: AppColors.primaryColor,
                       height: 200,
@@ -49,11 +49,12 @@ class ForgotPasswordScreen extends GetView<AuthController> {
                         controller.uiState.value.forgotPasswordPhoneController,
                     autofocus: false,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [PhoneNumberFormatter()],
                     style: const TextStyle(fontSize: 14),
                     validator: (String? value) {
                       return CheckInput().checkLength(
-                        value!,
+                        (value ?? '').replaceAll(' ', ''),
                         9,
                         'phone_r'.tr,
                         'phone_in'.tr,
@@ -64,22 +65,28 @@ class ForgotPasswordScreen extends GetView<AuthController> {
                       iconLeft: Ionicons.call_outline,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 40.0),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: globalButton(
-                        context: context,
-                        buttonText: 'continue'.tr,
-                        onPressed: () {
-                          controller.submitForgotPassword(context);
-                        },
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buttonContinue(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        color: AppColors.whiteColor,
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: globalButton(
+            context: context,
+            buttonText: 'continue'.tr,
+            onPressed: () {
+              controller.submitForgotPassword(context);
+            },
           ),
         ),
       ),

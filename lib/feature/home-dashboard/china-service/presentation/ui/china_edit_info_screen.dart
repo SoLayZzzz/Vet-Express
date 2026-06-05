@@ -4,6 +4,7 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 
 import '../../../../../models/china/customer_china_response.dart';
+import '../../../../../utils/check_input.dart';
 
 class EditChinaAddressScreen extends StatefulWidget {
   const EditChinaAddressScreen({super.key});
@@ -33,7 +34,7 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
 
     _nameController = TextEditingController(text: customer?.name ?? '');
     _phoneController = TextEditingController(
-      text: _formatPhoneNumber(customer?.telephone ?? ''),
+      text: CheckInput.formatPhoneNumber(customer?.telephone ?? ''),
     );
     _addressController = TextEditingController(text: customer?.address ?? '');
 
@@ -93,7 +94,7 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
                 _phoneController,
                 keyboardType: TextInputType.phone,
                 inputFormatters: <TextInputFormatter>[
-                  _PhoneNumberSpacingFormatter(),
+                  PhoneNumberFormatter(),
                 ],
               ),
 
@@ -221,42 +222,4 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
     );
   }
 
-  String _formatPhoneNumber(String input) {
-    final digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.isEmpty) return '';
-
-    final parts = <String>[];
-    for (var i = 0; i < digits.length; i += 3) {
-      final end = (i + 3 < digits.length) ? i + 3 : digits.length;
-      parts.add(digits.substring(i, end));
-    }
-    return parts.join(' ');
-  }
-}
-
-class _PhoneNumberSpacingFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
-    if (digits.isEmpty) {
-      return const TextEditingValue(
-        text: '',
-        selection: TextSelection.collapsed(offset: 0),
-      );
-    }
-
-    final buffer = StringBuffer();
-    for (var i = 0; i < digits.length; i++) {
-      if (i != 0 && i % 3 == 0) buffer.write(' ');
-      buffer.write(digits[i]);
-    }
-    final formatted = buffer.toString();
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-    );
-  }
 }

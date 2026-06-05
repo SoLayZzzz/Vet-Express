@@ -750,6 +750,8 @@ final Map<String, String> enUS = {
   // internet check
   'connection': 'No Connection',
   'no_internet_connection': 'Check your internet connection',
+  'back_online': 'Back Online',
+  'internet_connection_restored': 'Internet connection restored',
 
   // delete account
   'successful': 'Successful',

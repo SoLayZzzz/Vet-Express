@@ -30,6 +30,38 @@ class PaymentAbaPackageController extends GetxController {
     });
   }
 
+  void _logNetwork({
+    required String url,
+    required String method,
+    required Map<String, String>? headers,
+    required dynamic requestBody,
+    required int statusCode,
+    required String responseBody,
+  }) {
+    dynamic prettyResponse = responseBody;
+    try {
+      final decoded = jsonDecode(responseBody);
+      prettyResponse = const JsonEncoder.withIndent('  ').convert(decoded);
+    } catch (_) {}
+
+    String endpoint = '';
+    try {
+      endpoint = Uri.parse(url).path;
+    } catch (_) {}
+
+    debugPrint(
+      '--------------------------------------------------\n'
+      '🚀 REQUEST: $method\n'
+      '🛣️ Endpoint: $endpoint\n'
+      '🔗 URL: $url\n'
+      '🔑 Headers: $headers\n'
+      '📦 Body: $requestBody\n'
+      '--------------------------------------------------\n'
+      '📥 RESPONSE ($statusCode):\n$prettyResponse\n'
+      '--------------------------------------------------'
+    );
+  }
+
   final String transactionId;
   final String token;
   final String title;
@@ -155,15 +187,21 @@ class PaymentAbaPackageController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
-    debugPrint(
-      '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token',
-    );
+    final url = '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token';
+    final headers = <String, String>{'Authorization': AppPref.getToken() ?? ''};
 
     final response = await http.post(
-      Uri.parse(
-        '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token',
-      ),
-      headers: <String, String>{'Authorization': AppPref.getToken() ?? ''},
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    _logNetwork(
+      url: url,
+      method: 'POST',
+      headers: headers,
+      requestBody: null,
+      statusCode: response.statusCode,
+      responseBody: response.body,
     );
 
     if (response.statusCode == 200) {
@@ -200,22 +238,27 @@ class PaymentAbaPackageController extends GetxController {
   }) async {
     if (!_loop) return;
     try {
-      debugPrint(
-        '${BaseUrl.PAYMENT_URL}payments/checkTravelPackageStatus/$transactionId',
-      );
-
+      final url = '${BaseUrl.PAYMENT_URL}payments/checkTravelPackageStatus/$transactionId';
+      final headers = <String, String>{
+        'Authorization': AppPref.getToken() ?? '',
+      };
       final response = await http
           .post(
-            Uri.parse(
-              '${BaseUrl.PAYMENT_URL}payments/checkTravelPackageStatus/$transactionId',
-            ),
-            headers: <String, String>{
-              'Authorization': AppPref.getToken() ?? '',
-            },
+            Uri.parse(url),
+            headers: headers,
           )
           .timeout(const Duration(seconds: 20));
 
       if (!_loop) return;
+
+      _logNetwork(
+        url: url,
+        method: 'POST',
+        headers: headers,
+        requestBody: null,
+        statusCode: response.statusCode,
+        responseBody: response.body,
+      );
 
       if (response.statusCode == 200) {
         debugPrint('This is response check payment $title ==>>${response.body}');

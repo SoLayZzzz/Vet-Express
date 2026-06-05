@@ -336,7 +336,7 @@ class AuthController extends StateController<AuthUiState> {
     final valid =
         uiState.value.forgotPasswordFormKey.currentState?.validate() ?? false;
     if (!valid) return;
-    _forgotPassword(context, uiState.value.forgotPasswordPhoneController.text);
+    _forgotPassword(context, uiState.value.forgotPasswordPhoneController.text.replaceAll(' ', ''));
   }
 
   void toggleCreateNewPasswordVisibility() {
@@ -533,7 +533,7 @@ class AuthController extends StateController<AuthUiState> {
         LoginRequest(
           deviceId: deviceId,
           deviceName: deviceName,
-          username: username,
+          username: username.replaceAll(' ', ''),
           password: password,
         ),
       );

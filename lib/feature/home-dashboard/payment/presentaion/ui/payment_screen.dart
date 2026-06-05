@@ -638,7 +638,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   view(
                     "total_ticket_price".tr,
                     "\$${totalPayableAll.toStringAsFixed(2)}",
-                    fontWeight: FontWeight.w600,
+                    // fontWeight: FontWeight.w600,
                   ),
                 ],
               ),
@@ -938,7 +938,7 @@ class _PaymentScreenState extends State<PaymentScreen>
             style: TextStyle(
               fontSize: 16,
               color: textColor,
-              fontFamily: 'Inter',
+              // fontFamily: 'Inter',
             ),
           ),
           Text(

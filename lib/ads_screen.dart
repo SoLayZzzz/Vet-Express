@@ -134,7 +134,10 @@ class _AdsScreenState extends State<AdsScreen>
       }
       final auth = Get.find<AuthUseCase>();
       final resp = await auth.loginWithRefreshToken(
-        RefreshtokenLoginRequest(deviceId: deviceId, refreshToken: refreshToken),
+        RefreshtokenLoginRequest(
+          deviceId: deviceId,
+          refreshToken: refreshToken,
+        ),
       );
 
       final tokenType = resp.body?.tokenType;

@@ -66,10 +66,11 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: [PhoneNumberFormatter()],
                       style: const TextStyle(fontSize: 14),
                       validator: (String? value) {
                         return CheckInput().checkLength(
-                          value!,
+                          (value ?? '').replaceAll(' ', ''),
                           9,
                           'phone_number_is_incorrect'.tr,
                           'phone_number_is_incorrect'.tr,
@@ -92,10 +93,11 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: [PhoneNumberFormatter()],
                       style: const TextStyle(fontSize: 14),
                       validator: (String? value) {
                         return CheckInput().checkLength(
-                          value!,
+                          (value ?? '').replaceAll(' ', ''),
                           9,
                           'phone_number_is_required'.tr,
                           'phone_number_is_incorrect'.tr,
@@ -351,10 +353,18 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                 Get.toNamed(
                   AppRoutes.selfServiceCheck,
                   arguments: {
-                    'senderPhone':
-                        controller.uiState.value.phoneSenderController.text,
-                    'receiverPhone':
-                        controller.uiState.value.phoneReceivedController.text,
+                    'senderPhone': controller
+                        .uiState
+                        .value
+                        .phoneSenderController
+                        .text
+                        .replaceAll(' ', ''),
+                    'receiverPhone': controller
+                        .uiState
+                        .value
+                        .phoneReceivedController
+                        .text
+                        .replaceAll(' ', ''),
                     'itemPrice':
                         controller.uiState.value.itemPriceController.text,
                     'amount': controller.uiState.value.amountController.text,

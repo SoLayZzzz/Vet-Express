@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../data/model/reponse/membership_ticket_response.dart';
 import '../../../../utils/app_colors.dart';
+import '../../../../utils/check_input.dart';
 
 import 'package:flutter_flip_card/flutter_flip_card.dart';
 
@@ -119,7 +120,7 @@ class _TicketMemberScreenState extends State<TicketMemberScreen> {
                                           ),
                                         ),
                                         Text(
-                                          "${membershipData.data!.body!.data![0].telephone}",
+                                          CheckInput.formatPhoneNumber(membershipData.data!.body!.data![0].telephone ?? ''),
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,

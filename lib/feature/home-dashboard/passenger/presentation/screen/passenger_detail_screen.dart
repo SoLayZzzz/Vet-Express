@@ -490,52 +490,54 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                     onChanged: syncGoingToReturnIfNeeded,
                   ),
                   const SizedBox(height: 15),
-                  if (companyType == 4) const SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text.rich(
-                          TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'name_pro'.tr,
-                                style: const TextStyle(
-                                  color: AppColors.textColor,
+                  if (companyType == 4) ...[
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Text.rich(
+                            TextSpan(
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: 'name_pro'.tr,
+                                  style: const TextStyle(
+                                    color: AppColors.textColor,
+                                  ),
                                 ),
-                              ),
-                              const TextSpan(
-                                text: ' *',
-                                style: TextStyle(color: AppColors.redColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: TextField(
-                          controller: nameControllers[index],
-                          style: const TextStyle(fontSize: 14),
-                          onChanged: (_) {
-                            syncGoingToReturnIfNeeded();
-                          },
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 15,
+                                const TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(color: AppColors.redColor),
+                                ),
+                              ],
                             ),
-                            hintText: 'name_pro'.tr,
-                            enabledBorder: Style.outlineInputBorder(),
-                            focusedBorder: Style.outlineInputBorder(),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
+                        Expanded(
+                          flex: 2,
+                          child: TextField(
+                            controller: nameControllers[index],
+                            style: const TextStyle(fontSize: 14),
+                            onChanged: (_) {
+                              syncGoingToReturnIfNeeded();
+                            },
+                            decoration: InputDecoration(
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 15,
+                              ),
+                              hintText: 'name_pro'.tr,
+                              enabledBorder: Style.outlineInputBorder(),
+                              focusedBorder: Style.outlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                  ],
                   _buildChooseNationality(
                     nationalityIds,
                     index,
@@ -2039,30 +2041,30 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         //   ),
                                         if (_shouldShowAmount(discount))
                                           // const SizedBox(height: 10),
-                                        if (_shouldShowAmount(discount))
-                                          Row(
-                                            children: [
-                                              Text(
-                                                (controller
-                                                            .state
-                                                            .isTravelPackage
-                                                            .value &&
-                                                        controller
-                                                            .state
-                                                            .isTravelPackageOk
-                                                            .value)
-                                                    ? 'discount_travel'.tr
-                                                    : 'discount'.tr,
-                                                style: const TextStyle(
-                                                  color: AppColors.textColor,
+                                          if (_shouldShowAmount(discount))
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  (controller
+                                                              .state
+                                                              .isTravelPackage
+                                                              .value &&
+                                                          controller
+                                                              .state
+                                                              .isTravelPackageOk
+                                                              .value)
+                                                      ? 'discount_travel'.tr
+                                                      : 'discount'.tr,
+                                                  style: const TextStyle(
+                                                    color: AppColors.textColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                '\$${discount.toStringAsFixed(2)}',
-                                              ),
-                                            ],
-                                          ),
+                                                const Spacer(),
+                                                Text(
+                                                  '\$${discount.toStringAsFixed(2)}',
+                                                ),
+                                              ],
+                                            ),
                                         if (shouldShowGrandTotal)
                                           const SizedBox(height: 10),
                                         if (shouldShowGrandTotal)
@@ -2139,21 +2141,21 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         //   ),
                                         if (_shouldShowAmount(discount))
                                           // const SizedBox(height: 10),
-                                        if (_shouldShowAmount(discount))
-                                          Row(
-                                            children: [
-                                              Text(
-                                                discountLabel,
-                                                style: const TextStyle(
-                                                  color: AppColors.textColor,
+                                          if (_shouldShowAmount(discount))
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  discountLabel,
+                                                  style: const TextStyle(
+                                                    color: AppColors.textColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                '\$${discount.toStringAsFixed(2)}',
-                                              ),
-                                            ],
-                                          ),
+                                                const Spacer(),
+                                                Text(
+                                                  '\$${discount.toStringAsFixed(2)}',
+                                                ),
+                                              ],
+                                            ),
                                         if (controller.state.luckyDraw.value)
                                           const SizedBox(height: 10),
                                         if (controller.state.luckyDraw.value)
@@ -2169,25 +2171,25 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         if (shouldShowGrandTotal)
                                           const SizedBox(height: 10),
                                         // if (shouldShowGrandTotal)
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'total_mn'.tr,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'total_mn'.tr,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
                                               ),
-                                              const Spacer(),
-                                              Text(
-                                                '\$${total.toStringAsFixed(2)}',
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                            ),
+                                            const Spacer(),
+                                            Text(
+                                              '\$${total.toStringAsFixed(2)}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     );
                                   },

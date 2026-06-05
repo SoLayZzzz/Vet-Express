@@ -8,6 +8,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import '../../data/model/response/ticket_detail_response.dart';
 import '../../../../../utils/contains.dart';
+import '../../../../../utils/check_input.dart';
 import '../controller/ticket_detail_controller.dart';
 
 class TicketDetailScreen extends StatefulWidget {
@@ -813,15 +814,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
   }
 
   String _formatTelephone(String input) {
-    final digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.isEmpty) return input;
-
-    final buffer = StringBuffer();
-    for (var i = 0; i < digits.length; i++) {
-      if (i > 0 && i % 3 == 0) buffer.write(' ');
-      buffer.write(digits[i]);
-    }
-    return buffer.toString();
+    return CheckInput.formatPhoneNumber(input);
   }
 
   String _seatTypeText(int? seatType) {

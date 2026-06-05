@@ -52,7 +52,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
     controller = Get.find<CarRentalController>();
 
     nameController.text = ValueStatic.username;
-    phoneController.text = ValueStatic.phone;
+    phoneController.text = CheckInput.formatPhoneNumber(ValueStatic.phone);
 
     setNow();
   }
@@ -121,10 +121,11 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               keyboardType: TextInputType.phone,
+                              inputFormatters: [PhoneNumberFormatter()],
                               style: const TextStyle(fontSize: 14),
                               validator: (String? value) {
                                 return CheckInput().checkLength(
-                                  value!,
+                                  (value ?? '').replaceAll(' ', ''),
                                   9,
                                   'phone_number_is_required'.tr,
                                   'phone_number_is_incorrect'.tr,
@@ -478,7 +479,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                             numberBus: amountController.text,
                             provinceFrom: ValueStatic.provinceRentalFromId,
                             provinceTo: ValueStatic.provinceRentalToId,
-                            telephone: phoneController.text,
+                            telephone: phoneController.text.replaceAll(' ', ''),
                             travelType: selected.toString(),
                             note: remarkController.text,
                           );

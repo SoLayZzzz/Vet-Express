@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 
 class CheckInput {
   String? checkLength(String value, int length, String checkNull, String checkLength) {
@@ -41,6 +42,26 @@ class CheckInput {
     return null; // Email is valid
   }
 
+  static String formatPhoneNumber(String phone) {
+    var digits = phone.replaceAll(RegExp(r'\D'), '');
+    if (digits.isNotEmpty && !digits.startsWith('0')) {
+      digits = '0${digits.substring(1)}';
+    }
+    if (digits.length > 10) {
+      digits = digits.substring(0, 10);
+    }
+    if (digits.isEmpty) return '';
+
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      buffer.write(digits[i]);
+      if ((i == 2 || i == 5) && i != digits.length - 1) {
+        buffer.write(' ');
+      }
+    }
+    return buffer.toString();
+  }
+
   //check phone number validate (optional)
   String? validatePhone(String? value) {
     const pattern = r"^0[0-9]{2}[0-9]{6,7}$";
@@ -49,13 +70,13 @@ class CheckInput {
 
     if (value == null || value.isEmpty) {
       return null;
-    } else if (value.contains(' ')) {
-      return 'phone number cannot contain spaces';
-    } else if (!regex.hasMatch(value)) {
+    }
+    final cleanValue = value.replaceAll(' ', '');
+    if (!regex.hasMatch(cleanValue)) {
       return 'Invalid phone number format';
     }
 
-    return null; // Email is valid
+    return null; // Phone is valid
   }
 
   //check phone number validate (require)
@@ -66,13 +87,13 @@ class CheckInput {
 
     if (value == null || value.isEmpty) {
       return 'phone_r'.tr;
-    } else if (value.contains(' ')) {
-      return 'phone number cannot contain spaces';
-    } else if (!regex.hasMatch(value)) {
+    }
+    final cleanValue = value.replaceAll(' ', '');
+    if (!regex.hasMatch(cleanValue)) {
       return 'phone_in'.tr;
     }
 
-    return null; // Email is valid
+    return null; // Phone is valid
   }
 
 //check boolean value in profile
@@ -81,7 +102,9 @@ class CheckInput {
 
     if (value == null || value.isEmpty) {
       return false;
-    } else if (!phoneRegex.hasMatch(value)) {
+    }
+    final cleanValue = value.replaceAll(' ', '');
+    if (!phoneRegex.hasMatch(cleanValue)) {
       return false;
     }
     return true;
@@ -103,5 +126,19 @@ class CheckInput {
       return false;
     }
     return true;
+  }
+}
+
+class PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final formatted = CheckInput.formatPhoneNumber(newValue.text);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
   }
 }

@@ -9,6 +9,7 @@ import '../../../../../controller/user_controller.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
+import '../../../../../utils/check_input.dart';
 import '../../../../auth/presentation/controller/auth_controller.dart';
 import 'profile_screen.dart';
 import 'term_screen.dart';
@@ -88,7 +89,9 @@ class SettingScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          user?.body?.telephone ?? '',
+                          CheckInput.formatPhoneNumber(
+                            user?.body?.telephone ?? '',
+                          ),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 14,

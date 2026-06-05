@@ -7,6 +7,7 @@ import 'package:express_vet/feature/home-dashboard/china-service/presentation/co
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/ui/registration_screen.dart';
 import '../../../../../models/china/customer_china_response.dart';
 import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/check_input.dart';
 import '../../../../../routes/app_routes.dart';
 
 class WarehouseAddressScreen extends GetView<ChinaController> {
@@ -101,10 +102,11 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Get.toNamed(
-                        AppRoutes.chinaEditInfo,
-                        arguments: customer,
-                      ),
+                      onTap:
+                          () => Get.toNamed(
+                            AppRoutes.chinaEditInfo,
+                            arguments: customer,
+                          ),
                       child: const Icon(
                         MaterialCommunityIcons.square_edit_outline,
                         color: Colors.grey,
@@ -116,13 +118,16 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                 const SizedBox(height: 12),
                 _buildContactRow(
                   AssetImages.ic_phone_china,
-                  _formatPhoneNumber(customer.telephone ?? ''),
+                  CheckInput.formatPhoneNumber(customer.telephone ?? ''),
                 ),
                 _buildContactRow(
                   AssetImages.ic_bussness_ountline,
                   customer.branchName ?? '',
                 ),
-                _buildContactRow(AssetImages.ic_map_pin, customer.address ?? ''),
+                _buildContactRow(
+                  AssetImages.ic_map_pin,
+                  customer.address ?? '',
+                ),
               ],
             ),
           ),
@@ -243,11 +248,11 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
 
       return Column(
         children: [
-          _buildCopyableField(
-            'warehouse_name'.tr,
-            // warehouse.name ?? ''
-            'Vet Livhong',
-          ),
+          // _buildCopyableField(
+          //   'warehouse_name'.tr,
+          //   // warehouse.name ?? ''
+          //   'Vet Livhong',
+          // ),
           _buildCopyableField('customer_code'.tr, customer.code ?? ''),
           _buildCopyableField('warehouse_phone'.tr, warehouse.telephone ?? ''),
           _buildCopyableField(
@@ -294,17 +299,18 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                   final isCopied = _copiedItems[value] ?? false;
                   return GestureDetector(
                     onTap: () => _copyToClipboard(value),
-                    child: isCopied
-                        ? const Icon(
-                            Ionicons.checkmark_done,
-                            color: Colors.green,
-                            size: 22,
-                          )
-                        : ImageIcon(
-                            AssetImage(AssetImages.ic_copy),
-                            color: Colors.grey[400],
-                            size: 22,
-                          ),
+                    child:
+                        isCopied
+                            ? const Icon(
+                              Ionicons.checkmark_done,
+                              color: Colors.green,
+                              size: 22,
+                            )
+                            : ImageIcon(
+                              AssetImage(AssetImages.ic_copy),
+                              color: Colors.grey[400],
+                              size: 22,
+                            ),
                   );
                 }),
               ],
@@ -331,17 +337,5 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
       const Duration(seconds: 2),
       () => _copiedItems[text] = false,
     );
-  }
-
-  String _formatPhoneNumber(String input) {
-    final digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.isEmpty) return '';
-
-    final parts = <String>[];
-    for (var i = 0; i < digits.length; i += 3) {
-      final end = (i + 3 < digits.length) ? i + 3 : digits.length;
-      parts.add(digits.substring(i, end));
-    }
-    return parts.join(' ');
   }
 }

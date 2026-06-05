@@ -79,13 +79,15 @@ class _SignInScreenState extends State<SignInScreen> {
                             controller.uiState.value.signInPhoneController,
                         autofocus: false,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
+                        keyboardType: TextInputType.emailAddress,
+                        inputFormatters: [PhoneNumberFormatter()],
                         style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.textColor,
                         ),
                         validator: (String? value) {
                           return CheckInput().checkLength(
-                            value!,
+                            (value ?? '').replaceAll(' ', ''),
                             9,
                             'phone_req'.tr,
                             'phone_inco'.tr,
@@ -210,12 +212,20 @@ class _SignInScreenState extends State<SignInScreen> {
 
                           controller.login(
                             context,
-                            username: controller
-                                .uiState.value.signInPhoneController.text
-                                .trim(),
-                            password: controller
-                                .uiState.value.signInPasswordController.text
-                                .trim(),
+                            username:
+                                controller
+                                    .uiState
+                                    .value
+                                    .signInPhoneController
+                                    .text
+                                    .trim(),
+                            password:
+                                controller
+                                    .uiState
+                                    .value
+                                    .signInPasswordController
+                                    .text
+                                    .trim(),
                           );
                         },
                       ),

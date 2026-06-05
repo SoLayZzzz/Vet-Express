@@ -1,7 +1,10 @@
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
+
+import '../../../../../utils/check_input.dart';
 
 import '../../../../../utils/app_colors.dart';
 import '../../../../../value_statics.dart';
@@ -76,6 +79,7 @@ class ChinaRegistrationScreen extends GetView<ChinaController> {
               hint: 'phone_number'.tr,
               controller: _phoneController,
               keyboardType: TextInputType.phone,
+              inputFormatters: [PhoneNumberFormatter()],
               onChanged: (value) => controller.phone.value = value,
             ),
             const SizedBox(height: 16),
@@ -300,6 +304,7 @@ class ChinaRegistrationScreen extends GetView<ChinaController> {
     required Function(String) onChanged,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,6 +333,7 @@ class ChinaRegistrationScreen extends GetView<ChinaController> {
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           onChanged: (value) {
             onChanged(value);
           },

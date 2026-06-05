@@ -133,7 +133,9 @@ class ProfileController extends GetxController {
       final user = await Get.find<AuthUseCase>().getUserMe();
       userMeResponse.value = user;
       nameController.text = user.body?.name ?? '';
-      phoneNumberController.text = user.body?.telephone ?? '';
+      phoneNumberController.text = CheckInput.formatPhoneNumber(
+        user.body?.telephone ?? '',
+      );
       emailController.text = user.body?.email ?? '';
 
       // Check if username matches email or telephone
@@ -222,7 +224,7 @@ class ProfileController extends GetxController {
                 telephone:
                     phoneNumberController.text.isEmpty
                         ? null
-                        : phoneNumberController.text,
+                        : phoneNumberController.text.replaceAll(' ', ''),
                 email:
                     emailController.text.isEmpty ? null : emailController.text,
                 filename: imagePath.value,
@@ -240,7 +242,7 @@ class ProfileController extends GetxController {
 
             // Update static values
             ValueStatic.username = nameController.text;
-            ValueStatic.phone = phoneNumberController.text;
+            ValueStatic.phone = phoneNumberController.text.replaceAll(' ', '');
             ValueStatic.email = emailController.text;
             ValueStatic.gender =
                 gender.value == 'male'.tr

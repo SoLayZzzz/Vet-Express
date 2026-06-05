@@ -86,7 +86,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
     );
 
     nameController.text = ValueStatic.username;
-    phoneController.text = ValueStatic.phone;
+    phoneController.text = CheckInput.formatPhoneNumber(ValueStatic.phone);
     emailController.text = ValueStatic.email;
     dateOfBirthController.text = ValueStatic.dob;
 
@@ -1063,6 +1063,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                     autofocus: false,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.phone,
+                    inputFormatters: [PhoneNumberFormatter()],
                     style: const TextStyle(fontSize: 14),
                     validator: (String? value) {
                       return CheckInput().validatePhone(value);
@@ -1116,7 +1117,7 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         sex: gender == 'male'.tr ? 1 : 2,
         nationality: nationalityId!.toInt(),
         photo: imageFile.toString(),
-        telephone: phoneController.text,
+        telephone: phoneController.text.replaceAll(' ', ''),
         email: emailController.text.isEmpty ? '' : emailController.text,
         dob: dateOfBirthController.text,
         address: addressController.text,
@@ -1323,16 +1324,52 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
     return null;
   }
 
-  Future<void> payWithABAMobile(transactionId, token) async {
-    debugPrint(
-      '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token',
-    );
+  void _logNetwork({
+    required String url,
+    required String method,
+    required Map<String, String>? headers,
+    required dynamic requestBody,
+    required int statusCode,
+    required String responseBody,
+  }) {
+    dynamic prettyResponse = responseBody;
+    try {
+      final decoded = jsonDecode(responseBody);
+      prettyResponse = const JsonEncoder.withIndent('  ').convert(decoded);
+    } catch (_) {}
 
-    final response = await http.post(
-      Uri.parse(
-        '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token',
-      ),
-      headers: <String, String>{'Authorization': AppPref.getToken() ?? ''},
+    String endpoint = '';
+    try {
+      endpoint = Uri.parse(url).path;
+    } catch (_) {}
+
+    debugPrint(
+      '--------------------------------------------------\n'
+      '🚀 REQUEST: $method\n'
+      '🛣️ Endpoint: $endpoint\n'
+      '🔗 URL: $url\n'
+      '🔑 Headers: $headers\n'
+      '📦 Body: $requestBody\n'
+      '--------------------------------------------------\n'
+      '📥 RESPONSE ($statusCode):\n$prettyResponse\n'
+      '--------------------------------------------------',
+    );
+  }
+
+  Future<void> payWithABAMobile(transactionId, token) async {
+    final url =
+        '${BaseUrl.PAYMENT_URL}payments/abaMobilePayPackage/$transactionId/$token';
+    final headers = <String, String>{'Authorization': AppPref.getToken() ?? ''};
+
+    final response = await http.post(Uri.parse(url), headers: headers);
+
+    _logNetwork(
+      url: url,
+      method: 'POST',
+      headers: headers,
+      requestBody: null,
+      statusCode: response.statusCode,
+      responseBody: response.body,
     );
 
     if (response.statusCode == 200) {
@@ -1362,6 +1399,14 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         Get.delete<PaymentAbaPackageController>(force: true);
       }
       if (result == "1") {
+        debugPrint(
+          '--------------------------------------------------\n'
+          '✅ PAYMENT SUCCESS / COMPLETE\n'
+          '💳 Method: ABA KHQR (Travel Package)\n'
+          '🆔 Transaction ID: $transactionId\n'
+          '--------------------------------------------------',
+        );
+
         /// Payment ABA KHQR success
         showDialogPaymentComplete();
       } else {
@@ -1445,6 +1490,20 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         response = await sendOnce();
       }
 
+      _logNetwork(
+        url: '${BaseUrl.BASE_URL_TICKET}travelPackage/processPayment',
+        method: 'POST',
+        headers: <String, String>{
+          'Authorization': AppPref.getToken() ?? '',
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+          'Connection': 'close',
+        },
+        requestBody: fields,
+        statusCode: response.statusCode,
+        responseBody: response.body,
+      );
+
       if (response.statusCode == 200) {
         debugPrint('This is response booking process ==>>${response.body}');
         var data = PaymentResponse.fromJson(jsonDecode(response.body));
@@ -1486,6 +1545,14 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
             debugPrint('Result $result');
 
             if (result == "1") {
+              debugPrint(
+                '--------------------------------------------------\n'
+                '✅ PAYMENT SUCCESS / COMPLETE\n'
+                '💳 Method: Credit/Debit Card (Travel Package)\n'
+                '🆔 Transaction ID: $transactionId\n'
+                '--------------------------------------------------',
+              );
+
               /// Payment Credit card success
               showDialogPaymentComplete();
             } else {
@@ -1544,7 +1611,9 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
 
       if (response.statusCode == 200) {
         Loading().loadingClose();
-        debugPrint('This is response image travel package ==>>${response.body}');
+        debugPrint(
+          'This is response image travel package ==>>${response.body}',
+        );
         final registerImageResponse = UploadImage.fromJson(
           jsonDecode(response.body),
         );

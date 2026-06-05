@@ -78,45 +78,45 @@ class ScanQrScreen extends GetView<ScanQrController> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _buildCircularButton(
-                icon: Icons.arrow_back_ios_new_rounded,
-                onTap: () => Get.back(),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'scan_qr'.tr,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black54,
-                            offset: Offset(0, 2),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'scan_qr_info'.tr,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
+              // _buildCircularButton(
+              //   icon: Icons.arrow_back_ios_new_rounded,
+              //   onTap: () => Get.back(),
+              // ),
+              // Expanded(
+              //   child: Column(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: [
+              //       Text(
+              //         'scan_qr'.tr,
+              //         style: const TextStyle(
+              //           color: Colors.white,
+              //           fontSize: 20,
+              //           fontWeight: FontWeight.bold,
+              //           letterSpacing: 0.5,
+              //           shadows: [
+              //             Shadow(
+              //               color: Colors.black54,
+              //               offset: Offset(0, 2),
+              //               blurRadius: 4,
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //       const SizedBox(height: 4),
+              //       Text(
+              //         'scan_qr_info'.tr,
+              //         style: TextStyle(
+              //           color: Colors.white.withValues(alpha: 0.7),
+              //           fontSize: 12,
+              //           fontWeight: FontWeight.w400,
+              //         ),
+              //         textAlign: TextAlign.center,
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Obx(
                 () => _buildCircularButton(
                   icon:
@@ -172,86 +172,78 @@ class ScanQrScreen extends GetView<ScanQrController> {
           borderRadius: BorderRadius.circular(24),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  width: 1.5,
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Obx(() {
-                        if (controller.state.scanFrom != 0) {
-                          return const SizedBox.shrink();
-                        }
-                        return _buildOptionButton(
-                          context: context,
-                          icon: Icons.keyboard_alt_outlined,
-                          text: 'enter_tracking'.tr,
-                          onTap: () async {
-                            debugPrint(
-                              'ScanQrScreen: Stopping scanner to enter tracking ID.',
-                            );
-                            await controller.scannerController.stop();
-                            await Get.to(
-                              () => const GoodsSearchInputScreen(),
-                              transition: Transition.rightToLeft,
-                              duration: const Duration(milliseconds: 350),
-                            );
-                            debugPrint(
-                              'ScanQrScreen: Returned from GoodsSearchInputScreen. Starting scanner...',
-                            );
-                            await controller.startScanning();
-                          },
-                        );
-                      }),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Obx(() {
+                  final List<Widget> buttons = [];
+                  if (controller.state.scanFrom == 0) {
+                    buttons.add(
                       _buildOptionButton(
                         context: context,
-                        icon: Icons.image_outlined,
-                        text: 'upload_image'.tr,
-                        onTap: () => controller.cropImage(context),
+                        icon: Icons.edit,
+                        text: 'enter_tracking'.tr,
+                        onTap: () async {
+                          debugPrint(
+                            'ScanQrScreen: Stopping scanner to enter tracking ID.',
+                          );
+                          await controller.scannerController.stop();
+                          await Get.to(
+                            () => const GoodsSearchInputScreen(),
+                            transition: Transition.rightToLeft,
+                            duration: const Duration(milliseconds: 350),
+                          );
+                          debugPrint(
+                            'ScanQrScreen: Returned from GoodsSearchInputScreen. Starting scanner...',
+                          );
+                          await controller.startScanning();
+                        },
                       ),
-                    ],
-                  ),
-                  Obx(() {
-                    if (controller.state.scanFrom != 1) {
-                      return const SizedBox.shrink();
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                    );
+                  }
+                  buttons.add(
+                    _buildOptionButton(
+                      context: context,
+                      icon: Icons.image,
+                      text: 'upload_image'.tr,
+                      onTap: () => controller.cropImage(context),
+                    ),
+                  );
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: buttons,
+                  );
+                }),
+                Obx(() {
+                  if (controller.state.scanFrom != 1) {
+                    return const SizedBox.shrink();
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          onPressed: () => Get.back(),
-                          child: Text(
-                            'cancel'.tr,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        ),
+                        onPressed: () => Get.back(),
+                        child: Text(
+                          'cancel'.tr,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                    );
-                  }),
-                ],
-              ),
+                    ),
+                  );
+                }),
+              ],
             ),
           ),
         ),
@@ -267,60 +259,40 @@ class ScanQrScreen extends GetView<ScanQrController> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.38,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white.withValues(alpha: 0.05),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-            width: 1.0,
+      // borderRadius: BorderRadius.circular(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              shape: BoxShape.circle,
+            ),
+            width: 48,
+            height: 48,
+            child: Icon(icon, color: Colors.white, size: 22),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primaryColor,
-                    AppColors.primaryColor.withValues(alpha: 0.7),
-                  ],
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryColor.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              width: 48,
-              height: 48,
-              child: Icon(icon, color: Colors.white, size: 22),
+          const SizedBox(height: 8),
+          Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontFamily: "Inter",
+              // fontWeight: FontWeight.w600,
             ),
-            const SizedBox(height: 8),
-            Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildQrView(BuildContext context) {
     final scanner = controller.scannerController;
+    final double cutOutSize = MediaQuery.of(context).size.width * 0.8;
+    final double bottomPosition =
+        (MediaQuery.of(context).size.height + cutOutSize) / 2 + 10;
 
     return Stack(
       children: [
@@ -335,7 +307,28 @@ class ScanQrScreen extends GetView<ScanQrController> {
           borderRadius: 10,
           borderLength: 30,
           borderWidth: 7,
-          cutOutSize: MediaQuery.of(context).size.width * 0.8,
+          cutOutSize: cutOutSize,
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: bottomPosition,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 10,
+                bottom: 10,
+              ), // Added bottom padding for breathing room
+              child: Text(
+                'scan_qr'.tr,
+                style: const TextStyle(
+                  color: AppColors.whiteColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );

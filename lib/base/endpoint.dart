@@ -86,6 +86,7 @@ class Endpoint {
   static const String ticketBookingConfirm = 'booking/confirm';
   static const String ticketBookingCancel = 'booking/cancel';
   static const String ticketBookingList = 'booking/list';
+  static const String bookingComplete = "booking/complete";
   static String ticketBookingFind(String id) => 'booking/find/$id';
   static const String ticketBookingProcessPayment = 'booking/processPayment';
   static const String ticketBookingCheckCoupon = 'booking/checkCoupon';

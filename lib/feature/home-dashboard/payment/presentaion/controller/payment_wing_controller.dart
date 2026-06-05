@@ -52,7 +52,9 @@ class PaymentWingController extends GetxController {
     webViewController = WebViewController();
     final wingPaymentUrl =
         "${BaseUrl.PAYMENT_URL}payments/wingNewApiPaymentPro/$transactionId/$token";
-    debugPrint('PaymentWingController.loadWingPayment.request url=$wingPaymentUrl');
+    debugPrint(
+      'PaymentWingController.loadWingPayment.request url=$wingPaymentUrl',
+    );
 
     _showLoadingIfNeeded();
 
@@ -88,7 +90,9 @@ class PaymentWingController extends GetxController {
           _hideLoadingIfShown();
         },
         onNavigationRequest: (NavigationRequest request) {
-          debugPrint('PaymentWingController.onNavigationRequest url=${request.url}');
+          debugPrint(
+            'PaymentWingController.onNavigationRequest url=${request.url}',
+          );
           if (request.url.startsWith('https://closewingpayment/')) {
             _hideLoadingIfShown();
             return NavigationDecision.prevent;
