@@ -1,4 +1,9 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/destination_ev.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_transaction_detail_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_transaction_list_response.dart';
 import 'package:express_vet/models/simple_response.dart';
 
 import '../../domain/repository/ev_charger_repository.dart';
@@ -205,5 +210,59 @@ class EvChargerRepositoryImpl implements EvChargerRepository {
       context: context,
       transactionId: transactionId,
     );
+  }
+
+  @override
+  Future<MembershipInfoResponse> fetchMembershipInfo({
+    required dynamic context,
+  }) {
+    return networkRequest.fetchMembershipInfo(context: context);
+  }
+
+  @override
+  Future<MembershipBenefitResponse> fetchMembershipBenefit({
+    required dynamic context,
+  }) {
+    return networkRequest.fetchMembershipBenefit(context: context);
+  }
+
+  @override
+  Future<MembershipTransactionListResponse> fetchMembershipTransactionList({
+    required dynamic context,
+    required int page,
+    required int rowsPerPage,
+    String orderBy = '',
+    String searchText = '',
+    int? type,
+  }) {
+    return networkRequest.fetchMembershipTransactionList(
+      context: context,
+      page: page,
+      rowsPerPage: rowsPerPage,
+      orderBy: orderBy,
+      searchText: searchText,
+      type: type,
+    );
+  }
+
+  @override
+  Future<MembershipTransactionDetailResponse> fetchMembershipTransactionDetail({
+    required dynamic context,
+    required int id,
+  }) {
+    return networkRequest.fetchMembershipTransactionDetail(
+      context: context,
+      id: id,
+    );
+  }
+
+  @override
+  Future<AmountPriceAndKwhResponse> fetchAmountKwh({required context}) {
+    return networkRequest.fetchAmountKwh(context: context);
+  }
+
+  @override
+  Future<AmountPriceAndKwhResponse> fetchAmountPrice({required context}) {
+    return networkRequest.fetchAmountPrice(context: context);
   }
 }

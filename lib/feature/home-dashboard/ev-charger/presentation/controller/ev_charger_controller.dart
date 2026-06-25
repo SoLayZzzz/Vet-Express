@@ -8,10 +8,14 @@ import '../../data/model/response/ev_news_feed_response.dart';
 import '../../data/model/response/ev_slide_show_response.dart';
 import '../../data/model/response/ev_charger_response.dart';
 import '../../data/model/response/destination_ev.dart';
+import '../../data/model/response/ev_wallet_list_response.dart';
+import '../../data/model/response/membership_transaction_list_response.dart';
 import '../uiState/ev_charger_ui_state.dart';
 
 class EvChargerController extends StateController<EvChargerUiState> {
   final EvChargerUseCase useCase;
+
+  final RxBool isCharging = false.obs;
 
   EvChargerController(this.useCase);
 
@@ -21,11 +25,153 @@ class EvChargerController extends StateController<EvChargerUiState> {
   @override
   void onInit() {
     super.onInit();
+
+    final args = Get.arguments;
+    final charging = args is Map && (args['isCharging'] == true || args['isCharging'] == 1);
+    isCharging.value = charging;
+
     loadHomeData();
+  }
+
+  Future<void> fetchMembershipTransactionList({
+    bool loadMore = false,
+    int? type,
+  }) async {
+    if (loadMore) {
+      if (!state.membershipTransactionHasMore ||
+          state.isLoadingMoreMembershipTransactionList) {
+        return;
+      }
+    }
+
+    final int page = loadMore ? state.membershipTransactionCurrentPage + 1 : 1;
+
+    uiState.value = state.copyWith(
+      isLoadingMembershipTransactionList: !loadMore,
+      isLoadingMoreMembershipTransactionList: loadMore,
+      hasErrorMembershipTransactionList: false,
+      membershipTransactionType: type,
+      membershipTransactionCurrentPage: loadMore
+          ? state.membershipTransactionCurrentPage
+          : 0,
+      membershipTransactionTotal: loadMore ? state.membershipTransactionTotal : 0,
+      membershipTransactionHasMore: loadMore ? state.membershipTransactionHasMore : true,
+      membershipTransactionGroups: loadMore ? state.membershipTransactionGroups : <Group>[],
+    );
+
+    try {
+      final res = await useCase.fetchMembershipTransactionList(
+        context: Get.context!,
+        page: page,
+        rowsPerPage: 50,
+        type: type,
+      );
+
+      final total = res.body?.pagination?.total ?? 0;
+      final newGroups = res.body?.data ?? <MembershipTransactionGroup>[];
+
+      final List<Group> merged = <Group>[...state.membershipTransactionGroups];
+
+      for (final g in newGroups) {
+        final date = g.date;
+        final txs = g.transactions ?? <MembershipTransactionItem>[];
+        if (date == null || date.isEmpty || txs.isEmpty) continue;
+
+        final mappedTransactions = txs
+            .map(
+              (t) => Transaction(
+                id: t.id,
+                type: t.type,
+                transactionId: t.salesOrderId?.toString(),
+                code: t.typeName,
+                amount: (t.points ?? 0).toDouble(),
+                description: t.description,
+                createdDate: t.created,
+              ),
+            )
+            .toList();
+
+        final existingIndex = merged.indexWhere((x) => x.date == date);
+        if (existingIndex >= 0) {
+          final existing = merged[existingIndex];
+          final List<Transaction> mergedTx = <Transaction>[
+            ...(existing.transactions ?? <Transaction>[]),
+            ...mappedTransactions,
+          ];
+          merged[existingIndex] = Group(date: date, transactions: mergedTx);
+        } else {
+          merged.add(Group(date: date, transactions: mappedTransactions));
+        }
+      }
+
+      merged.sort((a, b) {
+        final da = a.date;
+        final db = b.date;
+        if (da == null || db == null) return 0;
+        try {
+          return DateTime.parse(db).compareTo(DateTime.parse(da));
+        } catch (_) {
+          return db.compareTo(da);
+        }
+      });
+
+      for (final g in merged) {
+        final tx = g.transactions;
+        if (tx == null) continue;
+        tx.sort((a, b) {
+          final ca = a.createdDate ?? '';
+          final cb = b.createdDate ?? '';
+          try {
+            return DateTime.parse(cb).compareTo(DateTime.parse(ca));
+          } catch (_) {
+            return cb.compareTo(ca);
+          }
+        });
+      }
+
+      final currentCount = merged.fold<int>(
+        0,
+        (sum, g) => sum + (g.transactions?.length ?? 0),
+      );
+
+      uiState.value = state.copyWith(
+        membershipTransactionGroups: merged,
+        membershipTransactionCurrentPage: page,
+        membershipTransactionTotal: total,
+        membershipTransactionHasMore: currentCount < total && newGroups.isNotEmpty,
+      );
+    } catch (e) {
+      uiState.value = state.copyWith(hasErrorMembershipTransactionList: true);
+    } finally {
+      uiState.value = state.copyWith(
+        isLoadingMembershipTransactionList: false,
+        isLoadingMoreMembershipTransactionList: false,
+      );
+    }
+  }
+
+  Future<void> fetchMembershipTransactionDetail({required int id}) async {
+    uiState.value = state.copyWith(
+      isLoadingMembershipTransactionDetail: true,
+      hasErrorMembershipTransactionDetail: false,
+    );
+
+    try {
+      final res = await useCase.fetchMembershipTransactionDetail(
+        context: Get.context!,
+        id: id,
+      );
+      uiState.value = state.copyWith(membershipTransactionDetailResponse: res);
+    } catch (e) {
+      uiState.value = state.copyWith(hasErrorMembershipTransactionDetail: true);
+    } finally {
+      uiState.value = state.copyWith(isLoadingMembershipTransactionDetail: false);
+    }
   }
 
   void refreshData() {
     loadHomeData();
+    fetchMembershipInfo();
   }
 
   void refreshContacts() {
@@ -94,9 +240,43 @@ class EvChargerController extends StateController<EvChargerUiState> {
       fetchContacts(page: 1, rowsPerPage: 10),
       fetchSlides(page: 1, rowsPerPage: 10),
       fetchNewsFeed(page: 1, rowsPerPage: 10),
+      fetchMembershipInfo(),
+      fetchMembershipBenefit(),
       fetchWalletAmount(),
       fetchWalletList(page: 1, rowsPerPage: 10),
     ]);
+  }
+
+  Future<void> fetchMembershipInfo()async {
+    uiState.value = state.copyWith(
+      isLoadingMembershipInfo: true,
+      hasErrorMembershipInfo: false,
+    );
+
+    try {
+      final res = await useCase.fetchMembershipInfo(context: Get.context!);
+      uiState.value = state.copyWith(membershipInfoResponse: res);
+    } catch (e) {
+       uiState.value = state.copyWith(hasErrorMembershipInfo: true);
+    } finally {
+       uiState.value = state.copyWith(isLoadingMembershipInfo: false);
+    }
+  }
+
+  Future<void> fetchMembershipBenefit() async {
+    uiState.value = state.copyWith(
+      isLoadingMembershipBenefit: true,
+      hasErrorMembershipBenefit: false,
+    );
+
+    try {
+      final res = await useCase.fetchMembershipBenefit(context: Get.context!);
+      uiState.value = state.copyWith(membershipBenefitResponse: res);
+    } catch (e) {
+      uiState.value = state.copyWith(hasErrorMembershipBenefit: true);
+    } finally {
+      uiState.value = state.copyWith(isLoadingMembershipBenefit: false);
+    }
   }
 
   Future<void> fetchContacts({

@@ -1,3 +1,7 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_transaction_detail_response.dart';
+
 import '../../data/model/response/ev_contact_response.dart';
 import '../../data/model/response/ev_news_feed_response.dart';
 import '../../data/model/response/ev_slide_show_response.dart';
@@ -12,6 +16,27 @@ class EvChargerUiState {
   final EvContactResponse? contactResponse;
   final bool isLoadingContact;
   final bool hasErrorContact;
+
+  final MembershipInfoResponse? membershipInfoResponse;
+  final bool isLoadingMembershipInfo;
+  final bool hasErrorMembershipInfo;
+
+  final MembershipBenefitResponse? membershipBenefitResponse;
+  final bool isLoadingMembershipBenefit;
+  final bool hasErrorMembershipBenefit;
+
+  final List<Group> membershipTransactionGroups;
+  final bool isLoadingMembershipTransactionList;
+  final bool isLoadingMoreMembershipTransactionList;
+  final bool hasErrorMembershipTransactionList;
+  final int membershipTransactionCurrentPage;
+  final int membershipTransactionTotal;
+  final bool membershipTransactionHasMore;
+  final int membershipTransactionType;
+
+  final MembershipTransactionDetailResponse? membershipTransactionDetailResponse;
+  final bool isLoadingMembershipTransactionDetail;
+  final bool hasErrorMembershipTransactionDetail;
 
   final EvSlideShowResponse? slideShowResponse;
   final bool isLoadingSlides;
@@ -55,6 +80,28 @@ class EvChargerUiState {
     this.contactResponse,
     this.isLoadingContact = false,
     this.hasErrorContact = false,
+
+    this.membershipInfoResponse,
+    this.isLoadingMembershipInfo = false,
+    this.hasErrorMembershipInfo = false,
+
+    this.membershipBenefitResponse,
+    this.isLoadingMembershipBenefit = false,
+    this.hasErrorMembershipBenefit = false,
+
+    this.membershipTransactionGroups = const <Group>[],
+    this.isLoadingMembershipTransactionList = false,
+    this.isLoadingMoreMembershipTransactionList = false,
+    this.hasErrorMembershipTransactionList = false,
+    this.membershipTransactionCurrentPage = 0,
+    this.membershipTransactionTotal = 0,
+    this.membershipTransactionHasMore = true,
+    this.membershipTransactionType = 0,
+
+    this.membershipTransactionDetailResponse,
+    this.isLoadingMembershipTransactionDetail = false,
+    this.hasErrorMembershipTransactionDetail = false,
+
     this.slideShowResponse,
     this.isLoadingSlides = false,
     this.hasErrorSlides = false,
@@ -96,6 +143,25 @@ class EvChargerUiState {
     EvContactResponse? contactResponse,
     bool? isLoadingContact,
     bool? hasErrorContact,
+    MembershipInfoResponse? membershipInfoResponse,
+    bool? isLoadingMembershipInfo,
+    bool? hasErrorMembershipInfo,
+    MembershipBenefitResponse? membershipBenefitResponse,
+    bool? isLoadingMembershipBenefit,
+    bool? hasErrorMembershipBenefit,
+
+    List<Group>? membershipTransactionGroups,
+    bool? isLoadingMembershipTransactionList,
+    bool? isLoadingMoreMembershipTransactionList,
+    bool? hasErrorMembershipTransactionList,
+    int? membershipTransactionCurrentPage,
+    int? membershipTransactionTotal,
+    bool? membershipTransactionHasMore,
+    int? membershipTransactionType,
+
+    MembershipTransactionDetailResponse? membershipTransactionDetailResponse,
+    bool? isLoadingMembershipTransactionDetail,
+    bool? hasErrorMembershipTransactionDetail,
     EvSlideShowResponse? slideShowResponse,
     bool? isLoadingSlides,
     bool? hasErrorSlides,
@@ -136,6 +202,52 @@ class EvChargerUiState {
       contactResponse: contactResponse ?? this.contactResponse,
       isLoadingContact: isLoadingContact ?? this.isLoadingContact,
       hasErrorContact: hasErrorContact ?? this.hasErrorContact,
+
+      membershipInfoResponse:
+          membershipInfoResponse ?? this.membershipInfoResponse,
+      isLoadingMembershipInfo:
+          isLoadingMembershipInfo ?? this.isLoadingMembershipInfo,
+      hasErrorMembershipInfo:
+          hasErrorMembershipInfo ?? this.hasErrorMembershipInfo,
+
+      membershipBenefitResponse:
+          membershipBenefitResponse ?? this.membershipBenefitResponse,
+      isLoadingMembershipBenefit:
+          isLoadingMembershipBenefit ?? this.isLoadingMembershipBenefit,
+      hasErrorMembershipBenefit:
+          hasErrorMembershipBenefit ?? this.hasErrorMembershipBenefit,
+
+      membershipTransactionGroups:
+          membershipTransactionGroups ?? this.membershipTransactionGroups,
+      isLoadingMembershipTransactionList:
+          isLoadingMembershipTransactionList ??
+          this.isLoadingMembershipTransactionList,
+      isLoadingMoreMembershipTransactionList:
+          isLoadingMoreMembershipTransactionList ??
+          this.isLoadingMoreMembershipTransactionList,
+      hasErrorMembershipTransactionList:
+          hasErrorMembershipTransactionList ??
+          this.hasErrorMembershipTransactionList,
+      membershipTransactionCurrentPage:
+          membershipTransactionCurrentPage ??
+          this.membershipTransactionCurrentPage,
+      membershipTransactionTotal:
+          membershipTransactionTotal ?? this.membershipTransactionTotal,
+      membershipTransactionHasMore:
+          membershipTransactionHasMore ?? this.membershipTransactionHasMore,
+      membershipTransactionType:
+          membershipTransactionType ?? this.membershipTransactionType,
+
+      membershipTransactionDetailResponse:
+          membershipTransactionDetailResponse ??
+          this.membershipTransactionDetailResponse,
+      isLoadingMembershipTransactionDetail:
+          isLoadingMembershipTransactionDetail ??
+          this.isLoadingMembershipTransactionDetail,
+      hasErrorMembershipTransactionDetail:
+          hasErrorMembershipTransactionDetail ??
+          this.hasErrorMembershipTransactionDetail,
+
       slideShowResponse: slideShowResponse ?? this.slideShowResponse,
       isLoadingSlides: isLoadingSlides ?? this.isLoadingSlides,
       hasErrorSlides: hasErrorSlides ?? this.hasErrorSlides,

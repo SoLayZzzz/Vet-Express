@@ -7,6 +7,7 @@ import '../../data/repositoryImpl/ev_charger_repository_impl.dart';
 import '../../domain/repository/ev_charger_repository.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 import '../controller/ev_charger_controller.dart';
+import '../controller/ev_charging_information_controller.dart';
 import '../controller/ev_contact_controller.dart';
 import '../controller/ev_faq_controller.dart';
 import '../controller/ev_news_feed_controller.dart';
@@ -46,6 +47,10 @@ class EvChargerBinding implements Bindings {
 
     if (!Get.isRegistered<EvChargerController>()) {
       Get.lazyPut(() => EvChargerController(Get.find()), fenix: true);
+    }
+
+    if (!Get.isRegistered<EvChargingInformationController>()) {
+      Get.lazyPut(() => EvChargingInformationController(Get.find()), fenix: true);
     }
 
     if (!Get.isRegistered<EvContactController>()) {

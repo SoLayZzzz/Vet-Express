@@ -1,6 +1,15 @@
 import 'package:express_vet/feature/history-dashboard/other-history/presentation/screen/parcel_payment_screen.dart';
 import 'package:express_vet/feature/home-dashboard/contact_us/presentation/screen/contact_us_screen.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_charger_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_charging_information_screen.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_charging_payment_flow_screen.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_detail_charging.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_membership_benefit.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_membership_history_screen.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_membership_screen.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_redeem_point_screen.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_voucher_screen.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/screen/ev_verificationScreen.dart';
 import 'package:express_vet/feature/home-dashboard/notifications/presentation/screen/notification_screen.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/screen/passenger_detail_screen.dart';
 import 'package:express_vet/feature/home-dashboard/payment/presentaion/ui/ticket_payment_success_screen.dart';
@@ -535,6 +544,70 @@ class AppPages {
     GetPage(
       name: AppRoutes.ticketpaymentSuccessScreen,
       page: () => const TicketPaymentSuccess(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    // Ev Membership
+    GetPage(
+      name: AppRoutes.evMembership,
+      page: () => const EvMembershipScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    // Ev Membership Benefit
+    GetPage(
+      name: AppRoutes.evMembershipBenefit,
+      page: () => const MembershipBenefitScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evMembershipHistory,
+      page: () => const EvMembershipHistoryScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evRedeemPoint,
+      page: () => const EvRedeemPointScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    GetPage(
+      name: AppRoutes.evVoucher,
+      page: () => const EvVoucherScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    //
+    GetPage(
+      name: AppRoutes.evDetailCharging,
+      page: () => const EvDetailCharging(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    //
+    GetPage(
+      name: AppRoutes.evVerification,
+      page: () => const EvVerificationScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    //
+    GetPage(
+      name: AppRoutes.evChargingInformation,
+      page: () => const EvChargingInformationScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+    //
+    GetPage(
+      name: AppRoutes.evPaymentFlow,
+      page: () => const EvChargingPaymentFlowScreen(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_wallet_list_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,6 +17,7 @@ class EvWalletController extends GetxController {
   // Loading states
   final RxBool isLoading = false.obs;
   final RxBool isLoadingBalance = false.obs;
+  final RxBool isLoadingMemberShipInfo = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxBool hasMoreData = false.obs;
   final RxBool hasError = false.obs;

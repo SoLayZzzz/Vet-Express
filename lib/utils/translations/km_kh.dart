@@ -415,6 +415,11 @@ final Map<String, String> kmKH = {
   'contact_list': 'លេខទំនាក់ទំនង',
   'telephone_num': 'លេខទូរស័ព្ទ',
 
+  'reconnecting': 'កំពុងភ្ជាប់ឡើងវិញ',
+  'connecting_to_internet': 'កំពុងព្យាយាមភ្ជាប់អ៊ីនធឺណិត',
+  'connected': 'បានភ្ជាប់',
+  'internet_connected': 'បានភ្ជាប់អ៊ីនធឺណិត',
+
   //Goods transfer list detail
   'transfer_code': 'កូដអីវ៉ាន់',
   'date': 'កាលបរិច្ឆេទ',

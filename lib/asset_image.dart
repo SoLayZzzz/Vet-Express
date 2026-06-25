@@ -177,14 +177,47 @@ class AssetImages {
   // EV Charger screen
   // =========================
 
-  static const String ic_ev_faq = "assets/icons/icon_ev_faq.png";
-  static const String ic_ev_contact = "assets/icons/icon_ev_contact.png";
-  static const String ic_ev_policy = "assets/icons/icon_ev_policy.png";
+  static const String ic_ev_faq = "assets/icons/faq.svg";
+  static const String ic_ev_contact = "assets/icons/headphone.svg";
+  static const String ic_ev_policy = "assets/icons/Shield.svg";
   static const String ic_topUp = "assets/icons/icon_ev_topUp.png";
   static const String ic_aba = "assets/icons/icon_aba.png";
+  static const String ic_station = "assets/icons/ev-a.svg";
+  static const String ic_favorite = "assets/icons/ic_favorite.svg";
+  static const String ic_history = "assets/icons/history.svg";
+  static const String ic_money_backgroound = "assets/icons/money_background.svg";
+  static const String ic_history_background = "assets/icons/history_background.svg";
+  static const String ic_money_backgroound_small = "assets/icons/money_background_small.svg";
+  static const String ic_history_background_small = "assets/icons/history_background_small.svg";
+  static const String ic_membership = "assets/icons/membership.svg";
+  static const String ic_history_membership = "assets/icons/history_membership.svg";
+  static const String ic_back = "assets/icons/button_back.svg";
+  static const String ic_car_charging = "assets/icons/car_charging.svg";
+  static const String gifCharging = 'assets/gif/charging_gift.gif';
+  // Charging
+  static const String ammeter = "assets/icons/ammeter.svg";
+  static const String volt = "assets/icons/volt.svg";
+  static const String energy = "assets/icons/power.svg";
+  static const String current = "assets/icons/currentCy.svg"; 
+  static const String stopCharg = "assets/icons/stop_charg.svg";
+  static const String buttonStop = "assets/icons/button_stop.svg";
+  static const String stop = "assets/icons/stop.svg";
+  static const String full_charg = "assets/icons/full_charg.svg";
+  static const String verification = "assets/icons/verification.svg";
+  static const String success = "assets/icons/success.svg";
+  static const String apply_code = "assets/icons/apply_code.svg";
+  static const String star = "assets/icons/star.svg";
+  static const String small_car = "assets/icons/car.svg";
+  static const String wallet = "assets/icons/wallet.svg";
+  static const String small_scan = "assets/icons/scan.svg";
+  static const String battery = "assets/icons/battery.svg";
+  static const String select = "assets/icons/select.svg";
+  static const String green_car = "assets/icons/green_car.png";
+  static const String voucher = "assets/icons/voucher.svg";
+  static const String isYouAreHere = "assets/icons/you_are_here.svg";
 
   // =========================
-  // Rental Car screen
+  // Rental Car screenr
   // =========================
 
   static const String ic_empty = "assets/images/ic_empty.png";

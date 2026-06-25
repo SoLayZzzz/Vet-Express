@@ -5,7 +5,7 @@ class Endpoint {
   static const String authCheckVersion = 'auth/checkVersion';
   static const String authDeleteAccount = 'auth/deleteAccount';
   static const String authLoginWithRefreshToken =
-      '/auth/login-with-refresh-token';
+      'auth/login-with-refresh-token';
 
   static const String userRegister = 'user/register';
   static const String userVerification = 'user/verification';
@@ -139,4 +139,14 @@ class Endpoint {
   static const String uploadPhotoTravelPackageOrder =
       'uploads/uploadPhotoTravelPackageOrder';
   static const String uploadPhotoUserProfile = 'uploads/uploadPhotoUserProfile';
+
+  static const String evMembershipinfo = "membership/info";
+  static const String evMembershipBenefit = "membership/level/list";
+
+  static const String evMembershipTransactionList = "membership/transaction/list";
+  static String evMembershipTransactionDetail(String id) =>
+      "membership/transaction/detail/$id";
+  
+  static const String evkwhlist = "label/kwh/list";
+  static const String evpricelist = "label/price/list";
 }

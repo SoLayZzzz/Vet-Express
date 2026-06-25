@@ -1,4 +1,9 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/destination_ev.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_transaction_detail_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_transaction_list_response.dart';
 import 'package:express_vet/models/simple_response.dart';
 
 import '../../data/model/response/ev_charger_response.dart';
@@ -188,5 +193,61 @@ class EvChargerUseCase {
       context: context,
       transactionId: transactionId,
     );
+  }
+
+  Future<MembershipInfoResponse> fetchMembershipInfo({
+    required dynamic context,
+  }) {
+    return repository.fetchMembershipInfo(
+      context: context,
+    );
+  }
+
+  Future<MembershipBenefitResponse> fetchMembershipBenefit({
+    required dynamic context,
+  }) {
+    return repository.fetchMembershipBenefit(
+      context: context,
+    );
+  }
+
+  Future<MembershipTransactionListResponse> fetchMembershipTransactionList({
+    required dynamic context,
+    required int page,
+    required int rowsPerPage,
+    String orderBy = '',
+    String searchText = '',
+    int? type,
+  }) {
+    return repository.fetchMembershipTransactionList(
+      context: context,
+      page: page,
+      rowsPerPage: rowsPerPage,
+      orderBy: orderBy,
+      searchText: searchText,
+      type: type,
+    );
+  }
+
+  Future<MembershipTransactionDetailResponse> fetchMembershipTransactionDetail({
+    required dynamic context,
+    required int id,
+  }) {
+    return repository.fetchMembershipTransactionDetail(
+      context: context,
+      id: id,
+    );
+  }
+
+  Future<AmountPriceAndKwhResponse> fetchAmountKwh({
+    required dynamic context
+  }) {
+    return repository.fetchAmountKwh(context: context);
+  }
+
+  Future<AmountPriceAndKwhResponse> fetchAmountPrice({
+    required dynamic context
+  }) {
+    return repository.fetchAmountPrice(context: context);
   }
 }

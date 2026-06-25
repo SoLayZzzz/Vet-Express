@@ -20,4 +20,5 @@ class AppColors {
   static const lineGray = Color(0xFFDADDE1);
   static const deepBlueLight = Color(0xFFE7F1FB);
   static const viewMapColor = Color(0xFFFFA733);
+  static const lightPrimaryColor = Color(0xFFFFD8B6);
 }

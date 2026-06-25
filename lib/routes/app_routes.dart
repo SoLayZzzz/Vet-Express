@@ -35,6 +35,15 @@ class AppRoutes {
   static const evFavorites = '/ev-charger/favorites';
   static const evSearchStations = '/ev-charger/search-stations';
   static const evSelectProvince = '/ev-charger/select-province';
+  static const evMembership = '/ev-charger/membership';
+  static const evMembershipBenefit = '/ev-charger/membership-benefit';
+  static const evMembershipHistory = '/ev-charger/membership-history';
+  static const evRedeemPoint = '/ev-charger/redeem-point';
+  static const evVoucher = '/ev-charger/voucher';
+  static const evDetailCharging = '/ev-charger/detail-charging';
+  static const evVerification = '/ev-charger/verification';
+  static const evChargingInformation = '/ev-charger/charging-information';
+  static const evPaymentFlow = '/ev-charger/payment-flow';
 
   // Menu route
   static const contactUs = '/contact-us';

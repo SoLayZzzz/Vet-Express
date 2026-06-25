@@ -11,6 +11,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10
 
   # all dependencies
   cupertino_icons: ^1.0.8
@@ -62,6 +63,7 @@ dependencies:
   widget_zoom: ^0.0.4
   permission_handler: ^11.3.1
   like_button: ^2.0.5
+  vector_math: ^2.2.0
 
   # component:
   #  git:

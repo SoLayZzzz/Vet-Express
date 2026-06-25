@@ -75,7 +75,7 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
                   color:
                       isSelected
                           ? AppColors.primaryColor
-                          : AppColors.whiteColor,
+                          : Color(0xFF1E3A8A).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color:

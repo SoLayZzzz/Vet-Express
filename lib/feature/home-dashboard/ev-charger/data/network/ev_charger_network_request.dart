@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:express_vet/base/network_data_source.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
 import 'package:flutter/material.dart';
 import '../model/response/ev_charger_response.dart';
 import '../model/response/ev_contact_response.dart';
@@ -15,6 +18,8 @@ import '../model/response/ev_station_list_response.dart';
 import '../model/response/ev_top_up_response.dart';
 import '../model/response/ev_wallet_amount_response.dart';
 import '../model/response/ev_wallet_list_response.dart';
+import '../model/response/membership_transaction_detail_response.dart';
+import '../model/response/membership_transaction_list_response.dart';
 import '../../../../../base/endpoint.dart';
 import '../model/response/destination_ev.dart';
 import '../../../../../models/simple_response.dart';
@@ -363,6 +368,119 @@ class EvChargerNetworkRequest {
       );
       debugPrint('confirmPayment response: ${jsonEncode(json)}');
       return SimpleResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<MembershipInfoResponse> fetchMembershipInfo({
+    required dynamic context,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evMembershipinfo,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetchMembershipInfo response: ${jsonEncode(json)}');
+      return MembershipInfoResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<MembershipBenefitResponse> fetchMembershipBenefit({
+    required dynamic context,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evMembershipBenefit,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetchMembershipBenefit response: ${jsonEncode(json)}');
+      return MembershipBenefitResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<MembershipTransactionListResponse> fetchMembershipTransactionList({
+    required dynamic context,
+    required int page,
+    required int rowsPerPage,
+    String orderBy = '',
+    String searchText = '',
+    int? type,
+  }) async {
+    try {
+      final Map<String, dynamic> body = <String, dynamic>{
+        'page': page,
+        'rowsPerPage': rowsPerPage,
+        'orderBy': orderBy,
+        'searchText': searchText,
+      };
+      if (type != null && type != 0) {
+        body['type'] = type;
+      }
+
+      final json = await evDataSource.postJson(
+        Endpoint.evMembershipTransactionList,
+        body: body,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetchMembershipTransactionList response: ${jsonEncode(json)}');
+      return MembershipTransactionListResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<MembershipTransactionDetailResponse> fetchMembershipTransactionDetail({
+    required dynamic context,
+    required int id,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evMembershipTransactionDetail(id.toString()),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetchMembershipTransactionDetail response: ${jsonEncode(json)}');
+      return MembershipTransactionDetailResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<AmountPriceAndKwhResponse> fetchAmountKwh({
+    required dynamic context,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evkwhlist,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetch kwh  response: ${jsonEncode(json)}');
+      return AmountPriceAndKwhResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<AmountPriceAndKwhResponse> fetchAmountPrice({
+    required dynamic context,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evpricelist,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetch price response: ${jsonEncode(json)}');
+      return AmountPriceAndKwhResponse.fromJson(json);
     } catch (_) {
       rethrow;
     }

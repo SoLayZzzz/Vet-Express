@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:convert';
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/components/skeleton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../controller/ev_charger_controller.dart';
 import '../controller/ev_wallet_controller.dart';
 import '../../../../../utils/app_colors.dart';
@@ -18,6 +20,9 @@ class EvChargerScreen extends GetView<EvChargerController> {
 
   final CarouselSliderController _carouselController =
       CarouselSliderController();
+
+  late final Future<Uint8List?> _carChargingBytes =
+      _loadEmbeddedPngBytes(AssetImages.ic_car_charging);
 
   @override
   Widget build(BuildContext context) {
@@ -100,29 +105,44 @@ class EvChargerScreen extends GetView<EvChargerController> {
         ),
         onPressed: () {
           Get.back();
+       
         },
       ),
       actions: [
-        IconButton(
-          onPressed: () {
-            Get.toNamed(AppRoutes.evFaq);
-          },
-          icon: Image.asset(AssetImages.ic_ev_faq),
+        // Faq
+        _buildAppBarButton(
+        () =>  Get.toNamed(AppRoutes.evFaq),
+        AssetImages.ic_ev_faq
         ),
-        IconButton(
-          onPressed: () {
-            showContactBottomSheet();
-          },
-          icon: Image.asset(AssetImages.ic_ev_contact),
+        // Support
+         _buildAppBarButton(
+        () =>  showContactBottomSheet(),
+        AssetImages.ic_ev_contact
         ),
-        IconButton(
-          onPressed: () {
-            Get.toNamed(AppRoutes.evPolicy);
-          },
-          icon: Image.asset(AssetImages.ic_ev_policy),
+        // Policy
+         _buildAppBarButton(
+        () =>  Get.toNamed(AppRoutes.evPolicy),
+        AssetImages.ic_ev_policy
         ),
+       
       ],
     );
+  }
+
+  Widget _buildAppBarButton(
+    VoidCallback? onTap,
+    String iconPath
+  ) {
+    return GestureDetector(
+        onTap: () {
+          onTap?.call();
+        },
+        child: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 20,
+          child: SvgPicture.asset(iconPath),
+        ),
+      );
   }
 
   Widget _buildBody() {
@@ -132,23 +152,153 @@ class EvChargerScreen extends GetView<EvChargerController> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // 1. Image Carousel with Indicators
+
+           Obx(() {
+             if (!controller.isCharging.value) {
+               return const SizedBox.shrink();
+             }
+             return Column(
+              children: [
+                _buildCardCharging(),
+                const SizedBox(height: 15),
+              ],
+             );
+           }),
+
+            _buildBalanceCard(),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: _buildQuickActions(),
+            ),
+
             _buildImageCarousel(),
 
-            // 2. Balance Card
-            _buildBalanceCard(),
-            const SizedBox(height: 20),
-
-            // 3. Quick Actions
-            _buildQuickActions(),
-            const SizedBox(height: 10),
-
-            // 4. News Feed Section
             _buildNewsFeedSection(),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildCardCharging() {
+    return Container(
+      // height: 130,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
+          // 0xFFF7F0EC
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Stack(
+          children: [
+            Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned(
+                        bottom: -30,
+                        right: -30,
+                        child: Image.asset(
+                          AssetImages.gifCharging,
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.contain,
+                          gaplessPlayback: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  'Your vehicle is charging',
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            //
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: _buildCarChargingImage(),
+                  ),
+                ),
+                // View detail button
+                ElevatedButton.icon(
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.evDetailCharging);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    label: Text(
+                      "View Detail".tr,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+              ],
+            )
+          ],
+        ),
+          ],
+        )
+       
+      ),
+    );
+  }
+
+  Widget _buildCarChargingImage() {
+    return FutureBuilder<Uint8List?>(
+      future: _carChargingBytes,
+      builder: (context, snapshot) {
+        final bytes = snapshot.data;
+        if (bytes != null && bytes.isNotEmpty) {
+          return Image.memory(bytes, fit: BoxFit.contain);
+        }
+        return SvgPicture.asset(AssetImages.ic_car_charging, fit: BoxFit.contain);
+      },
+    );
+  }
+
+  Future<Uint8List?> _loadEmbeddedPngBytes(String svgAssetPath) async {
+    final svg = await rootBundle.loadString(svgAssetPath);
+    final match =
+        RegExp(r'data:image/png;base64,([^"\s]+)').firstMatch(svg);
+    final data = match?.group(1);
+    if (data == null || data.isEmpty) return null;
+
+    try {
+      return base64Decode(data);
+    } catch (_) {
+      return null;
+    }
   }
 
   Widget _buildImageCarousel() {
@@ -168,7 +318,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
 
       // Fallback to default images if no slides from API
       final List<String> defaultImages = [
-        'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=1000',
+        'https://oknmedia.ap-south-1.linodeobjects.com/2026/04/DJI_20260319110048_0588_D-1024x576.jpg',
         'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1000',
       ];
 
@@ -295,124 +445,306 @@ class EvChargerScreen extends GetView<EvChargerController> {
   }
 
   Widget _buildBalanceCard() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: _buildTotalBalance()),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 1,
+          child: _buildTotalPoint()),
+      ],
+    );
+  }
+
+  Widget _buildTotalBalance() {
     return InkWell(
-      onTap: () {
-        Get.toNamed(AppRoutes.evWallet);
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        onTap: () {
+          Get.toNamed(AppRoutes.evWallet);
+        },
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "total_balance".tr,
-                  style: const TextStyle(
-                    color: AppColors.greyColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 20,
-                  color: AppColors.primaryColor,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            GetX<EvWalletController>(
-              builder: (wallet) {
-                return wallet.isLoadingBalance.value
-                    ? const SizedBox(height: 40)
-                    : Text(
-                      "${wallet.totalBalance.value.toStringAsFixed(2)} KHR",
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.titleColor,
-                      ),
-                    );
-              },
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Get.toNamed(AppRoutes.evTopUp);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-                icon: Image.asset(AssetImages.ic_topUp, width: 20, height: 20),
-                label: Text(
-                  "top_up".tr,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: AppColors.whiteColor,
+          child: Stack(
+            children: [
+              Positioned(
+                right: 1,
+                top: 2,
+                child: Opacity(
+                  opacity: 0.99,
+                  child: SvgPicture.asset(
+                    AssetImages.ic_money_backgroound_small,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
-            ),
-          ],
+              //
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                 Text(
+                      "total_balance".tr,
+                      style: const TextStyle(
+                        color: AppColors.greyColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                
+                const SizedBox(height: 5),
+                GetX<EvWalletController>(
+                  builder: (wallet) {
+                    return wallet.isLoadingBalance.value
+                        ? const SizedBox(height: 40)
+                        : Text(
+                          "${wallet.totalBalance.value.toStringAsFixed(2)} KHR",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.titleColor,
+                          ),
+                        );
+                  },
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.evTopUp);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      minimumSize: const Size(50, 35),
+                     
+                    ),
+                    icon: Image.asset(AssetImages.ic_topUp, width: 20, height: 20),
+                    label: Text(
+                      "top_up".tr,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                ),
+                            ],
+                          ),
+              ),
+            ],
+          )
+        
         ),
-      ),
-    );
+      );
+  }
+
+  Widget _buildTotalPoint() {
+    return InkWell(
+        onTap: () {
+           final point = controller.state.membershipInfoResponse?.body?.data;
+
+           Get.toNamed(
+             AppRoutes.evMembership,
+             arguments: <String, dynamic>{
+               'section': 'menu',
+               'membershipInfo': point,
+             },
+           );
+        },
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                right: 1,
+                top: 2,
+                child: Opacity(
+                  opacity: 0.50,
+                  child: SvgPicture.asset(
+                    AssetImages.ic_history_background_small,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              //
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                 Text(
+                      "Total Points".tr,
+                      style: const TextStyle(
+                        color: AppColors.greyColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                
+                const SizedBox(height: 5),
+                Obx(() {
+                  final isLoading = controller.state.isLoadingMembershipInfo;
+                  if (isLoading) return const SizedBox(height: 40);
+
+                  final point =
+                      controller.state.membershipInfoResponse?.body?.data;
+                  final currentPoint = point?.currentPoint ?? 0;
+
+                  return Text(
+                    "$currentPoint pts",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.titleColor,
+                    ),
+                  );
+                }),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Obx(() {
+                    final isCharging = controller.isCharging.value;
+                    final point =
+                        controller.state.membershipInfoResponse?.body?.data;
+                    // final currentPoint = point?.currentPoint ?? 0;
+
+                    return ElevatedButton.icon(
+                      onPressed: () {
+                        if (isCharging) {
+                          Get.toNamed(
+                            AppRoutes.evRedeemPoint,
+                            arguments: <String, dynamic>{'points': point},
+                          );
+                          return;
+                        }
+
+                        Get.toNamed(
+                          AppRoutes.evMembership,
+                          arguments: <String, dynamic>{
+                            'section': 'history',
+                            'membershipInfo': point,
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        minimumSize: const Size(50, 35),
+                      ),
+                      icon:
+                          isCharging
+                              ? const Icon(Icons.auto_awesome, size: 20)
+                              : SvgPicture.asset(
+                                AssetImages.ic_history,
+                                width: 20,
+                                height: 20,
+                              ),
+                      label: Text(
+                        isCharging ? 'Redeem' : "History".tr,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: AppColors.whiteColor,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                            ],
+                          ),
+              ),
+            ],
+          )
+        
+        ),
+      );
   }
 
   Widget _buildQuickActions() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: _buildActionButton(Icons.ev_station, "ev_charger".tr, () {
+          child: _buildActionButton(
+            // Icons.ev_station, 
+            SvgPicture.asset(AssetImages.ic_station, width: 18, height: 18),
+            // "ev_charger".tr,
+            "Map Station",
+             () {
             Get.toNamed(AppRoutes.evAllStations);
           }),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 15),
         Expanded(
-          child: _buildActionButton(Icons.favorite, "favorites".tr, () {
+          child: _buildActionButton(
+            SvgPicture.asset(AssetImages.ic_favorite, width: 18, height: 18),
+            "favorites".tr, () {
             Get.toNamed(AppRoutes.evFavorites);
+          }),
+        ),
+        const SizedBox(width: 15),
+        Expanded(
+          child: _buildActionButton(
+            SvgPicture.asset(AssetImages.voucher, width: 18, height: 18),
+            "Voucher".tr, () {
+            Get.toNamed(AppRoutes.evVoucher);
           }),
         ),
       ],
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, VoidCallback onTap) {
+  Widget _buildActionButton(Widget icon, String label, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black38),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withValues(alpha: 0.1),
@@ -421,32 +753,26 @@ class EvChargerScreen extends GetView<EvChargerController> {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: AppColors.whiteColor, size: 20),
-                ),
-                const SizedBox(width: 12),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.grey,
-                ),
-              ],
-            ),
+                 Container(
+                   padding: const EdgeInsets.all(8),
+                   decoration: const BoxDecoration(
+                     color: AppColors.primaryColor,
+                     shape: BoxShape.circle,
+                   ),
+                   child: icon,
+                 ),
             const SizedBox(height: 6),
             Text(
               label,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+              ],
             ),
           ],
         ),
@@ -469,12 +795,21 @@ class EvChargerScreen extends GetView<EvChargerController> {
               onPressed: () {
                 Get.toNamed(AppRoutes.evNewsFeed);
               },
-              child: Text(
-                "view_all".tr,
-                style: const TextStyle(
-                  color: AppColors.primaryColor,
-                  decoration: TextDecoration.underline,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    "view_all".tr,
+                    style: const TextStyle(
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 12,
+                    color: AppColors.primaryColor,
+                  ),
+                ],
               ),
             ),
           ],
