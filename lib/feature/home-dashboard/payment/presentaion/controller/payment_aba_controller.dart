@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -19,6 +18,8 @@ import '../../../../../utils/loading.dart';
 class PaymentAbaController extends GetxController {
   bool _loop = true;
   bool _initialized = false;
+  bool _isCheckingPaymentStatus = false;
+  bool _isCheckingTransactionStatus = false;
   DateTime? _acledaPollStartAt;
   final Duration _acledaMaxWait = const Duration(minutes: 3);
 
@@ -91,6 +92,33 @@ class PaymentAbaController extends GetxController {
 
   void stop() {
     _loop = false;
+  }
+
+  void resumePolling({
+    required BuildContext context,
+    required String transactionId,
+    required String token,
+  }) {
+    _loop = true;
+    if (type == 1) {
+      checkTransactionABAComplete(
+        context: context,
+        transactionId: transactionId,
+        token: token,
+      );
+    } else if (type == 4) {
+      checkPaymentACLEDAComplete(
+        context: context,
+        transactionId: transactionId,
+        token: token,
+      );
+    } else {
+      checkPaymentABAComplete(
+        context: context,
+        transactionId: transactionId,
+        token: token,
+      );
+    }
   }
 
   void init({required BuildContext context}) {
@@ -255,7 +283,8 @@ class PaymentAbaController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
-    if (!_loop) return;
+    if (!_loop || _isCheckingPaymentStatus) return;
+    _isCheckingPaymentStatus = true;
     try {
       final url =
           '${BaseUrl.PAYMENT_URL}payments/checkAbaTransaction/$transactionId';
@@ -287,7 +316,6 @@ class PaymentAbaController extends GetxController {
           debugPrint(
             'Check status transaction == 1. Checking terminal payment completion.',
           );
-          _loop = false;
           checkTransactionABAComplete(
             context: Get.context ?? context,
             transactionId: transactionId,
@@ -351,6 +379,8 @@ class PaymentAbaController extends GetxController {
           token: token,
         );
       }, delay: const Duration(seconds: 2));
+    } finally {
+      _isCheckingPaymentStatus = false;
     }
   }
 
@@ -359,6 +389,8 @@ class PaymentAbaController extends GetxController {
     required String transactionId,
     required String token,
   }) async {
+    if (!_loop || _isCheckingTransactionStatus) return;
+    _isCheckingTransactionStatus = true;
     final requestUrl =
         '${BaseUrl.PAYMENT_URL}payments/checkTerminalPaymentComplete/$transactionId/$token';
     debugPrint(
@@ -401,9 +433,20 @@ class PaymentAbaController extends GetxController {
           'PaymentAbaController.checkTransactionABAComplete.status=${result['status']}',
         );
         Loading().loadingClose();
-        if (result['status'] == "1") {
+        final status = '${result['status']}';
+        if (status == '1') {
           debugPrint('Check status transaction $title == 1');
+          _loop = false;
           Get.back(result: '1');
+        } else {
+          debugPrint('Check status transaction $title == $status (payment pending)');
+          _scheduleRetry(() {
+            checkTransactionABAComplete(
+              context: Get.context ?? context,
+              transactionId: transactionId,
+              token: token,
+            );
+          });
         }
       } else {
         Loading().loadingClose();
@@ -411,6 +454,13 @@ class PaymentAbaController extends GetxController {
           'PaymentAbaController.checkTransactionABAComplete.failed '
           'statusCode=${response.statusCode}, body=${response.body}',
         );
+        _scheduleRetry(() {
+          checkTransactionABAComplete(
+            context: Get.context ?? context,
+            transactionId: transactionId,
+            token: token,
+          );
+        }, delay: const Duration(seconds: 2));
       }
     } on SocketException catch (e) {
       Loading().loadingClose();
@@ -418,24 +468,54 @@ class PaymentAbaController extends GetxController {
         'PaymentAbaController.checkTransactionABAComplete.networkError '
         'transactionId=$transactionId, error=$e',
       );
+      _scheduleRetry(() {
+        checkTransactionABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
     } on http.ClientException catch (e) {
       Loading().loadingClose();
       debugPrint(
         'PaymentAbaController.checkTransactionABAComplete.httpClientError '
         'transactionId=$transactionId, error=$e',
       );
+      _scheduleRetry(() {
+        checkTransactionABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
     } on TimeoutException catch (e) {
       Loading().loadingClose();
       debugPrint(
         'PaymentAbaController.checkTransactionABAComplete.timeout '
         'transactionId=$transactionId, error=$e',
       );
+      _scheduleRetry(() {
+        checkTransactionABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
     } catch (e) {
       Loading().loadingClose();
       debugPrint(
         'PaymentAbaController.checkTransactionABAComplete.unexpectedError '
         'transactionId=$transactionId, error=$e',
       );
+      _scheduleRetry(() {
+        checkTransactionABAComplete(
+          context: Get.context ?? context,
+          transactionId: transactionId,
+          token: token,
+        );
+      }, delay: const Duration(seconds: 2));
+    } finally {
+      _isCheckingTransactionStatus = false;
     }
   }
 

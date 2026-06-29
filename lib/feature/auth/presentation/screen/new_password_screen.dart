@@ -10,10 +10,25 @@ import 'package:get/get.dart';
 
 import '../controller/auth_controller.dart';
 
-class CreateNewPasswordScreen extends GetView<AuthController> {
+class CreateNewPasswordScreen extends StatefulWidget {
   final String token;
 
   const CreateNewPasswordScreen({super.key, required this.token});
+
+  @override
+  State<CreateNewPasswordScreen> createState() =>
+      _CreateNewPasswordScreenState();
+}
+
+class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
+  late final AuthController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<AuthController>();
+    controller.clearCreateNewPasswordInputs();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +134,7 @@ class CreateNewPasswordScreen extends GetView<AuthController> {
                         onPressed: () {
                           controller.submitCreateNewPassword(
                             context,
-                            token: token,
+                            token: widget.token,
                           );
                         },
                       ),

@@ -17,6 +17,7 @@ import '../../data/model/request/refreshToken_login_request.dart';
 import '../../domain/uscase/auth_usecase.dart';
 import '../uiState/auth_ui_state.dart';
 import '../../../../routes/app_routes.dart';
+import '../screen/verify_code_screen.dart';
 
 class AuthController extends StateController<AuthUiState> {
   final AuthUseCase authUseCase;
@@ -101,6 +102,7 @@ class AuthController extends StateController<AuthUiState> {
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final token = res.body?.message?.toString() ?? '';
+          prepareVerifyCodeScreen();
           Get.toNamed(
             AppRoutes.verifyCode,
             arguments: {'identify': 1, 'token': token, 'phone': telephone},
@@ -211,7 +213,12 @@ class AuthController extends StateController<AuthUiState> {
     required String phone,
   }) async {
     try {
-      await authUseCase.resendVerification(phone: phone);
+      final res = await authUseCase.resendVerification(phone: phone);
+      if (res.header?.result == true && res.header?.statusCode == 200) {
+        if (res.body?.status == true) {
+          VerifyCodeScreen.newToken = res.body?.message?.toString() ?? '';
+        }
+      }
     } catch (_) {}
   }
 
@@ -254,7 +261,12 @@ class AuthController extends StateController<AuthUiState> {
     required String token,
   }) async {
     try {
-      await authUseCase.resendCode(token: token);
+      final res = await authUseCase.resendCode(token: token);
+      if (res.header?.result == true && res.header?.statusCode == 200) {
+        if (res.body?.status == true) {
+          VerifyCodeScreen.newToken = res.body?.message?.toString() ?? '';
+        }
+      }
     } catch (_) {}
   }
 
@@ -292,6 +304,7 @@ class AuthController extends StateController<AuthUiState> {
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final token = res.body?.message?.toString() ?? '';
+          prepareVerifyCodeScreen();
           Get.toNamed(
             AppRoutes.verifyCode,
             arguments: {'identify': 2, 'token': token, 'phone': phone},
@@ -336,7 +349,10 @@ class AuthController extends StateController<AuthUiState> {
     final valid =
         uiState.value.forgotPasswordFormKey.currentState?.validate() ?? false;
     if (!valid) return;
-    _forgotPassword(context, uiState.value.forgotPasswordPhoneController.text.replaceAll(' ', ''));
+    _forgotPassword(
+      context,
+      uiState.value.forgotPasswordPhoneController.text.replaceAll(' ', ''),
+    );
   }
 
   void toggleCreateNewPasswordVisibility() {
@@ -390,6 +406,9 @@ class AuthController extends StateController<AuthUiState> {
       return;
     }
 
+    final activeToken =
+        resend ? (newToken.isNotEmpty ? newToken : token) : token;
+
     if (identify == 1) {
       final deviceId = AppPref.getDeviceId() ?? 'VET_Express_DeviceID';
       final deviceName = AppPref.getDeviceName() ?? 'VET_Express_DeviceName';
@@ -398,10 +417,10 @@ class AuthController extends StateController<AuthUiState> {
         code: code,
         deviceId: deviceId,
         deviceName: deviceName,
-        token: resend ? newToken : token,
+        token: activeToken,
       );
     } else if (identify == 2 || identify == 3) {
-      _resetPasswordVerify(context, code: code, token: token);
+      _resetPasswordVerify(context, code: code, token: activeToken);
     } else {
       final deviceId = AppPref.getDeviceId() ?? 'VET_Express_DeviceID';
       final deviceName = AppPref.getDeviceName() ?? 'VET_Express_DeviceName';
@@ -410,7 +429,7 @@ class AuthController extends StateController<AuthUiState> {
         code: code,
         deviceId: deviceId,
         deviceName: deviceName,
-        token: resend ? newToken : token,
+        token: activeToken,
       );
     }
   }
@@ -645,5 +664,48 @@ class AuthController extends StateController<AuthUiState> {
     } finally {
       uiState.value.isLoading.value = false;
     }
+  }
+
+  void clearLoginInputs() {
+    uiState.value.signInPhoneController.clear();
+    uiState.value.signInPasswordController.clear();
+    uiState.value.signInPasswordVisible.value = false;
+  }
+
+  void clearRegisterInputs() {
+    uiState.value.signUpUsernameController.clear();
+    uiState.value.signUpPhoneController.clear();
+    uiState.value.signUpPasswordController.clear();
+    uiState.value.signUpRePasswordController.clear();
+    uiState.value.signUpEmailController.clear();
+    uiState.value.signUpDateOfBirthController.clear();
+    uiState.value.signUpNationalitySearchController.clear();
+    uiState.value.signUpGender.value = '';
+    uiState.value.signUpNationalityValue.value = '';
+    uiState.value.signUpNationalityId.value = 0;
+    uiState.value.signUpImagePath.value = '';
+    uiState.value.signUpPasswordVisible.value = false;
+    uiState.value.signUpRePasswordVisible.value = false;
+    uiState.value.signUpFormKey.currentState?.reset();
+  }
+
+  void clearForgotPasswordInputs() {
+    uiState.value.forgotPasswordPhoneController.clear();
+    uiState.value.forgotPasswordFormKey.currentState?.reset();
+  }
+
+  void clearCreateNewPasswordInputs() {
+    uiState.value.createNewPasswordController.clear();
+    uiState.value.createNewRePasswordController.clear();
+    uiState.value.newPasswordVisible.value = false;
+    uiState.value.newRePasswordVisible.value = false;
+    uiState.value.createNewPasswordFormKey.currentState?.reset();
+  }
+
+  void prepareVerifyCodeScreen() {
+    uiState.value.verifyResend.value = false;
+    uiState.value.verifyTimeExpired.value = false;
+    uiState.value.verifyCountResend.value = 0;
+    VerifyCodeScreen.newToken = '';
   }
 }

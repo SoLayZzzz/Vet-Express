@@ -422,9 +422,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
             itemCount: selectedSeats.length,
             itemBuilder: (BuildContext context, int index) {
               void syncGoingToReturnIfNeeded() {
-                if (isGoingTrip && companyType == 4) {
+                if (isGoingTrip) {
                   controller.syncBuvaSeaRoundTripFromGoingToReturn(
-                    onlyIfEmpty: true,
+                    onlyIfEmpty: false,
                   );
                 }
               }
@@ -851,41 +851,50 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     required String groupValue,
     required VoidCallback onTap,
   }) {
+    final bool selected = groupValue == value;
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            height: 18,
-            width: 18,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color:
-                    groupValue == value
-                        ? AppColors.primaryColor
-                        : AppColors.deepGrey,
-                width: 2,
-              ),
-            ),
-            child: Center(
-              child: Container(
-                height: 8,
-                width: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeInOut,
+              height: 18,
+              width: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
                   color:
-                      groupValue == value
+                      selected
                           ? AppColors.primaryColor
-                          : Colors.transparent,
+                          : AppColors.deepGrey,
+                  width: 2,
+                ),
+              ),
+              child: Center(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeInOut,
+                  height: 8,
+                  width: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:
+                        selected
+                            ? AppColors.primaryColor
+                            : Colors.transparent,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Text(label, style: const TextStyle(fontSize: 14)),
-        ],
+            const SizedBox(width: 10),
+            Text(label, style: const TextStyle(fontSize: 14)),
+          ],
+        ),
       ),
     );
   }
@@ -902,9 +911,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
           label: "female".tr,
           groupValue: gender[index],
           onTap: () {
-            gender[index] = '2';
-            controller.update();
-            onChanged?.call();
+            if (gender[index] != '2') {
+              gender[index] = '2';
+              controller.update();
+              onChanged?.call();
+            }
           },
         ),
         const SizedBox(width: 30),
@@ -913,9 +924,11 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
           label: "male".tr,
           groupValue: gender[index],
           onTap: () {
-            gender[index] = '1';
-            controller.update();
-            onChanged?.call();
+            if (gender[index] != '1') {
+              gender[index] = '1';
+              controller.update();
+              onChanged?.call();
+            }
           },
         ),
       ],
@@ -1100,287 +1113,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                         ? Column(
                                           children: [
                                             //* checkbox apply package
-                                            Row(
-                                              children: [
-                                                //* checkbox
-                                                Container(
-                                                  width: 25,
-                                                  height: 25,
-                                                  margin: const EdgeInsets.only(
-                                                    top: 5,
-                                                  ),
-                                                  child: Transform.scale(
-                                                    scale: 1.5,
-                                                    child: Checkbox(
-                                                      tristate: false,
-                                                      activeColor:
-                                                          Colors.grey[300],
-                                                      fillColor:
-                                                          WidgetStateColor.resolveWith(
-                                                            (states) =>
-                                                                controller
-                                                                    .getColor(
-                                                                      states,
-                                                                    ),
-                                                          ),
-                                                      checkColor:
-                                                          ValueStatic.ticketType ==
-                                                                  '3'
-                                                              ? AppColors
-                                                                  .airBusColor
-                                                              : AppColors
-                                                                  .primaryColor,
-                                                      side: const BorderSide(
-                                                        color:
-                                                            Colors
-                                                                .transparent, //your desired color here
-                                                      ),
-                                                      value:
-                                                          controller
-                                                              .state
-                                                              .isTravelPackage
-                                                              .value,
-                                                      onChanged:
-                                                          (controller
-                                                                      .state
-                                                                      .status
-                                                                      .value ==
-                                                                  1)
-                                                              ? null // disable checkbox when promo code applied
-                                                              : (value) async {
-                                                                ///user click apply and set isTravelPackage==true
-                                                                if (value !=
-                                                                    null) {
-                                                                  controller
-                                                                      .state
-                                                                      .isTravelPackage
-                                                                      .value = value;
-                                                                  controller
-                                                                      .update();
-                                                                }
-
-                                                                ///user not click or un_click apply
-                                                                if (value ==
-                                                                    false) {
-                                                                  controller
-                                                                      .state
-                                                                      .codeController
-                                                                      .text = '';
-                                                                  // allow promo button again
-                                                                  controller
-                                                                      .state
-                                                                      .isTravelPackageOk
-                                                                      .value = false;
-                                                                  controller
-                                                                      .update();
-                                                                }
-
-                                                                ///user apply with the same phone number
-                                                                if (value! &&
-                                                                    !controller
-                                                                        .state
-                                                                        .isPhone
-                                                                        .value) {
-                                                                  ///check user have travel package or not
-                                                                  final travelPackage =
-                                                                      await TravelPackage()
-                                                                          .getBuyList(
-                                                                            context,
-                                                                          );
-
-                                                                  /// when user don't have travel package, it will alert dialog
-                                                                  if (travelPackage
-                                                                      .body!
-                                                                      .isEmpty) {
-                                                                    ///when user don't have travel package, set isNoPackage = true;
-                                                                    controller
-                                                                        .state
-                                                                        .isNoPackage
-                                                                        .value = true;
-                                                                    controller
-                                                                        .update();
-
-                                                                    ///alert dialog no package
-                                                                    alertDialogTravelPackage(
-                                                                      title:
-                                                                          "information"
-                                                                              .tr,
-                                                                      description:
-                                                                          "no_package"
-                                                                              .tr,
-                                                                      buttonText:
-                                                                          'yes'
-                                                                              .tr,
-                                                                      onButtonPressed: () {
-                                                                        Navigator.pop(
-                                                                          context,
-                                                                        );
-
-                                                                        ///when user don't have travel package, set isTravelPackage = false; then un_tick the checkbox
-                                                                        controller
-                                                                            .state
-                                                                            .isTravelPackage
-                                                                            .value = false;
-                                                                        controller
-                                                                            .update();
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  ///when user have travel package
-                                                                  else {
-                                                                    ///when user have travel package, set isNoPackage = false;
-                                                                    controller
-                                                                        .state
-                                                                        .isNoPackage
-                                                                        .value = false;
-                                                                    controller
-                                                                        .update();
-
-                                                                    ///get the first index package code
-                                                                    String?
-                                                                    packageCoded =
-                                                                        travelPackage
-                                                                            .body?[0]
-                                                                            .packageCode;
-                                                                    controller
-                                                                        .state
-                                                                        .codeController
-                                                                        .text = packageCoded!;
-
-                                                                    ///set the first index package code to inputCodeController
-                                                                    controller
-                                                                        .state
-                                                                        .codeController
-                                                                        .text = packageCoded;
-                                                                    controller
-                                                                        .state
-                                                                        .packageTypeOneWay
-                                                                        .value = travelPackage
-                                                                            .body![0]
-                                                                            .type!;
-                                                                    controller
-                                                                        .update();
-
-                                                                    if (ValueStatic.vehicleTypeOneWay ==
-                                                                            2 &&
-                                                                        controller.state.packageTypeOneWay.value ==
-                                                                            2) {
-                                                                      alertDialogTravelPackage(
-                                                                        title:
-                                                                            "information".tr,
-                                                                        description:
-                                                                            "First-class seats are not available for travel packages with a student grade A.",
-                                                                        buttonText:
-                                                                            'yes'.tr,
-                                                                        onButtonPressed: () {
-                                                                          Navigator.pop(
-                                                                            context,
-                                                                          );
-
-                                                                          ///when user don't have travel package, set isTravelPackage = false; then un_tick the checkbox
-                                                                          controller
-                                                                              .state
-                                                                              .codeController
-                                                                              .text = '';
-                                                                          controller
-                                                                              .state
-                                                                              .isTravelPackage
-                                                                              .value = false;
-                                                                          controller
-                                                                              .update();
-                                                                        },
-                                                                      );
-                                                                    } else {
-                                                                      ///check travel package apply available or unavailable
-                                                                      controller
-                                                                          .state
-                                                                          .checkPackageContext = context;
-                                                                      controller
-                                                                          .state
-                                                                          .checkPackageCode = controller
-                                                                              .state
-                                                                              .codeController
-                                                                              .text;
-                                                                      controller
-                                                                          .state
-                                                                          .checkPackageJourneyId = ValueStatic
-                                                                              .journeyIdGo;
-                                                                      controller
-                                                                          .state
-                                                                          .checkPackageTravelDate = ValueStatic
-                                                                              .goDate;
-                                                                      final ok =
-                                                                          await controller
-                                                                              .checkPackageApply();
-
-                                                                      ///travel package code is ok
-                                                                      if (ok) {
-                                                                        ///save that this travel package code that apply is OK, set isTravelPackageOk = true;
-                                                                        controller
-                                                                            .state
-                                                                            .isTravelPackageOk
-                                                                            .value = true;
-
-                                                                        // disable promo code
-                                                                        controller
-                                                                            .state
-                                                                            .status
-                                                                            .value = 0;
-                                                                        controller
-                                                                            .state
-                                                                            .couponController
-                                                                            .text = '';
-                                                                        controller
-                                                                            .update();
-                                                                      }
-                                                                      ///travel package code is unavailable
-                                                                      else {
-                                                                        ///save when this travel package code that apply is unavailable, set isTravelPackageOk = false;
-                                                                        ///(sometime package code is expired, invalid, or already apply in this date)
-                                                                        controller
-                                                                            .state
-                                                                            .isTravelPackageOk
-                                                                            .value = false;
-                                                                        controller
-                                                                            .update();
-
-                                                                        ///alert dialog travel package code is unavailable
-                                                                        alertDialogTravelPackage(
-                                                                          title:
-                                                                              'information'.tr,
-                                                                          description:
-                                                                              controller.state.msgPackage.value,
-                                                                          buttonText:
-                                                                              'yes'.tr,
-                                                                          onButtonPressed: () {
-                                                                            Navigator.pop(
-                                                                              context,
-                                                                            );
-
-                                                                            ///when user apply code and the code is unavailable, set isTravelPackage = false; then un_tick the checkbox
-                                                                            controller.state.isTravelPackage.value =
-                                                                                false;
-                                                                            controller.update();
-                                                                          },
-                                                                        );
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                }
-                                                              },
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Text(
-                                                  'apply_package'.tr,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 20),
+                                            _buildApplyPackageCode(context),
+                                            const SizedBox(height: 15),
 
                                             ///apply package code with same phone number
                                             if (controller
@@ -1454,7 +1188,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(height: 20),
+                                                    const SizedBox(height: 5),
                                                   ],
                                                 ),
                                           ],
@@ -1979,198 +1713,168 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                       )
                                       : const SizedBox.shrink(),
 
-                              // * value of round trip
-                              if (ValueStatic.journeyType == 2)
-                                Builder(
-                                  builder: (context) {
-                                    final subTotal =
-                                        (ValueStatic.totalPriceGo +
-                                            ValueStatic.totalPriceBack);
-                                    final lucky =
-                                        controller.state.luckyDraw.value
-                                            ? ValueStatic.luckyDrawValue
-                                            : 0;
+                              Builder(
+                                builder: (context) {
+                                  final double subTotal =
+                                      ValueStatic.journeyType == 2
+                                          ? (ValueStatic.totalPriceGo +
+                                              ValueStatic.totalPriceBack)
+                                          : (double.tryParse(
+                                                ValueStatic.totalPrice,
+                                              ) ??
+                                              0.0);
 
-                                    final discount =
-                                        forceZeroDiscount
-                                            ? 0.0
-                                            : (controller
-                                                    .state
-                                                    .isTravelPackage
-                                                    .value &&
-                                                controller
-                                                    .state
-                                                    .isTravelPackageOk
-                                                    .value)
-                                            ? controller
-                                                .getTravelPackageDiscountAmount(
-                                                  subTotal,
-                                                )
-                                            : ((!ValueStatic.seatPriceGoDiscount
-                                                    ? (ValueStatic
-                                                            .totalPriceGo *
-                                                        0.05)
-                                                    : 0) +
-                                                (!ValueStatic
-                                                        .seatPriceBackDiscount
-                                                    ? (ValueStatic
-                                                            .totalPriceBack *
-                                                        0.05)
-                                                    : 0));
-                                    final total =
-                                        forceZeroDiscount
-                                            ? (subTotal + lucky)
-                                            : (subTotal - discount + lucky);
+                                  final double lucky =
+                                      controller.state.luckyDraw.value
+                                          ? ValueStatic.luckyDrawValue
+                                          : 0.0;
 
-                                    return Column(
-                                      children: [
-                                        // if (shouldShowSubTotal)
-                                        //   Row(
-                                        //     children: [
-                                        //       Text(
-                                        //         'sub_total'.tr,
-                                        //         style: const TextStyle(
-                                        //           color: AppColors.textColor,
-                                        //         ),
-                                        //       ),
-                                        //       const Spacer(),
-                                        //       Text(
-                                        //         '\$${subTotal.toStringAsFixed(2)}',
-                                        //       ),
-                                        //     ],
-                                        //   ),
-                                        if (_shouldShowAmount(discount))
-                                          // const SizedBox(height: 10),
-                                          if (_shouldShowAmount(discount))
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  (controller
-                                                              .state
-                                                              .isTravelPackage
-                                                              .value &&
-                                                          controller
-                                                              .state
-                                                              .isTravelPackageOk
-                                                              .value)
-                                                      ? 'discount_travel'.tr
-                                                      : 'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  '\$${discount.toStringAsFixed(2)}',
-                                                ),
-                                              ],
-                                            ),
-                                        if (shouldShowGrandTotal)
-                                          const SizedBox(height: 10),
-                                        if (shouldShowGrandTotal)
-                                          Row(
+                                  double discount = 0.0;
+                                  String discountLabel = 'discount'.tr;
+
+                                  if (forceZeroDiscount || !enableDiscount) {
+                                    discount = 0.0;
+                                  } else if (controller.state.status.value ==
+                                          1 &&
+                                      !controller.packageOnlyDiscountMode) {
+                                    // Coupon discount
+                                    discount =
+                                        double.tryParse(
+                                          controller.state.balance.value,
+                                        ) ??
+                                        0.0;
+                                    discountLabel = 'dis_coupon'.tr;
+                                  } else if (controller
+                                          .state
+                                          .isTravelPackage
+                                          .value &&
+                                      controller
+                                          .state
+                                          .isTravelPackageOk
+                                          .value &&
+                                      ValueStatic.travelPackageDis > 0) {
+                                    // Travel package discount
+                                    discount = controller
+                                        .getTravelPackageDiscountAmount(
+                                          subTotal,
+                                        );
+                                    discountLabel = 'discount_travel'.tr;
+                                  } else {
+                                    // Standard 5% discount
+                                    if (ValueStatic.journeyType == 2) {
+                                      final disCountGo =
+                                          !ValueStatic.seatPriceGoDiscount
+                                              ? double.parse(
+                                                (ValueStatic.totalPriceGo *
+                                                        0.05)
+                                                    .toStringAsFixed(2),
+                                              )
+                                              : 0.0;
+                                      final disCountBack =
+                                          !ValueStatic.seatPriceBackDiscount
+                                              ? double.parse(
+                                                (ValueStatic.totalPriceBack *
+                                                        0.05)
+                                                    .toStringAsFixed(2),
+                                              )
+                                              : 0.0;
+                                      discount = disCountGo + disCountBack;
+                                    } else {
+                                      discount =
+                                          !ValueStatic.seatPriceGoDiscount
+                                              ? double.parse(
+                                                (subTotal * 0.05)
+                                                    .toStringAsFixed(2),
+                                              )
+                                              : 0.0;
+                                    }
+                                  }
+
+                                  final double total = (subTotal -
+                                          discount +
+                                          lucky)
+                                      .clamp(0.0, double.infinity);
+                                  final bool hasDiscountApplied =
+                                      discount > 0.0;
+
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (shouldShowGrandTotal &&
+                                          hasDiscountApplied)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 10.0,
+                                          ),
+                                          child: Row(
                                             children: [
                                               Text(
-                                                'total_mn'.tr,
+                                                'grand_total'.tr,
                                                 style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColors.textColor,
                                                 ),
                                               ),
                                               const Spacer(),
                                               Text(
-                                                '\$${total.toStringAsFixed(2)}',
+                                                '\$${subTotal.toStringAsFixed(2)}',
                                                 style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColors.textColor,
                                                 ),
                                               ),
                                             ],
                                           ),
-                                      ],
-                                    );
-                                  },
-                                ),
-
-                              if (ValueStatic.journeyType == 1 &&
-                                  forceZeroDiscount)
-                                Builder(
-                                  builder: (context) {
-                                    final subTotal =
-                                        double.tryParse(
-                                          ValueStatic.totalPrice,
-                                        ) ??
-                                        0;
-                                    final discount = 0.0;
-                                    final lucky =
-                                        controller.state.luckyDraw.value
-                                            ? ValueStatic.luckyDrawValue
-                                            : 0;
-                                    final total = subTotal + lucky;
-
-                                    final discountLabel =
-                                        controller.state.status.value == 1
-                                            ? 'dis_coupon'.tr
-                                            : (controller
-                                                    .state
-                                                    .isTravelPackage
-                                                    .value &&
-                                                controller
-                                                    .state
-                                                    .isTravelPackageOk
-                                                    .value)
-                                            ? 'discount_travel'.tr
-                                            : 'discount'.tr;
-
-                                    return Column(
-                                      children: [
-                                        // if (shouldShowSubTotal)
-                                        //   Row(
-                                        //     children: [
-                                        //       Text(
-                                        //         'sub_total'.tr,
-                                        //         style: const TextStyle(
-                                        //           color: AppColors.textColor,
-                                        //         ),
-                                        //       ),
-                                        //       const Spacer(),
-                                        //       Text(
-                                        //         '\$${subTotal.toStringAsFixed(2)}',
-                                        //       ),
-                                        //     ],
-                                        //   ),
-                                        if (_shouldShowAmount(discount))
-                                          // const SizedBox(height: 10),
-                                          if (_shouldShowAmount(discount))
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  discountLabel,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  '\$${discount.toStringAsFixed(2)}',
-                                                ),
-                                              ],
-                                            ),
-                                        if (controller.state.luckyDraw.value)
-                                          const SizedBox(height: 10),
-                                        if (controller.state.luckyDraw.value)
-                                          Row(
+                                        ),
+                                      if (discount > 0)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 10.0,
+                                          ),
+                                          child: Row(
                                             children: [
-                                              Text('lucky_draw'.tr),
+                                              Text(
+                                                discountLabel,
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
+                                              ),
+                                              const Spacer(),
+                                              Text(
+                                                '\$${discount.toStringAsFixed(2)}',
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      if (controller.state.luckyDraw.value &&
+                                          lucky > 0)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 10.0,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                'lucky_draw'.tr,
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
+                                              ),
                                               const Spacer(),
                                               Text(
                                                 '\$${lucky.toStringAsFixed(2)}',
+                                                style: const TextStyle(
+                                                  color: AppColors.textColor,
+                                                ),
                                               ),
                                             ],
                                           ),
-                                        if (shouldShowGrandTotal)
-                                          const SizedBox(height: 10),
-                                        // if (shouldShowGrandTotal)
+                                        ),
+                                      if (shouldShowSubTotal &&
+                                          shouldShowGrandTotal &&
+                                          hasDiscountApplied)
                                         Row(
                                           children: [
                                             Text(
@@ -2190,199 +1894,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    );
-                                  },
-                                ),
-
-                              // * value of one way with coupon code
-                              if (enableDiscount &&
-                                  ValueStatic.journeyType == 1 &&
-                                  controller.state.status.value == 1 &&
-                                  !controller.packageOnlyDiscountMode &&
-                                  !forceZeroDiscount)
-                                Column(
-                                  children: [
-                                    // if (shouldShowSubTotal)
-                                    //   Row(
-                                    //     children: [
-                                    //       Text(
-                                    //         'sub_total'.tr,
-                                    //         style: const TextStyle(
-                                    //           color: AppColors.textColor,
-                                    //         ),
-                                    //       ),
-                                    //       const Spacer(),
-                                    //       Text(
-                                    //         ValueStatic.seatPriceGoDiscount
-                                    //             ? '\$${(double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}'
-                                    //             : '\$${(double.parse(ValueStatic.totalPrice) * 0.95).toStringAsFixed(2)}',
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'dis_coupon'.tr,
-                                          style: const TextStyle(
-                                            color: AppColors.textColor,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Text(
-                                          ValueStatic.seatPriceGoDiscount
-                                              ? '\$${(double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}'
-                                              : '\$${(double.parse(ValueStatic.totalPrice) * 0.95).toStringAsFixed(2)}',
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    if (shouldShowGrandTotal)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'total_mn'.tr,
-                                            style: const TextStyle(
-                                              color: AppColors.textColor,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Text(
-                                            '\$${(double.parse(ValueStatic.totalPrice) - double.parse(ValueStatic.totalPrice)).toStringAsFixed(2)}',
-                                          ),
-                                        ],
-                                      ),
-                                  ],
-                                ),
-
-                              // * value of one way with travel package same phone number
-                              if (enableDiscount &&
-                                  ValueStatic.journeyType == 1 &&
-                                  controller.state.isPhone.value == false &&
-                                  controller.state.status.value == 0 &&
-                                  !forceZeroDiscount)
-                                Column(
-                                  children: [
-                                    // if (shouldShowSubTotal)
-                                    //   Row(
-                                    //     children: [
-                                    //       Text(
-                                    //         'sub_total'.tr,
-                                    //         style: const TextStyle(
-                                    //           color: AppColors.textColor,
-                                    //         ),
-                                    //       ),
-                                    //       const Spacer(),
-                                    //       Text('\$${ValueStatic.totalPrice}'),
-                                    //     ],
-                                    //   ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            true &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            true &&
-                                        ValueStatic.travelPackageDis > 0)
-                                      Column(
-                                        children: [
-                                          const SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text('discount_travel'.tr),
-                                              const Spacer(),
-                                              Text(
-                                                "\$${controller.getTravelPackageDiscountAmount(double.tryParse(ValueStatic.totalPrice) ?? 0.0).toStringAsFixed(2)}",
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    if (controller
-                                            .state
-                                            .isTravelPackage
-                                            .value ==
-                                        false)
-                                      if (ValueStatic.seatPriceGoDiscount ==
-                                          false)
-                                        Column(
-                                          children: [
-                                            const SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  ValueStatic.seatPriceGoDiscount ==
-                                                          true
-                                                      ? "\$${double.parse(ValueStatic.totalPrice).toStringAsFixed(2)}"
-                                                      : "\$${(double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                    if (controller
-                                            .state
-                                            .isTravelPackage
-                                            .value ==
-                                        true)
-                                      if (controller.state.isNoPackage.value ==
-                                          true)
-                                        if (ValueStatic.seatPriceGoDiscount ==
-                                            false)
-                                          Column(
-                                            children: [
-                                              const SizedBox(height: 10),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    'discount'.tr,
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.textColor,
-                                                    ),
-                                                  ),
-                                                  const Spacer(),
-                                                  Text(
-                                                    "\$${(double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)}",
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                    controller.state.luckyDraw.value
-                                        ? const SizedBox(height: 10)
-                                        : const SizedBox(),
-                                    controller.state.luckyDraw.value
-                                        ? Row(
-                                          children: [
-                                            Text('lucky_draw'.tr),
-                                            const Spacer(),
-                                            Text(
-                                              ValueStatic.journeyType == 2
-                                                  ? '\$${0.25 * (ValueStatic.oneWaySelectedSeat.length + ValueStatic.twoWaySelectedSeat.length)}'
-                                                  : '\$${0.25 * ValueStatic.oneWaySelectedSeat.length}',
-                                            ),
-                                          ],
-                                        )
-                                        : const SizedBox(),
-                                    const SizedBox(height: 8),
-                                    if (controller
-                                            .state
-                                            .isTravelPackage
-                                            .value ==
-                                        false)
-                                      if (shouldShowGrandTotal)
+                                      if (shouldShowGrandTotal &&
+                                          !hasDiscountApplied)
                                         Row(
                                           children: [
                                             Text(
@@ -2393,745 +1906,19 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               ),
                                             ),
                                             const Spacer(),
-                                            if (ValueStatic
-                                                .totalPrice
-                                                .isNotEmpty)
-                                              Text(
-                                                ValueStatic.seatPriceGoDiscount ==
-                                                        true
-                                                    ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2))).toStringAsFixed(2)}"
-                                                    : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            true &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            true)
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'total_mn'.tr,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Text(
-                                            (() {
-                                              final subTotal =
-                                                  double.tryParse(
-                                                    ValueStatic.totalPrice,
-                                                  ) ??
-                                                  0.0;
-                                              final lucky =
-                                                  controller
-                                                          .state
-                                                          .luckyDraw
-                                                          .value
-                                                      ? ValueStatic
-                                                          .luckyDrawValue
-                                                      : 0.0;
-                                              final discount = controller
-                                                  .getTravelPackageDiscountAmount(
-                                                    subTotal,
-                                                  );
-                                              final total = double.parse(
-                                                (subTotal - discount + lucky)
-                                                    .toStringAsFixed(2),
-                                              );
-                                              return '\$${total.toStringAsFixed(2)}';
-                                            })(),
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            true &&
-                                        controller.state.isNoPackage.value ==
-                                            true &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            false)
-                                      if (shouldShowGrandTotal)
-                                        Row(
-                                          children: [
                                             Text(
-                                              'total_mn'.tr,
+                                              '\$${total.toStringAsFixed(2)}',
                                               style: const TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.w400,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                            ),
-                                            const Spacer(),
-                                            if (ValueStatic
-                                                .totalPrice
-                                                .isNotEmpty)
-                                              Text(
-                                                ValueStatic.seatPriceGoDiscount ==
-                                                        true
-                                                    ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2)))}"
-                                                    : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            true &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            false &&
-                                        controller.state.isNoPackage.value ==
-                                            false)
-                                      if (shouldShowGrandTotal)
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'total_mn'.tr,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            if (ValueStatic
-                                                .totalPrice
-                                                .isNotEmpty)
-                                              Text(
-                                                ValueStatic.seatPriceGoDiscount ==
-                                                        true
-                                                    ? "\$${double.parse(((double.parse(ValueStatic.totalPrice) + ValueStatic.luckyDrawValue).toStringAsFixed(2)))}"
-                                                    : "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                  ],
-                                ),
-
-                              // * value of one way with travel package different phone number
-                              if (enableDiscount &&
-                                  ValueStatic.journeyType == 1 &&
-                                  controller.state.isPhone.value == true &&
-                                  controller.state.status.value == 0 &&
-                                  !forceZeroDiscount)
-                                Column(
-                                  children: [
-                                    // if (shouldShowSubTotal)
-                                    //   Row(
-                                    //     children: [
-                                    //       Text(
-                                    //         'sub_total'.tr,
-                                    //         style: const TextStyle(
-                                    //           color: AppColors.textColor,
-                                    //         ),
-                                    //       ),
-                                    //       const Spacer(),
-                                    //       Text('\$${ValueStatic.totalPrice}'),
-                                    //     ],
-                                    //   ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            true &&
-                                        controller.state.isPhone.value &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            false)
-                                      Column(
-                                        children: [
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  true &&
-                                              ValueStatic.seatPriceGoDiscount ==
-                                                  true)
-                                            const SizedBox(height: 10),
-
-                                          // * when go don't have dis and back have dis
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  true &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  false)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  "\$${((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-
-                                          // * when go have dis and back have dis
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  false)
-                                            const SizedBox(height: 10),
-
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  false)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  "\$${(double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-
-                                          // * when go have dis and back don't have dis
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  true)
-                                            const SizedBox(height: 10),
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  true)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  "\$${((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-
-                                          controller.state.luckyDraw.value
-                                              ? const SizedBox(height: 10)
-                                              : const SizedBox(),
-
-                                          controller.state.luckyDraw.value
-                                              ? Row(
-                                                children: [
-                                                  Text('lucky_draw'.tr),
-                                                  const Spacer(),
-                                                  Text(
-                                                    ValueStatic.journeyType == 2
-                                                        ? '\$${0.25 * (ValueStatic.oneWaySelectedSeat.length + ValueStatic.twoWaySelectedSeat.length)}'
-                                                        : '\$${0.25 * ValueStatic.oneWaySelectedSeat.length}',
-                                                  ),
-                                                ],
-                                              )
-                                              : const SizedBox(),
-
-                                          const SizedBox(height: 8),
-                                          if (controller
-                                                      .state
-                                                      .isTravelPackage
-                                                      .value ==
-                                                  true &&
-                                              controller
-                                                      .state
-                                                      .isTravelPackageOk
-                                                      .value ==
-                                                  true)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'total_mn'.tr,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  (() {
-                                                    final subTotal =
-                                                        double.tryParse(
-                                                          ValueStatic
-                                                              .totalPrice,
-                                                        ) ??
-                                                        0.0;
-                                                    final lucky =
-                                                        controller
-                                                                .state
-                                                                .luckyDraw
-                                                                .value
-                                                            ? ValueStatic
-                                                                .luckyDrawValue
-                                                            : 0.0;
-                                                    final discount = controller
-                                                        .getTravelPackageDiscountAmount(
-                                                          subTotal,
-                                                        );
-                                                    final total = double.parse(
-                                                      (subTotal -
-                                                              discount +
-                                                              lucky)
-                                                          .toStringAsFixed(2),
-                                                    );
-                                                    return '\$${total.toStringAsFixed(2)}';
-                                                  })(),
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          if (controller
-                                                      .state
-                                                      .isTravelPackage
-                                                      .value ==
-                                                  true &&
-                                              controller
-                                                      .state
-                                                      .isTravelPackageOk
-                                                      .value ==
-                                                  false)
-                                            if (shouldShowGrandTotal)
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    'total_mn'.tr,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  const Spacer(),
-
-                                                  // * when go don't have dis and back have dis
-                                                  if (ValueStatic
-                                                              .seatPriceGoDiscount ==
-                                                          true &&
-                                                      ValueStatic
-                                                              .seatPriceBackDiscount ==
-                                                          false)
-                                                    Text(
-                                                      "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-
-                                                  // * when go have dis and back have dis
-                                                  if (ValueStatic
-                                                              .seatPriceGoDiscount ==
-                                                          false &&
-                                                      ValueStatic
-                                                              .seatPriceBackDiscount ==
-                                                          false)
-                                                    Text(
-                                                      "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-
-                                                  // * when go have dis and back don't have dis
-                                                  if (ValueStatic
-                                                              .seatPriceGoDiscount ==
-                                                          false &&
-                                                      ValueStatic
-                                                              .seatPriceBackDiscount ==
-                                                          true)
-                                                    Text(
-                                                      "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                        ],
-                                      ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            true &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            true &&
-                                        ValueStatic.travelPackageDis > 0)
-                                      Column(
-                                        children: [
-                                          const SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Text('discount_travel'.tr),
-                                              const Spacer(),
-                                              Text(
-                                                "\$${controller.getTravelPackageDiscountAmount(double.tryParse(ValueStatic.totalPrice) ?? 0.0).toStringAsFixed(2)}",
-                                              ),
-                                            ],
-                                          ),
-                                          if (controller.state.luckyDraw.value)
-                                            const SizedBox(height: 10),
-                                          if (controller.state.luckyDraw.value)
-                                            Row(
-                                              children: [
-                                                Text('lucky_draw'.tr),
-                                                const Spacer(),
-                                                Text(
-                                                  '\$${ValueStatic.luckyDrawValue.toStringAsFixed(2)}',
-                                                ),
-                                              ],
-                                            ),
-                                          const SizedBox(height: 8),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'total_mn'.tr,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                (() {
-                                                  final subTotal =
-                                                      double.tryParse(
-                                                        ValueStatic.totalPrice,
-                                                      ) ??
-                                                      0.0;
-                                                  final lucky =
-                                                      controller
-                                                              .state
-                                                              .luckyDraw
-                                                              .value
-                                                          ? ValueStatic
-                                                              .luckyDrawValue
-                                                          : 0.0;
-                                                  final discount = controller
-                                                      .getTravelPackageDiscountAmount(
-                                                        subTotal,
-                                                      );
-                                                  final total = double.parse(
-                                                    (subTotal -
-                                                            discount +
-                                                            lucky)
-                                                        .toStringAsFixed(2),
-                                                  );
-                                                  return '\$${total.toStringAsFixed(2)}';
-                                                })(),
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            true &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            false)
-                                      if (ValueStatic.seatPriceGoDiscount ==
-                                              true &&
-                                          ValueStatic.seatPriceBackDiscount ==
-                                              true)
-                                        Column(
-                                          children: [
-                                            const SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  ValueStatic.seatPriceGoDiscount ==
-                                                          true
-                                                      ? "\$${double.parse(ValueStatic.totalPrice).toStringAsFixed(2)}"
-                                                      : "\$${(double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
                                             ),
                                           ],
                                         ),
-                                    if (controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            false &&
-                                        controller
-                                                .state
-                                                .isTravelPackageOk
-                                                .value ==
-                                            true)
-                                      if (ValueStatic.seatPriceGoDiscount ==
-                                              false &&
-                                          ValueStatic.seatPriceBackDiscount ==
-                                              false)
-                                        Column(
-                                          children: [
-                                            const SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  ValueStatic.seatPriceGoDiscount ==
-                                                          true
-                                                      ? "\$${double.parse(ValueStatic.totalPrice).toStringAsFixed(2)}"
-                                                      : "\$${(double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                    if (controller.state.isPhone.value &&
-                                        controller
-                                                .state
-                                                .isTravelPackage
-                                                .value ==
-                                            false)
-                                      Column(
-                                        children: [
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  true &&
-                                              ValueStatic.seatPriceGoDiscount ==
-                                                  true)
-                                            const SizedBox(height: 10),
-
-                                          // * when go don't have dis and back have dis
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  true &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  false)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  "\$${((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-
-                                          // * when go have dis and back have dis
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  false)
-                                            const SizedBox(height: 10),
-
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  false)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  "\$${(double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-
-                                          // * when go have dis and back don't have dis
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  true)
-                                            const SizedBox(height: 10),
-                                          if (ValueStatic.seatPriceGoDiscount ==
-                                                  false &&
-                                              ValueStatic
-                                                      .seatPriceBackDiscount ==
-                                                  true)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'discount'.tr,
-                                                  style: const TextStyle(
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  "\$${((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)}",
-                                                ),
-                                              ],
-                                            ),
-
-                                          controller.state.luckyDraw.value
-                                              ? const SizedBox(height: 10)
-                                              : const SizedBox(),
-
-                                          controller.state.luckyDraw.value
-                                              ? Row(
-                                                children: [
-                                                  Text('lucky_draw'.tr),
-                                                  const Spacer(),
-                                                  Text(
-                                                    ValueStatic.journeyType == 2
-                                                        ? '\$${0.25 * (ValueStatic.oneWaySelectedSeat.length + ValueStatic.twoWaySelectedSeat.length)}'
-                                                        : '\$${0.25 * ValueStatic.oneWaySelectedSeat.length}',
-                                                  ),
-                                                ],
-                                              )
-                                              : const SizedBox(),
-
-                                          if (shouldShowGrandTotal)
-                                            const SizedBox(height: 8),
-                                          if (shouldShowGrandTotal)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'total_mn'.tr,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-
-                                                // * when go don't have dis and back have dis
-                                                if (ValueStatic
-                                                            .seatPriceGoDiscount ==
-                                                        true &&
-                                                    ValueStatic
-                                                            .seatPriceBackDiscount ==
-                                                        false)
-                                                  Text(
-                                                    "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceBack) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-
-                                                // * when go have dis and back have dis
-                                                if (ValueStatic
-                                                            .seatPriceGoDiscount ==
-                                                        false &&
-                                                    ValueStatic
-                                                            .seatPriceBackDiscount ==
-                                                        false)
-                                                  Text(
-                                                    "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse((double.parse(ValueStatic.totalPrice) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-
-                                                // * when go have dis and back don't have dis
-                                                if (ValueStatic
-                                                            .seatPriceGoDiscount ==
-                                                        false &&
-                                                    ValueStatic
-                                                            .seatPriceBackDiscount ==
-                                                        true)
-                                                  Text(
-                                                    "\$${double.parse(((double.parse(ValueStatic.totalPrice) - (double.parse(((ValueStatic.totalPriceGo) * 0.05).toStringAsFixed(2)))) + ValueStatic.luckyDrawValue).toStringAsFixed(2))}",
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                              ],
-                                            ),
-                                        ],
-                                      ),
-                                  ],
-                                ),
+                                    ],
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         ),
@@ -3186,6 +1973,170 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildApplyPackageCode(BuildContext context) {
+    return Row(
+      children: [
+        //* checkbox
+        Container(
+          width: 25,
+          height: 25,
+          margin: const EdgeInsets.only(top: 5),
+          child: Transform.scale(
+            scale: 1.5,
+            child: Checkbox(
+              tristate: false,
+              activeColor: Colors.grey[300],
+              fillColor: WidgetStateColor.resolveWith(
+                (states) => controller.getColor(states),
+              ),
+              checkColor:
+                  ValueStatic.ticketType == '3'
+                      ? AppColors.airBusColor
+                      : AppColors.primaryColor,
+              side: const BorderSide(
+                color: Colors.transparent, //your desired color here
+              ),
+              value: controller.state.isTravelPackage.value,
+              onChanged:
+                  (controller.state.status.value == 1)
+                      ? null // disable checkbox when promo code applied
+                      : (value) async {
+                        ///user click apply and set isTravelPackage==true
+                        if (value != null) {
+                          controller.state.isTravelPackage.value = value;
+                          controller.update();
+                        }
+
+                        ///user not click or un_click apply
+                        if (value == false) {
+                          controller.state.codeController.text = '';
+                          // allow promo button again
+                          controller.state.isTravelPackageOk.value = false;
+                          controller.update();
+                        }
+
+                        ///user apply with the same phone number
+                        if (value! && !controller.state.isPhone.value) {
+                          ///check user have travel package or not
+                          final travelPackage = await TravelPackage()
+                              .getBuyList(context);
+
+                          /// when user don't have travel package, it will alert dialog
+                          if (travelPackage.body!.isEmpty) {
+                            ///when user don't have travel package, set isNoPackage = true;
+                            controller.state.isNoPackage.value = true;
+                            controller.update();
+
+                            ///alert dialog no package
+                            alertDialogTravelPackage(
+                              title: "information".tr,
+                              description: "no_package".tr,
+                              buttonText: 'yes'.tr,
+                              onButtonPressed: () {
+                                Navigator.pop(context);
+
+                                ///when user don't have travel package, set isTravelPackage = false; then un_tick the checkbox
+                                controller.state.isTravelPackage.value = false;
+                                controller.update();
+                              },
+                            );
+                          }
+                          ///when user have travel package
+                          else {
+                            ///when user have travel package, set isNoPackage = false;
+                            controller.state.isNoPackage.value = false;
+                            controller.update();
+
+                            ///get the first index package code
+                            String? packageCoded =
+                                travelPackage.body?[0].packageCode;
+                            controller.state.codeController.text =
+                                packageCoded!;
+
+                            ///set the first index package code to inputCodeController
+                            controller.state.codeController.text = packageCoded;
+                            controller.state.packageTypeOneWay.value =
+                                travelPackage.body![0].type!;
+                            controller.update();
+
+                            if (ValueStatic.vehicleTypeOneWay == 2 &&
+                                controller.state.packageTypeOneWay.value == 2) {
+                              alertDialogTravelPackage(
+                                title: "information".tr,
+                                description:
+                                    "First-class seats are not available for travel packages with a student grade A.",
+                                buttonText: 'yes'.tr,
+                                onButtonPressed: () {
+                                  Navigator.pop(context);
+
+                                  ///when user don't have travel package, set isTravelPackage = false; then un_tick the checkbox
+                                  controller.state.codeController.text = '';
+                                  controller.state.isTravelPackage.value =
+                                      false;
+                                  controller.update();
+                                },
+                              );
+                            } else {
+                              ///check travel package apply available or unavailable
+                              controller.state.checkPackageContext = context;
+                              controller.state.checkPackageCode =
+                                  controller.state.codeController.text;
+                              controller.state.checkPackageJourneyId =
+                                  ValueStatic.journeyIdGo;
+                              controller.state.checkPackageTravelDate =
+                                  ValueStatic.goDate;
+                              final ok = await controller.checkPackageApply();
+
+                              ///travel package code is ok
+                              if (ok) {
+                                ///save that this travel package code that apply is OK, set isTravelPackageOk = true;
+                                controller.state.isTravelPackageOk.value = true;
+
+                                // disable promo code
+                                controller.state.status.value = 0;
+                                controller.state.couponController.text = '';
+                                controller.update();
+                              }
+                              ///travel package code is unavailable
+                              else {
+                                ///save when this travel package code that apply is unavailable, set isTravelPackageOk = false;
+                                ///(sometime package code is expired, invalid, or already apply in this date)
+                                controller.state.isTravelPackageOk.value =
+                                    false;
+                                controller.update();
+
+                                ///alert dialog travel package code is unavailable
+                                alertDialogTravelPackage(
+                                  title: 'information'.tr,
+                                  description:
+                                      controller.state.msgPackage.value,
+                                  buttonText: 'yes'.tr,
+                                  onButtonPressed: () {
+                                    Navigator.pop(context);
+
+                                    ///when user apply code and the code is unavailable, set isTravelPackage = false; then un_tick the checkbox
+                                    controller.state.isTravelPackage.value =
+                                        false;
+                                    controller.update();
+                                  },
+                                );
+                              }
+                            }
+                          }
+                        }
+                      },
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          'apply_package'.tr,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ],
     );
   }
 

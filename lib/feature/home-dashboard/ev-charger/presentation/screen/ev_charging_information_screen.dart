@@ -4,6 +4,10 @@ import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../../base/base_url.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart'
+    as list_resp;
 import '../controller/ev_charging_information_controller.dart';
 
 class EvChargingInformationScreen extends StatefulWidget {
@@ -164,11 +168,11 @@ class _ChargingInformationScreenState
                     // --- 3. Promo & Points Rows ---
                     _buildListTile(
                       iconAsset: AssetImages.apply_code,
-                       title: 'Apply Promotion Code', 
-                       valueOfff: '5% OFF', 
-                       iconSize: 15,
-                       onTap: _showPromotionCodeDialog,
-                       ),
+                      title: 'Apply Promotion Code',
+                      valueOfff: '5% OFF',
+                      iconSize: 15,
+                      onTap: _showPromotionCodeDialog,
+                    ),
                     _buildListTile(
                       iconAsset: AssetImages.star,
                       title: 'Apply Point',
@@ -344,147 +348,230 @@ class _ChargingInformationScreenState
     );
   }
 
-  Widget _buildVoucherCard() {
+  Widget _buildVoucherCard({
+    required list_resp.Data voucher,
+    required bool isSelected,
+    VoidCallback? onTap,
+  }) {
     const double cardHeight = 115;
     const double leftWidth = 112;
     const double notchRadius = 13;
     const double borderRadius = 14;
-    Color borderColor = Colors.grey.shade500;
+    final Color borderColor =
+        isSelected ? AppColors.primaryColor : Colors.grey.shade500;
+    final double strokeWidth = isSelected ? 2.0 : 1.2;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: SizedBox(
-        height: cardHeight,
-        width: double.infinity,
-        child: CustomPaint(
-          painter: _VoucherBorderPainter(
-            leftWidth: leftWidth,
-            notchRadius: notchRadius,
-            borderRadius: borderRadius,
-            color: borderColor,
-          ),
-          child: Row(
-            children: [
-              ClipPath(
-                clipper: _VoucherLeftClipper(
-                  notchRadius: notchRadius,
-                  borderRadius: borderRadius,
-                ),
-                child: Container(
-                  width: leftWidth,
-                  height: cardHeight,
-                  color: AppColors.primaryColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 14,
-                  ),
-                  child: const Column(
-                    children: [
-                      Text(
-                        '5.0%',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 1.1,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'OFF',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 1.1,
-                        ),
-                      ),
+    final bool isActive =
+        voucher.displayStatus == 1 ||
+        (voucher.statusText?.toLowerCase() == 'active');
+    final Color statusColor = isActive ? const Color(0xFF16A34A) : Colors.grey;
+    final String statusText =
+        voucher.statusText ?? (isActive ? 'Active' : 'In Active');
+    final String discountPct =
+        voucher.discountType == 1
+            ? '${(voucher.discountValue ?? 0.0).toStringAsFixed(1)}%'
+            : '\$${voucher.discountValue}';
+    final String discountOff =
+        voucher.discountType == 1
+            ? '${voucher.discountValue}% OFF'
+            : '\$${voucher.discountValue} OFF';
 
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 7),
-                        child: Divider(
-                          color: Colors.white,
-                          height: 1,
-                          thickness: 1,
-                        ),
-                      ),
+    final String banner = voucher.banner ?? '';
+    final String bannerUrl =
+        banner.isNotEmpty
+            ? (banner.startsWith('http')
+                ? banner
+                : '${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}${banner.startsWith('/') ? banner.substring(1) : banner}')
+            : '';
 
-                      Text(
-                        '5% off with\nany charge',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          height: 1.35,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ClipPath(
-                  clipper: _VoucherRightClipper(
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: SizedBox(
+          height: cardHeight,
+          width: double.infinity,
+          child: CustomPaint(
+            painter: _VoucherBorderPainter(
+              leftWidth: leftWidth,
+              notchRadius: notchRadius,
+              borderRadius: borderRadius,
+              color: borderColor,
+              strokeWidth: strokeWidth,
+            ),
+            child: Row(
+              children: [
+                ClipPath(
+                  clipper: _VoucherLeftClipper(
                     notchRadius: notchRadius,
                     borderRadius: borderRadius,
                   ),
                   child: Container(
+                    width: leftWidth,
                     height: cardHeight,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(13),
-                        bottomRight: Radius.circular(13),
-                      ),
-                      border: Border.all(
-                        color: Colors.grey.shade500,
-                        width: 0.3,
-                      ),
-                    ),
-                    padding: const EdgeInsets.fromLTRB(26, 15, 14, 13),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    color: AppColors.primaryColor,
+                    child: Stack(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Voucher Code',
-                              style: TextStyle(
-                                color: Color(0xFF26232D),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
+                        if (bannerUrl.isNotEmpty)
+                          Positioned.fill(
+                            child: CachedNetworkImage(
+                              imageUrl: bannerUrl,
+                              fit: BoxFit.cover,
+                              errorWidget:
+                                  (context, url, error) =>
+                                      const SizedBox.shrink(),
+                            ),
+                          ),
+                        if (bannerUrl.isNotEmpty)
+                          Positioned.fill(
+                            child: Container(
+                              color: AppColors.primaryColor.withValues(
+                                alpha: 0.4,
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              '5% OFF',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                discountPct,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.1,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Valid Till - 31 December 2024',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Color(0xFF9A9CAE),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+                              const SizedBox(height: 4),
+                              const Text(
+                                'OFF',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.1,
+                                ),
+                              ),
+
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 7),
+                                child: Divider(
+                                  color: Colors.white,
+                                  height: 1,
+                                  thickness: 1,
+                                ),
+                              ),
+
+                              Expanded(
+                                child: Text(
+                                  voucher.batchTitle ?? '',
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: ClipPath(
+                    clipper: _VoucherRightClipper(
+                      notchRadius: notchRadius,
+                      borderRadius: borderRadius,
+                    ),
+                    child: Container(
+                      height: cardHeight,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(13),
+                          bottomRight: Radius.circular(13),
+                        ),
+                        border: Border.all(
+                          color: Colors.grey.shade500,
+                          width: 0.3,
+                        ),
+                      ),
+                      padding: const EdgeInsets.fromLTRB(26, 15, 14, 13),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      voucher.voucherCode ?? '',
+                                      style: const TextStyle(
+                                        color: Color(0xFF26232D),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.circle,
+                                    size: 8,
+                                    color: statusColor,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    statusText,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                discountOff,
+                                style: const TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            voucher.expiresDate != null
+                                ? 'Valid Till - ${voucher.expiresDate}'
+                                : '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF9A9CAE),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -672,9 +759,8 @@ class _ChargingInformationScreenState
   }
 
   // Helper Widget for Promo/Points
-  Widget _buildListTile(
-     {
-      required String iconAsset,
+  Widget _buildListTile({
+    required String iconAsset,
     required String title,
     required String valueOfff,
     required double iconSize,
@@ -702,7 +788,13 @@ class _ChargingInformationScreenState
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             ),
             const Spacer(),
-            Text(valueOfff, style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.w600),),
+            Text(
+              valueOfff,
+              style: TextStyle(
+                color: AppColors.primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             const SizedBox(width: 15),
             const Icon(
               Icons.arrow_forward_ios,
@@ -716,6 +808,11 @@ class _ChargingInformationScreenState
   }
 
   Future<void> _showPromotionCodeDialog() {
+    // Reset selected code and input field on open to avoid stale state
+    controller.selectedVoucherCode.value = '';
+    controller.promoCodeController.text = '';
+    controller.searchQuery.value = '';
+
     return Get.dialog(
       Dialog(
         backgroundColor: Colors.transparent,
@@ -751,26 +848,47 @@ class _ChargingInformationScreenState
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      // controller: controller.promoCodeController,
-                      decoration: InputDecoration(
-                        hintText: 'Code',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade400),
+                    child: Obx(
+                      () => TextField(
+                        controller: controller.promoCodeController,
+                        onChanged: (val) {
+                          controller.selectedVoucherCode.value = val;
+                          controller.searchQuery.value = val;
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Code',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          suffixIcon:
+                              controller.searchQuery.value.isNotEmpty
+                                  ? IconButton(
+                                    icon: const Icon(
+                                      Icons.clear,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      controller.promoCodeController.clear();
+                                      controller.searchQuery.value = '';
+                                      controller.selectedVoucherCode.value = '';
+                                      controller.searchVoucher('');
+                                    },
+                                  )
+                                  : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade400),
+                          ),
                         ),
                       ),
                     ),
@@ -789,9 +907,69 @@ class _ChargingInformationScreenState
                 ],
               ),
               const SizedBox(height: 10),
-              _buildVoucherCard(),
-              const SizedBox(height: 10),
-              _buildVoucherCard(),
+
+              SizedBox(
+                height: 280,
+                child: Obx(() {
+                  if (controller.isLoadingVouchers.value &&
+                      controller.voucherList.isEmpty) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryColor,
+                      ),
+                    );
+                  }
+                  if (controller.voucherList.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            AssetImages.emptyVoucher,
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'voucher_is_empty'.tr,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: controller.voucherList.length,
+                    separatorBuilder:
+                        (context, index) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final voucher = controller.voucherList[index];
+                      return Obx(() {
+                        final bool isSelected =
+                            controller.selectedVoucherCode.value ==
+                            voucher.voucherCode;
+                        return _buildVoucherCard(
+                          voucher: voucher,
+                          isSelected: isSelected,
+                          onTap: () {
+                            controller.selectedVoucherCode.value =
+                                voucher.voucherCode ?? '';
+                            controller.promoCodeController.text =
+                                voucher.voucherCode ?? '';
+                            controller.searchQuery.value =
+                                voucher.voucherCode ?? '';
+                          },
+                        );
+                      });
+                    },
+                  );
+                }),
+              ),
 
               const SizedBox(height: 20),
               Row(
@@ -815,7 +993,10 @@ class _ChargingInformationScreenState
                   const SizedBox(width: 14),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () => Get.back(),
+                      onPressed: () {
+                        final code = controller.promoCodeController.text;
+                        controller.applySelectedVoucher(code);
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         backgroundColor: AppColors.primaryColor,
@@ -845,14 +1026,11 @@ class _ChargingInformationScreenState
   }
 
   Future<void> _showApplyPointDialog() {
-    final options = <Map<String, dynamic>>[
-      {'kwh': 5, 'points': 500},
-      {'kwh': 10, 'points': 1000},
-      {'kwh': 50, 'points': 5000},
-    ];
-
     controller.pointController.text = '';
-    int selectedIndex = 0;
+    int selectedIndex = -1;
+
+    // Refresh point list from API when dialog opens
+    controller.fetchPointList();
 
     return Get.dialog(
       StatefulBuilder(
@@ -912,63 +1090,88 @@ class _ChargingInformationScreenState
                     style: TextStyle(color: Colors.black54, fontSize: 13),
                   ),
                   const SizedBox(height: 10),
-                  Row(
-                    children: List.generate(options.length, (i) {
-                      final opt = options[i];
-                      final isSelected = selectedIndex == i;
-                      return Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            right: i == options.length - 1 ? 0 : 10,
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              setDialogState(() {
-                                selectedIndex = i;
-                              });
-                            },
-                            borderRadius: BorderRadius.circular(10),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color:
-                                    isSelected
-                                        ? const Color(0xFFE26A15)
-                                        : const Color(0xFFEEF2FF),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    '${opt['kwh']} kWh',
-                                    style: TextStyle(
-                                      color:
-                                          isSelected
-                                              ? Colors.white
-                                              : const Color(0xFF2B3DBB),
-                                      fontWeight: FontWeight.w700,
+                  Obx(() {
+                    if (controller.isLoadingPoints.value &&
+                        controller.pointList.isEmpty) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFE26A15),
+                        ),
+                      );
+                    }
+                    final displayOptions = controller.pointList.isNotEmpty
+                        ? controller.pointList.map((item) => {
+                            'name': item.name ?? (item.point != null ? '${(item.point! / 100).toStringAsFixed(0)} kWh' : ''),
+                            'point': item.point ?? 0,
+                          }).toList()
+                        : [
+                            {'name': '5 kWh', 'point': 500},
+                            {'name': '10 kWh', 'point': 1000},
+                            {'name': '50 kWh', 'point': 5000},
+                          ];
+
+                    return Row(
+                      children: List.generate(displayOptions.length, (i) {
+                        final opt = displayOptions[i];
+                        final isSelected = selectedIndex == i;
+                        return Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: i == displayOptions.length - 1 ? 0 : 10,
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                setDialogState(() {
+                                  selectedIndex = i;
+                                  controller.pointController.text =
+                                      opt['point'].toString();
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      isSelected
+                                          ? const Color(0xFFE26A15)
+                                          : const Color(0xFFEEF2FF),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      opt['name'].toString(),
+                                      style: TextStyle(
+                                        color:
+                                            isSelected
+                                                ? Colors.white
+                                                : const Color(0xFF2B3DBB),
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${opt['points']} Points',
-                                    style: TextStyle(
-                                      color:
-                                          isSelected
-                                              ? Colors.white
-                                              : const Color(0xFF2B3DBB),
-                                      fontSize: 12,
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${opt['point']} Points',
+                                      style: TextStyle(
+                                        color:
+                                            isSelected
+                                                ? Colors.white
+                                                : const Color(0xFF2B3DBB),
+                                        fontSize: 12,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    }),
-                  ),
+                        );
+                      }),
+                    );
+                  }),
                   const SizedBox(height: 12),
                   const Text(
                     'Or enter your preferred amount',
@@ -978,6 +1181,11 @@ class _ChargingInformationScreenState
                   TextField(
                     controller: controller.pointController,
                     keyboardType: TextInputType.number,
+                    onChanged: (val) {
+                      setDialogState(() {
+                        selectedIndex = -1;
+                      });
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter',
                       hintStyle: TextStyle(color: Colors.grey.shade400),
@@ -1032,7 +1240,29 @@ class _ChargingInformationScreenState
                       const SizedBox(width: 14),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => Get.back(),
+                          onPressed: () {
+                            if (selectedIndex >= 0) {
+                              final displayOptions =
+                                  controller.pointList.isNotEmpty
+                                      ? controller.pointList.map((item) => {
+                                          'name':
+                                              item.name ??
+                                              (item.point != null
+                                                  ? '${(item.point! / 100).toStringAsFixed(0)} kWh'
+                                                  : ''),
+                                          'point': item.point ?? 0,
+                                        }).toList()
+                                      : [
+                                          {'name': '5 kWh', 'point': 500},
+                                          {'name': '10 kWh', 'point': 1000},
+                                          {'name': '50 kWh', 'point': 5000},
+                                        ];
+                              controller.pointController.text =
+                                  displayOptions[selectedIndex]['point']
+                                      .toString();
+                            }
+                            Get.back();
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             backgroundColor: const Color(0xFFE26A15),
@@ -1177,12 +1407,14 @@ class _VoucherBorderPainter extends CustomPainter {
     required this.notchRadius,
     required this.borderRadius,
     required this.color,
+    this.strokeWidth = 1.2,
   });
 
   final double leftWidth;
   final double notchRadius;
   final double borderRadius;
   final Color color;
+  final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -1190,7 +1422,7 @@ class _VoucherBorderPainter extends CustomPainter {
         Paint()
           ..color = color
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2;
+          ..strokeWidth = strokeWidth;
 
     final path =
         Path()
@@ -1253,6 +1485,7 @@ class _VoucherBorderPainter extends CustomPainter {
     return oldDelegate.leftWidth != leftWidth ||
         oldDelegate.notchRadius != notchRadius ||
         oldDelegate.borderRadius != borderRadius ||
-        oldDelegate.color != color;
+        oldDelegate.color != color ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }

@@ -25,10 +25,26 @@ class BaseUrl {
   // http://localhost:8512/vetExpressTicketApiLocal/swagger-ui.html#/16.%20Booking/saveBookingUsingPOST
   // http://localhost:8512/vetExpressTicketApiLocal/swagger-ui.html#/03.%20Destinations/getDestinationFromListUsingPOST
 
+  // https://vetticket.utlog.net/payments/acledaXpay/VTCK-tsYxzqBBEQHypA7/DsquDNFD3MpvDcOLeFLONyYZUjJZFKS6wxX
+
+  // Production
+  // static String BASE_URL = 'https://tomapicaps.utlog.net/vetAppApi/'; //logistic
+  // static String BASE_URL_TICKET =
+  //     'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ticket
+  // static String BASE_URL_EV =
+  //     'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ev
+  // static String BASE_URL_SLIDE_IMAGE =
+  //     'https://oc.utlog.net/public/slide_photo/';
+  // static String PAYMENT_URL = 'https://vetticket.utlog.net/';
+  // static String BASE_URL_UPLOAD_IMAGE = 'https://oc.utlog.net/';
+
   static const String _flavor = String.fromEnvironment(
     'FLAVOR',
     defaultValue: 'qa',
   );
+
+  static String get flavor => _flavor;
+
   static final String BASE_URL =
       _flavor == 'prod'
           ? 'https://tomapicaps.utlog.net/vetAppApi/'
@@ -41,6 +57,7 @@ class BaseUrl {
       _flavor == 'prod'
           ? 'https://newpapi.utebi.com/vetEvChargerCustomerAPi/'
           : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
+  // : 'http://srouyapi.duckdns.org:8093/vetEvChargerCustomerAPi/';
   static final String BASE_URL_SLIDE_IMAGE =
       _flavor == 'prod'
           ? 'https://oc.utlog.net/public/slide_photo/'
@@ -58,18 +75,11 @@ class BaseUrl {
           ? 'https://oc.utlog.net/'
           : 'https://qacl.udaya-tech.com/0412_VETOc_Web/';
 
-  // https://vetticket.utlog.net/payments/acledaXpay/VTCK-tsYxzqBBEQHypA7/DsquDNFD3MpvDcOLeFLONyYZUjJZFKS6wxX
-
-  // Production
-  // static String BASE_URL = 'https://tomapicaps.utlog.net/vetAppApi/'; //logistic
-  // static String BASE_URL_TICKET =
-  //     'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ticket
-  // static String BASE_URL_EV =
-  //     'https://vettkexpapp.utlog.net/vetExpressTicketApi/'; //ev
-  // static String BASE_URL_SLIDE_IMAGE =
-  //     'https://oc.utlog.net/public/slide_photo/';
-  // static String PAYMENT_URL = 'https://vetticket.utlog.net/';
-  // static String BASE_URL_UPLOAD_IMAGE = 'https://oc.utlog.net/';
+  // Use for chagring ev
+  static final String BASE_URL_WEB_SOCKET =
+      _flavor == 'prod'
+          ? 'ws://srouyapi.duckdns.org:9898/OCPI/ws?username=ocpi-dashboard/topic/ocpi/commands'
+          : 'ws://srouyapi.duckdns.org:9898/OCPI/ws?username=ocpi-dashboard/topic/ocpi/commands';
 
   // Version App
   static String APP_VERSION_ANDROID = '2.1.4';

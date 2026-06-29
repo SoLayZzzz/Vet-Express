@@ -66,15 +66,6 @@ class _EvRedeemPointScreenState extends State<EvRedeemPointScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const Spacer(),
-                  Text(
-                    '${(Get.arguments is Map && (Get.arguments as Map)['points'] != null) ? (Get.arguments as Map)['points'] : 190} Points',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -100,11 +91,11 @@ class _EvRedeemPointScreenState extends State<EvRedeemPointScreen> {
                       itemCount: _options.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                       childAspectRatio: 1.5,
-                      ),
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 1.5,
+                          ),
                       itemBuilder: (context, index) {
                         final opt = _options[index];
                         final selected = _selectedIndex == index;
@@ -117,9 +108,10 @@ class _EvRedeemPointScreenState extends State<EvRedeemPointScreen> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: selected
-                                  ? AppColors.primaryColor
-                                  : const Color(0xFFF2F4F7),
+                              color:
+                                  selected
+                                      ? AppColors.primaryColor
+                                      : const Color(0xFFF2F4F7),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             padding: const EdgeInsets.all(12),
@@ -218,10 +210,7 @@ class _EvRedeemPointScreenState extends State<EvRedeemPointScreen> {
                   icon: const Icon(Icons.auto_awesome, size: 22),
                   label: const Text(
                     'Redeem Now',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                   ),
                 ),
               ),

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/feature/auth/data/model/request/refreshToken_login_request.dart';
 import 'package:express_vet/feature/auth/data/model/request/register_request.dart';
@@ -19,15 +21,74 @@ class AuthNetworkRequest {
 
   AuthNetworkRequest(this.netWorkDataSource);
 
-  Future<LoginResponse> login(LoginRequest request) async {
-    final json = await netWorkDataSource.postMultipart(
-      Endpoint.authLogin,
-      fields: request.toFields(),
-      attachAuth: false,
-      timeout: const Duration(seconds: Constrains.timeout180),
-    );
+  String _resolveUrl(String base, String path) {
+    final normalizedBase = base.endsWith('/') ? base : '$base/';
+    return Uri.parse(normalizedBase).resolve(path).toString();
+  }
 
-    return LoginResponse.fromJson(json);
+  String _maskToken(String token) {
+    final t = token.trim();
+    if (t.isEmpty) return '';
+    if (t.length <= 12) return '***';
+    return '${t.substring(0, 6)}...${t.substring(t.length - 6)}';
+  }
+
+  Map<String, dynamic> _redactMap(Map<String, dynamic> input) {
+    final out = <String, dynamic>{};
+    for (final entry in input.entries) {
+      final k = entry.key;
+      final lower = k.toLowerCase();
+      final v = entry.value;
+      if (lower.contains('password')) {
+        out[k] = v;
+      } else if (lower.contains('token') || lower.contains('authorization')) {
+        out[k] = v is String ? _maskToken(v) : '***';
+      } else {
+        out[k] = v;
+      }
+    }
+    return out;
+  }
+
+  Map<String, dynamic> _redactDynamicJson(dynamic input) {
+    if (input is Map) {
+      return _redactMap(
+        input.map((k, v) => MapEntry(k.toString(), v)),
+      );
+    }
+    return <String, dynamic>{'data': input};
+  }
+
+  Future<LoginResponse> login(LoginRequest request) async {
+    final fields = request.toFields();
+    final startedAt = DateTime.now();
+    if (kDebugMode) {
+      debugPrint('========== AUTH LOGIN (REQUEST) ==========');
+      debugPrint('url=${_resolveUrl(netWorkDataSource.baseUrl, Endpoint.authLogin)}');
+      debugPrint('fields=${jsonEncode(_redactMap(fields.map((k, v) => MapEntry(k, v))))}');
+    }
+    try {
+      final json = await netWorkDataSource.postMultipart(
+        Endpoint.authLogin,
+        fields: fields,
+        attachAuth: false,
+        timeout: const Duration(seconds: Constrains.timeout180),
+      );
+      if (kDebugMode) {
+        final ms = DateTime.now().difference(startedAt).inMilliseconds;
+        debugPrint('========== AUTH LOGIN (RESPONSE) =========');
+        debugPrint('durationMs=$ms');
+        debugPrint('json=${jsonEncode(_redactDynamicJson(json))}');
+      }
+      return LoginResponse.fromJson(json);
+    } catch (e) {
+      if (kDebugMode) {
+        final ms = DateTime.now().difference(startedAt).inMilliseconds;
+        debugPrint('========== AUTH LOGIN (ERROR) ===========');
+        debugPrint('durationMs=$ms error=$e');
+      }
+      rethrow;
+    }
   }
 
   Future<void> logout({required String deviceId}) async {

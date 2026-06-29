@@ -92,13 +92,6 @@ class _PaymentScreenState extends State<PaymentScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.detached) {
-      controller.setLoop(false);
-      return;
-    }
-
     if (state == AppLifecycleState.resumed) {
       log('On Resume');
 
@@ -466,17 +459,15 @@ class _PaymentScreenState extends State<PaymentScreen>
                   //           AppColors.greyColor,
                   //     ),
                   //   ),
-                  const Divider(thickness: 1),
+                  // const Divider(thickness: 1),
 
                   if (_hasVisibleAmount(widget.datas.body?.totalDiscountTravel))
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      child: view(
-                        'discount_travel'.tr,
-                        "\$${widget.datas.body!.totalDiscountTravel}",
-                        textColor: AppColors.greyColor,
-                      ),
+                    view(
+                      'discount_travel'.tr,
+                      "\$${widget.datas.body!.totalDiscountTravel}",
+                      textColor: AppColors.greyColor,
                     ),
+                     const Divider(thickness: 1),
                   if (_hasVisibleAmount(selectedDiscountAmount))
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -486,7 +477,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                         textColor: AppColors.greyColor,
                       ),
                     ),
-                  if (_hasVisibleAmount(selectedServiceFeeAmount))
+                  if (_hasVisibleAmount(selectedServiceFeeAmount) ||
+                      controller.state.paymentMethodId == 6 ||
+                      controller.state.paymentMethodId == 7)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
                       child: view(
@@ -603,6 +596,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   //     "\$${apiPlatformDiscountAll.toStringAsFixed(2)}",
                   //     textColor: AppColors.greyColor,
                   //   ),
+                  //  Divider(height: 10, thickness: 1),
                   if (_hasVisibleAmount(
                     _getTravelPackageDiscountItem(
                       widget.datas.body!.orderPaymentLists![index],
@@ -621,7 +615,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                     ),
                   const Divider(height: 10, thickness: 1),
 
-                  if (_hasVisibleAmount(selectedServiceFeeAmount))
+                  if (_hasVisibleAmount(selectedServiceFeeAmount) ||
+                      controller.state.paymentMethodId == 6 ||
+                      controller.state.paymentMethodId == 7)
                     view(
                       _getSelectedPaymentServiceFeePercent(
                                 paymentMethods:

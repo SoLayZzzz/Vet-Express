@@ -274,9 +274,16 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             value: (bookingData.data?.body?.data?[0].bookingDate).toString(),
           ),
 
+         
           _item(
             label: 'Email'.tr,
-            value: bookingData.data?.body?.data?[0].email ?? '-',
+            value:
+                _getEmailForDisplay(bookingData.data?.body?.data?[0].email) ==
+                        '*@gmail.com'
+                    ? '-'
+                    : _getEmailForDisplay(
+                        bookingData.data?.body?.data?[0].email,
+                      ),
             color: AppColors.secondaryColor,
           ),
           _item(
@@ -574,11 +581,26 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   value: (bookingData.data?.body?.data?[0].subTotal).toString(),
                 ),
                 const SizedBox(height: 10),
-                _listPrice(
-                  label: "discount".tr,
-                  value: (bookingData.data?.body?.data?[0].discount).toString(),
-                ),
-                const SizedBox(height: 10),
+                if (_shouldShowDiscount(
+                  bookingData.data?.body?.data?[0].discount,
+                )) ...[
+                  _listPrice(
+                    label: "discount".tr,
+                    value:
+                        (bookingData.data?.body?.data?[0].discount).toString(),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+                if (_shouldShowServiceFee(
+                  bookingData.data?.body?.data?[0].serviceFee,
+                )) ...[
+                  _listPrice(
+                    label: "service_fee".tr,
+                    value:
+                        (bookingData.data?.body?.data?[0].serviceFee).toString(),
+                  ),
+                  const SizedBox(height: 10),
+                ],
                 _listPrice(
                   label: "total_ticket_price".tr,
                   value:
@@ -813,6 +835,13 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     return _formatTelephone(trimmed);
   }
 
+  String _getEmailForDisplay(dynamic emailValue) {
+    final raw = emailValue?.toString() ?? '';
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty || trimmed == 'null') return '-';
+    return trimmed;
+  }
+
   String _formatTelephone(String input) {
     return CheckInput.formatPhoneNumber(input);
   }
@@ -821,5 +850,19 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     if (seatType == 1) return 'Seater Bus';
     if (seatType == 2) return 'Sleeper Bus';
     return '-';
+  }
+
+  bool _shouldShowDiscount(String? discountString) {
+    if (discountString == null) return false;
+    final clean = discountString.replaceAll(r'$', '').trim();
+    final value = double.tryParse(clean) ?? 0.0;
+    return value > 0;
+  }
+
+  bool _shouldShowServiceFee(String? feeString) {
+    if (feeString == null) return false;
+    final clean = feeString.replaceAll(r'$', '').trim();
+    final value = double.tryParse(clean) ?? 0.0;
+    return value > 0;
   }
 }

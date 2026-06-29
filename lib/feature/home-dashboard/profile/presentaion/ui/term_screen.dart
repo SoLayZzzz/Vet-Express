@@ -40,6 +40,14 @@ class TermScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'policy_title'.tr,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
 
                   //* condition ticket
                   if (from == 1)
@@ -48,568 +56,156 @@ class TermScreen extends StatelessWidget {
                       children: [
                         //1
                         const SizedBox(height: 10),
-                        Text(
-                          '1'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('1'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '1.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '1.2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('1.1'),
+                        _buildBulletRow('1.2'),
+                        _buildBulletRow('1.3'),
+                        _buildBulletRow('1.4'),
                         const SizedBox(height: 10),
 
                         //2
-                        Text(
-                          '2'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('2'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '2.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '2.2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('2.1'),
+                        _buildBulletRow('2.2'),
+                        _buildBulletRow('2.3'),
+                        _buildBulletRow('2.4'),
+                        _buildBulletRow('2.5'),
+                        _buildBulletRow('2.6'),
+                        _buildBulletRow('2.7'),
                         const SizedBox(height: 10),
 
                         //3
-                        Text(
-                          '3'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('3'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '3.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '3.2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '3.3'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '3.4'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('3.1'),
+                        _buildBulletRow('3.2'),
+                        _buildBulletRow('3.3'),
+                        _buildBulletRow('3.4'),
+                        _buildBulletRow('3.5'),
                         const SizedBox(height: 10),
 
                         //4
-                        Text(
-                          '4'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('4'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '4.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '4.2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('4.1'),
+                        _buildBulletRow('4.2'),
+                        _buildBulletRow('4.3'),
                         const SizedBox(height: 10),
 
                         //5
-                        Text(
-                          '5'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('5'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Ionicons.star, size: 10),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '5.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '5.2'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '5.3'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '5.4'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '5.5'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
+                        _buildBulletRow('5.1'),
+                        _buildBulletRow('5.2'),
+                        _buildBulletRow('5.3'),
+                        _buildBulletRow('5.4'),
                         const SizedBox(height: 10),
 
                         //6
-                        Text(
-                          '6'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('6'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '6.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '6.2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-
-                        //7
-                        Text(
-                          '7'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Ionicons.star, size: 10),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '7.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
+                         _buildBulletRow('6.1', isStar: true),
+                          Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '7.2'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '7.3'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '7.4'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '7.5'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '7.6'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      '7.7'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              _buildBulletRow('6.1.1'),
+                              _buildBulletRow('6.1.2'),
+                              _buildBulletRow('6.1.3'),
+                              _buildBulletRow('6.1.4'),
                             ],
                           ),
                         ),
+                         _buildBulletRow('6.2'),
+                         _buildBulletRow('6.3'),
+                         _buildBulletRow('6.4'),
+                        
+                        const SizedBox(height: 10),
 
+                        //7
+                        const SizedBox(height: 10),
+                        _buildTitle('7'),
+                        const SizedBox(height: 5),
+                        _buildBulletRow('7.1'),
+                        _buildBulletRow('7.2'),
+                        _buildBulletRow('7.3'),
+                        _buildBulletRow('7.4'),
                         const SizedBox(height: 10),
 
                         //8
-                        Text(
-                          '8'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
+                         _buildTitle('8'),
+                        const SizedBox(height: 5),
+                         _buildBulletRow('8.1', isStar: true),
+                          Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildBulletRow('8.1.1'),
+                              _buildBulletRow('8.1.2'),
+                              _buildBulletRow('8.1.3'),
+                              _buildBulletRow('8.1.4'),
+                              _buildBulletRow('8.1.5'),
+                              _buildBulletRow('8.1.6'),
+                              _buildBulletRow('8.1.7'),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '8.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '8.2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                         _buildBulletRow('8.2'),
+                       
                         const SizedBox(height: 10),
 
                         //9
-                        Text(
-                          '9'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('9'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '9.1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                '9.2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('9.1'),
+                        _buildBulletRow('9.2'),
+                        _buildBulletRow('9.3'),
+                        const SizedBox(height: 10),
+
+                         //10
+                        _buildTitle('10'),
+                        const SizedBox(height: 5),
+                        _buildBulletRow('10.1'),
+                        _buildBulletRow('10.2'),
+                        _buildBulletRow('10.3'),
+                        _buildBulletRow('10.4'),
+                        const SizedBox(height: 10),
+
+                        //10
+                        _buildTitle('11'),
+                        const SizedBox(height: 5),
+                        _buildBulletRow('11.1'),
+                        _buildBulletRow('11.2'),
+                        _buildBulletRow('11.3'),
+                        const SizedBox(height: 10),
+
+                         //10
+                        _buildTitle('12'),
+                        const SizedBox(height: 5),
+                        _buildBulletRow('12.1'),
+                        _buildBulletRow('12.2'),
+                        _buildBulletRow('12.3'),
+                        _buildBulletRow('12.4'),
+                        _buildBulletRow('12.5'),
+                        const SizedBox(height: 10),
+
+                        //10
+                        _buildTitle('13'),
+                        const SizedBox(height: 5),
+                        _buildBulletRow('13.1'),
+                        _buildBulletRow('13.2'),
+                        _buildBulletRow('13.3'),
+                        _buildBulletRow('13.4'),
+                        const SizedBox(height: 10),
+
+                        //10
+                        _buildTitle('14'),
+                        const SizedBox(height: 5),
+                        _buildBulletRow('14.1'),
                         const SizedBox(height: 10),
                       ],
                     ),
@@ -620,107 +216,17 @@ class TermScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                't1'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('t1'),
                         const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                't2'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('t2'),
                         const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                't3'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('t3'),
                         const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                't4'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('t4'),
                         const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                't5'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('t5'),
                         const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                't6'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('t6'),
                       ],
                     ),
 
@@ -731,360 +237,63 @@ class TermScreen extends StatelessWidget {
                       children: [
                         //1
                         const SizedBox(height: 10),
-                        Text(
-                          'b1'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('b1'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b11'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b12'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b13'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('b11'),
+                        _buildBulletRow('b12'),
+                        _buildBulletRow('b13'),
                         const SizedBox(height: 10),
 
                         //2
-                        Text(
-                          'b2'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('b2'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b21'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b22'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('b21'),
+                        _buildBulletRow('b22'),
                         const SizedBox(height: 10),
 
                         //3
-                        Text(
-                          'b3'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('b3'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b31'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b32'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b33'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('b31'),
+                        _buildBulletRow('b32'),
+                        _buildBulletRow('b33'),
                         const SizedBox(height: 10),
 
                         //4
-                        Text(
-                          'b4'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('b4'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Ionicons.star, size: 10),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b40'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('b40', isStar: true),
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      'b41'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      'b42'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      'b43'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("•"),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      'b44'.tr,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.textColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              _buildBulletRow('b41'),
+                              _buildBulletRow('b42'),
+                              _buildBulletRow('b43'),
+                              _buildBulletRow('b44'),
                             ],
                           ),
                         ),
                         const SizedBox(height: 10),
 
                         //5
-                        Text(
-                          'b5'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('b5'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b51'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('b51'),
                         const SizedBox(height: 10),
 
                         //6
-                        Text(
-                          'b6'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('b6'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b61'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b62'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('b61'),
+                        _buildBulletRow('b62'),
                         const SizedBox(height: 10),
 
                         //7
-                        Text(
-                          'b7'.tr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.titleColor,
-                          ),
-                        ),
+                        _buildTitle('b7'),
                         const SizedBox(height: 5),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("•"),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                'b71'.tr,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildBulletRow('b71'),
                       ],
                     ),
                 ],
@@ -1093,6 +302,29 @@ class TermScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTitle(String textKey) {
+    return Text(
+      textKey.tr,
+      style: const TextStyle(fontSize: 14, color: AppColors.titleColor),
+    );
+  }
+
+  Widget _buildBulletRow(String textKey, {bool isStar = false}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        isStar ? const Icon(Ionicons.star, size: 10) : const Text("•"),
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text(
+            textKey.tr,
+            style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+          ),
+        ),
+      ],
     );
   }
 }

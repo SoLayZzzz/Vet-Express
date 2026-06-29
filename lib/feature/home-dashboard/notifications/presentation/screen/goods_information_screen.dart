@@ -493,12 +493,15 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
           // const SizedBox(height: 20),
 
           // 4. Stylized Info Boxes
-          _buildInfoBox('${'qty'.tr}:', '${data?.qty} ${data?.typeId}'),
+          _buildInfoBox(
+            '${'qty'.tr}:', 
+            '${data?.qty}'
+          ),
           const SizedBox(height: 10),
           _buildReceiverBox(
-            label: '${'from'.tr}:',
+            label: '${'sender'.tr}:',
             phoneNumber: '${data?.senderTelephone}',
-            toLabel: '${'to'.tr}:',
+            toLabel: '${'from'.tr}:',
             destination: '${data?.destinationFromEn}',
           ),
           const SizedBox(height: 10),
@@ -509,8 +512,8 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
             destination: '${data?.destinationToEn}',
           ),
           //
-          const SizedBox(height: 10),
-           _buildInfoBox('${'delivery_to'.tr}:', '${data?.destinationToEn}'),
+          // const SizedBox(height: 10),
+          //  _buildInfoBox('${'delivery_to'.tr}:', '${data?.destinationToEn}'),
         ],
       ),
     ),

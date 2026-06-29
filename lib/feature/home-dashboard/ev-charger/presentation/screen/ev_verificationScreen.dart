@@ -3,11 +3,12 @@ import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:express_vet/base/base_url.dart';
 
 class EvVerificationScreen extends StatefulWidget {
   const EvVerificationScreen({super.key});
@@ -17,9 +18,18 @@ class EvVerificationScreen extends StatefulWidget {
 }
 
 class _EvVerificationScreenState extends State<EvVerificationScreen> {
-  late final Future<Uint8List?> _verificationBytes =
-      _loadEmbeddedPngBytes(AssetImages.verification);
+  late final Future<Uint8List?> _verificationBytes = _loadEmbeddedPngBytes(
+    AssetImages.verification,
+  );
 
+  // Verification Screen Data Variables
+  final String _transactionId = '00001';
+  final String _stationName = 'Station 1';
+  final String _orderDate = '02 Jan 2025 04:00PM';
+  final String _subTotal = 'KHR (៛) 48,000';
+  final String _discount = '-KHR (៛) 4,000';
+  final String _totalAmount = 'KHR (៛) 44,000';
+  final String _totalKwh = '20 kWh';
 
   Timer? _plugInDialogTimer;
 
@@ -82,15 +92,21 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
       PopScope(
         canPop: false,
         child: Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           insetPadding: const EdgeInsets.symmetric(horizontal: 18),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 22, 18, 18),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-              
-                Image.asset(AssetImages.green_car, width: 140,height: 140,fit: BoxFit.contain),
+                Image.asset(
+                  AssetImages.green_car,
+                  width: 140,
+                  height: 140,
+                  fit: BoxFit.contain,
+                ),
                 const Text(
                   'Please plug in the charger',
                   textAlign: TextAlign.center,
@@ -136,7 +152,10 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
                     ),
                     child: const Text(
                       'Return',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -159,12 +178,44 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
 
     Get.dialog(
       const Center(
-        child: CircularProgressIndicator( color: AppColors.primaryColor),
+        child: CircularProgressIndicator(color: AppColors.primaryColor),
       ),
       barrierDismissible: false,
     );
 
-    await Future.delayed(const Duration(milliseconds: 700));
+    // Call WebSocket connection and send the verification screen's data
+    try {
+      final base = BaseUrl.BASE_URL_WEB_SOCKET;
+      final wsBase = base
+          .replaceAll('https://', 'wss://')
+          .replaceAll('http://', 'ws://');
+      final wsUrl = wsBase;
+
+      debugPrint('Connecting to WebSocket for payment confirmation: $wsUrl');
+      final channel = WebSocketChannel.connect(Uri.parse(wsUrl));
+
+      final data = {
+        'transactionId': _transactionId,
+        'stationName': _stationName,
+        'orderDate': _orderDate,
+        'subTotal': _subTotal,
+        'discount': _discount,
+        'totalAmount': _totalAmount,
+        'totalKwh': _totalKwh,
+      };
+
+      final payload = jsonEncode(data);
+      debugPrint('WebSocket URL: $wsUrl');
+      debugPrint('Sending confirmation payload: $payload');
+      channel.sink.add(payload);
+
+      // Brief delay to ensure transmission before closing the connection
+      await Future.delayed(const Duration(milliseconds: 800));
+      await channel.sink.close();
+    } catch (e) {
+      debugPrint('Error sending data over WebSocket: $e');
+    }
+
     if (Get.isDialogOpen == true) {
       Get.back();
     }
@@ -182,7 +233,11 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.black,
+            size: 20,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -193,15 +248,15 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-           
-               Container(
-                  height: 100,
-                  width: 100,
-                  alignment: Alignment.center,
-                  child: _buildVerificationIcon(),
-                ),
+
+              Container(
+                height: 100,
+                width: 100,
+                alignment: Alignment.center,
+                child: _buildVerificationIcon(),
+              ),
               const SizedBox(height: 24),
-              
+
               // --- Title & Subtitle ---
               const Text(
                 'Verification',
@@ -212,7 +267,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-               Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
                   'Please check to make sure all information are correct.',
@@ -225,23 +280,32 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // --- Info List Items ---
               Expanded(
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
-                  children: const [
-                    _InfoRow(label: 'Transaction id', value: '00001'),
-                    _InfoRow(label: 'Station Name', value: 'Station 1'),
-                    _InfoRow(label: 'Order Date', value: '02 Jan 2025 04:00PM'),
-                    _InfoRow(label: 'Sub Total', value: 'KHR (៛) 48,000'),
-                    _InfoRow(label: 'Discount (20%)', value: '-KHR (៛) 4,000'),
-                    _InfoRow(label: 'Total Amout', value: 'KHR (៛) 44,000', fontWeight: FontWeight.w600), // Kept typo from design ("Amout")
-                    _InfoRow(label: 'Total kWh', value: '20 kWh', isLast: true,fontWeight: FontWeight.w600),
+                  children: [
+                    _InfoRow(label: 'Transaction id', value: _transactionId),
+                    _InfoRow(label: 'Station Name', value: _stationName),
+                    _InfoRow(label: 'Order Date', value: _orderDate),
+                    _InfoRow(label: 'Sub Total', value: _subTotal),
+                    _InfoRow(label: 'Discount (20%)', value: _discount),
+                    _InfoRow(
+                      label: 'Total Amout',
+                      value: _totalAmount,
+                      fontWeight: FontWeight.w600,
+                    ), // Kept typo from design ("Amout")
+                    _InfoRow(
+                      label: 'Total kWh',
+                      value: _totalKwh,
+                      isLast: true,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ],
                 ),
               ),
-              
+
               // --- Bottom Action Button ---
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
@@ -253,7 +317,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
                       _onConfirmPayment();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor, 
+                      backgroundColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -290,12 +354,9 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
     );
   }
 
- 
-
   Future<Uint8List?> _loadEmbeddedPngBytes(String svgAssetPath) async {
     final svg = await rootBundle.loadString(svgAssetPath);
-    final match =
-        RegExp(r'data:image/png;base64,([^"\s]+)').firstMatch(svg);
+    final match = RegExp(r'data:image/png;base64,([^"\s]+)').firstMatch(svg);
     final data = match?.group(1);
     if (data == null || data.isEmpty) return null;
 
@@ -326,20 +387,17 @@ class _InfoRow extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding:  EdgeInsets.symmetric(vertical: 14.0),
+          padding: EdgeInsets.symmetric(vertical: 14.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 label,
-                style:  TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey.shade700,
-                ),
+                style: TextStyle(fontSize: 15, color: Colors.grey.shade700),
               ),
               Text(
                 value,
-                style:  TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: fontWeight,
                   color: Colors.grey.shade900,
@@ -349,11 +407,7 @@ class _InfoRow extends StatelessWidget {
           ),
         ),
         if (!isLast)
-          const Divider(
-            color: Color(0xFFEEEEEE),
-            height: 1,
-            thickness: 1,
-          ),
+          const Divider(color: Color(0xFFEEEEEE), height: 1, thickness: 1),
       ],
     );
   }

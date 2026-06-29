@@ -27,17 +27,16 @@ class ProfileScreen extends StatelessWidget {
       bottomNavigationBar: _buildSaveButton(controller),
       appBar: AppBar(
         elevation: 0.2,
-        backgroundColor:
-            ValueStatic.ticketType == '3'
-                ? AppColors.airBusColor
-                : AppColors.primaryColor,
+        backgroundColor: ValueStatic.ticketType == '3'
+            ? AppColors.airBusColor
+            : AppColors.primaryColor,
         leading: IconButton(
           icon: const Icon(
             Ionicons.chevron_back_outline,
             color: AppColors.whiteColor,
           ),
           onPressed: () {
-            Navigator.pop(context, true);
+            Get.back();
           },
         ),
         centerTitle: true,
@@ -109,7 +108,7 @@ class ProfileScreen extends StatelessWidget {
                 controller.selectedNationalityId.value = selected.id;
               },
             ),
-            const SizedBox(height: 40),
+            // const SizedBox(height: 40),
             // _buildSaveButton(controller),
           ],
         ),
@@ -150,22 +149,21 @@ class ProfileScreen extends StatelessWidget {
               ),
               value:
                   selectedValue.value?.isNotEmpty == true &&
-                          items.contains(selectedValue.value)
-                      ? selectedValue.value
-                      : null,
-              items:
-                  items.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textColor,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                      items.contains(selectedValue.value)
+                  ? selectedValue.value
+                  : null,
+              items: items.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textColor,
+                    ),
+                  ),
+                );
+              }).toList(),
               onChanged: (String? newValue) {
                 selectedValue.value = newValue;
               },
@@ -238,22 +236,21 @@ class ProfileScreen extends StatelessWidget {
               ),
               value:
                   selectedValue.value != null &&
-                          items.contains(selectedValue.value)
-                      ? selectedValue.value
-                      : null,
-              items:
-                  items.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textColor,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                      items.contains(selectedValue.value)
+                  ? selectedValue.value
+                  : null,
+              items: items.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textColor,
+                    ),
+                  ),
+                );
+              }).toList(),
               onChanged: onChanged,
               buttonStyleData: const ButtonStyleData(
                 height: 48,
@@ -318,8 +315,9 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileImage(ProfileController controller) {
-    final UserController? userController =
-        Get.isRegistered<UserController>() ? Get.find<UserController>() : null;
+    final UserController? userController = Get.isRegistered<UserController>()
+        ? Get.find<UserController>()
+        : null;
 
     return Obx(() {
       final imageUrl = controller.userMeResponse.value?.body?.filename ?? '';
@@ -344,30 +342,29 @@ class ProfileScreen extends StatelessWidget {
             width: 130,
             height: 130,
             child: ClipOval(
-              child:
-                  localImage != null
-                      ? Image.file(
-                        localImage,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                        width: 130,
-                        height: 130,
-                      )
-                      : (imageUrl.isEmpty
-                          ? Image.asset(
+              child: localImage != null
+                  ? Image.file(
+                      localImage,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      width: 130,
+                      height: 130,
+                    )
+                  : (imageUrl.isEmpty
+                        ? Image.asset(
                             AssetImages.img_user_profile,
                             fit: BoxFit.cover,
                             alignment: Alignment.center,
                             width: 130,
                             height: 130,
                           )
-                          : CachedNetworkImage(
+                        : CachedNetworkImage(
                             key: ValueKey('$imageUrl-$refreshToken'),
                             imageUrl: _cacheBustedUrl(imageUrl, refreshToken),
                             cacheKey: '$imageUrl-$refreshToken',
                             placeholder: (context, url) => placeHolderImg(),
-                            errorWidget:
-                                (context, url, error) => placeHolderImg(),
+                            errorWidget: (context, url, error) =>
+                                placeHolderImg(),
                             fit: BoxFit.cover,
                             alignment: Alignment.center,
                             width: 130,
@@ -465,12 +462,12 @@ class ProfileScreen extends StatelessWidget {
           () => globalButton(
             context: Get.context!,
             buttonText: 'save'.tr,
-            buttonColor:
-                controller.canSave.value
-                    ? AppColors.primaryColor
-                    : AppColors.greyColor,
-            onPressed:
-                controller.canSave.value ? controller.updateProfile : () {},
+            buttonColor: controller.canSave.value
+                ? AppColors.primaryColor
+                : AppColors.greyColor,
+            onPressed: controller.canSave.value
+                ? controller.updateProfile
+                : () {},
           ),
         ),
       ),

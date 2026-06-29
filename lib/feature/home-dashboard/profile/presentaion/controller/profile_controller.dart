@@ -15,6 +15,7 @@ import '../../../../../utils/check_input.dart';
 import '../../../../../utils/loading.dart';
 import '../../../profile/data/network/profile_network_request.dart';
 import '../../../../../controller/user_controller.dart';
+import '../../../../../models/simple_response.dart';
 
 class ProfileController extends GetxController {
   var userMeResponse = Rxn<UserMeResponse>();
@@ -217,9 +218,10 @@ class ProfileController extends GetxController {
             if (!Get.isRegistered<AuthUseCase>()) {
               AuthBinding().dependencies();
             }
+            SimpleResponse? response;
             Loading().loadingShow();
             try {
-              await Get.find<AuthUseCase>().profileUpdate(
+              response = await Get.find<AuthUseCase>().profileUpdate(
                 name: nameController.text,
                 telephone:
                     phoneNumberController.text.isEmpty
@@ -236,35 +238,61 @@ class ProfileController extends GetxController {
                         : 0,
                 nationalityId: selectedNationalityId.toInt(),
               );
+            } catch (e) {
+              debugPrint('Error updating profile: $e');
             } finally {
               Loading().loadingClose();
             }
 
-            // Update static values
-            ValueStatic.username = nameController.text;
-            ValueStatic.phone = phoneNumberController.text.replaceAll(' ', '');
-            ValueStatic.email = emailController.text;
-            ValueStatic.gender =
-                gender.value == 'male'.tr
-                    ? 1
-                    : gender.value == 'female'.tr
-                    ? 2
-                    : 0;
-            ValueStatic.nationalityId = selectedNationalityId.toInt()!;
-            ValueStatic.nationalityName = selectedNationality.value!;
+            if (response != null &&
+                response.header?.result == true &&
+                response.header?.statusCode == 200 &&
+                response.body?.status == true) {
+              // Update static values
+              ValueStatic.username = nameController.text;
+              ValueStatic.phone = phoneNumberController.text.replaceAll(
+                ' ',
+                '',
+              );
+              ValueStatic.email = emailController.text;
+              ValueStatic.gender =
+                  gender.value == 'male'.tr
+                      ? 1
+                      : gender.value == 'female'.tr
+                      ? 2
+                      : 0;
+              ValueStatic.nationalityId = selectedNationalityId.toInt()!;
+              ValueStatic.nationalityName = selectedNationality.value!;
 
-            // Refresh global user store so other screens react immediately
-            try {
-              if (Get.isRegistered<UserController>()) {
-                final userController = Get.find<UserController>();
-                await userController.fetchUserMe();
-                userMeResponse.value = userController.userMeResponse.value;
-              }
-            } catch (_) {}
+              // Refresh global user store so other screens react immediately
+              try {
+                if (Get.isRegistered<UserController>()) {
+                  final userController = Get.find<UserController>();
+                  await userController.fetchUserMe();
+                  userMeResponse.value = userController.userMeResponse.value;
+                }
+              } catch (_) {}
 
-            image.value = null;
-            imagePath.value = null;
-            _captureInitialSnapshot();
+              image.value = null;
+              imagePath.value = null;
+              _captureInitialSnapshot();
+              Get.back(result: true);
+              Get.snackbar(
+                'success'.tr,
+                response.body?.message ?? 'updated'.tr,
+                backgroundColor: Colors.white,
+                colorText: Colors.green,
+                snackPosition: SnackPosition.TOP,
+              );
+            } else {
+              final errorMsg =
+                  response?.body?.message ?? 'something_went_wrong'.tr;
+              alertDialogOneButton(
+                title: 'information'.tr,
+                description: errorMsg,
+                buttonText: 'yes'.tr,
+              );
+            }
           } else {
             if (invalidType == 1) {
               alertDialogOneButton(

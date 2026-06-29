@@ -1,5 +1,10 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/destination_ev.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_apply_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_search_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_transaction_detail_response.dart';
@@ -20,6 +25,7 @@ import '../model/response/ev_station_list_response.dart';
 import '../model/response/ev_top_up_response.dart';
 import '../model/response/ev_wallet_amount_response.dart';
 import '../model/response/ev_wallet_list_response.dart';
+import '../model/response/ev_charging_status_response.dart';
 
 class EvChargerRepositoryImpl implements EvChargerRepository {
   final EvChargerNetworkRequest networkRequest;
@@ -264,5 +270,32 @@ class EvChargerRepositoryImpl implements EvChargerRepository {
   @override
   Future<AmountPriceAndKwhResponse> fetchAmountPrice({required context}) {
     return networkRequest.fetchAmountPrice(context: context);
+  }
+
+  @override
+  Future<EvVoucherApplyResponse> applyVoucher({required context, required EvVoucherRequest request}) {
+    return networkRequest.applyVoucher(context: context, request: request);
+  }
+
+  @override
+  Future<EvVoucherListResponse> fetchVoucherList({required context}) {
+    return networkRequest.fetchVoucherList(context: context);
+  }
+
+  @override
+  Future<EvVoucherSearchResponse> searchVoucher({required context, required EvVoucherRequest request}) {
+    return networkRequest.searchVoucher(context: context, request: request);
+  }
+
+  @override
+  Future<EvPointListResponse> fetchPoint({required context}) {
+    return networkRequest.fetchPoint(context: context);
+  }
+
+  @override
+  Future<EvChargingStatusResponse> fetchChargingStatus({
+    required dynamic context,
+  }) {
+    return networkRequest.fetchChargingStatus(context: context);
   }
 }

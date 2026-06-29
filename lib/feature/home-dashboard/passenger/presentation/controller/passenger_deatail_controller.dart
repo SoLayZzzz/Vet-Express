@@ -450,7 +450,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       ];
       final dropOffPointId = <int>[int.parse(ValueStatic.dropOffPointOneWayId)];
       final email =
-          ValueStatic.email.isEmpty ? 'user@gmail.com' : ValueStatic.email;
+          ValueStatic.email.isEmpty ? '*@gmail.com' : ValueStatic.email;
       final journeyDate = <String>[ValueStatic.goDate];
       final journeyId = <String>[ValueStatic.journeyIdGo];
       const journeyType = 1;
@@ -466,22 +466,23 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
       final totalAmount = getTotalAmount(seatPrice);
       double totalDiscount = 0;
+      // debugPrint('=============>> empty email: $email');
       if (!forceZeroDiscount) {
         if (state.isTravelPackage.value &&
             state.isTravelPackageOk.value &&
             ValueStatic.travelPackageDis > 0) {
           totalDiscount = getTravelPackageDiscountAmount(totalAmount);
-          debugPrint(
-            'Applying travel package discount: ${ValueStatic.travelPackageDis}% -> $totalDiscount',
-          );
+          // debugPrint(
+          //   'Applying travel package discount: ${ValueStatic.travelPackageDis}% -> $totalDiscount',
+          // );
         } else if (ValueStatic.seatPriceGoDiscount) {
           totalDiscount = 0;
-          debugPrint('No standard 5% discount (seatPriceGoDiscount=true)');
+          // debugPrint('No standard 5% discount (seatPriceGoDiscount=true)');
         } else {
           totalDiscount = double.parse(
             (getTotalAmount(seatPrice) * 0.05).toStringAsFixed(2),
           );
-          debugPrint('Applying standard 5% discount -> $totalDiscount');
+          // debugPrint('Applying standard 5% discount -> $totalDiscount');
         }
       }
       final totalSeat = ValueStatic.oneWaySelectedSeat.length.toString();
@@ -491,9 +492,9 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       final seatDob = dobOneWay;
       final seatPassport = passportOneWay;
 
-      debugPrint(
-        'One-Way Data: seats: $seatNum, total: $totalAmount, discount: $totalDiscount',
-      );
+      // debugPrint(
+      //   'One-Way Data: seats: $seatNum, total: $totalAmount, discount: $totalDiscount',
+      // );
 
       Booking().confirmBooking(
         context,
@@ -866,10 +867,6 @@ class PassengerDetailController extends StateController<PassengerUistate> {
 
   void syncBuvaSeaRoundTripFromGoingToReturn({bool onlyIfEmpty = true}) {
     if (ValueStatic.journeyType != 2) return;
-    if (ValueStatic.companyTypeOneWay != 4 ||
-        ValueStatic.companyTypeTwoWay != 4) {
-      return;
-    }
 
     final seatCount =
         ValueStatic.oneWaySelectedSeat.length <
@@ -881,50 +878,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
     bool changed = false;
 
     for (int i = 0; i < seatCount; i++) {
-      if (i < state.nameOneWay.length && i < state.nameTwoWay.length) {
-        final source = state.nameOneWay[i].text.trim();
-        final target = state.nameTwoWay[i].text.trim();
-        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
-          if (target != source) {
-            state.nameTwoWay[i].text = source;
-            changed = true;
-          }
-        }
-      }
-
-      if (i < state.passportOneWay.length && i < state.passportTwoWay.length) {
-        final source = state.passportOneWay[i].text.trim();
-        final target = state.passportTwoWay[i].text.trim();
-        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
-          if (target != source) {
-            state.passportTwoWay[i].text = source;
-            changed = true;
-          }
-        }
-      }
-
-      if (i < state.dobOneWayList.length && i < state.dobTwoWayList.length) {
-        final source = state.dobOneWayList[i].text.trim();
-        final target = state.dobTwoWayList[i].text.trim();
-        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
-          if (target != source) {
-            state.dobTwoWayList[i].text = source;
-            changed = true;
-          }
-        }
-      }
-
-      if (i < state.dobOneWay.length && i < state.dobTwoWay.length) {
-        final source = state.dobOneWay[i].text.trim();
-        final target = state.dobTwoWay[i].text.trim();
-        if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
-          if (target != source) {
-            state.dobTwoWay[i].text = source;
-            changed = true;
-          }
-        }
-      }
-
+      // Always sync gender and nationality for all company types
       if (i < state.genderOneWay.length && i < state.genderTwoWay.length) {
         final source = state.genderOneWay[i];
         final target = state.genderTwoWay[i];
@@ -957,6 +911,55 @@ class PassengerDetailController extends StateController<PassengerUistate> {
           if (target != source) {
             state.nationalTwoWay[i] = source;
             changed = true;
+          }
+        }
+      }
+
+      // Sync name, passport, and DOB only for Buva Sea (company type 4)
+      if (ValueStatic.companyTypeOneWay == 4 &&
+          ValueStatic.companyTypeTwoWay == 4) {
+        if (i < state.nameOneWay.length && i < state.nameTwoWay.length) {
+          final source = state.nameOneWay[i].text.trim();
+          final target = state.nameTwoWay[i].text.trim();
+          if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+            if (target != source) {
+              state.nameTwoWay[i].text = source;
+              changed = true;
+            }
+          }
+        }
+
+        if (i < state.passportOneWay.length &&
+            i < state.passportTwoWay.length) {
+          final source = state.passportOneWay[i].text.trim();
+          final target = state.passportTwoWay[i].text.trim();
+          if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+            if (target != source) {
+              state.passportTwoWay[i].text = source;
+              changed = true;
+            }
+          }
+        }
+
+        if (i < state.dobOneWayList.length && i < state.dobTwoWayList.length) {
+          final source = state.dobOneWayList[i].text.trim();
+          final target = state.dobTwoWayList[i].text.trim();
+          if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+            if (target != source) {
+              state.dobTwoWayList[i].text = source;
+              changed = true;
+            }
+          }
+        }
+
+        if (i < state.dobOneWay.length && i < state.dobTwoWay.length) {
+          final source = state.dobOneWay[i].text.trim();
+          final target = state.dobTwoWay[i].text.trim();
+          if (source.isNotEmpty && (!onlyIfEmpty || target.isEmpty)) {
+            if (target != source) {
+              state.dobTwoWay[i].text = source;
+              changed = true;
+            }
           }
         }
       }

@@ -17,6 +17,7 @@ import '../controller/ev_slide_show_controller.dart';
 import '../controller/ev_station_controller.dart';
 import '../controller/ev_top_up_controller.dart';
 import '../controller/ev_wallet_controller.dart';
+import '../controller/ev_voucher_controller.dart';
 
 class EvChargerBinding implements Bindings {
   @override
@@ -87,6 +88,10 @@ class EvChargerBinding implements Bindings {
 
     if (!Get.isRegistered<EvNewsFeedController>()) {
       Get.lazyPut(() => EvNewsFeedController(Get.find()), fenix: true);
+    }
+
+    if (!Get.isRegistered<EvVoucherController>()) {
+      Get.lazyPut(() => EvVoucherController(Get.find()), fenix: true);
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:express_vet/feature/home-dashboard/profile/presentaion/ui/term_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -64,7 +65,10 @@ class _AdsScreenState extends State<AdsScreen>
     }
 
     _shouldAutoNavigate = true;
-    Future.delayed(const Duration(milliseconds: 6000), () {
+    Future.delayed(
+      const Duration(milliseconds: 6000),
+      // const Duration(milliseconds: 0),
+       () {
       if (mounted && _shouldAutoNavigate) {
         log("⏰ Auto-navigation triggered after 6 seconds");
         _navigateBasedOnLoginStatus();
@@ -91,6 +95,11 @@ class _AdsScreenState extends State<AdsScreen>
       if (ok) {
         log("➡️ Navigating to HomeScreen");
         Get.offAllNamed(AppRoutes.home);
+        //  Get.to(
+        //             () => TermScreen(from: 1, title: 'condition-ticket'.tr),
+        //             transition: Transition.rightToLeft,
+        //             duration: const Duration(milliseconds: Constrains.duration),
+        //           );
       } else {
         log("➡️ Navigating to SignInScreen");
         Get.offAllNamed(AppRoutes.signIn);

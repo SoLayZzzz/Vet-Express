@@ -1,5 +1,10 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/destination_ev.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_apply_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_search_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_transaction_detail_response.dart';
@@ -18,6 +23,7 @@ import '../../data/model/response/ev_station_list_response.dart';
 import '../../data/model/response/ev_top_up_response.dart';
 import '../../data/model/response/ev_wallet_amount_response.dart';
 import '../../data/model/response/ev_wallet_list_response.dart';
+import '../../data/model/response/ev_charging_status_response.dart';
 
 abstract class EvChargerRepository {
   Future<EvChargerResponse> fetchTicketEvStationList({
@@ -134,5 +140,27 @@ abstract class EvChargerRepository {
 
   Future<AmountPriceAndKwhResponse> fetchAmountPrice({
     required dynamic context
+  });
+
+  Future<EvPointListResponse> fetchPoint({
+    required dynamic context
+  });
+  
+  Future<EvVoucherApplyResponse> applyVoucher({
+    required dynamic context,
+    required EvVoucherRequest request,
+  });
+
+  Future<EvVoucherSearchResponse> searchVoucher({
+    required dynamic context,
+    required EvVoucherRequest request,
+  });
+
+  Future<EvVoucherListResponse> fetchVoucherList({
+    required dynamic context,
+  });
+
+  Future<EvChargingStatusResponse> fetchChargingStatus({
+    required dynamic context,
   });
 }

@@ -104,6 +104,14 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="wingbankuat" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="wingbankapp" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="wingbank" />
+        </intent>
         <!-- * Query for VTENH -->
         <intent>
             <action android:name="android.intent.action.VIEW" />

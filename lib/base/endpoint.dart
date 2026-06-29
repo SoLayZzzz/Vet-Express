@@ -129,6 +129,13 @@ class Endpoint {
   static const String evSaleOrderWalletList = 'sale-order/wallet/list';
   static const String evSaleOrderWalletAmount = 'sale-order/wallet/amount';
   static const String evSaleOrderWalletTopUp = 'sale-order/wallet/top-up';
+  static const String evkwhlist = "label/kwh/list";
+  static const String evpricelist = "label/price/list";
+  static const String evpointlist = "label/point/list";
+  static const String evVoucherList = "voucher/list";
+  static const String evVoucherApply = "voucher/apply";
+  static const String evVoucherSearch = "voucher/search"; 
+
   static String evSaleOrderWalletTopUpStatus(String transactionId) =>
       'sale-order/wallet/top-up/status/$transactionId';
   static String evSaleOrderFind(String transactionId) =>
@@ -147,6 +154,5 @@ class Endpoint {
   static String evMembershipTransactionDetail(String id) =>
       "membership/transaction/detail/$id";
   
-  static const String evkwhlist = "label/kwh/list";
-  static const String evpricelist = "label/price/list";
+  static const String evChargingStatus = 'profile/charging-status';
 }

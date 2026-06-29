@@ -65,7 +65,9 @@ class AssetImages {
   static const String booking_air_bus =
       'assets/images/ic_booking_air_bus_new.png';
   static const String booking_boat = 'assets/images/ic_booking_boat_new.png';
-  static const String rental_car = 'assets/images/ic_rental_car.png';
+  // static const String rental_car = 'assets/images/ic_rental_car.png';
+  static const String rental_car = 'assets/images/car_rental.png';
+
   static const String ev_charger = 'assets/icons/icon_ev.png';
   static const String vtinh_logo = 'assets/images/ic_v_tenh.png';
 
@@ -185,12 +187,17 @@ class AssetImages {
   static const String ic_station = "assets/icons/ev-a.svg";
   static const String ic_favorite = "assets/icons/ic_favorite.svg";
   static const String ic_history = "assets/icons/history.svg";
-  static const String ic_money_backgroound = "assets/icons/money_background.svg";
-  static const String ic_history_background = "assets/icons/history_background.svg";
-  static const String ic_money_backgroound_small = "assets/icons/money_background_small.svg";
-  static const String ic_history_background_small = "assets/icons/history_background_small.svg";
+  static const String ic_money_backgroound =
+      "assets/icons/money_background.svg";
+  static const String ic_history_background =
+      "assets/icons/history_background.svg";
+  static const String ic_money_backgroound_small =
+      "assets/icons/money_background_small.svg";
+  static const String ic_history_background_small =
+      "assets/icons/history_background_small.svg";
   static const String ic_membership = "assets/icons/membership.svg";
-  static const String ic_history_membership = "assets/icons/history_membership.svg";
+  static const String ic_history_membership =
+      "assets/icons/history_membership.svg";
   static const String ic_back = "assets/icons/button_back.svg";
   static const String ic_car_charging = "assets/icons/car_charging.svg";
   static const String gifCharging = 'assets/gif/charging_gift.gif';
@@ -198,7 +205,7 @@ class AssetImages {
   static const String ammeter = "assets/icons/ammeter.svg";
   static const String volt = "assets/icons/volt.svg";
   static const String energy = "assets/icons/power.svg";
-  static const String current = "assets/icons/currentCy.svg"; 
+  static const String current = "assets/icons/currentCy.svg";
   static const String stopCharg = "assets/icons/stop_charg.svg";
   static const String buttonStop = "assets/icons/button_stop.svg";
   static const String stop = "assets/icons/stop.svg";
@@ -214,6 +221,7 @@ class AssetImages {
   static const String select = "assets/icons/select.svg";
   static const String green_car = "assets/icons/green_car.png";
   static const String voucher = "assets/icons/voucher.svg";
+  static const String emptyVoucher = "assets/icons/empty_voucher.svg";
   static const String isYouAreHere = "assets/icons/you_are_here.svg";
 
   // =========================

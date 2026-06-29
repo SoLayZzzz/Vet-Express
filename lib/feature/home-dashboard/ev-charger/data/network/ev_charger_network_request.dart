@@ -1,8 +1,13 @@
 import 'dart:convert';
 
 import 'package:express_vet/base/network_data_source.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_apply_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_search_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +24,7 @@ import '../model/response/ev_top_up_response.dart';
 import '../model/response/ev_wallet_amount_response.dart';
 import '../model/response/ev_wallet_list_response.dart';
 import '../model/response/membership_transaction_detail_response.dart';
+import '../model/response/ev_charging_status_response.dart';
 import '../model/response/membership_transaction_list_response.dart';
 import '../../../../../base/endpoint.dart';
 import '../model/response/destination_ev.dart';
@@ -430,7 +436,9 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      debugPrint('fetchMembershipTransactionList response: ${jsonEncode(json)}');
+      debugPrint(
+        'fetchMembershipTransactionList response: ${jsonEncode(json)}',
+      );
       return MembershipTransactionListResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -447,7 +455,9 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      debugPrint('fetchMembershipTransactionDetail response: ${jsonEncode(json)}');
+      debugPrint(
+        'fetchMembershipTransactionDetail response: ${jsonEncode(json)}',
+      );
       return MembershipTransactionDetailResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -481,6 +491,88 @@ class EvChargerNetworkRequest {
       );
       debugPrint('fetch price response: ${jsonEncode(json)}');
       return AmountPriceAndKwhResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvPointListResponse> fetchPoint({required dynamic context}) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evpointlist,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetch point response: ${jsonEncode(json)}');
+      return EvPointListResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvVoucherApplyResponse> applyVoucher({
+    required dynamic context,
+    required EvVoucherRequest request,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evVoucherApply,
+        body: request.toJson(),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('apply voucher response: ${jsonEncode(json)}');
+      return EvVoucherApplyResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvVoucherSearchResponse> searchVoucher({
+    required dynamic context,
+    required EvVoucherRequest request,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evVoucherSearch,
+        body: request.toJson(),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('search voucher response: ${jsonEncode(json)}');
+      return EvVoucherSearchResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvVoucherListResponse> fetchVoucherList({
+    required dynamic context,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evVoucherList,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetch voucher list response: ${jsonEncode(json)}');
+      return EvVoucherListResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvChargingStatusResponse> fetchChargingStatus({
+    required dynamic context,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evChargingStatus,
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('======> fetchChargingStatus response: ${jsonEncode(json)}');
+      return EvChargingStatusResponse.fromJson(json);
     } catch (_) {
       rethrow;
     }

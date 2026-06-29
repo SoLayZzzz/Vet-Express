@@ -10,8 +10,22 @@ import '../../../../utils/check_input.dart';
 import '../../../../utils/style.dart';
 import '../controller/auth_controller.dart';
 
-class ForgotPasswordScreen extends GetView<AuthController> {
+class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
+
+  @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  late final AuthController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<AuthController>();
+    controller.clearForgotPasswordInputs();
+  }
 
   @override
   Widget build(BuildContext context) {

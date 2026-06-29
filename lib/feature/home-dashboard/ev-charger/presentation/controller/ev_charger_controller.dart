@@ -10,12 +10,15 @@ import '../../data/model/response/ev_charger_response.dart';
 import '../../data/model/response/destination_ev.dart';
 import '../../data/model/response/ev_wallet_list_response.dart';
 import '../../data/model/response/membership_transaction_list_response.dart';
+import '../../data/model/response/ev_charging_status_response.dart';
 import '../uiState/ev_charger_ui_state.dart';
 
 class EvChargerController extends StateController<EvChargerUiState> {
   final EvChargerUseCase useCase;
 
-  final RxBool isCharging = false.obs;
+  final RxInt isCharging = 0.obs;
+  final RxString chargingTransactionId = ''.obs;
+  final RxString chargingChargerUsername = ''.obs;
 
   EvChargerController(this.useCase);
 
@@ -25,11 +28,6 @@ class EvChargerController extends StateController<EvChargerUiState> {
   @override
   void onInit() {
     super.onInit();
-
-    final args = Get.arguments;
-    final charging = args is Map && (args['isCharging'] == true || args['isCharging'] == 1);
-    isCharging.value = charging;
-
     loadHomeData();
   }
 
@@ -51,12 +49,14 @@ class EvChargerController extends StateController<EvChargerUiState> {
       isLoadingMoreMembershipTransactionList: loadMore,
       hasErrorMembershipTransactionList: false,
       membershipTransactionType: type,
-      membershipTransactionCurrentPage: loadMore
-          ? state.membershipTransactionCurrentPage
-          : 0,
-      membershipTransactionTotal: loadMore ? state.membershipTransactionTotal : 0,
-      membershipTransactionHasMore: loadMore ? state.membershipTransactionHasMore : true,
-      membershipTransactionGroups: loadMore ? state.membershipTransactionGroups : <Group>[],
+      membershipTransactionCurrentPage:
+          loadMore ? state.membershipTransactionCurrentPage : 0,
+      membershipTransactionTotal:
+          loadMore ? state.membershipTransactionTotal : 0,
+      membershipTransactionHasMore:
+          loadMore ? state.membershipTransactionHasMore : true,
+      membershipTransactionGroups:
+          loadMore ? state.membershipTransactionGroups : <Group>[],
     );
 
     try {
@@ -77,19 +77,20 @@ class EvChargerController extends StateController<EvChargerUiState> {
         final txs = g.transactions ?? <MembershipTransactionItem>[];
         if (date == null || date.isEmpty || txs.isEmpty) continue;
 
-        final mappedTransactions = txs
-            .map(
-              (t) => Transaction(
-                id: t.id,
-                type: t.type,
-                transactionId: t.salesOrderId?.toString(),
-                code: t.typeName,
-                amount: (t.points ?? 0).toDouble(),
-                description: t.description,
-                createdDate: t.created,
-              ),
-            )
-            .toList();
+        final mappedTransactions =
+            txs
+                .map(
+                  (t) => Transaction(
+                    id: t.id,
+                    type: t.type,
+                    transactionId: t.salesOrderId?.toString(),
+                    code: t.typeName,
+                    amount: (t.points ?? 0).toDouble(),
+                    description: t.description,
+                    createdDate: t.created,
+                  ),
+                )
+                .toList();
 
         final existingIndex = merged.indexWhere((x) => x.date == date);
         if (existingIndex >= 0) {
@@ -138,7 +139,8 @@ class EvChargerController extends StateController<EvChargerUiState> {
         membershipTransactionGroups: merged,
         membershipTransactionCurrentPage: page,
         membershipTransactionTotal: total,
-        membershipTransactionHasMore: currentCount < total && newGroups.isNotEmpty,
+        membershipTransactionHasMore:
+            currentCount < total && newGroups.isNotEmpty,
       );
     } catch (e) {
       uiState.value = state.copyWith(hasErrorMembershipTransactionList: true);
@@ -165,7 +167,9 @@ class EvChargerController extends StateController<EvChargerUiState> {
     } catch (e) {
       uiState.value = state.copyWith(hasErrorMembershipTransactionDetail: true);
     } finally {
-      uiState.value = state.copyWith(isLoadingMembershipTransactionDetail: false);
+      uiState.value = state.copyWith(
+        isLoadingMembershipTransactionDetail: false,
+      );
     }
   }
 
@@ -244,10 +248,11 @@ class EvChargerController extends StateController<EvChargerUiState> {
       fetchMembershipBenefit(),
       fetchWalletAmount(),
       fetchWalletList(page: 1, rowsPerPage: 10),
+      fetchChargingStatus(),
     ]);
   }
 
-  Future<void> fetchMembershipInfo()async {
+  Future<void> fetchMembershipInfo() async {
     uiState.value = state.copyWith(
       isLoadingMembershipInfo: true,
       hasErrorMembershipInfo: false,
@@ -257,9 +262,9 @@ class EvChargerController extends StateController<EvChargerUiState> {
       final res = await useCase.fetchMembershipInfo(context: Get.context!);
       uiState.value = state.copyWith(membershipInfoResponse: res);
     } catch (e) {
-       uiState.value = state.copyWith(hasErrorMembershipInfo: true);
+      uiState.value = state.copyWith(hasErrorMembershipInfo: true);
     } finally {
-       uiState.value = state.copyWith(isLoadingMembershipInfo: false);
+      uiState.value = state.copyWith(isLoadingMembershipInfo: false);
     }
   }
 
@@ -505,5 +510,19 @@ class EvChargerController extends StateController<EvChargerUiState> {
     final amount = state.walletAmountResponse?.body?.data;
     if (amount == null) return 0.0;
     return double.tryParse(amount) ?? 0.0;
+  }
+
+  Future<void> fetchChargingStatus() async {
+    try {
+      final EvChargingStatusResponse res = await useCase.fetchChargingStatus(
+        context: Get.context!,
+      );
+      if (res.header?.result == true && res.header?.statusCode == 200) {
+        final chargingStatus = res.body?.data?.isCharging;
+        isCharging.value = chargingStatus ?? 0;
+        chargingTransactionId.value = res.body?.data?.transactionId ?? '';
+        chargingChargerUsername.value = res.body?.data?.chargerUsername ?? '';
+      }
+    } catch (_) {}
   }
 }

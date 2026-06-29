@@ -2,7 +2,6 @@ import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/feature/dash_board/presentation/screen/dashboard_screen.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charger_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -46,13 +45,9 @@ class _EvChargingPaymentFlowScreenState extends State<EvChargingPaymentFlowScree
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (Get.isRegistered<EvChargerController>()) {
-                        Get.find<EvChargerController>().isCharging.value = true;
-                      }
                       Get.offNamedUntil(
                         AppRoutes.evCharger,
                         (route) => route.settings.name == AppRoutes.home,
-                        arguments: const {'isCharging': true},
                       );
                     },
                     style: ElevatedButton.styleFrom(

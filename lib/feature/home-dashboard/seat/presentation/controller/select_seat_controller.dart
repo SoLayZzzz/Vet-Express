@@ -37,12 +37,22 @@ class SelectSeatController extends StateController<SelectSeatUiState> {
     required BuildContext context,
     required String journeyId,
     required bool isBack,
+    List<String>? markAsUnavailable,
   }) {
     final date = isBack ? ValueStatic.backDate : ValueStatic.goDate;
     final title =
         isBack
             ? '${ValueStatic.desTo} - ${ValueStatic.desfrom}'
             : '${ValueStatic.desfrom} - ${ValueStatic.desTo}';
+
+    final initialUnavailable = <String>[];
+    final initialUnavailableGender = <String>[];
+    if (markAsUnavailable != null) {
+      for (final seat in markAsUnavailable) {
+        initialUnavailable.add(seat);
+        initialUnavailableGender.add('1');
+      }
+    }
 
     uiState.value = state.copyWith(
       isBack: isBack,
@@ -51,8 +61,8 @@ class SelectSeatController extends StateController<SelectSeatUiState> {
       title: title,
       selectedSeat: <String>[],
       selectedSeatValue: <String>[],
-      unavailableSeat: <String>[],
-      unavailableSeatGender: <String>[],
+      unavailableSeat: initialUnavailable,
+      unavailableSeatGender: initialUnavailableGender,
       futureSeatLayout: selectSeatUseCase.fetchSeatLayout(
         context: context,
         date: date,
@@ -60,10 +70,13 @@ class SelectSeatController extends StateController<SelectSeatUiState> {
       ),
     );
 
-    _loadUnavailable(context);
+    _loadUnavailable(context, additionalUnavailable: markAsUnavailable);
   }
 
-  Future<void> _loadUnavailable(BuildContext context) async {
+  Future<void> _loadUnavailable(
+    BuildContext context, {
+    List<String>? additionalUnavailable,
+  }) async {
     final res = await selectSeatUseCase.fetchUnavailable(
       context: context,
       date: state.date,
@@ -76,6 +89,15 @@ class SelectSeatController extends StateController<SelectSeatUiState> {
     for (final item in (res.body ?? <seat_unavailable.Body>[])) {
       unavailableSeat.add(item.seatNumber.toString());
       unavailableSeatGender.add(item.gender.toString());
+    }
+
+    if (additionalUnavailable != null) {
+      for (final seat in additionalUnavailable) {
+        if (!unavailableSeat.contains(seat)) {
+          unavailableSeat.add(seat);
+          unavailableSeatGender.add('1');
+        }
+      }
     }
 
     uiState.value = state.copyWith(
@@ -126,14 +148,21 @@ class SelectSeatController extends StateController<SelectSeatUiState> {
     );
   }
 
-  void next() {
+  Future<void> next() async {
     final args = Get.arguments as Map<dynamic, dynamic>?;
     final flowId = (args?['flowId'] as String?) ?? '';
 
     if (state.isBack) {
       ValueStatic.twoWaySelectedSeat = state.selectedSeat;
       ValueStatic.twoWaySelectedSeatValue = state.selectedSeatValue;
-      Get.toNamed(AppRoutes.passengerDetail, arguments: {'flowId': flowId});
+      await Get.toNamed(
+        AppRoutes.passengerDetail,
+        arguments: {'flowId': flowId},
+      );
+      final context = Get.context;
+      if (context != null) {
+        _loadUnavailable(context);
+      }
       return;
     }
 
@@ -141,12 +170,23 @@ class SelectSeatController extends StateController<SelectSeatUiState> {
     ValueStatic.oneWaySelectedSeatValue = state.selectedSeatValue;
 
     if (ValueStatic.journeyType == 2) {
-      Get.toNamed(
+      await Get.toNamed(
         AppRoutes.scheduleList,
         arguments: {'isBack': true, 'flowId': flowId},
       );
+      final context = Get.context;
+      if (context != null) {
+        _loadUnavailable(context);
+      }
     } else {
-      Get.toNamed(AppRoutes.passengerDetail, arguments: {'flowId': flowId});
+      await Get.toNamed(
+        AppRoutes.passengerDetail,
+        arguments: {'flowId': flowId},
+      );
+      final context = Get.context;
+      if (context != null) {
+        _loadUnavailable(context);
+      }
     }
   }
 

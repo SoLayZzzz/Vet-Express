@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:express_vet/routes/app_routes.dart';
+import 'package:express_vet/feature/home-dashboard/seat/presentation/controller/select_seat_controller.dart';
+import 'package:express_vet/feature/home-dashboard/schedule/presentation/controller/schedule_list_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../payment/presentaion/ui/payment_screen.dart';
@@ -212,14 +214,63 @@ class Booking {
               children: [
                 InkWell(
                   onTap: () {
-                    ValueStatic().clearDataTicket();
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DashboardScreen(from: 0),
-                      ),
-                      (Route<dynamic> route) => false,
+                    final args = Get.arguments as Map<dynamic, dynamic>?;
+                    final flowId = (args?['flowId'] as String?) ?? '';
+
+                    SelectSeatController? selectSeatController;
+                    if (flowId.isNotEmpty) {
+                      final backTag = '${flowId}_seat_back';
+                      final goTag = '${flowId}_seat_go';
+                      if (Get.isRegistered<SelectSeatController>(tag: backTag)) {
+                        selectSeatController = Get.find<SelectSeatController>(tag: backTag);
+                      } else if (Get.isRegistered<SelectSeatController>(tag: goTag)) {
+                        selectSeatController = Get.find<SelectSeatController>(tag: goTag);
+                      }
+                    }
+                    if (selectSeatController == null && Get.isRegistered<SelectSeatController>()) {
+                      selectSeatController = Get.find<SelectSeatController>();
+                    }
+
+                    List<String> seatsToMark = [];
+                    if (selectSeatController != null) {
+                      seatsToMark = selectSeatController.state.isBack
+                          ? List<String>.from(ValueStatic.twoWaySelectedSeat)
+                          : List<String>.from(ValueStatic.oneWaySelectedSeat);
+                    }
+
+                    ScheduleListController? scheduleController;
+                    if (flowId.isNotEmpty) {
+                      final backScheduleTag = '${flowId}_schedule_back';
+                      final goScheduleTag = '${flowId}_schedule_go';
+                      if (Get.isRegistered<ScheduleListController>(tag: backScheduleTag)) {
+                        scheduleController = Get.find<ScheduleListController>(tag: backScheduleTag);
+                      } else if (Get.isRegistered<ScheduleListController>(tag: goScheduleTag)) {
+                        scheduleController = Get.find<ScheduleListController>(tag: goScheduleTag);
+                      }
+                    }
+                    if (scheduleController == null && Get.isRegistered<ScheduleListController>()) {
+                      scheduleController = Get.find<ScheduleListController>();
+                    }
+
+                    if (scheduleController != null && selectSeatController != null && seatsToMark.isNotEmpty) {
+                      scheduleController.decreaseAvailableSeats(
+                        journeyId: selectSeatController.state.journeyId,
+                        count: seatsToMark.length,
+                      );
+                    }
+
+                    Get.until(
+                      (route) => route.settings.name == AppRoutes.selectSeat,
                     );
+
+                    if (selectSeatController != null) {
+                      selectSeatController.init(
+                        context: Get.context!,
+                        journeyId: selectSeatController.state.journeyId,
+                        isBack: selectSeatController.state.isBack,
+                        markAsUnavailable: seatsToMark,
+                      );
+                    }
                   },
                   child: Container(
                     decoration: const BoxDecoration(
@@ -230,7 +281,7 @@ class Booking {
                     height: 50,
                     child: Center(
                       child: Text(
-                        'start_again'.tr,
+                        'choose_new_seat'.tr,
                         style: const TextStyle(color: AppColors.whiteColor),
                       ),
                     ),

@@ -11,44 +11,35 @@ import 'package:get/get.dart';
 
 import 'package:vector_math/vector_math_64.dart' as math;
 import 'dart:math' as math;
+import '../controller/ev_detail_charging_controller.dart';
 
 class EvDetailCharging extends StatefulWidget {
   const EvDetailCharging({super.key});
-
-  
 
   @override
   State<EvDetailCharging> createState() => _EvDetailChargingState();
 }
 
 class _EvDetailChargingState extends State<EvDetailCharging> {
-  int _percent = 1;
-  Timer? _timer;
+  late final EvDetailChargingController controller;
+  StreamSubscription<int>? _percentSubscription;
   bool _fullyChargedDialogShown = false;
 
-   late final Future<Uint8List?> _stopChargBytes =
-      _loadEmbeddedPngBytes(AssetImages.stopCharg);
+  late final Future<Uint8List?> _stopChargBytes = _loadEmbeddedPngBytes(
+    AssetImages.stopCharg,
+  );
 
-  late final Future<Uint8List?> _fullChargBytes =
-      _loadEmbeddedPngBytes(AssetImages.full_charg);
+  late final Future<Uint8List?> _fullChargBytes = _loadEmbeddedPngBytes(
+    AssetImages.full_charg,
+  );
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 80), (_) {
-      if (!mounted) return;
-      if (_percent >= 100) {
-        _timer?.cancel();
-        _timer = null;
-        _showFullyChargedIfNeeded();
-        return;
-      }
-      setState(() {
-        _percent = (_percent + 1).clamp(0, 100);
-      });
-      if (_percent >= 100) {
-        _timer?.cancel();
-        _timer = null;
+    controller = Get.put(EvDetailChargingController());
+
+    _percentSubscription = controller.percent.listen((val) {
+      if (val >= 100) {
         _showFullyChargedIfNeeded();
       }
     });
@@ -66,8 +57,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
 
   @override
   void dispose() {
-    _timer?.cancel();
-    _timer = null;
+    _percentSubscription?.cancel();
     super.dispose();
   }
 
@@ -76,217 +66,218 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
     return Scaffold(
       appBar: AppBarVET().appBar(context, "Charging".tr),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Text(
-                'Battery'.tr,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.blueGrey,
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: _BatteryGauge(
-                  percent: _percent,
+        child: Obx(() {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Text(
+                  'Battery'.tr,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.blueGrey,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${'Estimated Time'.tr} : ',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                  ),
-                  Text(
-                    '30 mins'.tr,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF2E9E4E),
-                        ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex:  1,
-                          child: _InfoCard(
-                          title: 'Time Elapsed',
-                          value: '14 mins',
-                          icon: const Icon(
-                            Icons.timer_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          color: AppColors.primaryColor,
-                          ),
-                        ),
-                        //
-                         const SizedBox(width: 10),
-                        Expanded(
-                          flex: 1,
-                          child: _InfoCard(
-                    title: 'Current',
-                    value: '60 A',
-                    icon: SvgPicture.asset(
-                      AssetImages.ammeter,
-                      width: 20,
-                      height: 20,
-                    ),
-                    color: Color(0xFF2E9E4E),
-                  ),
-                     ) ],
-                    ),
-                    //
-                     const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-            
-                  Expanded(
-                    flex: 1,
-                    child: _InfoCard(
-                      title: 'Voltage',
-                      value: '500 V',
-                      icon: SvgPicture.asset(
-                        AssetImages.volt,
-                        width: 20,
-                        height: 20,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: _BatteryGauge(percent: controller.percent.value),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${'Estimated Time'.tr} : ',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
                       ),
-                      color: Color(0xFF2D4CFF),
                     ),
-                  ),
-                   const SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: _InfoCard(
-                      title: 'Energy',
-                      value: '6 / 15 kWh',
-                     icon: SvgPicture.asset(
-                      AssetImages.energy,
-                      width: 20,
-                      height: 20,
-                    ),
-                    color: Color(0xFFFF3B30),
-                  ),
-                     )],
-                    ),
-              const SizedBox(height: 16),
-              _InfoCard(
-                title: 'Estimated Cost',
-                value: '៛2,000.00',
-                 icon: SvgPicture.asset(
-                      AssetImages.current,
-                      width: 20,
-                      height: 20,
-                    ),
-                color: Color(0xFFF6B33C),
-                fullWidth: true,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 100,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.grey, width: 1),
+                    Text(
+                      controller.estimatedTime.value.tr,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF2E9E4E),
                       ),
-                      child: Row(
-                        children: [
-                        
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: _InfoCard(
+                        title: 'Time Elapsed',
+                        value: controller.timeElapsed.value,
+                        icon: const Icon(
+                          Icons.timer_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: _InfoCard(
+                        title: 'Current',
+                        value: controller.current.value,
+                        icon: SvgPicture.asset(
+                          AssetImages.ammeter,
+                          width: 20,
+                          height: 20,
+                        ),
+                        color: const Color(0xFF2E9E4E),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: _InfoCard(
+                        title: 'Voltage',
+                        value: controller.voltage.value,
+                        icon: SvgPicture.asset(
+                          AssetImages.volt,
+                          width: 20,
+                          height: 20,
+                        ),
+                        color: const Color(0xFF2D4CFF),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: _InfoCard(
+                        title: 'Energy',
+                        value: controller.energy.value,
+                        icon: SvgPicture.asset(
+                          AssetImages.energy,
+                          width: 20,
+                          height: 20,
+                        ),
+                        color: const Color(0xFFFF3B30),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _InfoCard(
+                  title: 'Estimated Cost',
+                  value: controller.estimatedCost.value,
+                  icon: SvgPicture.asset(
+                    AssetImages.current,
+                    width: 20,
+                    height: 20,
+                  ),
+                  color: const Color(0xFFF6B33C),
+                  fullWidth: true,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 100,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey, width: 1),
+                        ),
+                        child: Row(
+                          children: [
                             SizedBox(
                               height: 60,
                               width: 60,
                               child: _buildCarChargingImage(),
                             ),
-                         
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.black87,
-                                      height: 1.3,
-                                    ),
-                                children: [
-                                  TextSpan(
-                                    text: '${'Note'.tr}: ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFE53935),
-                                    ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.black87,
+                                    height: 1.3,
                                   ),
-                                  TextSpan(
-                                    text: 'You cannot unplug the power while charging.'.tr,
-                                  ),
-                                ],
+                                  children: [
+                                    TextSpan(
+                                      text: '${'Note'.tr}: ',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFFE53935),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          'You cannot unplug the power while charging.'
+                                              .tr,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    height: 100,
-                    width: 86,
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InkWell(
-                      onTap: _onStopPressed,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 34,
-                            width: 34,
-                           
-                            child: SvgPicture.asset(
-                              AssetImages.buttonStop,
-                              width: 20,
-                              height: 20,
+                    const SizedBox(width: 12),
+                    Container(
+                      height: 100,
+                      width: 86,
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        onTap: _onStopPressed,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 34,
+                              width: 34,
+                              child: SvgPicture.asset(
+                                AssetImages.buttonStop,
+                                width: 20,
+                                height: 20,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Stop'.tr,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          )
-                        ],
+                            const SizedBox(height: 6),
+                            Text(
+                              'Stop'.tr,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.copyWith(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
 
   Future<Uint8List?> _loadEmbeddedPngBytes(String svgAssetPath) async {
     final svg = await rootBundle.loadString(svgAssetPath);
-    final match =
-        RegExp(r'data:image/png;base64,([^"\s]+)').firstMatch(svg);
+    final match = RegExp(r'data:image/png;base64,([^"\s]+)').firstMatch(svg);
     final data = match?.group(1);
     if (data == null || data.isEmpty) return null;
 
@@ -327,10 +318,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
             },
           );
         }
-        return SvgPicture.asset(
-          AssetImages.stopCharg,
-          fit: BoxFit.contain,
-        );
+        return SvgPicture.asset(AssetImages.stopCharg, fit: BoxFit.contain);
       },
     );
   }
@@ -352,10 +340,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
     final confirmed = await _showStopConfirmDialog();
     if (confirmed != true) return;
 
-    _timer?.cancel();
-    _timer = null;
-    if (!mounted) return;
-    setState(() {});
+    controller.stopCharging();
   }
 
   Future<bool?> _showStopConfirmDialog() {
@@ -385,18 +370,18 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                 Text(
                   'Message'.tr,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Do you really want to stop the charging process?'.tr,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.black54,
-                        height: 1.3,
-                      ),
+                    color: Colors.black54,
+                    height: 1.3,
+                  ),
                 ),
                 const SizedBox(height: 18),
                 Row(
@@ -412,7 +397,10 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                           ),
                           foregroundColor: const Color(0xFF374151),
                         ),
-                        child: Text('Cancel'.tr, style: TextStyle(color: Colors.black87),),
+                        child: Text(
+                          'Cancel'.tr,
+                          style: TextStyle(color: Colors.black87),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -428,7 +416,13 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                           foregroundColor: Colors.white,
                           elevation: 0,
                         ),
-                        child: Text('Stop'.tr, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
+                        child: Text(
+                          'Stop'.tr,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -458,33 +452,36 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                 Container(
+                Container(
                   height: 56,
                   width: 56,
                   alignment: Alignment.center,
                   // child: _buildFullChargIcon(),
                   child: Transform.rotate(
-    angle: 90 * math.pi / 180, // Change 90 to whatever angle you want
-    child: _buildFullChargIcon(),
-  ),
+                    angle:
+                        90 *
+                        math.pi /
+                        180, // Change 90 to whatever angle you want
+                    child: _buildFullChargIcon(),
+                  ),
                 ),
-               
+
                 const SizedBox(height: 10),
                 Text(
                   'Fully Charged!'.tr,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Please unplug the charger before traveling.\nThank you.'.tr,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.black54,
-                        height: 1.3,
-                      ),
+                    color: Colors.black54,
+                    height: 1.3,
+                  ),
                 ),
                 const SizedBox(height: 18),
                 SizedBox(
@@ -499,7 +496,10 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                       ),
                       foregroundColor: const Color(0xFF374151),
                     ),
-                    child: Text('Continue'.tr, style: TextStyle(color: Colors.black87)),
+                    child: Text(
+                      'Continue'.tr,
+                      style: TextStyle(color: Colors.black87),
+                    ),
                   ),
                 ),
               ],
@@ -511,13 +511,10 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
   }
 }
 
-
 class _BatteryGauge extends StatefulWidget {
   final int percent;
 
-  const _BatteryGauge({
-    required this.percent,
-  });
+  const _BatteryGauge({required this.percent});
 
   @override
   State<_BatteryGauge> createState() => _BatteryGaugeState();
@@ -535,7 +532,10 @@ class _BatteryGaugeState extends State<_BatteryGauge>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
     _controller.forward();
   }
 
@@ -570,43 +570,46 @@ class _BatteryGaugeState extends State<_BatteryGauge>
                       height: 50,
                       width: 100,
                       child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Positioned(
-                          bottom: -60,
-                          right: -35,
-                          child: Image.asset(
-                            AssetImages.gifCharging,
-                            height: 170,
-                            width: 170,
-                            fit: BoxFit.contain,
-                            gaplessPlayback: true,
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned(
+                            bottom: -60,
+                            right: -35,
+                            child: Image.asset(
+                              AssetImages.gifCharging,
+                              height: 170,
+                              width: 170,
+                              fit: BoxFit.contain,
+                              gaplessPlayback: true,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           '${widget.percent}',
-                          style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: const Color(0xFF1E232B),
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.displayMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF1E232B),
+                          ),
                         ),
                         const SizedBox(width: 6),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 14),
                           child: Text(
                             '%',
-                            style:
-                                Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      color: Colors.blueGrey,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleMedium?.copyWith(
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
@@ -626,10 +629,7 @@ class _BatteryGaugePainter extends CustomPainter {
   final double progress;
   final int percent;
 
-  const _BatteryGaugePainter({
-    required this.progress,
-    required this.percent,
-  });
+  const _BatteryGaugePainter({required this.progress, required this.percent});
 
   Color _progressColor() {
     final p = (percent.clamp(0, 100)) / 100.0;
@@ -648,17 +648,19 @@ class _BatteryGaugePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    final trackPaint = Paint()
-      ..color = const Color(0xFFE0E0E0)
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 25;
+    final trackPaint =
+        Paint()
+          ..color = const Color(0xFFE0E0E0)
+          ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 25;
 
-    final progressPaint = Paint()
-      ..color = _progressColor()
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 25;
+    final progressPaint =
+        Paint()
+          ..color = _progressColor()
+          ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 25;
 
     canvas.drawCircle(center, radius, trackPaint);
 
@@ -714,9 +716,9 @@ class _InfoCard extends StatelessWidget {
           Text(
             title.tr,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.blueGrey,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: Colors.blueGrey,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 10),
           Row(
@@ -725,7 +727,7 @@ class _InfoCard extends StatelessWidget {
                 backgroundColor: color,
                 radius: 20,
                 child: Center(child: icon),
-                  ),
+              ),
               const SizedBox(width: 10),
               Text(value.tr),
             ],
@@ -737,7 +739,4 @@ class _InfoCard extends StatelessWidget {
     if (!fullWidth) return card;
     return SizedBox(width: double.infinity, child: card);
   }
-
-
-  
 }

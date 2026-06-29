@@ -64,6 +64,7 @@ dependencies:
   permission_handler: ^11.3.1
   like_button: ^2.0.5
   vector_math: ^2.2.0
+  web_socket_channel: ^3.0.1
 
   # component:
   #  git:
@@ -107,3 +108,20 @@ flutter_launcher_icons:
 #   static const String vet_logo_qa = 'assets/images/vet_logo_qa.jpg';
 #   // Logo Production
 #   static const String vet_logo = 'assets/images/vet_logo.png';
+
+# Change logo command
+# flutter pub run flutter_launcher_icons
+
+# Command to build app auto get qa or production
+
+# build Apk
+# flutter build apk --flavor qa --dart-define=FLAVOR=qa --release --target-platform=android-arm64 --analyze-size --tree-shake-icons
+# flutter build apk --flavor prod --dart-define=FLAVOR=prod --release --target-platform=android-arm64 --analyze-size --tree-shake-icons
+
+# iOS run
+# flutter run --flavor qa --dart-define=FLAVOR=qa -d 5E7140F7-A2FB-4AC1-B690-11DE33B17FEB
+# flutter run --flavor prod --dart-define=FLAVOR=prod -d 5E7140F7-A2FB-4AC1-B690-11DE33B17FEB
+
+# android run
+# flutter run -d emulator-5554 --flavor qa --dart-define=FLAVOR=qa
+# flutter run -d emulator-5554 --flavor prod --dart-define=FLAVOR=prod

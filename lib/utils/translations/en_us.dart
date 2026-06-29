@@ -109,6 +109,9 @@ final Map<String, String> enUS = {
   'news_feed': 'News Feed',
   'view_all': "View All",
   'ev_wallet': 'EV Charger Wallet',
+  'add_voucher': 'Add voucher',
+  'add_voucher_question': 'Do you want to add this voucher?',
+  'voucher_is_empty': 'Voucher is empty',
   'all': 'All',
   'income': 'Income',
   'expense': 'Expense',
@@ -291,9 +294,9 @@ final Map<String, String> enUS = {
   'user_can': "For local phone number only (Cambodia +855)",
   'create_account': 'Create New Account',
   'phone_r': "Phone number is required",
-  'username_req': 'Username is required',
-  'username_inco': 'Full Name at least 4 character',
-  'name-signup': 'Name',
+  'username_req': 'Full name is required',
+  'username_inco': 'Full name at least 4 character',
+  'name-signup': 'Full name',
   'pass_not_match': 'Password not match',
   'confirm_pass': 'Confirm Password',
   'agree_info':
@@ -471,6 +474,7 @@ final Map<String, String> enUS = {
   'drop_off_point': 'Drop off point',
   'please_input_require_data': 'Please input require data',
   'start_again': 'Start again',
+  'choose_new_seat': 'Choose a new seat',
   'passenger_detail': 'Passenger Detail',
   'lucky_draw_1':
       'Booking LUCKY TICKET chances to win monthly prizes by just adding 0.25\$ on ticket price. Visit our ',
@@ -904,63 +908,114 @@ final Map<String, String> enUS = {
       'In the event of loss or damage, the company will compensate up to 5 times the shipping cost, not exceeding the value of the item. (International Logistics)',
 
   //*term condition ticket
+  "policy_title": "Check-In and Boarding Policy",
   "1": "1. Arrival Time",
   '1.1':
-      'Passengers are required to arrive at the boarding point 15 minutes before the scheduled departure time for check-in.',
+      'Passengers are required to arrive at the designated boarding point at least 30 minutes prior to the scheduled departure time for check-in and boarding procedures.',
   '1.2':
-      "It is the passenger's responsibility to ensure early or on-time arrival at the boarding station. Passengers who arrive late or fail to show up on the date and time of travel will not be eligible for refunds, and purchased tickets will expire once the bus departs.",
-  "2": "2. Ticket Policy",
+      "The company reserves the right to deny boarding to passengers arriving after the scheduled departure time. Tickets of late-arriving or no-show passengers shall be considered fully consumed and non-refundable.",
+  '1.3': "Passengers are responsible for ensuring they board at the correct station, departure time, and vehicle.",
+  '1.4':"The company reserves the right to depart strictly in accordance with the scheduled departure time without further notice.",
+  // ===========================
+  "2": "2. Ticket Validity, Cancellation and Reschedule Policy",
   '2.1':
-      "Purchased tickets are non-refundable but can be converted into a coupon for future trips.",
+      "All confirmed ticket purchases are non-refundable.",
   '2.2':
-      "Coupon refunds or reschedules can be processed up to 12 hours before the departure schedule. Coupons are valid for three months and can be used only once for rescheduling with the same route and vehicle type.",
+      "Passengers may request to convert their tickets into a travel coupon or reschedule their trip at least 12 hours prior to departure, subject to seat availability and the company’s policies and conditions.",
+  '2.3': "Coupons are valid for up to 3 months from the request date.",
+  '2.4': 'Coupons can only be requested and used once.',    
+  '2.5': 'Coupons must be used for the same route and vehicle category as the original ticket.',
+  '2.6': 'Coupons are non-refundable and non-transferable.',
+  '2.7': 'No cancellation, refund, coupon conversion, or reschedule will be permitted after the departure time.',
+  // ===========================   
   "3": "3. Infant, Child, Pregnant Women and People with Disabilities Policy",
-  '3.1':
-      "Infants under the age of 3 are not required to have tickets. They must be accompanied by an adult and sit on their lap. The company will not be held responsible for any injuries or harm that may occur to the infant during travel.",
-  '3.2':
-      "Children aged 3 and above, or those taller than 1 meter, are required to purchase their own seats at the full price.",
-  '3.3':
-      'For sleeper buses, infants are required to have a ticket at the full price.',
-  '3.4':
-      "Pregnant women over 27 weeks and people with disabilities must obtain prior approval from the company before purchasing tickets and traveling to ensure their safety. The company is not liable for any complications that may arise during travel.",
-  "4": "4. Border Crossing",
+  '3.1': "Infants under the age of 3 are not required to have tickets. They must be accompanied by an adult and sit on their lap. The company will not be held responsible for any injuries or harm that may occur to the infant during travel.",
+  '3.2': "Children aged 3 and above, or those taller than 1 meter, are required to purchase their own seats at the full price.",
+  '3.3': 'For sleeper buses, all passengers including infants are required to occupy individual berths and therefore require a full-price ticket.',    
+  '3.4': "Pregnant women over 27 weeks and people with disabilities must obtain prior approval from the company before purchasing tickets and traveling to ensure their safety. The company is not liable for any complications that may arise during travel.",
+  '3.5': 'The company reserves the right to refuse transportation if a passenger’s medical or physical condition may pose a safety risk to themselves, other passengers, staff, or operations.',    
+  // ===========================   
+  "4": "4. Border Crossing and Immigration Responsibility",
   '4.1':
-      'Vireak Buntham Express Travel is not responsible for VISA entry to the destination country.',
+      'Passengers are solely responsible for ensuring compliance with immigration, visa, customs, passport, and entry requirements of the destination country.',
   '4.2':
-      'In cases where immigration rejects entry at the border, passengers will not be eligible for ticket refunds.',
-  "5": "5. Booking and Seat Selection",
-  '5.1':
-      'Passengers can choose their preferred seats and purchase real-time tickets through the following options:',
-  '5.2': 'Booking hotline: +855 81 911 911',
-  '5.3': 'Mobile app: VET Express',
-  '5.4': 'Website: www.vireakbuntham.com',
-  '5.5': 'Any VET branches',
-  "6": "6. Baggage Policy",
+      'The company is not responsible for visa approval or rejection, immigration refusal, deportation, passport validity issues, customs penalties, or entry restrictions imposed by authorities.',
+  '4.3': 'Passengers denied entry by immigration authorities shall not be eligible for refunds or compensation.',
+  // ===========================   
+  "5": "5. Schedule Changes, Delays and Force Majeure",
+  '5.1': 'Departure and arrival times are estimates only and may be affected by traffic conditions, weather, road conditions, border processing, government restrictions, technical issues, or other operational circumstances beyond the company’s control.',
+  '5.2': 'The company reserves the right to delay departures, modify schedules, change boarding or drop-off points, replace vehicles, or reassign seats when operationally necessary.',
+  '5.3': 'The company shall not be liable for indirect losses, missed connections, business losses, hotel expenses, or other consequential damages caused by delays or operational changes.',
+  '5.4': 'In cases of force majeure including but not limited to natural disasters, accidents, political unrest, border closures, government orders, strikes, epidemics, or severe weather conditions, the company may suspend or cancel services without liability.',
+  // ===========================   
+  "6": "6. Booking and Seat Selection",
   "6.1":
-      "Passengers are allowed a maximum of 25kg of checked baggage and one carry-on item.",
+      "Passengers can choose their preferred seats and purchase real-time tickets through the following options:",
+  '6.1.1': 'Booking hotline: +855 81 911 911',
+  '6.1.2': 'Mobile app: VET Express',   
+  '6.1.3': 'Website: www.vireakbuntham.com',   
+  '6.1.4': 'Any VET branches',       
   "6.2":
-      "Additional charges will apply for overweight baggage, calculated based on the local delivery fee.",
-  "7": "7. Prohibited Items",
-  "7.1": "The following items are strictly prohibited onboard:",
-  "7.2": "Strong-smelling food (e.g., durian)",
-  "7.3": "Pets and other living animals",
-  "7.4": "Firearms of all types",
-  "7.5":
-      "All types of drugs, smoking, e-cigarettes, and substance abuse in the vehicle",
-  "7.6": "Smuggled or illegal products",
-  "7.7": "Dangerous, flammable, or explosive items",
-  "8": "8. Passenger Responsibility",
-  '8.1':
-      'Passengers are responsible for the safety of their personal belongings and valuables.',
-  '8.2':
-      'Vireak Buntham Express Travel will not be held liable for any loss or damage to personal items.',
-  "9": "9. Alcohol Policy",
+      "Tickets can be purchased at any time before the scheduled departure.",
+  "6.3": 'Passengers may select preferred seats during booking; however, seat assignments are subject to operational adjustments when necessary.',
+  '6.4': 'The company reserves the right to reassign seats or change vehicle configurations without prior notice for operational, safety, or maintenance reasons.',
+  // ===========================   
+  "7": "7. Baggage Policy",
+  "7.1": "Passengers are allowed a maximum of 25kg of checked baggage and one carry-on item.",
+  "7.2": "Additional charges will apply for overweight baggage, calculated based on the local delivery fee.",
+  "7.3": "Passengers must ensure that all baggage is properly tagged with the company baggage claim tag and securely stored.",
+  "7.4": "The company reserves the right to inspect baggage for safety and security purposes.",
+  
+  // ===========================
+  "8": "8. Prohibited Items",
+  "8.1": "The following items are strictly prohibited onboard:",
+  "8.1.1": "Strong-smelling food (e.g., durian)",
+  "8.1.2": "Pets",
+  "8.1.3": "Firearms",
+  "8.1.4": "Narcotics",
+  "8.1.5": "All types of drugs, smoking, e-cigarettes, and substance abuse in the vehicle",
+  "8.1.6": "Smuggled or illegal products",
+  "8.1.7": "Dangerous, flammable, or explosive items",
+  "8.2": 'The company reserves the right to refuse transportation of prohibited items and report violations to the relevant authorities.', 
+  // ===========================  
+  "9": "9. Passenger Responsibility",
   "9.1":
-      "Bringing alcohol onboard or consuming alcohol inside the vehicle is prohibited.",
+      "Passengers are responsible for ensuring that all booking information provided, including passenger names, contact details, passport information, travel dates, and destinations, is accurate and complete.",
   "9.2":
-      "The company reserves the right to deboard any passengers who are intoxicated, unhygienic, or displaying inappropriate behavior that causes disturbances to others. Such passengers will not be eligible for refunds.",
+      "Passengers are responsible for the safety of their personal belongings and valuables.",
+      "9.3":
+      "The company will not be held liable for any loss, damage, or deterioration of passengers’ personal belongings, valuables, cash, electronic devices, or fragile items.",
+  // ===========================
+  "10": "10. Lost, Damaged or Unclaimed Baggage",
+  "10.1": "Passengers are responsible for safeguarding personal valuables including cash, jewelry, electronics, documents, and fragile items.",
+  "10.2": "The company shall not be liable for loss of valuables, damaged fragile items, unattended belongings, or minor wear and tear during transportation.",
+  "10.3": "Any baggage claims must be reported immediately upon arrival and supported by valid baggage claim tags or proof of ownership.",
+  "10.4": "Unclaimed baggage may be disposed of in accordance with company policy after the legally permitted holding period.",
+  // ===========================
+  "11": "11. Passenger Conduct and Safety",
+  "11.1": "Passengers must behave respectfully and comply with instructions provided by drivers, onboard staff, and company representatives.",
+  "11.2": "The company reserves the right to refuse boarding or remove passengers without refund if they are intoxicated, display aggressive, abusive, or disruptive behavior, endanger safety, damage company property, cause discomfort to other passengers, or violate company policies or local laws.",
+  "11.3": "Passengers may be held financially liable for damages caused to company property or third parties.",
+  // ===========================
+  "12": "12. E-Ticket Delivery",
+  "12.1": "Passengers are responsible for providing a valid email address and contact information during booking.",
+  "12.2": "E-tickets are considered successfully delivered once generated and sent by the company’s system.",
+  "12.3": "If passengers do not receive their E-ticket, they should check spam or junk folders, use the “Resend Email” function, or contact customer support immediately before departure.",
+  "12.4": "Failure to receive or present an E-ticket due to incorrect email entry, internet issues, spam filtering, device problems, or failure to contact support shall not constitute grounds for refund.",
+  "12.5": "If passengers still do not receive their E-ticket, they may contact customer support via email at support@vireakbuntham.com or hotline at (+855) 81 911 911.",
+  // ===========================
+  "13": "13. Limitation of Liability",
+  "13.1": "To the maximum extent permitted by applicable law, the company’s liability for any claim arising from transportation services shall be limited to the value of the purchased ticket.",
+  "13.2": "The company shall not be liable for indirect, incidental, special, punitive, or consequential damages including loss of income, business opportunities, accommodation costs, emotional distress, or missed connections.",
+  "13.3": "The Company retains operational records, including vehicle camera recordings, for a limited period in accordance with its internal policies. Passengers are encouraged to report any service-related complaints, disputes, or claims within thirty (30) days from the date of travel. The Company shall not be responsible for the unavailability of operational records after the applicable retention period has expired.",
+  "13.4": "Any payment dispute or chargeback request must be supported by valid evidence. The Company reserves the right to provide booking records, boarding records, vehicle tracking records, communication logs, and other operational evidence to payment processors, financial institutions, agents, OTAs, or competent authorities to contest fraudulent or unfounded claims.",
+  // ===========================
+  "14": "14. Acceptance of Terms",
+  "14.1": "By purchasing, booking, or using VET Express/VET AirBus services, passengers acknowledge that they have read, understood, and agreed to these Terms & Conditions.",
 
-  //*term condition buva sea
+  // ===========================
+  // term condition buva sea
+  // ===========================
   "b1": "1. Pick-Up Service",
   "b11":
       "Free pick-up service is available at VET’s bus terminal in Sihanoukville.",

@@ -26,11 +26,23 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   late final AuthController controller;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final FocusNode _phoneFocusNode;
 
   @override
   void initState() {
     super.initState();
     controller = Get.find<AuthController>();
+    controller.clearLoginInputs();
+    _phoneFocusNode = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _phoneFocusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _phoneFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,23 +87,41 @@ class _SignInScreenState extends State<SignInScreen> {
                     children: [
                       const SizedBox(height: 20),
                       TextFormField(
+                        focusNode: _phoneFocusNode,
                         controller:
                             controller.uiState.value.signInPhoneController,
-                        autofocus: false,
+                        autofocus: true,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         keyboardType: TextInputType.emailAddress,
-                        inputFormatters: [PhoneNumberFormatter()],
+                        inputFormatters: [PhoneOrEmailFormatter()],
                         style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.textColor,
                         ),
                         validator: (String? value) {
-                          return CheckInput().checkLength(
-                            (value ?? '').replaceAll(' ', ''),
-                            9,
-                            'phone_req'.tr,
-                            'phone_inco'.tr,
-                          );
+                          final cleanValue = (value ?? '').trim();
+                          if (cleanValue.isEmpty) {
+                            return 'phone_req'.tr;
+                          }
+                          // Check if it is an email (contains '@')
+                          if (cleanValue.contains('@')) {
+                            final emailError = CheckInput()
+                                .validateEmailAddress(cleanValue);
+                            if (emailError != null) {
+                              return 'phone_inco'.tr;
+                            }
+                            return null;
+                          } else {
+                            // Check if phone number format is valid (at least 9 digits)
+                            final phoneClean = cleanValue.replaceAll(' ', '');
+                            final isNumeric = RegExp(
+                              r'^\+?[0-9]+$',
+                            ).hasMatch(phoneClean);
+                            if (!isNumeric || phoneClean.length < 9) {
+                              return 'phone_inco'.tr;
+                            }
+                            return null;
+                          }
                         },
                         decoration: InputDecoration(
                           isDense: true,
@@ -162,14 +192,17 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           const SizedBox(width: 5),
                           InkWell(
-                            onTap: () {
-                              Get.to(
+                            onTap: () async {
+                              controller.clearLoginInputs();
+                              _formKey.currentState?.reset();
+                              await Get.to(
                                 () => const SignUpScreen(),
                                 transition: Transition.rightToLeft,
                                 duration: const Duration(
                                   milliseconds: Constrains.duration,
                                 ),
                               );
+                              _phoneFocusNode.requestFocus();
                             },
                             child: Text(
                               'register'.tr,
@@ -182,14 +215,17 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           const Spacer(),
                           InkWell(
-                            onTap: () {
-                              Get.to(
+                            onTap: () async {
+                              controller.clearLoginInputs();
+                              _formKey.currentState?.reset();
+                              await Get.to(
                                 () => const ForgotPasswordScreen(),
                                 transition: Transition.rightToLeft,
                                 duration: const Duration(
                                   milliseconds: Constrains.duration,
                                 ),
                               );
+                              _phoneFocusNode.requestFocus();
                             },
                             child: Text(
                               'forget_pass'.tr,
@@ -233,14 +269,17 @@ class _SignInScreenState extends State<SignInScreen> {
                       buttonNoBackground(
                         context: context,
                         buttonText: 'scan_parcel'.tr,
-                        onPressed: () {
-                          Get.to(
+                        onPressed: () async {
+                          controller.clearLoginInputs();
+                          _formKey.currentState?.reset();
+                          await Get.to(
                             () => const SearchGoodsTransferScreen(),
                             transition: Transition.rightToLeft,
                             duration: const Duration(
                               milliseconds: Constrains.duration,
                             ),
                           );
+                          _phoneFocusNode.requestFocus();
                         },
                       ),
                       const SizedBox(height: 20),

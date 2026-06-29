@@ -579,6 +579,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.evVoucher,
       page: () => const EvVoucherScreen(),
+      binding: EvChargerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),
     ),

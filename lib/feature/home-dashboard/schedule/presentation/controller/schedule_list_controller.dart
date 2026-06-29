@@ -207,7 +207,7 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
     }
   }
 
-  void openSelectSeat(Body data) {
+  Future<void> openSelectSeat(Body data) async {
     applySelectedScheduleData(data);
 
     final args = Get.arguments as Map<dynamic, dynamic>?;
@@ -216,7 +216,7 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
     debugPrint('Body: ${jsonEncode(data.toJson())}');
     debugPrint("args: $args");
 
-    Get.toNamed(
+    await Get.toNamed(
       AppRoutes.selectSeat,
       arguments: {
         'journeyId': (data.id).toString(),
@@ -224,5 +224,41 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
         'flowId': flowId,
       },
     );
+
+    final context = Get.context;
+    if (context != null) {
+      refreshSchedule(context);
+    }
+  }
+
+  void refreshSchedule(BuildContext context) {
+    uiState.value = state.copyWith(
+      futureSchedule: _buildFutureSchedule(context: context, isBack: state.isBack),
+    );
+  }
+
+  Future<void> decreaseAvailableSeats({
+    required String journeyId,
+    required int count,
+  }) async {
+    if (state.futureSchedule == null) return;
+    try {
+      final scheduleResponse = await state.futureSchedule!;
+      final list = scheduleResponse.body;
+      if (list == null) return;
+      for (final item in list) {
+        if (item.id == journeyId) {
+          if (item.seatAvailable != null) {
+            item.seatAvailable = (item.seatAvailable! - count).clamp(0, item.totalSeat ?? 0);
+          }
+          break;
+        }
+      }
+      uiState.value = state.copyWith(
+        futureSchedule: Future.value(scheduleResponse),
+      );
+    } catch (e) {
+      debugPrint('Error updating schedule seats: $e');
+    }
   }
 }

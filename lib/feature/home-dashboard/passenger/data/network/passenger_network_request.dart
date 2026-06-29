@@ -238,6 +238,10 @@ class PassengerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
+      final prettyResponse = const JsonEncoder.withIndent('  ').convert(json);
+      debugPrint(
+        'PassengerNetworkRequest.checkTicketStatus.responseJson\n$prettyResponse',
+      );
       return WingResponse.fromJson(json);
     } catch (e) {
       debugPrint('PassengerNetworkRequest.checkTicketStatus.error $e');

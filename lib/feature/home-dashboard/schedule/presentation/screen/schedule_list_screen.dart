@@ -361,7 +361,11 @@ class ScheduleListScreen extends StatelessWidget {
                                 ),
                                 child: Text(
                                   isFull
-                                      ? 'full'.tr
+                                      ? (Get.locale?.languageCode == 'km'
+                                          ? (seatType == 2
+                                              ? 'គ្រែកក់ពេញ'
+                                              : 'កៅអីកក់ពេញ')
+                                          : 'full'.tr)
                                       : isUnavailable
                                       ? 'unavailable'.tr
                                       : 'left'.tr,
@@ -453,6 +457,7 @@ class ScheduleListScreen extends StatelessWidget {
                             controller,
                             flowId,
                           );
+                          controller.refreshSchedule(context);
                         },
                         child: Row(
                           children: [

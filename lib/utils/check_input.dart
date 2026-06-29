@@ -142,3 +142,26 @@ class PhoneNumberFormatter extends TextInputFormatter {
     );
   }
 }
+
+class PhoneOrEmailFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) return newValue;
+
+    // Check if input contains any character other than digits and spaces
+    final hasNonPhoneChars = newValue.text.replaceAll(' ', '').contains(RegExp(r'\D'));
+    if (hasNonPhoneChars) {
+      return newValue;
+    }
+
+    final formatted = CheckInput.formatPhoneNumber(newValue.text);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+

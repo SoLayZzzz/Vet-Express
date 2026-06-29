@@ -1,25 +1,36 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
-import '../../data/model/response/nationality_response.dart';
 import '../../../../utils/app_bar.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/button.dart';
 import '../../../../utils/check_input.dart';
 import '../../../../utils/style.dart';
-import '../../../../value_statics.dart';
 import '../../../../base/web_view_screen.dart';
 import '../controller/auth_controller.dart';
+import 'select_nationality_screen.dart';
 
-class SignUpScreen extends GetView<AuthController> {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   static const genderItems = ['male', 'female'];
 
   @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  late final AuthController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<AuthController>();
+    controller.clearRegisterInputs();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    controller.ensureNationalityLoaded(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBarVET().appBar(context, 'create_account'.tr),
@@ -313,7 +324,7 @@ class SignUpScreen extends GetView<AuthController> {
                   ),
                   iconEnabledColor: AppColors.borderColor,
                   items:
-                      genderItems
+                      SignUpScreen.genderItems
                           .map(
                             (String item) => DropdownMenuItem<String>(
                               value: item,
@@ -328,7 +339,7 @@ class SignUpScreen extends GetView<AuthController> {
                           )
                           .toList(),
                   value:
-                      genderItems.contains(normalizedGender)
+                      SignUpScreen.genderItems.contains(normalizedGender)
                           ? normalizedGender
                           : null,
                   onChanged: (String? value) {
@@ -351,154 +362,35 @@ class SignUpScreen extends GetView<AuthController> {
         children: [
           Text('nationality'.tr),
           const SizedBox(height: 5),
-          FutureBuilder<NationalityResponse>(
-            future: controller.uiState.value.nationalityFuture,
-            builder: (context, data) {
-              if (data.hasData) {
-                if ((data.data?.header?.result) == true &&
-                    (data.data?.header?.statusCode) == 200) {
-                  if ((data.data?.body)!.status == true &&
-                      (data.data?.body)!.data!.isNotEmpty) {
-                    final nationalityData = data.data?.body?.data ?? [];
-                    final uniqueNationalityByName = <String, dynamic>{};
-                    for (final item in nationalityData) {
-                      final name = (item.name ?? '').trim();
-                      if (name.isEmpty) continue;
-                      uniqueNationalityByName.putIfAbsent(name, () => item);
-                    }
-                    return InputDecorator(
-                      decoration: InputDecoration(
-                        isDense: true,
-                        prefixIcon: const Icon(Ionicons.flag_outline),
-                        contentPadding: const EdgeInsets.fromLTRB(0, 1, 10, 1),
-                        enabledBorder: Style.outlineInputBorder(),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide(color: AppColors.primaryColor),
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                        ),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: Obx(() {
-                          final ui = controller.uiState.value;
-                          final selectedNationality =
-                              uniqueNationalityByName.containsKey(
-                                    ui.signUpNationalityValue.value,
-                                  )
-                                  ? ui.signUpNationalityValue.value
-                                  : null;
-                          return DropdownButton2<String>(
-                            isExpanded: true,
-                            hint: Text(
-                              'nationality'.tr,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).hintColor,
-                              ),
-                            ),
-                            items:
-                                uniqueNationalityByName.values
-                                    .map(
-                                      (item) => DropdownMenuItem<String>(
-                                        value: item.name,
-                                        child: Text(
-                                          "${item.name}",
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                            value: selectedNationality,
-                            onChanged: (value) {
-                              if (value == null) {
-                                controller.setSignUpNationality(
-                                  value: null,
-                                  id: null,
-                                );
-                                return;
-                              }
-                              final nationalityId =
-                                  uniqueNationalityByName[value]?.id;
-                              controller.setSignUpNationality(
-                                value: value,
-                                id: nationalityId,
-                              );
-                            },
-                            iconStyleData: const IconStyleData(
-                              iconEnabledColor: AppColors.borderColor,
-                            ),
-                            dropdownStyleData: const DropdownStyleData(
-                              width: double.infinity,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              height: 40,
-                            ),
-                            dropdownSearchData: DropdownSearchData(
-                              searchController:
-                                  controller
-                                      .uiState
-                                      .value
-                                      .signUpNationalitySearchController,
-                              searchInnerWidgetHeight: 50,
-                              searchInnerWidget: Container(
-                                height: 60,
-                                padding: const EdgeInsets.only(
-                                  top: 8,
-                                  bottom: 4,
-                                  right: 8,
-                                  left: 8,
-                                ),
-                                child: TextFormField(
-                                  expands: true,
-                                  maxLines: null,
-                                  controller:
-                                      controller
-                                          .uiState
-                                          .value
-                                          .signUpNationalitySearchController,
-                                  decoration: Style.inputText(
-                                    'search_nation'.tr,
-                                  ),
-                                ),
-                              ),
-                              searchMatchFn: (item, searchValue) {
-                                return item.value
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(searchValue.toLowerCase());
-                              },
-                            ),
-                            //* This to clear the search value when you close the menu
-                            onMenuStateChange: (isOpen) {
-                              if (!isOpen) {
-                                controller
-                                    .uiState
-                                    .value
-                                    .signUpNationalitySearchController
-                                    .clear();
-                              }
-                            },
-                          );
-                        }),
-                      ),
-                    );
-                  }
+          Obx(() {
+            final ui = controller.uiState.value;
+            final selectedName = ui.signUpNationalityValue.value;
+            return TextFormField(
+              key: ValueKey(selectedName),
+              initialValue: selectedName,
+              readOnly: true,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onTap: () async {
+                final result = await Get.to<Map<String, dynamic>>(
+                  () => const SelectNationalityScreen(),
+                  duration: const Duration(milliseconds: 350),
+                  transition: Transition.rightToLeft,
+                );
+                if (result != null) {
+                  controller.setSignUpNationality(
+                    value: result['name'],
+                    id: result['id'],
+                  );
                 }
-              } else if (data.hasError) {
-                return const Text('');
-              }
-              return const Center(
-                child: SizedBox(
-                  height: 30.0,
-                  width: 30.0,
-                  child: CircularProgressIndicator(
-                    value: null,
-                    color: AppColors.primaryColor,
-                    strokeWidth: 3.0,
-                  ),
-                ),
-              );
-            },
-          ),
+              },
+              style: const TextStyle(fontSize: 14),
+              decoration: Style.inputText(
+                'select_nation'.tr,
+                iconLeft: Ionicons.flag_outline,
+                iconRight: Ionicons.chevron_forward_outline,
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -530,7 +422,10 @@ class SignUpScreen extends GetView<AuthController> {
                       : g == 'female' || g == 'female'.tr
                       ? 2
                       : 0, // male = 1, female = 2
-              nationalityId: ValueStatic.nationalityId,
+              nationalityId:
+                  ui.signUpNationalityId.value == 0
+                      ? null
+                      : ui.signUpNationalityId.value,
             );
           }
         },

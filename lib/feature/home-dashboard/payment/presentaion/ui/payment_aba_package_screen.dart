@@ -66,10 +66,6 @@ class _PaymentABAPackageScreenState extends State<PaymentABAPackageScreen>
         transactionId: widget.transactionId,
         token: widget.token,
       );
-    } else if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      controller.stop();
     }
   }
 

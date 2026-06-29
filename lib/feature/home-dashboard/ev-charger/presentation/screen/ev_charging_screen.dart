@@ -21,8 +21,9 @@ class EvChargerScreen extends GetView<EvChargerController> {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
 
-  late final Future<Uint8List?> _carChargingBytes =
-      _loadEmbeddedPngBytes(AssetImages.ic_car_charging);
+  late final Future<Uint8List?> _carChargingBytes = _loadEmbeddedPngBytes(
+    AssetImages.ic_car_charging,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -105,44 +106,39 @@ class EvChargerScreen extends GetView<EvChargerController> {
         ),
         onPressed: () {
           Get.back();
-       
         },
       ),
       actions: [
         // Faq
         _buildAppBarButton(
-        () =>  Get.toNamed(AppRoutes.evFaq),
-        AssetImages.ic_ev_faq
+          () => Get.toNamed(AppRoutes.evFaq),
+          AssetImages.ic_ev_faq,
         ),
         // Support
-         _buildAppBarButton(
-        () =>  showContactBottomSheet(),
-        AssetImages.ic_ev_contact
+        _buildAppBarButton(
+          () => showContactBottomSheet(),
+          AssetImages.ic_ev_contact,
         ),
         // Policy
-         _buildAppBarButton(
-        () =>  Get.toNamed(AppRoutes.evPolicy),
-        AssetImages.ic_ev_policy
+        _buildAppBarButton(
+          () => Get.toNamed(AppRoutes.evPolicy),
+          AssetImages.ic_ev_policy,
         ),
-       
       ],
     );
   }
 
-  Widget _buildAppBarButton(
-    VoidCallback? onTap,
-    String iconPath
-  ) {
+  Widget _buildAppBarButton(VoidCallback? onTap, String iconPath) {
     return GestureDetector(
-        onTap: () {
-          onTap?.call();
-        },
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 20,
-          child: SvgPicture.asset(iconPath),
-        ),
-      );
+      onTap: () {
+        onTap?.call();
+      },
+      child: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: 20,
+        child: SvgPicture.asset(iconPath),
+      ),
+    );
   }
 
   Widget _buildBody() {
@@ -152,18 +148,14 @@ class EvChargerScreen extends GetView<EvChargerController> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-
-           Obx(() {
-             if (!controller.isCharging.value) {
-               return const SizedBox.shrink();
-             }
-             return Column(
-              children: [
-                _buildCardCharging(),
-                const SizedBox(height: 15),
-              ],
-             );
-           }),
+            Obx(() {
+              if (controller.isCharging.value != 1) {
+                return const SizedBox.shrink();
+              }
+              return Column(
+                children: [_buildCardCharging(), const SizedBox(height: 15)],
+              );
+            }),
 
             _buildBalanceCard(),
 
@@ -197,79 +189,83 @@ class EvChargerScreen extends GetView<EvChargerController> {
         child: Stack(
           children: [
             Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Positioned(
-                        bottom: -30,
-                        right: -30,
-                        child: Image.asset(
-                          AssetImages.gifCharging,
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.contain,
-                          gaplessPlayback: true,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned(
+                            bottom: -30,
+                            right: -30,
+                            child: Image.asset(
+                              AssetImages.gifCharging,
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.contain,
+                              gaplessPlayback: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      'Your vehicle is charging',
+                      style: TextStyle(color: Colors.black54, fontSize: 16),
+                    ),
+                  ],
+                ),
+                //
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: _buildCarChargingImage(),
+                      ),
+                    ),
+                    // View detail button
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Get.toNamed(
+                          AppRoutes.evDetailCharging,
+                          arguments: {
+                            'transactionId':
+                                controller.chargingTransactionId.value,
+                            'chargerUsername':
+                                controller.chargingChargerUsername.value,
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Text(
-                  'Your vehicle is charging',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
-                  ),
+                      label: Text(
+                        "View Detail".tr,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            //
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: _buildCarChargingImage(),
-                  ),
-                ),
-                // View detail button
-                ElevatedButton.icon(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.evDetailCharging);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    label: Text(
-                      "View Detail".tr,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.whiteColor,
-                      ),
-                    ),
-                  ),
-              ],
-            )
           ],
         ),
-          ],
-        )
-       
       ),
     );
   }
@@ -282,15 +278,17 @@ class EvChargerScreen extends GetView<EvChargerController> {
         if (bytes != null && bytes.isNotEmpty) {
           return Image.memory(bytes, fit: BoxFit.contain);
         }
-        return SvgPicture.asset(AssetImages.ic_car_charging, fit: BoxFit.contain);
+        return SvgPicture.asset(
+          AssetImages.ic_car_charging,
+          fit: BoxFit.contain,
+        );
       },
     );
   }
 
   Future<Uint8List?> _loadEmbeddedPngBytes(String svgAssetPath) async {
     final svg = await rootBundle.loadString(svgAssetPath);
-    final match =
-        RegExp(r'data:image/png;base64,([^"\s]+)').firstMatch(svg);
+    final match = RegExp(r'data:image/png;base64,([^"\s]+)').firstMatch(svg);
     final data = match?.group(1);
     if (data == null || data.isEmpty) return null;
 
@@ -447,223 +445,85 @@ class EvChargerScreen extends GetView<EvChargerController> {
   Widget _buildBalanceCard() {
     return Row(
       children: [
-        Expanded(
-          flex: 1,
-          child: _buildTotalBalance()),
+        Expanded(flex: 1, child: _buildTotalBalance()),
         const SizedBox(width: 12),
-        Expanded(
-          flex: 1,
-          child: _buildTotalPoint()),
+        Expanded(flex: 1, child: _buildTotalPoint()),
       ],
     );
   }
 
   Widget _buildTotalBalance() {
     return InkWell(
-        onTap: () {
-          Get.toNamed(AppRoutes.evWallet);
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.2),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
+      onTap: () {
+        Get.toNamed(AppRoutes.evWallet);
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: 1,
-                top: 2,
-                child: Opacity(
-                  opacity: 0.99,
-                  child: SvgPicture.asset(
-                    AssetImages.ic_money_backgroound_small,
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              //
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                 Text(
-                      "total_balance".tr,
-                      style: const TextStyle(
-                        color: AppColors.greyColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                
-                const SizedBox(height: 5),
-                GetX<EvWalletController>(
-                  builder: (wallet) {
-                    return wallet.isLoadingBalance.value
-                        ? const SizedBox(height: 40)
-                        : Text(
-                          "${wallet.totalBalance.value.toStringAsFixed(2)} KHR",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.titleColor,
-                          ),
-                        );
-                  },
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.evTopUp);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      minimumSize: const Size(50, 35),
-                     
-                    ),
-                    icon: Image.asset(AssetImages.ic_topUp, width: 20, height: 20),
-                    label: Text(
-                      "top_up".tr,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: AppColors.whiteColor,
-                      ),
-                    ),
-                  ),
-                ),
-                            ],
-                          ),
-              ),
-            ],
-          )
-        
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
-      );
-  }
-
-  Widget _buildTotalPoint() {
-    return InkWell(
-        onTap: () {
-           final point = controller.state.membershipInfoResponse?.body?.data;
-
-           Get.toNamed(
-             AppRoutes.evMembership,
-             arguments: <String, dynamic>{
-               'section': 'menu',
-               'membershipInfo': point,
-             },
-           );
-        },
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.2),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: 1,
-                top: 2,
-                child: Opacity(
-                  opacity: 0.50,
-                  child: SvgPicture.asset(
-                    AssetImages.ic_history_background_small,
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.contain,
-                  ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: 1,
+              top: 2,
+              child: Opacity(
+                opacity: 0.99,
+                child: SvgPicture.asset(
+                  AssetImages.ic_money_backgroound_small,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.contain,
                 ),
               ),
-              //
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                 Text(
-                      "Total Points".tr,
-                      style: const TextStyle(
-                        color: AppColors.greyColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                
-                const SizedBox(height: 5),
-                Obx(() {
-                  final isLoading = controller.state.isLoadingMembershipInfo;
-                  if (isLoading) return const SizedBox(height: 40);
-
-                  final point =
-                      controller.state.membershipInfoResponse?.body?.data;
-                  final currentPoint = point?.currentPoint ?? 0;
-
-                  return Text(
-                    "$currentPoint pts",
+            ),
+            //
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "total_balance".tr,
                     style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.titleColor,
+                      color: AppColors.greyColor,
+                      fontWeight: FontWeight.w600,
                     ),
-                  );
-                }),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Obx(() {
-                    final isCharging = controller.isCharging.value;
-                    final point =
-                        controller.state.membershipInfoResponse?.body?.data;
-                    // final currentPoint = point?.currentPoint ?? 0;
+                  ),
 
-                    return ElevatedButton.icon(
-                      onPressed: () {
-                        if (isCharging) {
-                          Get.toNamed(
-                            AppRoutes.evRedeemPoint,
-                            arguments: <String, dynamic>{'points': point},
+                  const SizedBox(height: 5),
+                  GetX<EvWalletController>(
+                    builder: (wallet) {
+                      return wallet.isLoadingBalance.value
+                          ? const SizedBox(height: 40)
+                          : Text(
+                            "${wallet.totalBalance.value.toStringAsFixed(2)} KHR",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.titleColor,
+                            ),
                           );
-                          return;
-                        }
-
-                        Get.toNamed(
-                          AppRoutes.evMembership,
-                          arguments: <String, dynamic>{
-                            'section': 'history',
-                            'membershipInfo': point,
-                          },
-                        );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.evTopUp);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
@@ -673,33 +533,175 @@ class EvChargerScreen extends GetView<EvChargerController> {
                         ),
                         minimumSize: const Size(50, 35),
                       ),
-                      icon:
-                          isCharging
-                              ? const Icon(Icons.auto_awesome, size: 20)
-                              : SvgPicture.asset(
-                                AssetImages.ic_history,
-                                width: 20,
-                                height: 20,
-                              ),
+                      icon: Image.asset(
+                        AssetImages.ic_topUp,
+                        width: 20,
+                        height: 20,
+                      ),
                       label: Text(
-                        isCharging ? 'Redeem' : "History".tr,
+                        "top_up".tr,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                           color: AppColors.whiteColor,
                         ),
                       ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTotalPoint() {
+    return InkWell(
+      onTap: () {
+        final point = controller.state.membershipInfoResponse?.body?.data;
+        final isCharging = controller.isCharging.value == 1;
+
+        if (isCharging) {
+          Get.toNamed(
+            AppRoutes.evRedeemPoint,
+            arguments: <String, dynamic>{'points': point},
+          );
+        } else {
+          Get.toNamed(
+            AppRoutes.evMembership,
+            arguments: <String, dynamic>{
+              'section': 'menu',
+              'membershipInfo': point,
+            },
+          );
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF7F0EC), Color(0xFFE3C7B6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: 1,
+              top: 2,
+              child: Opacity(
+                opacity: 0.50,
+                child: SvgPicture.asset(
+                  AssetImages.ic_history_background_small,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            //
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Total Points".tr,
+                    style: const TextStyle(
+                      color: AppColors.greyColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  const SizedBox(height: 5),
+                  Obx(() {
+                    final isLoading = controller.state.isLoadingMembershipInfo;
+                    if (isLoading) return const SizedBox(height: 40);
+
+                    final point =
+                        controller.state.membershipInfoResponse?.body?.data;
+                    final currentPoint = point?.currentPoint ?? 0;
+
+                    return Text(
+                      "$currentPoint pts",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.titleColor,
+                      ),
                     );
                   }),
-                ),
-                            ],
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Obx(() {
+                      final isCharging = controller.isCharging.value == 1;
+                      final point =
+                          controller.state.membershipInfoResponse?.body?.data;
+
+                      return ElevatedButton.icon(
+                        onPressed: () {
+                          if (isCharging) {
+                            Get.toNamed(
+                              AppRoutes.evRedeemPoint,
+                              arguments: <String, dynamic>{'points': point},
+                            );
+                            return;
+                          }
+
+                          Get.toNamed(
+                            AppRoutes.evMembership,
+                            arguments: <String, dynamic>{
+                              'section': 'history',
+                              'membershipInfo': point,
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
+                          minimumSize: const Size(50, 35),
+                        ),
+                        icon:
+                            isCharging
+                                ? const Icon(Icons.auto_awesome, size: 20)
+                                : SvgPicture.asset(
+                                  AssetImages.ic_history,
+                                  width: 20,
+                                  height: 20,
+                                ),
+                        label: Text(
+                          isCharging ? 'Redeem' : "History".tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ],
               ),
-            ],
-          )
-        
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 
   Widget _buildQuickActions() {
@@ -708,29 +710,34 @@ class EvChargerScreen extends GetView<EvChargerController> {
       children: [
         Expanded(
           child: _buildActionButton(
-            // Icons.ev_station, 
+            // Icons.ev_station,
             SvgPicture.asset(AssetImages.ic_station, width: 18, height: 18),
             // "ev_charger".tr,
             "Map Station",
-             () {
-            Get.toNamed(AppRoutes.evAllStations);
-          }),
+            () {
+              Get.toNamed(AppRoutes.evAllStations);
+            },
+          ),
         ),
         const SizedBox(width: 15),
         Expanded(
           child: _buildActionButton(
             SvgPicture.asset(AssetImages.ic_favorite, width: 18, height: 18),
-            "favorites".tr, () {
-            Get.toNamed(AppRoutes.evFavorites);
-          }),
+            "favorites".tr,
+            () {
+              Get.toNamed(AppRoutes.evFavorites);
+            },
+          ),
         ),
         const SizedBox(width: 15),
         Expanded(
           child: _buildActionButton(
             SvgPicture.asset(AssetImages.voucher, width: 18, height: 18),
-            "Voucher".tr, () {
-            Get.toNamed(AppRoutes.evVoucher);
-          }),
+            "Voucher".tr,
+            () {
+              Get.toNamed(AppRoutes.evVoucher);
+            },
+          ),
         ),
       ],
     );
@@ -759,19 +766,19 @@ class EvChargerScreen extends GetView<EvChargerController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Container(
-                   padding: const EdgeInsets.all(8),
-                   decoration: const BoxDecoration(
-                     color: AppColors.primaryColor,
-                     shape: BoxShape.circle,
-                   ),
-                   child: icon,
-                 ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: icon,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  label,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
               ],
             ),
           ],
@@ -799,9 +806,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                 children: [
                   Text(
                     "view_all".tr,
-                    style: const TextStyle(
-                      color: AppColors.primaryColor,
-                    ),
+                    style: const TextStyle(color: AppColors.primaryColor),
                   ),
                   const SizedBox(width: 4),
                   const Icon(

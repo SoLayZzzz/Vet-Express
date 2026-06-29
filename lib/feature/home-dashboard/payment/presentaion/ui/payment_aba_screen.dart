@@ -66,20 +66,15 @@ class PaymentABAScreenState extends State<PaymentABAScreen>
     log(
       'PaymentABAScreen.lifecycle state=$state, type=${widget.type}, transactionId=${widget.transactionId}',
     );
-    if (widget.type != 1) return;
     if (state == AppLifecycleState.resumed) {
       log(
-        'PaymentABAScreen.resume trigger checkTransactionABAComplete transactionId=${widget.transactionId}',
+        'PaymentABAScreen.resume trigger payment status polling transactionId=${widget.transactionId}',
       );
-      controller.checkTransactionABAComplete(
+      controller.resumePolling(
         context: context,
         transactionId: widget.transactionId,
         token: widget.token,
       );
-    } else if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      controller.stop();
     }
   }
 
