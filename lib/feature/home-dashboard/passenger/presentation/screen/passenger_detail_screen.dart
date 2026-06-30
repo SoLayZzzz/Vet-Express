@@ -868,10 +868,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color:
-                      selected
-                          ? AppColors.primaryColor
-                          : AppColors.deepGrey,
+                  color: selected ? AppColors.primaryColor : AppColors.deepGrey,
                   width: 2,
                 ),
               ),
@@ -884,9 +881,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color:
-                        selected
-                            ? AppColors.primaryColor
-                            : Colors.transparent,
+                        selected ? AppColors.primaryColor : Colors.transparent,
                   ),
                 ),
               ),
@@ -1247,6 +1242,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                   );
 
                                                   if (result != null) {
+                                                    debugPrint(
+                                                      '[PassengerDetail] Coupon select result data: $result',
+                                                    );
                                                     controller
                                                         .state
                                                         .couponController
@@ -1298,7 +1296,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                                     .state
                                                     .couponController,
                                             autofocus: false,
-                                            enabled: false,
+                                            enabled: true,
+                                            readOnly: true,
                                             autovalidateMode:
                                                 AutovalidateMode
                                                     .onUserInteraction,
@@ -1307,25 +1306,49 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                               fontSize: 14,
                                               color: AppColors.secondaryColor,
                                             ),
-                                            decoration: const InputDecoration(
+                                            decoration: InputDecoration(
                                               isDense: true,
                                               contentPadding:
-                                                  EdgeInsets.fromLTRB(
+                                                  const EdgeInsets.fromLTRB(
                                                     10,
                                                     15,
                                                     10,
                                                     15,
                                                   ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors.grey,
-                                                  width: 1.0,
+                                              suffixIcon: IconButton(
+                                                icon: const Icon(
+                                                  Icons.close,
+                                                  color: AppColors.greyColor,
+                                                  size: 20,
                                                 ),
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(5),
-                                                ),
+                                                onPressed: () {
+                                                  controller
+                                                      .state
+                                                      .couponController
+                                                      .text = '';
+                                                  controller
+                                                      .state
+                                                      .status
+                                                      .value = 0;
+                                                  controller
+                                                      .state
+                                                      .balance
+                                                      .value = '';
+                                                  controller.update();
+                                                },
                                               ),
-                                              border: OutlineInputBorder(
+                                              enabledBorder:
+                                                  const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color: Colors.grey,
+                                                      width: 1.0,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                          Radius.circular(5),
+                                                        ),
+                                                  ),
+                                              border: const OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                   color: Colors.grey,
                                                   width: 1.0,
@@ -1738,11 +1761,13 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                           1 &&
                                       !controller.packageOnlyDiscountMode) {
                                     // Coupon discount
-                                    discount =
-                                        double.tryParse(
-                                          controller.state.balance.value,
-                                        ) ??
-                                        0.0;
+                                    debugPrint(
+                                      '[PassengerDetail] Coupon discount value raw: ${controller.state.balance.value}',
+                                    );
+                                    discount = subTotal;
+                                    debugPrint(
+                                      '[PassengerDetail] Coupon discount overridden to match subTotal (grand total): $discount',
+                                    );
                                     discountLabel = 'dis_coupon'.tr;
                                   } else if (controller
                                           .state

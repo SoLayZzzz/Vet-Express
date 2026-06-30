@@ -248,6 +248,7 @@ final Map<String, String> enUS = {
   'pro_available': 'Your promo code available ',
   'more': " more",
   'dis_coupon': "Discount (Promo code)",
+   "your_pro1": "Your promotion code ",
 
   // Membership
   'ticket1': "1. Buy 10 tickets you will become VIP Customer.",
@@ -484,6 +485,7 @@ final Map<String, String> enUS = {
   'dob': "DOB",
   'passport': "Passport No.",
   'passport_number': 'Passport No.',
+  'is_not_apply': ' does not match the ticket price',
 
   //ticket_history
   'ticket_history': 'Ticket History',

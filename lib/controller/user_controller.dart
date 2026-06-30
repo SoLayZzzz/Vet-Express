@@ -46,5 +46,8 @@ class UserController extends GetxController {
   /// Optional: clear data (e.g. on logout)
   void clearUserData() {
     userMeResponse.value = null;
+    isLoading(false);
+    hasError(false);
+    profileRefreshToken.value++;
   }
 }

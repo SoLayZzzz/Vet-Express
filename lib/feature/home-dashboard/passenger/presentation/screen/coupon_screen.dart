@@ -257,7 +257,7 @@ class _SelectCouponScreenState extends State<SelectCouponScreen> {
           alertDialogCoupon(
             title: "information".tr,
             descriptionSpans: [
-              TextSpan(text: "your_pro".tr),
+              TextSpan(text: "your_pro1".tr),
               TextSpan(
                 text: couponCodeController.text,
                 style: const TextStyle(
@@ -277,7 +277,7 @@ class _SelectCouponScreenState extends State<SelectCouponScreen> {
           alertDialogCoupon(
             title: "information".tr,
             descriptionSpans: [
-              TextSpan(text: "your_pro".tr),
+              TextSpan(text: "your_pro1".tr),
               TextSpan(
                 text: couponCodeController.text,
                 style: const TextStyle(
@@ -297,7 +297,7 @@ class _SelectCouponScreenState extends State<SelectCouponScreen> {
           alertDialogCoupon(
             title: "information".tr,
             descriptionSpans: [
-              TextSpan(text: "your_pro".tr),
+              TextSpan(text: "your_pro1".tr),
               TextSpan(
                 text: couponCodeController.text,
                 style: const TextStyle(

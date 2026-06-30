@@ -276,6 +276,16 @@ class ProfileController extends GetxController {
               image.value = null;
               imagePath.value = null;
               _captureInitialSnapshot();
+
+              // Ensure the loading dialog is fully closed before popping the profile screen
+              int attempts = 0;
+              while (Get.isDialogOpen == true && attempts < 10) {
+                await Future.delayed(const Duration(milliseconds: 50));
+                attempts++;
+              }
+              // A brief delay to let GetX route transitions settle and guarantee the screen is popped correctly
+              await Future.delayed(const Duration(milliseconds: 100));
+
               Get.back(result: true);
               Get.snackbar(
                 'success'.tr,

@@ -48,6 +48,16 @@ class ValueStatic {
   static String nationalityName = '';
   static int nationalityId = 0;
 
+  void clearUserProfileData() {
+    ValueStatic.username = '';
+    ValueStatic.phone = '';
+    ValueStatic.email = '';
+    ValueStatic.dob = '';
+    ValueStatic.gender = 0;
+    ValueStatic.nationalityName = '';
+    ValueStatic.nationalityId = 0;
+  }
+
   static String boardingPointOneWay = '';
   static String boardingPointOneWayId = '';
   static String dropOffPointOneWay = '';
@@ -93,6 +103,9 @@ class ValueStatic {
     ValueStatic.totalPriceGo = 0;
     ValueStatic.totalPriceBack = 0;
     ValueStatic.totalPriceDiscount = 0;
+    ValueStatic.totalPrice = '';
+    ValueStatic.luckyDraw = false;
+    ValueStatic.luckyDrawValue = 0;
 
     // Ticket data
     ValueStatic.ticketType = '';
