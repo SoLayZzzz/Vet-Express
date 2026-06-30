@@ -11,7 +11,9 @@ class AppBinding implements Bindings {
 
     Get.lazyPut(() => NetworkDataSource(), fenix: true);
 
-    Get.put(ConnectivityController(), permanent: true);
+    if (!Get.isRegistered<ConnectivityController>()) {
+      Get.put(ConnectivityController(), permanent: true);
+    }
   }
 }
 

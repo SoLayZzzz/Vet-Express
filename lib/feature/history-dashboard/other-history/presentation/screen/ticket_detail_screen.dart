@@ -13,8 +13,9 @@ import '../controller/ticket_detail_controller.dart';
 
 class TicketDetailScreen extends StatefulWidget {
   final int id;
+  final int? journeyType;
 
-  const TicketDetailScreen({super.key, required this.id});
+  const TicketDetailScreen({super.key, required this.id, this.journeyType});
 
   @override
   State<TicketDetailScreen> createState() => _TicketDetailScreenState();
@@ -183,6 +184,15 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
   Widget _buildticketDetail(
     AsyncSnapshot<TicketDetailScreenReponse> bookingData,
   ) {
+    final transportationType = bookingData.data?.body?.data?[0].transportationType;
+    final transportationTypeLower = (transportationType ?? '').toLowerCase();
+    final isBoatByJourneyType = widget.journeyType == 2 || widget.journeyType == 4;
+    final isBoatByTransportType =
+        transportationTypeLower.contains('boat') ||
+        transportationTypeLower.contains('sea') ||
+        transportationTypeLower.contains('ferry');
+    final isBoatTransport = isBoatByJourneyType || isBoatByTransportType;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Column(
@@ -194,19 +204,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset(
-                  ((bookingData.data?.body?.data?[0].transportationType
-                                  ?.toLowerCase()
-                                  .contains('boat') ??
-                              false) ||
-                          (bookingData.data?.body?.data?[0].transportationType
-                                  ?.toLowerCase()
-                                  .contains('sea') ??
-                              false) ||
-                          (bookingData.data?.body?.data?[0].transportationType
-                                  ?.toLowerCase()
-                                  .contains('ferry') ??
-                              false))
-                      ? AssetImages.ic_buva_sea
+                  isBoatTransport
+                      ? AssetImages.ic_boat_history
                       : AssetImages.ic_bus_history,
                   height: 24,
                   width: 24,
@@ -219,8 +218,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   children: [
                     /// Title
                     Text(
-                      (bookingData.data?.body?.data?[0].transportationType)
-                          .toString(),
+                      transportationType.toString(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -231,34 +229,35 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     const SizedBox(height: 6),
 
                     /// Subtitle (pill style)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE6EBFF),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        _seatTypeText(
-                          bookingData.data?.body?.data?[0].seatType,
+                    if (!isBoatTransport)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE6EBFF),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         // "Type of bus",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF4A56A6),
+                        child: Text(
+                          _seatTypeText(
+                            bookingData.data?.body?.data?[0].seatType,
+                          ),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF4A56A6),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
           _item(
             label: "transaction_id".tr,
             value:
@@ -276,7 +275,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
          
           _item(
-            label: 'Email'.tr,
+            label: 'email'.tr,
             value:
                 _getEmailForDisplay(bookingData.data?.body?.data?[0].email) ==
                         '*@gmail.com'
@@ -295,7 +294,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           ),
 
           _item(
-            label: "payment".tr,
+            label: "payment_method".tr,
             value: (bookingData.data?.body?.data?[0].paymentType).toString(),
             color: AppColors.secondaryColor,
           ),

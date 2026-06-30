@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:express_vet/feature/home-dashboard/profile/presentaion/ui/term_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:express_vet/routes/app_routes.dart';
+import 'package:express_vet/controller/connectivity_controller.dart';
 import 'package:express_vet/controller/user_controller.dart';
 import 'package:express_vet/feature/auth/data/model/request/refreshToken_login_request.dart';
 import 'package:express_vet/feature/auth/domain/uscase/auth_usecase.dart';
@@ -30,6 +33,25 @@ class _AdsScreenState extends State<AdsScreen>
   int activeIndex = 0;
   bool _shouldAutoNavigate = true;
   bool _hasNavigated = false;
+
+  bool _isOffline() {
+    try {
+      return !Get.find<ConnectivityController>().isConnected.value;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  bool _isUnauthorizedError(Object e) {
+    if (e is HttpException) {
+      final msg = e.message;
+      return msg.contains('(401)') ||
+          msg.contains('(403)') ||
+          msg.contains(' 401') ||
+          msg.contains(' 403');
+    }
+    return false;
+  }
 
   @override
   void initState() {
@@ -115,6 +137,14 @@ class _AdsScreenState extends State<AdsScreen>
     final refreshToken = AppPref.getRefreshToken();
     final deviceId = AppPref.getDeviceId() ?? 'VET_Express_DeviceID';
 
+    final token = AppPref.getToken();
+    if (_isOffline()) {
+      if ((token != null && token.isNotEmpty) ||
+          (refreshToken != null && refreshToken.isNotEmpty)) {
+        return true;
+      }
+    }
+
     if (refreshToken == null || refreshToken.isEmpty) {
       await AppPref.clearAllData();
       try {
@@ -135,7 +165,16 @@ class _AdsScreenState extends State<AdsScreen>
           return true;
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      if (_isUnauthorizedError(e)) {
+        await AppPref.clearAllData();
+        try {
+          Get.find<UserController>().clearUserData();
+        } catch (_) {}
+        return false;
+      }
+      return true;
+    }
 
     try {
       if (!Get.isRegistered<AuthUseCase>()) {
@@ -164,12 +203,17 @@ class _AdsScreenState extends State<AdsScreen>
           return true;
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      if (_isUnauthorizedError(e)) {
+        await AppPref.clearAllData();
+        try {
+          Get.find<UserController>().clearUserData();
+        } catch (_) {}
+        return false;
+      }
+      return true;
+    }
 
-    await AppPref.clearAllData();
-    try {
-      Get.find<UserController>().clearUserData();
-    } catch (_) {}
     return false;
   }
 

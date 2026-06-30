@@ -122,7 +122,12 @@ class MenuScreen extends GetView<menu.MenuController> {
                   'booking_air_bus'.tr,
                   () => _navigateToAirBusBooking(),
                 ),
-                _buildMenuView(AssetImages.booking_boat, 'booking_boat'.tr, () {
+                _buildMenuView(
+                  AssetImages.booking_boat, 
+                  // imageWidth: 800,
+                  // imageHeight: MediaQuery.of(Get.context!).size.width / 4,
+                  'booking_boat'.tr, 
+                  () {
                   _navigateToBoatBooking();
                 }),
                 _buildMenuView(AssetImages.ev_charger, 'ev_charger'.tr, () {
@@ -323,6 +328,8 @@ class MenuScreen extends GetView<menu.MenuController> {
           );
     });
   }
+
+ 
 
   Widget _buildMenuView(String path, String title, VoidCallback onTap) {
     return Container(

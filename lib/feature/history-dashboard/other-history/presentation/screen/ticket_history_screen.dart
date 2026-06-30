@@ -127,6 +127,8 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                                               ?.data?[index]
                                               .id)!
                                           .toInt(),
+                                  journeyType:
+                                      bookingData.data?.body?.data?[index].journeyType,
                                 ),
                                 binding: TicketDetailBinding(),
                                 transition: Transition.rightToLeft,

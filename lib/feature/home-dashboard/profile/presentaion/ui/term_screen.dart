@@ -106,7 +106,7 @@ class TermScreen extends StatelessWidget {
                         //6
                         _buildTitle('6'),
                         const SizedBox(height: 5),
-                         _buildBulletRow('6.1', isStar: true),
+                         _buildBulletRow('6.1'),
                           Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Column(
@@ -138,7 +138,7 @@ class TermScreen extends StatelessWidget {
                         //8
                          _buildTitle('8'),
                         const SizedBox(height: 5),
-                         _buildBulletRow('8.1', isStar: true),
+                         _buildBulletRow('8.1'),
                           Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Column(
@@ -205,7 +205,7 @@ class TermScreen extends StatelessWidget {
                         //10
                         _buildTitle('14'),
                         const SizedBox(height: 5),
-                        _buildBulletRow('14.1'),
+                        _buildBulletRow('14.1', isStar: null),
                         const SizedBox(height: 10),
                       ],
                     ),
@@ -312,19 +312,24 @@ class TermScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletRow(String textKey, {bool isStar = false}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+  Widget _buildBulletRow(String textKey, {bool? isStar = false}) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // 1. Only show a sign if isStar is NOT null
+      if (isStar != null) ...[
         isStar ? const Icon(Ionicons.star, size: 10) : const Text("•"),
         const SizedBox(width: 5),
-        Expanded(
-          child: Text(
-            textKey.tr,
-            style: const TextStyle(fontSize: 14, color: AppColors.textColor),
-          ),
-        ),
       ],
-    );
-  }
+      
+      // 2. The text content will automatically shift left if there is no sign
+      Expanded(
+        child: Text(
+          textKey.tr,
+          style: const TextStyle(fontSize: 14, color: AppColors.textColor),
+        ),
+      ),
+    ],
+  );
+}
 }

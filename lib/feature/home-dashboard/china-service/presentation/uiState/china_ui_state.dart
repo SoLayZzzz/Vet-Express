@@ -4,6 +4,8 @@ import 'package:express_vet/models/china/province_response.dart';
 import 'package:express_vet/models/china/warehouse_response.dart';
 
 class ChinaUiState {
+  static const Object _unset = Object();
+
   final bool isLoading;
   final String errorMessage;
   final int transportType;
@@ -72,10 +74,10 @@ class ChinaUiState {
     String? branchSearchText,
     List<CustomerChinaListData>? customerList,
     List<WarehouseData>? warehouseList,
-    ProvinceBody? selectedProvince,
-    BranchByProvinceData? selectedBranch,
-    CustomerChinaListData? selectedCustomer,
-    WarehouseData? selectedWarehouse,
+    Object? selectedProvince = _unset,
+    Object? selectedBranch = _unset,
+    Object? selectedCustomer = _unset,
+    Object? selectedWarehouse = _unset,
   }) {
     return ChinaUiState(
       isLoading: isLoading ?? this.isLoading,
@@ -89,10 +91,22 @@ class ChinaUiState {
       branchSearchText: branchSearchText ?? this.branchSearchText,
       customerList: customerList ?? this.customerList,
       warehouseList: warehouseList ?? this.warehouseList,
-      selectedProvince: selectedProvince ?? this.selectedProvince,
-      selectedBranch: selectedBranch ?? this.selectedBranch,
-      selectedCustomer: selectedCustomer ?? this.selectedCustomer,
-      selectedWarehouse: selectedWarehouse ?? this.selectedWarehouse,
+      selectedProvince:
+          identical(selectedProvince, _unset)
+              ? this.selectedProvince
+              : selectedProvince as ProvinceBody?,
+      selectedBranch:
+          identical(selectedBranch, _unset)
+              ? this.selectedBranch
+              : selectedBranch as BranchByProvinceData?,
+      selectedCustomer:
+          identical(selectedCustomer, _unset)
+              ? this.selectedCustomer
+              : selectedCustomer as CustomerChinaListData?,
+      selectedWarehouse:
+          identical(selectedWarehouse, _unset)
+              ? this.selectedWarehouse
+              : selectedWarehouse as WarehouseData?,
     );
   }
 }

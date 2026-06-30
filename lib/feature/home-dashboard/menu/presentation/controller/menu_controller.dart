@@ -28,9 +28,7 @@ class MenuController extends StateController<MenuUiState>
   MenuController(this.menuUseCase);
 
   late final ConnectivityController connectivityController =
-      Get.isRegistered<ConnectivityController>()
-          ? Get.find<ConnectivityController>()
-          : Get.put(ConnectivityController());
+      Get.find<ConnectivityController>();
 
   @override
   MenuUiState onInitUiState() => const MenuUiState();

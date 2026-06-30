@@ -492,7 +492,7 @@ final Map<String, String> enUS = {
   'ticket_history_new_1': 'Ticket History',
   'ticket_code': 'Ticket Code',
   'transaction_id': 'Transaction ID',
-  'booking_date': 'Booking date',
+  'booking_date': 'Booked date',
   'departure_date': 'Departure Date',
   'transportation_type': 'Transportation Type',
   // 'payment': 'Payment type',
@@ -643,7 +643,7 @@ final Map<String, String> enUS = {
   'receiver_telephone': 'Receiver phone number',
   'pro_city': 'Province/City',
   'item_price': 'Item Price',
-  'qty': "Qty",
+  'qty': "QTY",
 
   //scan_qr_screen
   'enter_tracking': 'Enter Tracking Code',

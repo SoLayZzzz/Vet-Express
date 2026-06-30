@@ -11,49 +11,99 @@ import '../../../../../value_statics.dart';
 import 'province_selection_screen.dart';
 import 'warehouse_address_screen.dart';
 
-class ChinaRegistrationScreen extends GetView<ChinaController> {
-  ChinaRegistrationScreen({super.key});
+class ChinaRegistrationScreen extends StatefulWidget {
+  const ChinaRegistrationScreen({super.key});
 
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _addressController = TextEditingController();
+  @override
+  State<ChinaRegistrationScreen> createState() => _ChinaRegistrationScreenState();
+}
+
+class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
+  final ChinaController controller = Get.find<ChinaController>();
+
+  late final TextEditingController _nameController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _addressController;
+
+  void _clearControllerState() {
+    controller.name.value = '';
+    controller.phone.value = '';
+    controller.address.value = '';
+    controller.errorMessage.value = '';
+    controller.clearAllSelections();
+  }
+
+  void _clearFormData() {
+    _clearControllerState();
+
+    _nameController.clear();
+    _phoneController.clear();
+    _addressController.clear();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _clearControllerState();
+
+    _nameController = TextEditingController(text: controller.name.value);
+    _phoneController = TextEditingController(text: controller.phone.value);
+    _addressController = TextEditingController(text: controller.address.value);
+  }
+
+  @override
+  void dispose() {
+    _clearControllerState();
+
+    _nameController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0.2,
-        backgroundColor:
-            ValueStatic.ticketType == '3'
-                ? AppColors.airBusColor
-                : AppColors.primaryColor,
-        leading: IconButton(
-          icon: const Icon(
-            Ionicons.chevron_back_outline,
-            color: AppColors.whiteColor,
-          ),
-          onPressed: () {
-            controller.clearAllSelections();
-            Get.back();
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          'access_address_china'.tr,
-          style: const TextStyle(
-            color: AppColors.whiteColor,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-      body: Obx(() {
-        if (controller.state.isLoading && !controller.hasProvinces) {
-          return const Center(child: CircularProgressIndicator());
+    return PopScope(
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          _clearControllerState();
         }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0.2,
+          backgroundColor:
+              ValueStatic.ticketType == '3'
+                  ? AppColors.airBusColor
+                  : AppColors.primaryColor,
+          leading: IconButton(
+            icon: const Icon(
+              Ionicons.chevron_back_outline,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () {
+              _clearFormData();
+              Get.back();
+            },
+          ),
+          centerTitle: true,
+          title: Text(
+            'access_address_china'.tr,
+            style: const TextStyle(
+              color: AppColors.whiteColor,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        body: Obx(() {
+          if (controller.state.isLoading && !controller.hasProvinces) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        return _buildRegistrationForm();
-      }),
+          return _buildRegistrationForm();
+        }),
+      ),
     );
   }
 
@@ -105,55 +155,53 @@ class ChinaRegistrationScreen extends GetView<ChinaController> {
             const SizedBox(height: 20),
 
             // Register button
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  
                 ),
-                onPressed:
-                    controller.isLoading.value
-                        ? null
-                        : () async {
-                          // Clear any previous error message
-                          controller.errorMessage.value = '';
-
-                          // First, validate form fields
-                          final validationError = _validateForm();
-                          if (validationError.isNotEmpty) {
-                            // Show dialog for validation errors
-                            _showErrorDialog(validationError);
-                            return;
-                          }
-
-                          // Attempt registration
-                          final success = await controller.registerCustomer();
-                          if (success) {
-                            // Navigate to warehouse screen
-                            Get.off(() => WarehouseAddressScreen());
-                          } else {
-                            // Show error dialog for registration failure
-                            if (controller.errorMessage.value.isNotEmpty) {
-                              _showErrorDialog(controller.errorMessage.value);
-                            }
-                          }
-                        },
-                child:
-                    controller.isLoading.value
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                          'register_china_address'.tr,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                minimumSize: Size(double.infinity, 50)
               ),
+              onPressed:
+                  controller.isLoading.value
+                      ? null
+                      : () async {
+                        // Clear any previous error message
+                        controller.errorMessage.value = '';
+            
+                        // First, validate form fields
+                        final validationError = _validateForm();
+                        if (validationError.isNotEmpty) {
+                          // Show dialog for validation errors
+                          _showErrorDialog(validationError);
+                          return;
+                        }
+            
+                        // Attempt registration
+                        final success = await controller.registerCustomer();
+                        if (success) {
+                          // Navigate to warehouse screen
+                          Get.off(() => WarehouseAddressScreen());
+                        } else {
+                          // Show error dialog for registration failure
+                          if (controller.errorMessage.value.isNotEmpty) {
+                            _showErrorDialog(controller.errorMessage.value);
+                          }
+                        }
+                      },
+              child:
+                  controller.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                        'register_china_address'.tr,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
             ),
           ],
         ),

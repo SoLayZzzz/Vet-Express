@@ -65,7 +65,7 @@ class AssetImages {
   static const String booking_air_bus =
       'assets/images/ic_booking_air_bus_new.png';
   static const String booking_boat = 'assets/images/ic_booking_boat_new.png';
-  // static const String rental_car = 'assets/images/ic_rental_car.png';
+  // static const String booking_boat = 'assets/images/vet_speed_ferry.png';
   static const String rental_car = 'assets/images/car_rental.png';
 
   static const String ev_charger = 'assets/icons/icon_ev.png';
