@@ -71,7 +71,31 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                   ),
                 );
               }
-            } else if (bookingData.hasError) {}
+            } else if (bookingData.hasError) {
+              return SizedBox(
+                height: double.infinity,
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AssetImages.ic_empty,
+                      width: 150,
+                      height: 150,
+                    ),
+                    Text(
+                      "data_not_found".tr,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
 
             return const Center(
               child: SizedBox(

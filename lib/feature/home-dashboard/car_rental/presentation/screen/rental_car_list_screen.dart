@@ -162,7 +162,17 @@ class _RentalCarListScreenState extends State<RentalCarListScreen> {
                         }
                       }
                     } else if (carTypeData.hasError) {
-                      return const Center(child: Text('Error'));
+                      return SizedBox(
+                        height: double.infinity,
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(AssetImages.ic_empty, height: 84),
+                            Text('no_data'.tr),
+                          ],
+                        ),
+                      );
                     }
                     return const Center(
                       child: SizedBox(

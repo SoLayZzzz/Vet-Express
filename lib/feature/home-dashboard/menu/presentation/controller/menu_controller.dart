@@ -41,6 +41,12 @@ class MenuController extends StateController<MenuUiState>
     OneSignal.Notifications.addForegroundWillDisplayListener((e) {
       debugPrint('Notification Foreground');
     });
+    ever(connectivityController.isConnected, (bool connected) {
+      if (connected) {
+        getNotificationCount();
+        _refreshUserStatics();
+      }
+    });
   }
 
   Future<void> _refreshUserStatics() async {

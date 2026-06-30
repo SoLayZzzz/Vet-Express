@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../domain/uscase/ticket_history_usecase.dart';
 import '../uiState/ticket_history_ui_state.dart';
+import '../../../../../controller/connectivity_controller.dart';
 
 class TicketHistoryController extends StateController<TicketHistoryUiState> {
   final TicketHistoryUseCase ticketHistoryUseCase;
@@ -12,6 +13,19 @@ class TicketHistoryController extends StateController<TicketHistoryUiState> {
 
   @override
   TicketHistoryUiState onInitUiState() => const TicketHistoryUiState();
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
+      if (connected) {
+        final ctx = Get.context;
+        if (ctx != null) {
+          loadBookingList(context: ctx);
+        }
+      }
+    });
+  }
 
   @override
   void onReady() {

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../domain/uscase/goods_transfer_history_usecase.dart';
 import '../uiState/goods_transfer_history_ui_state.dart';
+import '../../../../../controller/connectivity_controller.dart';
 
 class GoodsTransferHistoryController
     extends StateController<GoodsTransferHistoryUiState>
@@ -30,6 +31,16 @@ class GoodsTransferHistoryController
   void onInit() {
     super.onInit();
     tabController = TabController(length: 3, vsync: this);
+    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
+      if (connected) {
+        final ctx = Get.context;
+        if (ctx != null) {
+          loadTransferList(context: ctx, type: 1);
+          loadTransferList(context: ctx, type: 2);
+          loadSelfServiceList(context: ctx);
+        }
+      }
+    });
   }
 
   @override

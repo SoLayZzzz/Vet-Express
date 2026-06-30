@@ -212,10 +212,8 @@ class SelectSeatScreen extends StatelessWidget {
                         }
                       } else if (seatData.hasError) {
                         debugPrint('error ${seatData.error}');
-                        return Center(
-                          child: Text(
-                            'Error loading seat data: ${seatData.error}',
-                          ),
+                        return const Center(
+                          child: Text('No seat data available'),
                         );
                       }
 

@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../domain/uscase/china_service_usecase.dart';
 import '../uiState/china_ui_state.dart';
+import '../../../../../controller/connectivity_controller.dart';
 
 class ChinaController extends StateController<ChinaUiState> {
   final ChinaServiceUseCase useCase;
@@ -51,6 +52,12 @@ class ChinaController extends StateController<ChinaUiState> {
       _syncLegacyState();
     });
     _syncLegacyState();
+
+    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
+      if (connected) {
+        fetchInitialData();
+      }
+    });
 
     fetchInitialData();
   }

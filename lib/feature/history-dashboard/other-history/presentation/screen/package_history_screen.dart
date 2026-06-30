@@ -244,6 +244,26 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                     ),
                   );
                 }
+              } else if (snapshot.hasError) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AssetImages.travel_package),
+                      const SizedBox(height: 10),
+                      Text(
+                        "data_not_found".tr,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
               return const Center(
                 child: SizedBox(

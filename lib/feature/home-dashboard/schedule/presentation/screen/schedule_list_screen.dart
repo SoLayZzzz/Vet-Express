@@ -129,7 +129,22 @@ class ScheduleListScreen extends StatelessWidget {
             }
           } else if (scheduleData.hasError) {
             debugPrint('error ${scheduleData.error}');
-            return Center(child: Text('Error: ${scheduleData.error}'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    AssetImages.no_schedule,
+                    width: 100,
+                    color:
+                        ValueStatic.ticketType == '3'
+                            ? AppColors.airBusColor
+                            : AppColors.primaryColor,
+                  ),
+                  Text('no_data'.tr),
+                ],
+              ),
+            );
           }
 
           return Container();

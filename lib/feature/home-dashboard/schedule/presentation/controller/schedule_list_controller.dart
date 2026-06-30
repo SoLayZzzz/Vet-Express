@@ -11,6 +11,7 @@ import '../../../../../value_statics.dart';
 import '../../../../../utils/app_colors.dart';
 import '../uiState/schedule_list_ui_state.dart';
 import '../../domain/uscase/schedule_list_usecase.dart';
+import '../../../../../controller/connectivity_controller.dart';
 
 class ScheduleListController extends StateController<ScheduleListUiState> {
   final ScheduleListUseCase scheduleListUseCase;
@@ -19,6 +20,19 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
 
   @override
   ScheduleListUiState onInitUiState() => const ScheduleListUiState();
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
+      if (connected) {
+        final context = Get.context;
+        if (context != null) {
+          init(isBack: state.isBack, context: context);
+        }
+      }
+    });
+  }
 
   @override
   void onReady() {

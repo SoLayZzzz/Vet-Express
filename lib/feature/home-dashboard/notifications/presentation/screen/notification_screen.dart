@@ -89,8 +89,14 @@ class NotificationScreen extends GetView<NotificationsController> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("Error loading notifications"),
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(AssetImages.no_notification, height: 84),
+                        Text('no_notification'.tr),
+                      ],
+                    ),
                   );
                 } else if (snapshot.hasData &&
                     snapshot.data!.header?.statusCode == 200 &&

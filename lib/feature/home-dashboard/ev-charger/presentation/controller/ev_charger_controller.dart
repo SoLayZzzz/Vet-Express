@@ -12,6 +12,7 @@ import '../../data/model/response/ev_wallet_list_response.dart';
 import '../../data/model/response/membership_transaction_list_response.dart';
 import '../../data/model/response/ev_charging_status_response.dart';
 import '../uiState/ev_charger_ui_state.dart';
+import '../../../../../controller/connectivity_controller.dart';
 
 class EvChargerController extends StateController<EvChargerUiState> {
   final EvChargerUseCase useCase;
@@ -28,6 +29,11 @@ class EvChargerController extends StateController<EvChargerUiState> {
   @override
   void onInit() {
     super.onInit();
+    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
+      if (connected) {
+        loadHomeData();
+      }
+    });
     loadHomeData();
   }
 

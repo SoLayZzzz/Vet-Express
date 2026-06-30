@@ -12,6 +12,7 @@ import '../../data/model/response/seat_unavailable_response.dart'
 import '../../../../../routes/app_routes.dart';
 import '../uiState/select_seat_ui_state.dart';
 import '../../domain/uscase/select_seat_usecase.dart';
+import '../../../../../controller/connectivity_controller.dart';
 
 class SelectSeatController extends StateController<SelectSeatUiState> {
   final SelectSeatUseCase selectSeatUseCase;
@@ -20,6 +21,23 @@ class SelectSeatController extends StateController<SelectSeatUiState> {
 
   @override
   SelectSeatUiState onInitUiState() => const SelectSeatUiState();
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
+      if (connected) {
+        final context = Get.context;
+        if (context != null && state.journeyId.isNotEmpty) {
+          init(
+            context: context,
+            journeyId: state.journeyId,
+            isBack: state.isBack,
+          );
+        }
+      }
+    });
+  }
 
   @override
   void onReady() {

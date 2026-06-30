@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../../value_statics.dart';
 import '../../data/model/response/destination_response.dart';
 import 'ticket_menu_controller.dart';
+import '../../../../../controller/connectivity_controller.dart';
 
 class SelectDestinationController extends GetxController {
   final TicketMenuController ticketMenuController;
@@ -19,6 +20,11 @@ class SelectDestinationController extends GetxController {
   void onInit() {
     super.onInit();
     selectType = (Get.arguments?['selectType'] as String?) ?? '';
+    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
+      if (connected) {
+        load(searchText.value);
+      }
+    });
     load('');
   }
 
