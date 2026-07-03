@@ -443,12 +443,15 @@ class EvChargerScreen extends GetView<EvChargerController> {
   }
 
   Widget _buildBalanceCard() {
-    return Row(
-      children: [
-        Expanded(flex: 1, child: _buildTotalBalance()),
-        const SizedBox(width: 12),
-        Expanded(flex: 1, child: _buildTotalPoint()),
-      ],
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(flex: 1, child: _buildTotalBalance()),
+          const SizedBox(width: 12),
+          Expanded(flex: 1, child: _buildTotalPoint()),
+        ],
+      ),
     );
   }
 
@@ -511,7 +514,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                           : Text(
                             "${wallet.totalBalance.value.toStringAsFixed(2)} KHR",
                             style: const TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: AppColors.titleColor,
                             ),
@@ -531,7 +534,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        minimumSize: const Size(50, 35),
+                        // minimumSize: const Size(50, 35),
                       ),
                       icon: Image.asset(
                         AssetImages.ic_topUp,
@@ -636,7 +639,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     return Text(
                       "$currentPoint pts",
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: AppColors.titleColor,
                       ),
@@ -674,7 +677,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          minimumSize: const Size(50, 35),
+                          // minimumSize: const Size(50, 30),
                         ),
                         icon:
                             isCharging
@@ -711,7 +714,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
         Expanded(
           child: _buildActionButton(
             // Icons.ev_station,
-            SvgPicture.asset(AssetImages.ic_station, width: 18, height: 18),
+            SvgPicture.asset(AssetImages.ic_station, width: 15, height: 15),
             // "ev_charger".tr,
             "Map Station",
             () {
@@ -719,20 +722,20 @@ class EvChargerScreen extends GetView<EvChargerController> {
             },
           ),
         ),
-        const SizedBox(width: 15),
+        const SizedBox(width: 5),
         Expanded(
           child: _buildActionButton(
-            SvgPicture.asset(AssetImages.ic_favorite, width: 18, height: 18),
+            SvgPicture.asset(AssetImages.ic_favorite, width: 15, height: 15),
             "favorites".tr,
             () {
               Get.toNamed(AppRoutes.evFavorites);
             },
           ),
         ),
-        const SizedBox(width: 15),
+        const SizedBox(width: 5),
         Expanded(
           child: _buildActionButton(
-            SvgPicture.asset(AssetImages.voucher, width: 18, height: 18),
+            SvgPicture.asset(AssetImages.voucher, width: 15, height: 15),
             "Voucher".tr,
             () {
               Get.toNamed(AppRoutes.evVoucher);
@@ -747,10 +750,11 @@ class EvChargerScreen extends GetView<EvChargerController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        // padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(7),
           border: Border.all(color: Colors.black38),
           boxShadow: [
             BoxShadow(
@@ -763,23 +767,27 @@ class EvChargerScreen extends GetView<EvChargerController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryColor,
-                    shape: BoxShape.circle,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: AppColors.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: icon,
                   ),
-                  child: icon,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  label,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ],
+                  const SizedBox(height: 6),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

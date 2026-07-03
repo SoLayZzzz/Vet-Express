@@ -11,6 +11,10 @@ import '../../data/model/response/destination_ev.dart';
 import '../../data/model/response/ev_wallet_list_response.dart';
 import '../../data/model/response/membership_transaction_list_response.dart';
 import '../../data/model/response/ev_charging_status_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import '../uiState/ev_charger_ui_state.dart';
 import '../../../../../controller/connectivity_controller.dart';
 
@@ -530,5 +534,23 @@ class EvChargerController extends StateController<EvChargerUiState> {
         chargingChargerUsername.value = res.body?.data?.chargerUsername ?? '';
       }
     } catch (_) {}
+  }
+
+  Future<EvCalculateResponse> evCalculate({
+    required EvCalculateRequest request,
+  }) {
+    return useCase.evCalculate(
+      context: Get.context!,
+      request: request,
+    );
+  }
+
+  Future<EvCheckZoneResponse> evCheckZone({
+    required EvCheckZoneRequest request,
+  }) {
+    return useCase.evCheckZone(
+      context: Get.context!,
+      request: request,
+    );
   }
 }

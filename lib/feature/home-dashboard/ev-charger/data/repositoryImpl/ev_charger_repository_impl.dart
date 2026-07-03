@@ -1,7 +1,13 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_sale_order_apptmp_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/destination_ev.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_apply_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_search_response.dart';
@@ -297,5 +303,20 @@ class EvChargerRepositoryImpl implements EvChargerRepository {
     required dynamic context,
   }) {
     return networkRequest.fetchChargingStatus(context: context);
+  }
+
+  @override
+  Future<EvSaleOrderApptmpResponse> evSaleOrderApptmp({required context, required EvSaleOrderApptmpRequest request}) {
+    return networkRequest.evSaleOrderApptmp(context: context, request: request);
+  }
+
+  @override
+  Future<EvCalculateResponse> evCalculate({required context, required EvCalculateRequest request}) {
+    return networkRequest.evCalculate(context: context, request: request);
+  }
+
+  @override
+  Future<EvCheckZoneResponse> evCheckZone({required context, required EvCheckZoneRequest request}) {
+    return networkRequest.evCheckZone(context: context, request: request);
   }
 }

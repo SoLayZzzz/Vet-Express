@@ -406,7 +406,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                     const SizedBox(width: 14),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => Get.back(),
+                        onPressed: () => Navigator.of(context).pop(true),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           backgroundColor: const Color(0xFFE53935),

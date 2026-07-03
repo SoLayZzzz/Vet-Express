@@ -97,8 +97,7 @@ android {
     }
 }
 tasks.matching { task ->
-    task.name.equals("assembleRelease", ignoreCase = true) ||
-        task.name.equals("bundleRelease", ignoreCase = true)
+    task.name.endsWith("Release", ignoreCase = true)
 }.configureEach {
     doFirst {
         if (!hasReleaseSigningConfig) {

@@ -9,7 +9,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:express_vet/base/base_url.dart';
-
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charging_information_controller.dart';
 class EvVerificationScreen extends StatefulWidget {
   const EvVerificationScreen({super.key});
 
@@ -23,17 +24,71 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
   );
 
   // Verification Screen Data Variables
-  final String _transactionId = '00001';
-  final String _stationName = 'Station 1';
-  final String _orderDate = '02 Jan 2025 04:00PM';
-  final String _subTotal = 'KHR (៛) 48,000';
-  final String _discount = '-KHR (៛) 4,000';
-  final String _totalAmount = 'KHR (៛) 44,000';
-  final String _totalKwh = '20 kWh';
+  late String _transactionId;
+  late String _stationName;
+  late String _orderDate;
+  late String _subTotal;
+  late String _discount;
+  late String _totalAmount;
+  late String _totalKwh;
+  bool _showDiscount = true;
+  late String _discountLabel;
+  dynamic _orderArgs;
 
   Timer? _plugInDialogTimer;
 
   bool _isConfirming = false;
+
+  String _formatCurrencyDouble(double val) {
+    if (val == val.toInt()) {
+      return val.toInt().toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+    }
+    return val.toStringAsFixed(2);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _orderArgs = Get.arguments;
+    final args = _orderArgs;
+    if (args != null && args is EvSaleOrderApptmpResponse) {
+      final orderData = args.body?.data;
+      _transactionId = orderData?.transactionId ?? 'N/A';
+      _stationName = orderData?.stationName ?? 'N/A';
+      _orderDate = orderData?.orderDate ?? 'N/A';
+      _subTotal = 'KHR (៛) ${_formatCurrencyDouble((orderData?.subTotal ?? 0).toDouble())}';
+      _discount = '-KHR (៛) ${_formatCurrencyDouble((orderData?.discount ?? 0).toDouble())}';
+      _totalAmount = 'KHR (៛) ${_formatCurrencyDouble((orderData?.totalAmount ?? 0).toDouble())}';
+      _totalKwh = '${orderData?.totalKwh ?? 0} kWh';
+      _showDiscount = (orderData?.discount ?? 0) > 0;
+      _discountLabel = 'Discount (${orderData?.discountPercentage ?? 0}%)';
+    } else if (args != null && args is Map) {
+      _transactionId = args['transactionId']?.toString() ?? 'N/A';
+      _stationName = args['stationName']?.toString() ?? 'N/A';
+      _orderDate = args['orderDate']?.toString() ?? 'N/A';
+      _subTotal = args['subTotal']?.toString() ?? 'N/A';
+      _discount = args['discount']?.toString() ?? 'N/A';
+      _totalAmount = args['totalAmount']?.toString() ?? 'N/A';
+      _totalKwh = args['totalKwh']?.toString() ?? 'N/A';
+      final cleanDiscount = _discount.replaceAll(RegExp(r'[^0-9.]'), '');
+      final parsedDiscount = double.tryParse(cleanDiscount) ?? 0.0;
+      _showDiscount = parsedDiscount > 0;
+      _discountLabel = 'Discount';
+    } else {
+      _transactionId = '00001';
+      _stationName = 'Station 1';
+      _orderDate = '02 Jan 2025 04:00PM';
+      _subTotal = 'KHR (៛) 48,000';
+      _discount = '-KHR (៛) 4,000';
+      _totalAmount = 'KHR (៛) 44,000';
+      _totalKwh = '20 kWh';
+      _showDiscount = true;
+      _discountLabel = 'Discount (20%)';
+    }
+  }
 
   @override
   void dispose() {
@@ -185,29 +240,101 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
 
     // Call WebSocket connection and send the verification screen's data
     try {
+      final infoController = Get.isRegistered<EvChargingInformationController>()
+          ? Get.find<EvChargingInformationController>()
+          : null;
+
+      final evseUidVal = (infoController != null && infoController.chargerUsername.value.isNotEmpty)
+          ? infoController.chargerUsername.value
+          : "ev01";
+
+      final plugIdVal = infoController?.plugId.value ?? 0;
+
       final base = BaseUrl.BASE_URL_WEB_SOCKET;
       final wsBase = base
           .replaceAll('https://', 'wss://')
           .replaceAll('http://', 'ws://');
-      final wsUrl = wsBase;
+      final cleanBase = wsBase.endsWith('/') ? wsBase.substring(0, wsBase.length - 1) : wsBase;
+      final wsUrl = cleanBase;
 
       debugPrint('Connecting to WebSocket for payment confirmation: $wsUrl');
       final channel = WebSocketChannel.connect(Uri.parse(wsUrl));
 
+      final args = _orderArgs;
+      EvSaleOrderApptmpResponse? response;
+      if (args != null) {
+        if (args is EvSaleOrderApptmpResponse) {
+          response = args;
+        } else if (args is Map) {
+          try {
+            final map = Map<String, dynamic>.from(args);
+            if (map.containsKey('header') || map.containsKey('body')) {
+              response = EvSaleOrderApptmpResponse.fromJson(map);
+            }
+          } catch (_) {}
+        }
+      }
+      final orderData = response?.body?.data;
+
+      // Extract transactionId, totalKwh, and totalPrice from the response data, default to 0 if not present
+      String transactionIdVal = "0";
+      int totalKwhVal = 0;
+      int totalPriceVal = 0;
+
+      if (orderData != null) {
+        transactionIdVal = orderData.transactionId ?? "0";
+        totalKwhVal = orderData.totalKwh ?? 0;
+        totalPriceVal = orderData.totalAmount ?? 0;
+      } else if (args != null && args is Map) {
+        transactionIdVal = args['transactionId']?.toString() ?? "0";
+        
+        final kwhStr = args['totalKwh']?.toString() ?? "0";
+        final cleanKwh = kwhStr.replaceAll(RegExp(r'[^0-9.]'), '');
+        totalKwhVal = double.tryParse(cleanKwh)?.round() ?? 0;
+
+        final priceStr = (args['totalAmount'] ?? args['subTotal'] ?? args['totalPrice'] ?? "0").toString();
+        final cleanPrice = priceStr.replaceAll(RegExp(r'[^0-9.]'), '');
+        totalPriceVal = double.tryParse(cleanPrice)?.round() ?? 0;
+      }
+
+
+
+      int isFullChargeVal = 0;
+      if (infoController != null) {
+        final isKwhTab = infoController.isKwhTab.value;
+        final text = isKwhTab ? infoController.kwhController.text : infoController.khrController.text;
+        if (text == "Full Charge") {
+          isFullChargeVal = 1;
+        }
+      }
+
       final data = {
-        'transactionId': _transactionId,
-        'stationName': _stationName,
-        'orderDate': _orderDate,
-        'subTotal': _subTotal,
-        'discount': _discount,
-        'totalAmount': _totalAmount,
-        'totalKwh': _totalKwh,
+        'command_type': 'START_SESSION',
+        'evse_uid': evseUidVal,
+        'transactionId': transactionIdVal,
+        'isFullCharge': isFullChargeVal,
+        'paymentMethod': 3,
+        'plug': plugIdVal,
+        'durations': 0,
+        'totalKwh': totalKwhVal,
+        'totalPrice': totalPriceVal,
+        'actualKwh': 0,
       };
 
       final payload = jsonEncode(data);
+
+      // STOMP format
+      final stompConnect = 'CONNECT\naccept-version:1.1,1.2\nheart-beat:10000,10000\n\n\u0000';
+      final stompSend = 'SEND\ndestination:/topic/ocpi/commands/$evseUidVal\ncontent-type:application/json\n\n$payload\u0000';
+
       debugPrint('WebSocket URL: $wsUrl');
-      debugPrint('Sending confirmation payload: $payload');
-      channel.sink.add(payload);
+      debugPrint('Sending STOMP CONNECT');
+      channel.sink.add(stompConnect);
+      
+      await Future.delayed(const Duration(milliseconds: 200));
+      
+      debugPrint('Sending STOMP SEND: $stompSend');
+      channel.sink.add(stompSend);
 
       // Brief delay to ensure transmission before closing the connection
       await Future.delayed(const Duration(milliseconds: 800));
@@ -290,12 +417,13 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
                     _InfoRow(label: 'Station Name', value: _stationName),
                     _InfoRow(label: 'Order Date', value: _orderDate),
                     _InfoRow(label: 'Sub Total', value: _subTotal),
-                    _InfoRow(label: 'Discount (20%)', value: _discount),
+                    if (_showDiscount)
+                      _InfoRow(label: _discountLabel, value: _discount),
                     _InfoRow(
                       label: 'Total Amout',
                       value: _totalAmount,
                       fontWeight: FontWeight.w600,
-                    ), // Kept typo from design ("Amout")
+                    ),
                     _InfoRow(
                       label: 'Total kWh',
                       value: _totalKwh,

@@ -1,10 +1,16 @@
 import 'dart:convert';
 
 import 'package:express_vet/base/network_data_source.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_sale_order_apptmp_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_apply_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_search_response.dart';
@@ -577,4 +583,61 @@ class EvChargerNetworkRequest {
       rethrow;
     }
   }
+
+  Future<EvSaleOrderApptmpResponse> evSaleOrderApptmp({
+    required dynamic context,
+    required EvSaleOrderApptmpRequest request,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evSaleOrderAppTmp,
+        body: request.toJson(),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('ev sale order apptmp response: ${jsonEncode(json)}');
+      return EvSaleOrderApptmpResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvCalculateResponse> evCalculate({
+    required dynamic context,
+    required EvCalculateRequest request,
+  }) async {
+    try {
+      debugPrint('ev calculate request: ${jsonEncode(request.toJson())}');
+      final json = await evDataSource.postJson(
+        Endpoint.ev_calculate,
+        body: request.toJson(),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('ev calculate response: ${jsonEncode(json)}');
+      return EvCalculateResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvCheckZoneResponse> evCheckZone({
+    required dynamic context,
+    required EvCheckZoneRequest request,
+  }) async {
+    try {
+      debugPrint('ev check zone request: ${jsonEncode(request.toJson())}');
+      final json = await evDataSource.postJson(
+        Endpoint.ev_checkZone,
+        body: request.toJson(),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('ev check zone response: ${jsonEncode(json)}');
+      return EvCheckZoneResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
 }
+

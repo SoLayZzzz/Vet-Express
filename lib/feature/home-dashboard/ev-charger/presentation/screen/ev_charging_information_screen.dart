@@ -1,5 +1,4 @@
 import 'package:express_vet/asset_image.dart';
-import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,7 +20,7 @@ class EvChargingInformationScreen extends StatefulWidget {
 class _ChargingInformationScreenState
     extends State<EvChargingInformationScreen> {
   late final EvChargingInformationController controller;
-  bool _isContinuing = false;
+
 
   @override
   void initState() {
@@ -48,25 +47,8 @@ class _ChargingInformationScreenState
     super.dispose();
   }
 
-  Future<void> _onContinue() async {
-    if (_isContinuing) return;
-    setState(() => _isContinuing = true);
-
-    Get.dialog(
-      const Center(
-        child: CircularProgressIndicator(color: AppColors.primaryColor),
-      ),
-      barrierDismissible: false,
-    );
-
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (Get.isDialogOpen == true) {
-      Get.back();
-    }
-
-    if (!mounted) return;
-    setState(() => _isContinuing = false);
-    Get.toNamed(AppRoutes.evVerification);
+  void _onContinue() {
+    controller.createSaleOrderAppTmp();
   }
 
   String _formatCurrency(double val) {
@@ -96,18 +78,19 @@ class _ChargingInformationScreenState
 
   String _getTotalPrice() {
     final isKwhTab = controller.isKwhTab.value;
+    final discount = controller.getCalculatedDiscount().toDouble();
     if (isKwhTab) {
       final text = controller.kwhController.text;
       if (text == "Full Charge") return "Full Charge";
       final val = double.tryParse(text) ?? 0.0;
       final subTotal = val * 2400;
-      final total = subTotal - 4000.0;
+      final total = subTotal - discount;
       return 'KHR (៛) ${_formatCurrency(total < 0 ? 0 : total)}';
     } else {
       final text = controller.khrController.text;
       if (text == "Full Charge") return "Full Charge";
       final val = double.tryParse(text.replaceAll(',', '')) ?? 0.0;
-      final total = val - 4000.0;
+      final total = val - discount;
       return 'KHR (៛) ${_formatCurrency(total < 0 ? 0 : total)}';
     }
   }
@@ -226,7 +209,14 @@ class _ChargingInformationScreenState
                     // --- 5. Dynamic Pricing Section ---
                     Obx(() => _buildPriceRow('Sub Total', _getSubTotal())),
                     const SizedBox(height: 5),
-                    _buildPriceRow('Discount (20%)', '-KHR (៛) 4,000'),
+                    Obx(() {
+                      final discount = controller.getCalculatedDiscount();
+                      final discountPct = controller.getCalculatedDiscountPercentage();
+                      return _buildPriceRow(
+                        'Discount ($discountPct%)',
+                        '-KHR (៛) ${_formatCurrency(discount.toDouble())}',
+                      );
+                    }),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Divider(height: 1, color: Colors.grey),

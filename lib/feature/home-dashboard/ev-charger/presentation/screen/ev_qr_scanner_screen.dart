@@ -220,10 +220,17 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                     height: 54,
                     child: ElevatedButton(
                       onPressed: () {
+                        final chargerUser = controller.scanResult.value ?? 'ev01';
+                        final plugNum = selectedPlugIndex + 1;
                         Get.back();
                         controller.resetScanner();
-                        Get.offNamed(AppRoutes.evChargingInformation);
-                        
+                        Get.offNamed(
+                          AppRoutes.evChargingInformation,
+                          arguments: {
+                            'chargerUsername': chargerUser,
+                            'plugId': plugNum,
+                          },
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
@@ -249,6 +256,10 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     );
+
+    if (!controller.isScanning.value) {
+      controller.retryScan();
+    }
   }
 
   Widget _buildPlugOptionCard({
@@ -337,10 +348,44 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Full screen camera preview
           MobileScanner(
             controller: controller.cameraController,
-            onDetect: controller.onQRDetect,
+            onDetect: (BarcodeCapture capture) {
+              if (!controller.isScanning.value) return;
+              final barcodes = capture.barcodes;
+              if (barcodes.isNotEmpty) {
+                final String rawQr = (barcodes.first.rawValue ?? '').trim();
+                if (rawQr.isNotEmpty) {
+                  String qrData = rawQr;
+                  if (qrData.startsWith('http://') || qrData.startsWith('https://')) {
+                    try {
+                      final uri = Uri.parse(qrData);
+                      if (uri.queryParameters.containsKey('username')) {
+                        qrData = uri.queryParameters['username']!;
+                      } else if (uri.queryParameters.containsKey('chargerUsername')) {
+                        qrData = uri.queryParameters['chargerUsername']!;
+                      } else if (uri.pathSegments.isNotEmpty) {
+                        qrData = uri.pathSegments.lastWhere((seg) => seg.isNotEmpty, orElse: () => qrData);
+                      }
+                    } catch (_) {}
+                  }
+
+                  final firstChar = qrData.substring(0, 1);
+                  final isLetter = RegExp(r'[a-zA-Z]').hasMatch(firstChar);
+                  if (isLetter) {
+                    controller.isScanning.value = false;
+                    controller.processChargerQR(
+                      qrData,
+                      _showScanSuccessDialogAndNavigate,
+                      _showScanFailedDialog,
+                    );
+                  } else {
+                    controller.isScanning.value = false;
+                    controller.processScannedQR(qrData);
+                  }
+                }
+              }
+            },
             fit: BoxFit.cover,
           ),
 
@@ -430,24 +475,6 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                 
 
                 const Spacer(),
-                //
-                Row(
-                  children: [
-                     TextButton(
-                      onPressed: _showScanFailedDialog, 
-                      child: Text("failed",style: TextStyle(color: Colors.white),),
-                    ),
-                   
-                    //
-                     TextButton(
-                      onPressed: () {
-                        _showScanSuccessDialogAndNavigate();
-                      }, 
-                      child: Text("Success",style: TextStyle(color: Colors.white),),
-                    ),
-                  ],
-                ),
-                
                 const SizedBox(height: 8),
                 // Flashlight button  
                 Obx(

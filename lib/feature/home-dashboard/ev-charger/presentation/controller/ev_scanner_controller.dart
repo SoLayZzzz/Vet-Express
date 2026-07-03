@@ -4,6 +4,9 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/respons
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:location/location.dart' as loc_pkg;
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_station_controller.dart';
 import 'ev_wallet_controller.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 import '../../../../../routes/app_routes.dart';
@@ -35,17 +38,30 @@ class EvScannerController extends GetxController {
 
     final barcodes = capture.barcodes;
     if (barcodes.isNotEmpty) {
-      final String qrData = barcodes.first.rawValue ?? '';
+      final String rawQrData = barcodes.first.rawValue ?? '';
 
-      if (qrData.isNotEmpty) {
+      if (rawQrData.isNotEmpty) {
+        String qrData = rawQrData.trim();
+        if (qrData.startsWith('http://') || qrData.startsWith('https://')) {
+          try {
+            final uri = Uri.parse(qrData);
+            if (uri.queryParameters.containsKey('username')) {
+              qrData = uri.queryParameters['username']!;
+            } else if (uri.queryParameters.containsKey('chargerUsername')) {
+              qrData = uri.queryParameters['chargerUsername']!;
+            } else if (uri.pathSegments.isNotEmpty) {
+              qrData = uri.pathSegments.lastWhere((seg) => seg.isNotEmpty, orElse: () => qrData);
+            }
+          } catch (_) {}
+        }
         isScanning.value = false;
-        _processScannedQR(qrData.trim());
+        processScannedQR(qrData.trim());
       }
     }
   }
 
   // Process scanned QR code
-  Future<void> _processScannedQR(String transactionId) async {
+  Future<void> processScannedQR(String transactionId) async {
     isLoading.value = true;
 
     try {
@@ -345,6 +361,68 @@ class EvScannerController extends GetxController {
     errorMessage.value = null;
   }
 
+  Future<bool> checkZone(String chargerUsername) async {
+    String lats = "11.5564";
+    String longs = "104.9281";
+    
+    try {
+      final location = loc_pkg.Location();
+      final hasPermission = await location.hasPermission();
+      if (hasPermission == loc_pkg.PermissionStatus.granted) {
+        final loc = await location.getLocation();
+        if (loc.latitude != null && loc.longitude != null) {
+          lats = loc.latitude.toString();
+          longs = loc.longitude.toString();
+        }
+      }
+    } catch (_) {}
+
+    try {
+      final req = EvCheckZoneRequest(
+        lats: lats,
+        longs: longs,
+        chargerUsername: chargerUsername,
+        chargerUserName: chargerUsername,
+      );
+      final res = await useCase.evCheckZone(
+        context: Get.context!,
+        request: req,
+      );
+      if (res.body?.status == true && res.body?.message == "You are in zone") {
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Check zone API error: $e');
+    }
+    return false;
+  }
+
+  Future<void> processChargerQR(String chargerUsername, VoidCallback onSuccess, VoidCallback onFailure) async {
+    isLoading.value = true;
+    
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(color: Color(0xFFE65100)),
+      ),
+      barrierDismissible: false,
+    );
+
+    final inZone = await checkZone(chargerUsername);
+
+    if (Get.isDialogOpen == true) {
+      Get.back();
+    }
+    isLoading.value = false;
+
+    if (inZone) {
+      scanResult.value = chargerUsername;
+      onSuccess();
+    } else {
+      errorMessage.value = "You are not in the station zone.";
+      onFailure();
+    }
+  }
+
   @override
   void onClose() {
     cameraController.dispose();
@@ -366,7 +444,12 @@ class _FullScreenVerificationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EvScannerController controller = Get.find<EvScannerController>();
+    EvScannerController controller;
+    try {
+      controller = Get.find<EvScannerController>();
+    } catch (_) {
+      controller = Get.put(EvScannerController(Get.find()));
+    }
     return Material(
       color: Colors.transparent,
       child: Scaffold(

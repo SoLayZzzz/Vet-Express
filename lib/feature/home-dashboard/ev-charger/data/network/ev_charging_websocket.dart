@@ -69,6 +69,40 @@ class EvChargingWebSocket {
         protocols: token != null ? ['Authorization', token] : null,
       );
 
+      final isStomp = url.contains('/OCPI/ws');
+      if (isStomp) {
+        final stompConnect = 'CONNECT\naccept-version:1.1,1.2\nheart-beat:10000,10000\n\n\u0000';
+        final username = (chargerUsername != null && chargerUsername!.isNotEmpty) ? chargerUsername : 'ev01';
+        final stompSubscribe = 'SUBSCRIBE\nid:sub-0\ndestination:/topic/ocpi/commands/$username\n\n\u0000';
+
+        debugPrint('Sending STOMP CONNECT to EV charging WebSocket');
+        _channel!.sink.add(stompConnect);
+
+        Future.delayed(const Duration(milliseconds: 250), () {
+          if (_channel != null && _shouldReconnect) {
+            debugPrint('Sending STOMP SUBSCRIBE to destination: /topic/ocpi/commands/$username');
+            _channel!.sink.add(stompSubscribe);
+
+            if (transactionId != null && transactionId!.isNotEmpty) {
+              final data = {
+                'command_type': 'START_SESSION',
+                'command_tpye': 'START_SESSION',
+                'transactionId': transactionId,
+              };
+              final payload = jsonEncode(data);
+              final stompSend = 'SEND\ndestination:/topic/ocpi/commands/$username\ncontent-type:application/json\n\n$payload\u0000';
+
+              Future.delayed(const Duration(milliseconds: 200), () {
+                if (_channel != null && _shouldReconnect) {
+                  debugPrint('Sending STOMP START_SESSION command: $stompSend');
+                  _channel!.sink.add(stompSend);
+                }
+              });
+            }
+          }
+        });
+      }
+
       _channel!.stream.listen(
         (message) {
           _isConnecting = false;
@@ -97,7 +131,31 @@ class EvChargingWebSocket {
   void _handleMessage(dynamic message) {
     debugPrint('EV charging WebSocket received: $message');
     try {
-      final dataMap = jsonDecode(message);
+      String rawJson = message.toString().trim();
+      if (rawJson.isEmpty) return;
+
+      if (rawJson.startsWith('MESSAGE')) {
+        final parts = rawJson.split('\n\n');
+        if (parts.length > 1) {
+          rawJson = parts.sublist(1).join('\n\n');
+        } else {
+          final doubleReturnParts = rawJson.split('\r\n\r\n');
+          if (doubleReturnParts.length > 1) {
+            rawJson = doubleReturnParts.sublist(1).join('\r\n\r\n');
+          }
+        }
+        if (rawJson.endsWith('\u0000')) {
+          rawJson = rawJson.substring(0, rawJson.length - 1);
+        } else if (rawJson.endsWith('\x00')) {
+          rawJson = rawJson.substring(0, rawJson.length - 1);
+        }
+        rawJson = rawJson.trim();
+      } else if (!rawJson.startsWith('{') && !rawJson.startsWith('[')) {
+        // Ignore other STOMP control frames like CONNECTED, RECEIPT, or HEARTBEATS
+        return;
+      }
+
+      final dataMap = jsonDecode(rawJson);
       if (dataMap is Map<String, dynamic>) {
         final chargingData = EvChargingData.fromJson(dataMap);
         _streamController?.add(chargingData);
@@ -124,6 +182,12 @@ class EvChargingWebSocket {
     _channel?.sink.close();
     _channel = null;
     _isConnecting = false;
+  }
+
+  void send(dynamic message) {
+    if (_channel != null) {
+      _channel!.sink.add(message);
+    }
   }
 
   void close() {

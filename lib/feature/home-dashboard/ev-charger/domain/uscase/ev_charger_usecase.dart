@@ -1,7 +1,13 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_sale_order_apptmp_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/destination_ev.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_apply_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_search_response.dart';
@@ -287,5 +293,26 @@ class EvChargerUseCase {
     required dynamic context,
   }) {
     return repository.fetchChargingStatus(context: context);
+  }
+
+  Future<EvSaleOrderApptmpResponse> evSaleOrderApptmp({
+    required dynamic context,
+    required EvSaleOrderApptmpRequest request,
+  }) {
+    return repository.evSaleOrderApptmp(context: context, request: request);
+  }
+
+  Future<EvCalculateResponse> evCalculate({
+    required dynamic context,
+    required EvCalculateRequest request,
+  }) {
+    return repository.evCalculate(context: context, request: request);
+  }
+
+  Future<EvCheckZoneResponse> evCheckZone({
+    required dynamic context,
+    required EvCheckZoneRequest request,
+  }) {
+    return repository.evCheckZone(context: context, request: request);
   }
 }

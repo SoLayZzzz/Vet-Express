@@ -129,6 +129,7 @@ class Endpoint {
   static const String evSaleOrderWalletList = 'sale-order/wallet/list';
   static const String evSaleOrderWalletAmount = 'sale-order/wallet/amount';
   static const String evSaleOrderWalletTopUp = 'sale-order/wallet/top-up';
+  static const String evSaleOrderAppTmp = 'sale-order/app-tmp';
   static const String evkwhlist = "label/kwh/list";
   static const String evpricelist = "label/price/list";
   static const String evpointlist = "label/point/list";
@@ -155,4 +156,6 @@ class Endpoint {
       "membership/transaction/detail/$id";
   
   static const String evChargingStatus = 'profile/charging-status';
+  static const String ev_checkZone = 'station/check-zone';
+  static const String ev_calculate = 'promotion/calculate';
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:express_vet/base/base_url.dart';
 import '../../data/network/ev_charging_websocket.dart';
 import 'ev_charger_controller.dart';
 
@@ -36,7 +38,14 @@ class EvDetailChargingController extends GetxController {
       percent.value = (percent.value + 1).clamp(0, 100);
     });
 
+    final base = BaseUrl.BASE_URL_WEB_SOCKET;
+    final wsBase = base
+        .replaceAll('https://', 'wss://')
+        .replaceAll('http://', 'ws://');
+    final cleanBase = wsBase.endsWith('/') ? wsBase.substring(0, wsBase.length - 1) : wsBase;
+
     _webSocket = EvChargingWebSocket(
+      customUrl: cleanBase,
       transactionId: transactionId.value,
       chargerUsername: chargerUsername.value,
     );
@@ -59,6 +68,18 @@ class EvDetailChargingController extends GetxController {
   void stopCharging() {
     _timer?.cancel();
     _timer = null;
+
+    final username = chargerUsername.value.isNotEmpty ? chargerUsername.value : 'ev01';
+    final data = {
+      'command_type': 'STOP_SESSION',
+      'command_tpye': 'STOP_SESSION',
+      'transactionId': transactionId.value,
+    };
+    final payload = jsonEncode(data);
+    final stompSend = 'SEND\ndestination:/topic/ocpi/commands/$username\ncontent-type:application/json\n\n$payload\u0000';
+
+    print('Sending STOP_SESSION command: $stompSend');
+    _webSocket.send(stompSend);
   }
 
   @override

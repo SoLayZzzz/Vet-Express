@@ -1,10 +1,10 @@
-class EvVoucherApplyResponse {
+class EvCheckZoneResponse {
   Header? header;
   Body? body;
 
-  EvVoucherApplyResponse({this.header, this.body});
+  EvCheckZoneResponse({this.header, this.body});
 
-  EvVoucherApplyResponse.fromJson(Map<String, dynamic> json) {
+  EvCheckZoneResponse.fromJson(Map<String, dynamic> json) {
     header =
         json['header'] != null ? new Header.fromJson(json['header']) : null;
     body = json['body'] != null ? new Body.fromJson(json['body']) : null;
@@ -47,26 +47,18 @@ class Header {
 class Body {
   bool? status;
   String? message;
-  double? discount;
-  double? discountPercentage;
 
-  Body({this.status, this.message, this.discount, this.discountPercentage});
+  Body({this.status, this.message});
 
   Body.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    discount = (json['discount'] as num?)?.toDouble() ??
-        (json['discountAmountKhr'] as num?)?.toDouble();
-    discountPercentage = (json['discountPercentage'] as num?)?.toDouble() ??
-        (json['discount_percentage'] as num?)?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
     data['message'] = this.message;
-    data['discount'] = this.discount;
-    data['discountPercentage'] = this.discountPercentage;
     return data;
   }
 }

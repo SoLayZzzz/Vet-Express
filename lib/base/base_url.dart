@@ -78,8 +78,8 @@ class BaseUrl {
   // Use for chagring ev
   static final String BASE_URL_WEB_SOCKET =
       _flavor == 'prod'
-          ? 'ws://srouyapi.duckdns.org:9898/OCPI/ws?username=ocpi-dashboard/topic/ocpi/commands'
-          : 'ws://srouyapi.duckdns.org:9898/OCPI/ws?username=ocpi-dashboard/topic/ocpi/commands';
+          ? 'wss://qacltom.udaya-tech.com/OCPI/ws'
+          : 'wss://qacltom.udaya-tech.com/OCPI/ws';
 
   // Version App
   static String APP_VERSION_ANDROID = '2.1.4';
@@ -88,3 +88,10 @@ class BaseUrl {
   // for check app update must be double value
   static String APP_VERSION = '2.14';
 }
+
+
+// View detail charging
+//wss://qacltom.udaya-tech.com/OCPI/ws/topic/ocpi/commands/ev01
+
+// Stop
+//wss://qacltom.udaya-tech.com/OCPI/ws/topic/ocpi/commands/ev01
