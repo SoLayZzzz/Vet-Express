@@ -13,9 +13,23 @@ import '../../../../../routes/app_routes.dart';
 
 class EvScannerController extends GetxController {
   final EvChargerUseCase useCase;
-  late final EvWalletController walletController;
+  EvWalletController? walletController;
 
   EvScannerController(this.useCase);
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Safely initialize walletController — it may not be registered
+    // if the user navigated directly to the scanner.
+    try {
+      if (Get.isRegistered<EvWalletController>()) {
+        walletController = Get.find<EvWalletController>();
+      }
+    } catch (e) {
+      debugPrint('EvScannerController.onInit: walletController not available: $e');
+    }
+  }
 
   // Observables
   var isLoading = false.obs;
@@ -108,7 +122,11 @@ class EvScannerController extends GetxController {
           // Update wallet balance after charging
           if (transactionData.value != null &&
               transactionData.value!.totalPrice != null) {
-            walletController.updateBalanceAfterCharging();
+            try {
+              walletController?.updateBalanceAfterCharging();
+            } catch (e) {
+              debugPrint('EvScannerController.confirmPayment: wallet update failed (non-critical): $e');
+            }
           }
 
           // Payment successful
@@ -144,6 +162,11 @@ class EvScannerController extends GetxController {
   void _showFullScreenVerificationDialog() {
     final data = transactionData.value;
 
+    // Stop the camera so it doesn't keep scanning behind the dialog
+    try {
+      cameraController.stop();
+    } catch (_) {}
+
     Get.dialog(
       _FullScreenVerificationDialog(
         data: data,
@@ -162,6 +185,11 @@ class EvScannerController extends GetxController {
   void _showFullScreenPaymentSuccessDialog() {
     final data = transactionData.value;
 
+    // Stop the camera so it doesn't keep scanning behind the dialog
+    try {
+      cameraController.stop();
+    } catch (_) {}
+
     Get.dialog(
       _FullScreenPaymentSuccessDialog(
         data: data,
@@ -178,6 +206,11 @@ class EvScannerController extends GetxController {
 
   // Dialog: Scan Failed (Keep as small dialog)
   void _showScanFailedDialog(String message) {
+    // Stop the camera so it doesn't keep scanning behind the dialog
+    try {
+      cameraController.stop();
+    } catch (_) {}
+
     Get.dialog(
       Dialog(
         backgroundColor: Colors.white,
@@ -351,6 +384,10 @@ class EvScannerController extends GetxController {
   void retryScan() {
     resetScanner();
     isScanning.value = true;
+    // Restart the camera so it can detect QR codes again
+    try {
+      cameraController.start();
+    } catch (_) {}
   }
 
   void resetScanner() {

@@ -11,7 +11,7 @@ import 'package:express_vet/feature/home-dashboard/notifications/presentation/bi
 import 'package:express_vet/feature/home-dashboard/notifications/presentation/controller/notifications_controller.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/contains.dart';
-import 'package:express_vet/feature/home-dashboard/notifications/presentation/screen/goods_information_screen.dart';
+import 'package:express_vet/feature/history-dashboard/other-history/presentation/screen/goods_information_screen.dart';
 
 class NotificationScreen extends GetView<NotificationsController> {
   const NotificationScreen({super.key});

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../../../base/base_url.dart';
@@ -24,6 +26,7 @@ class EvChargerController extends StateController<EvChargerUiState> {
   final RxInt isCharging = 0.obs;
   final RxString chargingTransactionId = ''.obs;
   final RxString chargingChargerUsername = ''.obs;
+  Timer? _chargingStatusTimer;
 
   EvChargerController(this.useCase);
 
@@ -39,6 +42,15 @@ class EvChargerController extends StateController<EvChargerUiState> {
       }
     });
     loadHomeData();
+    _chargingStatusTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      fetchChargingStatus();
+    });
+  }
+
+  @override
+  void onClose() {
+    _chargingStatusTimer?.cancel();
+    super.onClose();
   }
 
   Future<void> fetchMembershipTransactionList({
@@ -527,6 +539,7 @@ class EvChargerController extends StateController<EvChargerUiState> {
       final EvChargingStatusResponse res = await useCase.fetchChargingStatus(
         context: Get.context!,
       );
+      debugPrint('======> fetchChargingStatus response: ${res.header?.result}, isCharging: ${res.body?.data?.isCharging}, chargerUsername: ${res.body?.data?.chargerUsername}, transactionId: ${res.body?.data?.transactionId}');
       if (res.header?.result == true && res.header?.statusCode == 200) {
         final chargingStatus = res.body?.data?.isCharging;
         isCharging.value = chargingStatus ?? 0;

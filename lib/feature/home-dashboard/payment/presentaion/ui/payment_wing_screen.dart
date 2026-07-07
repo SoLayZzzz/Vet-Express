@@ -26,6 +26,7 @@ class _PaymentWingScreenState extends State<PaymentWingScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     controller = Get.put(
       PaymentWingController(
         transactionId: widget.transactionId,
@@ -33,6 +34,16 @@ class _PaymentWingScreenState extends State<PaymentWingScreen>
       ),
     );
     controller.init(context: context);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // When the user returns from the Wing Bank app, dismiss any loading overlay
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('PaymentWingScreen.didChangeAppLifecycleState -> resumed, hiding loading');
+      controller.hideLoadingOnResume();
+    }
   }
 
   @override
@@ -61,6 +72,7 @@ class _PaymentWingScreenState extends State<PaymentWingScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     if (Get.isRegistered<PaymentWingController>()) {
       Get.delete<PaymentWingController>(force: true);
     }

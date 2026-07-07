@@ -187,10 +187,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     final transportationType = bookingData.data?.body?.data?[0].transportationType;
     final transportationTypeLower = (transportationType ?? '').toLowerCase();
     final isBoatByJourneyType = widget.journeyType == 2 || widget.journeyType == 4;
-    final isBoatByTransportType =
-        transportationTypeLower.contains('boat') ||
-        transportationTypeLower.contains('sea') ||
-        transportationTypeLower.contains('ferry');
+    final isBoatByTransportType = RegExp(
+      r'\b(boat|ferry|ship|speedboat|sea)\b',
+    ).hasMatch(transportationTypeLower);
     final isBoatTransport = isBoatByJourneyType || isBoatByTransportType;
 
     return Padding(
@@ -222,7 +221,6 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        // color: Colors.grey.shade800,
                       ),
                     ),
 
@@ -621,6 +619,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       left: 0,
       right: 0,
       child: Container(
+        padding: EdgeInsets.all(8),
         color: const Color(0xff000000).withValues(alpha: 0.8),
         child: Column(
           children: [

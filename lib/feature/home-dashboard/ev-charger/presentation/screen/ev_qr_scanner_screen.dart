@@ -472,6 +472,13 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                     ],
                   ),
                 ),
+
+
+                TextButton(onPressed: (){
+                    _showScanSuccessDialogAndNavigate();
+                }, 
+                child: Text("Success")
+                ),
                 
 
                 const Spacer(),

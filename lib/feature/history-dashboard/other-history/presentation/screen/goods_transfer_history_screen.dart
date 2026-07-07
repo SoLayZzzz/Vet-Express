@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 
-import '../../../../home-dashboard/notifications/presentation/screen/goods_information_screen.dart';
+import 'goods_information_screen.dart';
 import '../../../../../feature/home-dashboard/self_service/presentation/screen/self_service_qr_list_screen.dart';
 import '../../data/model/response/transfer_list_response.dart';
 import '../../../../../models/request_transfer/self_service_response.dart';
@@ -107,7 +107,7 @@ class GoodsTransferHistoryScreen
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -409,41 +409,41 @@ class GoodsTransferHistoryScreen
     });
   }
 
-  Widget _surveyButton({
-    required BuildContext context,
-    required String goodsTransferId,
-    required int type,
-  }) {
-    return Row(
-      children: [
-        const Icon(
-          Ionicons.chatbubble_ellipses_outline,
-          color: AppColors.primaryColor,
-        ),
-        const SizedBox(width: 6),
-        InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: () async {
-            final result = await Get.to(
-              () => ReviewScreen(
-                goodsTransferID: goodsTransferId,
-                type: type.toString(),
-              ),
-              transition: Transition.rightToLeft,
-              duration: const Duration(milliseconds: Constrains.duration),
-            );
-            if (result != null) {
-              controller.loadTransferList(context: Get.context!, type: type);
-            }
-          },
-          child: Text(
-            'take_survey'.tr,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _surveyButton({
+  //   required BuildContext context,
+  //   required String goodsTransferId,
+  //   required int type,
+  // }) {
+  //   return Row(
+  //     children: [
+  //       const Icon(
+  //         Ionicons.chatbubble_ellipses_outline,
+  //         color: AppColors.primaryColor,
+  //       ),
+  //       const SizedBox(width: 6),
+  //       InkWell(
+  //         borderRadius: BorderRadius.circular(10),
+  //         onTap: () async {
+  //           final result = await Get.to(
+  //             () => ReviewScreen(
+  //               goodsTransferID: goodsTransferId,
+  //               type: type.toString(),
+  //             ),
+  //             transition: Transition.rightToLeft,
+  //             duration: const Duration(milliseconds: Constrains.duration),
+  //           );
+  //           if (result != null) {
+  //             controller.loadTransferList(context: Get.context!, type: type);
+  //           }
+  //         },
+  //         child: Text(
+  //           'take_survey'.tr,
+  //           style: const TextStyle(fontWeight: FontWeight.bold),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Positioned _filterButton({required BuildContext context}) {
     return Positioned(
@@ -729,47 +729,47 @@ class _TransferItemCardState extends State<TransferItemCard> {
     );
   }
 
-  Widget _buildFeeRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(color: Colors.grey[700])),
-          Text(value),
-        ],
-      ),
-    );
-  }
+  // Widget _buildFeeRow(String label, String value) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 4),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Text(label, style: TextStyle(color: Colors.grey[700])),
+  //         Text(value),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildBtn(
-    String title,
-    VoidCallback? onTap, {
-    bool isOutline = false,
-  }) {
-    return InkWell(
-      onTap: () {
-        onTap?.call();
-      },
-      child: Container(
-        height: 38,
-        decoration: BoxDecoration(
-          color: isOutline ? const Color(0xFFEDF0F3) : const Color(0xFFF9E8DE),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(
-              color: isOutline ? Colors.black87 : AppColors.primaryColor,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildBtn(
+  //   String title,
+  //   VoidCallback? onTap, {
+  //   bool isOutline = false,
+  // }) {
+  //   return InkWell(
+  //     onTap: () {
+  //       onTap?.call();
+  //     },
+  //     child: Container(
+  //       height: 38,
+  //       decoration: BoxDecoration(
+  //         color: isOutline ? const Color(0xFFEDF0F3) : const Color(0xFFF9E8DE),
+  //         borderRadius: BorderRadius.circular(20),
+  //       ),
+  //       child: Center(
+  //         child: Text(
+  //           title,
+  //           style: TextStyle(
+  //             color: isOutline ? Colors.black87 : AppColors.primaryColor,
+  //             fontWeight: FontWeight.w600,
+  //             fontSize: 12,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _onTrackOrderPressed() {
     final id = _parseId(widget.item.id);
@@ -819,320 +819,3 @@ class _TransferItemCardState extends State<TransferItemCard> {
     return statusMap[status] ?? 'Status: $status';
   }
 }
-
-
-
-
-  // Widget _transferTab({required BuildContext context, required int type}) {
-  //   return Obx(() {
-  //     final future =
-  //         type == 1
-  //             ? controller.state.futureSending
-  //             : controller.state.futureReceiving;
-
-  //     if (future == null) {
-  //       controller.loadTransferList(context: context, type: type);
-  //       return const Center(
-  //         child: SizedBox(
-  //           height: 50.0,
-  //           width: 50.0,
-  //           child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
-  //         ),
-  //       );
-  //     }
-
-  //     return FutureBuilder<TransferListResponse>(
-  //       future: future,
-  //       builder: (context, data) {
-  //         if (data.hasData) {
-  //           if ((data.data?.header?.result) == true &&
-  //               (data.data?.header?.statusCode) == 200) {
-  //             if ((data.data?.body?.data)!.isNotEmpty) {
-  //               return Padding(
-  //                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-  //                 child: Stack(
-  //                   children: [
-  //                     ListView.builder(
-  //                       physics: const BouncingScrollPhysics(),
-  //                       itemCount: (data.data?.body?.data)!.length,
-  //                       itemBuilder: (context, index) {
-  //                         return Container(
-  //                           margin: const EdgeInsets.only(top: 12.0),
-  //                           padding: const EdgeInsets.all(12.0),
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(10),
-  //                             color: AppColors.whiteColor,
-  //                             border: Border.all(
-  //                               width: 0.5,
-  //                               color: AppColors.borderColor,
-  //                             ),
-  //                           ),
-  //                           child: InkWell(
-  //                             onTap: () {
-  //                               Get.to(
-  //                                 () => GoodsInformationScreen(
-  //                                   id:
-  //                                       (data.data?.body?.data?[index].id)!
-  //                                           .toInt(),
-  //                                 ),
-  //                                 transition: Transition.rightToLeft,
-  //                                 duration: const Duration(
-  //                                   milliseconds: Constrains.duration,
-  //                                 ),
-  //                               );
-  //                             },
-  //                             child: Column(
-  //                               children: [
-  //                                 Row(
-  //                                   mainAxisAlignment:
-  //                                       MainAxisAlignment.spaceBetween,
-  //                                   children: [
-  //                                     Text(
-  //                                       "${data.data?.body?.data?[index].code}",
-  //                                       style: const TextStyle(
-  //                                         fontWeight: FontWeight.bold,
-  //                                         fontSize: 15,
-  //                                         color: AppColors.titleColor,
-  //                                       ),
-  //                                     ),
-  //                                     Text(
-  //                                       "${data.data?.body?.data?[index].date}",
-  //                                       style: const TextStyle(
-  //                                         fontWeight: FontWeight.bold,
-  //                                         fontSize: 15,
-  //                                         color: AppColors.titleColor,
-  //                                       ),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                                 Row(
-  //                                   crossAxisAlignment:
-  //                                       CrossAxisAlignment.center,
-  //                                   children: [
-  //                                     Column(
-  //                                       children: [
-  //                                         const SizedBox(height: 20),
-  //                                         Image.asset(
-  //                                           AssetImages.ic_posting,
-  //                                           width: 40,
-  //                                           height: 40,
-  //                                         ),
-  //                                       ],
-  //                                     ),
-  //                                     Expanded(
-  //                                       child: Column(
-  //                                         children: [
-  //                                           Text(
-  //                                             _returnStatus(
-  //                                               (data
-  //                                                   .data
-  //                                                   ?.body
-  //                                                   ?.data?[index]
-  //                                                   .status)!,
-  //                                             ),
-  //                                             style: const TextStyle(
-  //                                               fontWeight: FontWeight.bold,
-  //                                               fontSize: 16,
-  //                                               color: AppColors.secondaryColor,
-  //                                             ),
-  //                                           ),
-  //                                           Image.asset(
-  //                                             AssetImages.ic_tracking_line,
-  //                                           ),
-  //                                         ],
-  //                                       ),
-  //                                     ),
-  //                                     Column(
-  //                                       children: [
-  //                                         const SizedBox(height: 20),
-  //                                         Image.asset(
-  //                                           AssetImages.ic_receive,
-  //                                           width: 40,
-  //                                           height: 40,
-  //                                         ),
-  //                                       ],
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                                 Padding(
-  //                                   padding: const EdgeInsets.symmetric(
-  //                                     vertical: 10.0,
-  //                                   ),
-  //                                   child: Row(
-  //                                     children: [
-  //                                       Text(
-  //                                         (data
-  //                                                 .data
-  //                                                 ?.body
-  //                                                 ?.data?[index]
-  //                                                 .destinationFromEn)
-  //                                             .toString(),
-  //                                         style: const TextStyle(
-  //                                           fontWeight: FontWeight.bold,
-  //                                           fontSize: 15,
-  //                                           color: AppColors.primaryColor,
-  //                                         ),
-  //                                       ),
-  //                                       const Spacer(),
-  //                                       Text(
-  //                                         (data
-  //                                                 .data
-  //                                                 ?.body
-  //                                                 ?.data?[index]
-  //                                                 .destinationToEn)
-  //                                             .toString(),
-  //                                         style: const TextStyle(
-  //                                           fontWeight: FontWeight.bold,
-  //                                           fontSize: 15,
-  //                                           color: AppColors.primaryColor,
-  //                                         ),
-  //                                       ),
-  //                                     ],
-  //                                   ),
-  //                                 ),
-  //                                 Row(
-  //                                   mainAxisAlignment:
-  //                                       MainAxisAlignment.spaceBetween,
-  //                                   children: [
-  //                                     Text(
-  //                                       (data
-  //                                               .data
-  //                                               ?.body
-  //                                               ?.data?[index]
-  //                                               .senderTelephone)
-  //                                           .toString(),
-  //                                       style: const TextStyle(
-  //                                         fontWeight: FontWeight.bold,
-  //                                         fontSize: 14,
-  //                                       ),
-  //                                     ),
-  //                                     Text(
-  //                                       (data
-  //                                               .data
-  //                                               ?.body
-  //                                               ?.data?[index]
-  //                                               .receiverTelephone)
-  //                                           .toString(),
-  //                                       style: const TextStyle(
-  //                                         fontWeight: FontWeight.bold,
-  //                                         fontSize: 14,
-  //                                       ),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                                 Padding(
-  //                                   padding: const EdgeInsets.only(top: 12.0),
-  //                                   child: Row(
-  //                                     mainAxisAlignment:
-  //                                         MainAxisAlignment.spaceBetween,
-  //                                     children: [
-  //                                       Row(
-  //                                         children: [
-  //                                           Image.asset(
-  //                                             AssetImages.ic_qty,
-  //                                             width: 24,
-  //                                           ),
-  //                                           const SizedBox(width: 6),
-  //                                           Text(
-  //                                             'Qty: ${(data.data?.body?.data?[index].qty).toString()}',
-  //                                             style: const TextStyle(
-  //                                               fontWeight: FontWeight.bold,
-  //                                             ),
-  //                                           ),
-  //                                         ],
-  //                                       ),
-  //                                       if ((data
-  //                                                       .data
-  //                                                       ?.body
-  //                                                       ?.data?[index]
-  //                                                       .isSurveyReceiver)
-  //                                                   .toString() ==
-  //                                               '0' &&
-  //                                           type == 2)
-  //                                         _surveyButton(
-  //                                           context: context,
-  //                                           goodsTransferId:
-  //                                               (data
-  //                                                       .data
-  //                                                       ?.body
-  //                                                       ?.data?[index]
-  //                                                       .id)
-  //                                                   .toString(),
-  //                                           type: type,
-  //                                         ),
-  //                                       if ((data
-  //                                                       .data
-  //                                                       ?.body
-  //                                                       ?.data?[index]
-  //                                                       .isSurveySender)
-  //                                                   .toString() ==
-  //                                               '0' &&
-  //                                           type == 1)
-  //                                         _surveyButton(
-  //                                           context: context,
-  //                                           goodsTransferId:
-  //                                               (data
-  //                                                       .data
-  //                                                       ?.body
-  //                                                       ?.data?[index]
-  //                                                       .id)
-  //                                                   .toString(),
-  //                                           type: type,
-  //                                         ),
-  //                                     ],
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         );
-  //                       },
-  //                     ),
-  //                     _filterButton(context: context),
-  //                   ],
-  //                 ),
-  //               );
-  //             }
-  //             if ((data.data?.body?.data)!.isEmpty) {
-  //               return Stack(
-  //                 children: [
-  //                   Center(
-  //                     child: Column(
-  //                       mainAxisAlignment: MainAxisAlignment.center,
-  //                       crossAxisAlignment: CrossAxisAlignment.center,
-  //                       children: [
-  //                         Image.asset(
-  //                           AssetImages.ic_empty,
-  //                           width: 150,
-  //                           height: 150,
-  //                         ),
-  //                         Text(
-  //                           'no_data'.tr,
-  //                           style: const TextStyle(
-  //                             fontSize: 16,
-  //                             color: AppColors.primaryColor,
-  //                             fontWeight: FontWeight.w500,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   _filterButton(context: context),
-  //                 ],
-  //               );
-  //             }
-  //           }
-  //         } else if (data.hasError) {
-  //           log('error ${data.error}');
-  //         }
-  //         return const Center(
-  //           child: SizedBox(
-  //             height: 50.0,
-  //             width: 50.0,
-  //             child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
-  //           ),
-  //         );
-  //       },
-  //     );
-  //   });
-  // }

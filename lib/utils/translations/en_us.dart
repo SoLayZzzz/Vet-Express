@@ -341,12 +341,12 @@ final Map<String, String> enUS = {
   'search_goods': 'Search Goods Transfer',
   'enter_goods_transfer':
       'Enter the goods transfer code in the input text and then press on icon search button to find the result.',
-  'goods_transfer_code': 'Enter goods transfer code',
+  'goods_transfer_code': 'Enter the goods transfer code',
   'or': ' Or ',
-  'scan_qr_info': 'Scan QR code on goods receipt',
+  'scan_qr_info': 'Scan the QR Code on the Goods Receipt',
   'scan_qr': 'Scan QR code',
   'code': 'Enter goods transfer code',
-  'code_requ': 'Code is required',
+  'code_requ': 'Transfer code is required',
 
   // Change language Screen..................
   'change_lang': 'Choose Language',
@@ -430,6 +430,8 @@ final Map<String, String> enUS = {
   'hotline_6': 'Vehicle Rental: ',
   'contact_list': 'Contact List',
   'telephone_num': 'Phone number',
+  'update_profile': 'Profile updated successfully',
+  'pf_success': 'Success',
 
   //Goods transfer list detail
   'date': 'Date',
@@ -446,8 +448,8 @@ final Map<String, String> enUS = {
   'call': 'Call to Customer',
   'delivery': 'Delivery To Customer',
   'received': 'Customer Received',
-  'at': 'at',
-  'from_info': 'from',
+  'at': 'At',
+  'from_info': 'From',
   'thank_for_your_support': 'Thank For your Support \n HotLine: 010 522 522',
   'hotline_010_522_522': 'HotLine:010 522 522',
 

@@ -507,7 +507,6 @@ class PaymentController extends StateController<PaymentUistate> {
     required String token,
   }) async {
     setLoop(false);
-    Loading().loadingShow();
     Map<String, dynamic> result;
     try {
       result = await uscase.acledaComplete(
@@ -515,19 +514,16 @@ class PaymentController extends StateController<PaymentUistate> {
         token: token,
       );
     } on TimeoutException catch (e) {
-      Loading().loadingClose();
       debugPrint(
         'PaymentController.acledaComplete.timeout transactionId=$transactionId error=$e',
       );
       return;
     } catch (e) {
-      Loading().loadingClose();
       debugPrint(
         'PaymentController.acledaComplete.error transactionId=$transactionId error=$e',
       );
       return;
     }
-    Loading().loadingClose();
     debugPrint(
       'PaymentController.acledaComplete.response status=${result['status']} for transactionId=$transactionId',
     );

@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 
 import 'package:vector_math/vector_math_64.dart' as math;
 import 'dart:math' as math;
+import 'package:express_vet/routes/app_routes.dart';
 import '../controller/ev_detail_charging_controller.dart';
 
 class EvDetailCharging extends StatefulWidget {
@@ -340,7 +341,8 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
     final confirmed = await _showStopConfirmDialog();
     if (confirmed != true) return;
 
-    controller.stopCharging();
+    await controller.stopCharging();
+    Get.offNamed(AppRoutes.home);
   }
 
   Future<bool?> _showStopConfirmDialog() {

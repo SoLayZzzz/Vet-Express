@@ -53,7 +53,9 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
 
   @override
   void dispose() {
-    _clearControllerState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _clearControllerState();
+    });
 
     _nameController.dispose();
     _phoneController.dispose();

@@ -1,6 +1,7 @@
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_sale_order_apptmp_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/choosePayment_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
@@ -318,5 +319,10 @@ class EvChargerRepositoryImpl implements EvChargerRepository {
   @override
   Future<EvCheckZoneResponse> evCheckZone({required context, required EvCheckZoneRequest request}) {
     return networkRequest.evCheckZone(context: context, request: request);
+  }
+
+  @override
+  Future<ChoosePaymentResponse> fetchChoosePaymentMethod({required context}) {
+    return networkRequest.fetchChoosePaymentMethod(context: context);
   }
 }

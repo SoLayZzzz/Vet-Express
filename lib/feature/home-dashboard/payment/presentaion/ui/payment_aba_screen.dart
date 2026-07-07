@@ -70,6 +70,7 @@ class PaymentABAScreenState extends State<PaymentABAScreen>
       log(
         'PaymentABAScreen.resume trigger payment status polling transactionId=${widget.transactionId}',
       );
+      controller.hideLoadingOnResume();
       controller.resumePolling(
         context: context,
         transactionId: widget.transactionId,

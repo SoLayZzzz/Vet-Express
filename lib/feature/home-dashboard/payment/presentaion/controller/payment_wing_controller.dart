@@ -50,6 +50,13 @@ class PaymentWingController extends GetxController {
     }
   }
 
+  /// Called by the screen's WidgetsBindingObserver when the app resumes
+  /// from the Wing Bank app, ensuring the loading overlay is dismissed.
+  void hideLoadingOnResume() {
+    debugPrint('PaymentWingController.hideLoadingOnResume called');
+    _hideLoadingIfShown();
+  }
+
   void init({required BuildContext context}) {
     webViewController = WebViewController();
     final encodedTransactionId = Uri.encodeComponent(transactionId);
@@ -176,6 +183,11 @@ class PaymentWingController extends GetxController {
       debugPrint(
         'PaymentWingController.openDeepLinkWingBank.launchResult launched=$launched uri=$url',
       );
+      // Hide loading after deep link was handled – the user has left (or
+      // will leave) the app, so the spinner should not be visible when they
+      // come back.  The lifecycle observer will also call hideLoadingOnResume
+      // as a safety net.
+      _hideLoadingIfShown();
       if (!launched) {
         if (Platform.isIOS) {
           debugPrint(

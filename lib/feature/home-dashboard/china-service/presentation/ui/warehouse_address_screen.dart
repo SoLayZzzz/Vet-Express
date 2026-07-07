@@ -2,6 +2,7 @@ import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/ui/registration_screen.dart';
@@ -101,18 +102,18 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                         color: AppColors.primaryColor,
                       ),
                     ),
-                    GestureDetector(
-                      onTap:
-                          () => Get.toNamed(
-                            AppRoutes.chinaEditInfo,
-                            arguments: customer,
-                          ),
-                      child: const Icon(
-                        MaterialCommunityIcons.square_edit_outline,
-                        color: Colors.grey,
-                        size: 22,
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap:
+                    //       () => Get.toNamed(
+                    //         AppRoutes.chinaEditInfo,
+                    //         arguments: customer,
+                    //       ),
+                    //   child: const Icon(
+                    //     MaterialCommunityIcons.square_edit_outline,
+                    //     color: Colors.grey,
+                    //     size: 22,
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -306,10 +307,14 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                               color: Colors.green,
                               size: 22,
                             )
-                            : ImageIcon(
-                              AssetImage(AssetImages.ic_copy),
-                              color: Colors.grey[400],
-                              size: 22,
+                            : SvgPicture.asset(
+                              AssetImages.ic_copy,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.grey,
+                                BlendMode.srcIn,
+                              ),
+                              width: 22,
+                              height: 22,
                             ),
                   );
                 }),

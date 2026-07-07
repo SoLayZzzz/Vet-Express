@@ -69,7 +69,7 @@ class SearchGoodsTransferScreenState extends State<SearchGoodsTransferScreen> {
                         );
                       },
                       decoration: Style.inputText(
-                        'code'.tr,
+                        'goods_transfer_code'.tr,
                         iconLeft: Icons.confirmation_num_outlined,
                       ),
                     ),

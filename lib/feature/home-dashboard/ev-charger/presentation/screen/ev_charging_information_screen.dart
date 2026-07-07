@@ -1231,27 +1231,21 @@ class _ChargingInformationScreenState
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            if (selectedIndex >= 0) {
-                              final displayOptions =
-                                  controller.pointList.isNotEmpty
-                                      ? controller.pointList.map((item) => {
-                                          'name':
-                                              item.name ??
-                                              (item.point != null
-                                                  ? '${(item.point! / 100).toStringAsFixed(0)} kWh'
-                                                  : ''),
-                                          'point': item.point ?? 0,
-                                        }).toList()
-                                      : [
-                                          {'name': '5 kWh', 'point': 500},
-                                          {'name': '10 kWh', 'point': 1000},
-                                          {'name': '50 kWh', 'point': 5000},
-                                        ];
+                            if (selectedIndex >= 0 &&
+                                controller.pointList.isNotEmpty &&
+                                selectedIndex < controller.pointList.length) {
+                              final selectedPoint =
+                                  controller.pointList[selectedIndex];
+                              final redeemId = selectedPoint.id;
                               controller.pointController.text =
-                                  displayOptions[selectedIndex]['point']
-                                      .toString();
+                                  (selectedPoint.point ?? 0).toString();
+                              Get.back();
+                              if (redeemId != null) {
+                                controller.applyPoint(redeemId);
+                              }
+                            } else {
+                              Get.back();
                             }
-                            Get.back();
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),

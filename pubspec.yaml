@@ -50,7 +50,7 @@ dependencies:
   date_format_field: ^0.1.0
   intl: ^0.20.2
   pin_code_fields: ^8.0.1
-  hive: ^2.2.3 #General cache (API responses, lists): 👉 Hive (fast + offline).
+  hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.1
   crypto: ^3.0.3
@@ -95,13 +95,13 @@ flutter:
     - family: Battambang
       fonts:
         - asset: assets/fonts/Battambang.ttf
-flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: assets/images/vet_logo_qa.jpg
-  # image_path: assets/images/VET_Express_logo.png
-  remove_alpha_ios: true
-  adaptive_icon_background: "#FFFFFF"
+# flutter_launcher_icons:
+#   android: true
+#   ios: true
+#   # image_path: assets/images/vet_logo_qa.jpg
+#   image_path: assets/images/VET_Express_logo.png
+#   remove_alpha_ios: true
+#   adaptive_icon_background: "#FFFFFF"
 
 
 #  // Logo QA
@@ -110,6 +110,13 @@ flutter_launcher_icons:
 #   static const String vet_logo = 'assets/images/vet_logo.png';
 
 # Change logo command
+# QA
+# dart run flutter_launcher_icons -f flutter_launcher_icons-qa.yaml
+
+# Production
+# dart run flutter_launcher_icons -f flutter_launcher_icons-prod.yaml
+
+# default command run
 # flutter pub run flutter_launcher_icons
 
 # Command to build app auto get qa or production
@@ -119,8 +126,8 @@ flutter_launcher_icons:
 # flutter build apk --flavor prod --dart-define=FLAVOR=prod --release --target-platform=android-arm64 --analyze-size --tree-shake-icons
 
 # iOS run
-# flutter run --flavor qa --dart-define=FLAVOR=qa -d 5E7140F7-A2FB-4AC1-B690-11DE33B17FEB
-# flutter run --flavor prod --dart-define=FLAVOR=prod -d 5E7140F7-A2FB-4AC1-B690-11DE33B17FEB
+# flutter run --flavor qa --dart-define=FLAVOR=qa -d CA3A9594-78B6-4CF4-8DFC-BC3946601FDC
+# flutter run --flavor prod --dart-define=FLAVOR=prod -d CA3A9594-78B6-4CF4-8DFC-BC3946601FDC
 
 # android run
 # flutter run -d emulator-5554 --flavor qa --dart-define=FLAVOR=qa

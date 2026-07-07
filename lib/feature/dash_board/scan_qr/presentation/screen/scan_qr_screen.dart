@@ -45,6 +45,28 @@ class ScanQrScreen extends GetView<ScanQrController> {
           _buildVignetteOverlay(),
           _buildTopBar(context),
           _buildBottomBar(context),
+          Obx(() {
+            if (!controller.state.isProcessing) {
+              return const SizedBox.shrink();
+            }
+            return Positioned.fill(
+              child: AbsorbPointer(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.35),
+                  child: const Center(
+                    child: SizedBox(
+                      height: 44,
+                      width: 44,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 4,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -220,29 +242,33 @@ class ScanQrScreen extends GetView<ScanQrController> {
                   }
                   return Padding(
                     padding: const EdgeInsets.only(top: 15),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          minimumSize: Size(double.infinity, 50)
                           ),
-                        ),
-                        onPressed: () => Get.back(),
-                        child: Text(
-                          'cancel'.tr,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                          onPressed: () => Get.back(),
+                          child: Text(
+                            'cancel'.tr,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   );
                 }),
+                //
+                SizedBox(height: 30,)
               ],
             ),
           ),
@@ -357,25 +383,7 @@ class QRScannerOverlay extends StatefulWidget {
   State<QRScannerOverlay> createState() => _QRScannerOverlayState();
 }
 
-class _QRScannerOverlayState extends State<QRScannerOverlay>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
+class _QRScannerOverlayState extends State<QRScannerOverlay> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -391,45 +399,6 @@ class _QRScannerOverlayState extends State<QRScannerOverlay>
               cutOutSize: widget.cutOutSize,
             ),
           ),
-        ),
-        AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            final size = MediaQuery.of(context).size;
-            final double cutOutHeight = widget.cutOutSize;
-            final double topLimit = (size.height - cutOutHeight) / 2;
-            final double currentTop =
-                topLimit + (_animationController.value * cutOutHeight);
-
-            return Positioned(
-              top: currentTop,
-              left: (size.width - widget.cutOutSize) / 2 + 10,
-              width: widget.cutOutSize - 20,
-              child: Container(
-                height: 3,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      widget.borderColor.withValues(alpha: 0.01),
-                      widget.borderColor,
-                      widget.borderColor.withValues(alpha: 0.01),
-                    ],
-                  ),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.borderColor.withValues(alpha: 0.4),
-                        blurRadius: 6,
-                        spreadRadius: 1.5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
         ),
       ],
     );

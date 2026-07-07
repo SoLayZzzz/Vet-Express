@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'ev_wallet_controller.dart';
 
+import '../../data/model/response/choosePayment_response.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 import '../../../../../routes/app_routes.dart';
 
@@ -29,6 +30,10 @@ class EvTopUpController extends GetxController {
   final RxString selectedPaymentMethod = 'ABA Pay'.obs;
   final RxInt paymentMethodId = 0.obs;
 
+  // Payment methods from API
+  final RxList<Datum> paymentMethods = <Datum>[].obs;
+  final RxBool isLoadingPaymentMethods = false.obs;
+
   // Loading states
   final RxBool isLoading = false.obs;
   final RxBool hasError = false.obs;
@@ -47,6 +52,7 @@ class EvTopUpController extends GetxController {
     super.onInit();
     walletController = Get.find<EvWalletController>();
     amountController.text = selectedAmount.value.toStringAsFixed(0);
+    fetchPaymentMethods();
   }
 
   @override
@@ -379,4 +385,40 @@ class EvTopUpController extends GetxController {
     print("Selected payment method: $method");
     print("Payment method ID: $id");
   }
+
+  Future<void> fetchPaymentMethods() async {
+    try {
+      isLoadingPaymentMethods(true);
+      // Real data from Api
+      // final response = await useCase.fetchChoosePaymentMethod(
+      //   context: Get.context!,
+      // );
+      // if (response.status) {
+      //   paymentMethods.assignAll(response.data.data);
+      // }
+
+      // Fake data for testing
+      paymentMethods.assignAll([
+        Datum(name: 'ABA', status: 1),
+        Datum(name: 'AC', status: 0),
+      ]);
+      
+    } catch (e) {
+      debugPrint('Error fetching payment methods: $e');
+    } finally {
+      isLoadingPaymentMethods(false);
+      update();
+    }
+  }
+
+  bool isPaymentMethodEnabled(String name) {
+    for (var method in paymentMethods) {
+      if (method.name.toUpperCase() == name.toUpperCase()) {
+        return method.status == 1;
+      }
+    }
+    return false;
+  }
 }
+
+

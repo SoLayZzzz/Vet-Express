@@ -659,6 +659,8 @@ final Map<String, String> zhCN = {
   'select_boarding': "选择登机点",
   'select_drop': "Select drop off point",
   'service_fee': "服务费",
+  'update_profile': '个人资料更新成功',
+  'pf_success': '成功',
 
   //user detail
   "apply_package": "申请旅行套餐代码",
@@ -745,10 +747,10 @@ final Map<String, String> zhCN = {
   'ask_info': "询问信息或通过以下方式预订",
   "scan_parcel": "扫码查询货物",
   "enter_goods_transfer": "输入快递号及查询",
-  "goods_transfer_code": "输入快递号",
+  "goods_transfer_code": "输入快递单号",
   "code": "输入快递号",
-  "scan_qr_info": "扫描票据二维码",
-  'code_requ': '需要输入代码',
+  "scan_qr_info": "扫描快递单二维码",
+  'code_requ': '请务必输入快递单号',
   "see_more": "查看更多",
   "see_less": " 简阅",
 

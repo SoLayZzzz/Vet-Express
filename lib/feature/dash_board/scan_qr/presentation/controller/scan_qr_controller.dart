@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:express_vet/base/state_controller.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
-import 'package:express_vet/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -12,7 +10,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../screen/goods_information_no_token_screen.dart';
-import '../../../../home-dashboard/notifications/presentation/screen/goods_information_screen.dart';
+import '../../../../history-dashboard/other-history/presentation/screen/goods_information_screen.dart';
 import '../../data/model/response/goods_find_response.dart';
 import '../../data/model/response/good_search_response.dart';
 import '../../../../../utils/app_colors.dart';
@@ -33,17 +31,10 @@ class ScanQrController extends StateController<ScanQrUiState>
   bool _isStopping = false;
   bool _isPermissionDialogOpen = false;
   bool _openingAppSettings = false;
-
-  Timer? _zoomAnimationTimer;
   Timer? _cameraStartRetryTimer;
-  DateTime? _lastZoomRequestAt;
-  bool _isZoomAnimating = false;
   int _cameraStartRetryCount = 0;
 
   static const double _minRelativeBarcodeAreaToAccept = 0.04;
-  static const double _zoomStep = 0.6;
-  static const double _maxZoomScale = 3.0;
-  static const Duration _zoomRequestCooldown = Duration(milliseconds: 800);
   static const int _maxCameraStartRetries = 10;
   static const Duration _cameraStartRetryDelay = Duration(milliseconds: 250);
 
@@ -173,9 +164,6 @@ class ScanQrController extends StateController<ScanQrUiState>
   void onClose() {
     WidgetsBinding.instance.removeObserver(this);
     _isDisposed = true;
-
-    _zoomAnimationTimer?.cancel();
-    _zoomAnimationTimer = null;
     _cameraStartRetryTimer?.cancel();
     _cameraStartRetryTimer = null;
 
@@ -267,7 +255,7 @@ class ScanQrController extends StateController<ScanQrUiState>
     BuildContext context,
     BarcodeCapture capture,
   ) async {
-    if (!state.isScanning || _isDisposed) return;
+    if (!state.isScanning || state.isProcessing || _isDisposed) return;
 
     final barcodes = capture.barcodes;
     if (barcodes.isEmpty) return;
@@ -279,14 +267,17 @@ class ScanQrController extends StateController<ScanQrUiState>
     final imageSize = capture.size;
     final isSmall = _isBarcodeTooSmall(barcode, imageSize);
     if (isSmall) {
-      _requestAnimatedZoomToBarcode(barcode, imageSize);
       return;
     }
 
-    uiState.value = state.copyWith(isScanning: false);
-    await scannerController.stop();
-
-    await goodsSearch(Get.context!, code);
+    uiState.value = state.copyWith(isScanning: false, isProcessing: true);
+    try {
+      await goodsSearch(Get.context!, code);
+    } finally {
+      if (!_isDisposed) {
+        uiState.value = uiState.value.copyWith(isProcessing: false);
+      }
+    }
   }
 
   bool _isBarcodeTooSmall(Barcode barcode, Size imageSize) {
@@ -300,99 +291,11 @@ class ScanQrController extends StateController<ScanQrUiState>
     return relativeArea < _minRelativeBarcodeAreaToAccept;
   }
 
-  void _requestAnimatedZoomToBarcode(Barcode barcode, Size imageSize) {
-    if (_isDisposed) return;
-    if (!scannerController.value.isRunning) return;
-
-    final now = DateTime.now();
-    final last = _lastZoomRequestAt;
-    if (last != null && now.difference(last) < _zoomRequestCooldown) {
-      return;
-    }
-    _lastZoomRequestAt = now;
-
-    if (!_isZoomAnimating) {
-      _setFocusPointForBarcode(barcode, imageSize);
-    }
-
-    final currentZoom = scannerController.value.zoomScale;
-    final targetZoom = min(currentZoom + _zoomStep, _maxZoomScale);
-    if (targetZoom <= currentZoom) return;
-
-    _animateZoom(currentZoom: currentZoom, targetZoom: targetZoom);
-  }
-
-  void _setFocusPointForBarcode(Barcode barcode, Size imageSize) {
-    final corners = barcode.corners;
-    if (corners.isEmpty) {
-      scannerController
-          .setFocusPoint(const Offset(0.5, 0.5))
-          .catchError((_) {});
-      return;
-    }
-
-    double minX = corners.first.dx;
-    double maxX = corners.first.dx;
-    double minY = corners.first.dy;
-    double maxY = corners.first.dy;
-
-    for (final c in corners) {
-      minX = min(minX, c.dx);
-      maxX = max(maxX, c.dx);
-      minY = min(minY, c.dy);
-      maxY = max(maxY, c.dy);
-    }
-
-    final centerX = (minX + maxX) / 2;
-    final centerY = (minY + maxY) / 2;
-
-    final normX = (centerX / imageSize.width).clamp(0.0, 1.0);
-    final normY = (centerY / imageSize.height).clamp(0.0, 1.0);
-
-    scannerController.setFocusPoint(Offset(normX, normY)).catchError((_) {});
-  }
-
-  void _animateZoom({required double currentZoom, required double targetZoom}) {
-    _zoomAnimationTimer?.cancel();
-    _zoomAnimationTimer = null;
-
-    _isZoomAnimating = true;
-
-    const totalSteps = 10;
-    var step = 0;
-    _zoomAnimationTimer = Timer.periodic(const Duration(milliseconds: 40), (t) {
-      if (_isDisposed) {
-        t.cancel();
-        _isZoomAnimating = false;
-        return;
-      }
-      if (!scannerController.value.isRunning) {
-        t.cancel();
-        _isZoomAnimating = false;
-        return;
-      }
-
-      step++;
-      final p = (step / totalSteps).clamp(0.0, 1.0);
-      final zoom = currentZoom + (targetZoom - currentZoom) * p;
-      scannerController.setZoomScale(zoom).catchError((_) {});
-
-      if (step >= totalSteps) {
-        t.cancel();
-        _isZoomAnimating = false;
-      }
-    });
-  }
-
   Future<void> goodsSearch(BuildContext context, String code) async {
-    Loading().loadingShow();
-
     try {
       final json = await scanQrUseCase.searchCode(context: context, code: code);
 
-      if (Get.context!.mounted) {
-        Loading().loadingClose();
-      }
+      if (_isDisposed) return;
 
       final searchResponse = GoodsSearchResponse.fromJson(json);
 
@@ -423,7 +326,6 @@ class ScanQrController extends StateController<ScanQrUiState>
         await _displayDialog('information'.tr, 'code_invalid'.tr);
       }
     } catch (e) {
-      Loading().loadingClose();
       await _displayDialog('information'.tr, 'error_occurred'.tr);
       debugPrint('Goods search error: $e');
     }

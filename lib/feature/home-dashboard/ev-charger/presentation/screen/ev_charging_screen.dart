@@ -9,6 +9,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:express_vet/base/base_url.dart';
 import '../controller/ev_charger_controller.dart';
 import '../controller/ev_wallet_controller.dart';
 import '../../../../../utils/app_colors.dart';
@@ -219,7 +221,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     ),
                   ],
                 ),
-                //
+              
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -235,14 +237,9 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     // View detail button
                     ElevatedButton.icon(
                       onPressed: () {
-                        Get.toNamed(
-                          AppRoutes.evDetailCharging,
-                          arguments: {
-                            'transactionId':
-                                controller.chargingTransactionId.value,
-                            'chargerUsername':
-                                controller.chargingChargerUsername.value,
-                          },
+                        _connectWebSocketAndNavigate(
+                          controller.chargingTransactionId.value,
+                          controller.chargingChargerUsername.value,
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -282,6 +279,40 @@ class EvChargerScreen extends GetView<EvChargerController> {
           AssetImages.ic_car_charging,
           fit: BoxFit.contain,
         );
+      },
+    );
+  }
+
+  Future<void> _connectWebSocketAndNavigate(
+    String transactionId,
+    String chargerUsername,
+  ) async {
+    final username = chargerUsername.isNotEmpty ? chargerUsername : 'ev01';
+    final wsUrl = BaseUrl.BASE_URL_WEB_SOCKET;
+
+    debugPrint('Connecting to EV charging WebSocket: $wsUrl');
+
+    try {
+      final channel = WebSocketChannel.connect(Uri.parse(wsUrl));
+
+      final stompSend =
+          'SEND\ndestination:/topic/ocpi/commands/$username\ncontent-type:application/json\n\n\u0000';
+
+      debugPrint('destination:/topic/ocpi/commands/$username');
+      debugPrint('content-type:application/json');
+      channel.sink.add(stompSend);
+
+      await Future.delayed(const Duration(milliseconds: 500));
+      await channel.sink.close();
+    } catch (e) {
+      debugPrint('Error connecting to EV charging WebSocket: $e');
+    }
+
+    Get.toNamed(
+      AppRoutes.evDetailCharging,
+      arguments: {
+        'transactionId': transactionId,
+        'chargerUsername': chargerUsername,
       },
     );
   }
@@ -566,20 +597,28 @@ class EvChargerScreen extends GetView<EvChargerController> {
         final point = controller.state.membershipInfoResponse?.body?.data;
         final isCharging = controller.isCharging.value == 1;
 
-        if (isCharging) {
-          Get.toNamed(
-            AppRoutes.evRedeemPoint,
-            arguments: <String, dynamic>{'points': point},
-          );
-        } else {
-          Get.toNamed(
+        Get.toNamed(
             AppRoutes.evMembership,
             arguments: <String, dynamic>{
               'section': 'menu',
               'membershipInfo': point,
             },
           );
-        }
+
+        // if (isCharging) {
+        //   Get.toNamed(
+        //     AppRoutes.evRedeemPoint,
+        //     arguments: <String, dynamic>{'points': point},
+        //   );
+        // } else {
+        //   // Get.toNamed(
+        //   //   AppRoutes.evMembership,
+        //   //   arguments: <String, dynamic>{
+        //   //     'section': 'menu',
+        //   //     'membershipInfo': point,
+        //   //   },
+        //   // );
+        // }
       },
       child: Container(
         width: double.infinity,
@@ -750,7 +789,6 @@ class EvChargerScreen extends GetView<EvChargerController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // padding: const EdgeInsets.all(12),
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,

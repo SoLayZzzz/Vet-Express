@@ -283,17 +283,98 @@ class ProfileController extends GetxController {
                 await Future.delayed(const Duration(milliseconds: 50));
                 attempts++;
               }
+            
+
               // A brief delay to let GetX route transitions settle and guarantee the screen is popped correctly
               await Future.delayed(const Duration(milliseconds: 100));
 
               Get.back(result: true);
-              Get.snackbar(
-                'success'.tr,
-                response.body?.message ?? 'updated'.tr,
-                backgroundColor: Colors.white,
-                colorText: Colors.green,
-                snackPosition: SnackPosition.TOP,
-              );
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Get.snackbar(
+                  '',
+                  '',
+                  snackPosition: SnackPosition.TOP,
+                  snackStyle: SnackStyle.FLOATING,
+                  backgroundColor: Colors.white,
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  borderRadius: 16,
+                  boxShadows: [
+                    BoxShadow(
+                      color: Color(0x1F000000),
+                      blurRadius: 18,
+                      offset: Offset(0, 10),
+                    ),
+                  ],
+                  leftBarIndicatorColor: Colors.green,
+                  duration: const Duration(seconds: 2),
+                  animationDuration: const Duration(milliseconds: 450),
+                  isDismissible: true,
+                  dismissDirection: DismissDirection.horizontal,
+                  titleText: Row(
+                    children: [
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(begin: 0.0, end: 1.0),
+                        duration: const Duration(milliseconds: 450),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) {
+                          return Opacity(
+                            opacity: value.clamp(0.0, 1.0),
+                            child: Transform.scale(
+                              scale: value,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: const BoxDecoration(
+                            color: Color(0x1A16A34A),
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.check,
+                            color: Color(0xFF16A34A),
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'pf_success'.tr,
+                              style: const TextStyle(
+                                color: Color(0xFF16A34A),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                                height: 1.2,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'update_profile'.tr,
+                              style: const TextStyle(
+                                color: Color(0xFF111827),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                height: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  messageText: const SizedBox.shrink(),
+                );
+              });
             } else {
               final errorMsg =
                   response?.body?.message ?? 'something_went_wrong'.tr;

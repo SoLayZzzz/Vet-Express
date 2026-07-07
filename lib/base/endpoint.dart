@@ -158,4 +158,5 @@ class Endpoint {
   static const String evChargingStatus = 'profile/charging-status';
   static const String ev_checkZone = 'station/check-zone';
   static const String ev_calculate = 'promotion/calculate';
+  static const String ev_choosePayment = 'payment/methods';
 }

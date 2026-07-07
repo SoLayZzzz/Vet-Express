@@ -349,7 +349,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
 
     if (!mounted) return;
     setState(() => _isConfirming = false);
-    await _showPlugInDialog();
+    Get.offNamed(AppRoutes.evPaymentFlow);
   }
 
   @override

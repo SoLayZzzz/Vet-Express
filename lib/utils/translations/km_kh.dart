@@ -319,13 +319,13 @@ final Map<String, String> kmKH = {
   'search_goods': 'ស្វែងរកអីវ៉ាន់',
   'enter_goods_transfer':
       'បញ្ចូលលេខកូដផ្ទេរទំនិញ ហើយបន្ទាប់មកចុចលើ ពាក្យ "ស្វែងរក" ដើម្បីរកលទ្ធផល។',
-  'goods_transfer_code': 'បញ្ចូលលេខកូដផ្ទេរឥវ៉ាន់',
+  'goods_transfer_code': 'បញ្ចូលលេខកូដបញ្ញើ',
   'or': ' ឬ ',
-  'scan_qr_info': 'ស្កេន QR កូដលើបង្កាន់ដៃផ្ញើឥវ៉ាន់',
+  'scan_qr_info': 'ស្កេនកូដ QR លើបង្កាន់ដៃ',
   'scan_qr': 'ស្កែន QR កូដលើបង្កាន់ដៃផ្ញើអីវ៉ាន់',
   'scan_btn': 'ស្កេន QR កូដ',
   'code': 'បញ្ចូលលេខកូដផ្ទេរឥវ៉ាន់',
-  'code_requ': 'ត្រូវការលេខកូដ',
+  'code_requ': 'សូមបញ្ចូលលេខកូដបញ្ញើ',
 
   // Change language Screen..................
   'change_lang': 'ជ្រើសរើសភាសា',
@@ -731,6 +731,8 @@ final Map<String, String> kmKH = {
   'not_success': 'ការស្នើសុំមិនបានជោគជ័យ',
   'success_info': '(Request Successful)',
   'un_success_info': '(Request Unsuccessful)',
+  'update_profile': 'បានធ្វើបច្ចុប្បន្នភាពប្រវត្តិរូបដោយជោគជ័យ',
+  'pf_success': 'ជោគជ័យ',
 
   //account_screen
   'total': 'ចំនួនផ្ញើ ',

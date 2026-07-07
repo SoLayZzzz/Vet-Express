@@ -44,6 +44,7 @@ class EvChargingInformationController extends GetxController {
 
   final RxList<point_resp.Data> pointList = <point_resp.Data>[].obs;
   final RxBool isLoadingPoints = false.obs;
+  final RxnInt selectedRedeemId = RxnInt();
 
   final TextEditingController kwhController = TextEditingController();
   final TextEditingController khrController = TextEditingController();
@@ -78,6 +79,7 @@ class EvChargingInformationController extends GetxController {
       if (kwhController.text != inputAmount.value) {
         applyVoucherDiscount.value = null;
         applyVoucherDiscountPercentage.value = null;
+        selectedRedeemId.value = null;
       }
       inputAmount.value = kwhController.text;
     });
@@ -85,6 +87,7 @@ class EvChargingInformationController extends GetxController {
       if (khrController.text != inputAmount.value) {
         applyVoucherDiscount.value = null;
         applyVoucherDiscountPercentage.value = null;
+        selectedRedeemId.value = null;
       }
       inputAmount.value = khrController.text;
     });
@@ -140,6 +143,7 @@ class EvChargingInformationController extends GetxController {
     selectedGridIndex.value = 0;
     applyVoucherDiscount.value = null;
     applyVoucherDiscountPercentage.value = null;
+    selectedRedeemId.value = null;
     _syncTextFieldWithSelection();
     runPromotionCalculate();
 
@@ -155,6 +159,7 @@ class EvChargingInformationController extends GetxController {
     selectedGridIndex.value = index;
     applyVoucherDiscount.value = null;
     applyVoucherDiscountPercentage.value = null;
+    selectedRedeemId.value = null;
     _syncTextFieldWithSelection();
     runPromotionCalculate();
   }
@@ -495,6 +500,7 @@ class EvChargingInformationController extends GetxController {
       final req = EvCalculateRequest(
         chargerUserName: charger,
         voucherId: voucherId ?? 0,
+        redeemId: selectedRedeemId.value,
         amountKh: amountKh,
       );
       
@@ -508,5 +514,12 @@ class EvChargingInformationController extends GetxController {
     } finally {
       isLoadingCalculate(false);
     }
+  }
+
+  Future<void> applyPoint(int redeemId) async {
+    selectedRedeemId.value = redeemId;
+    applyVoucherDiscount.value = null;
+    applyVoucherDiscountPercentage.value = null;
+    await runPromotionCalculate();
   }
 }
