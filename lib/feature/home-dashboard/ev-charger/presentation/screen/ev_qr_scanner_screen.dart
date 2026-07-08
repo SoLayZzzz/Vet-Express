@@ -35,7 +35,7 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                 ),
               const SizedBox(height: 14),
               Text(
-                'Scan Failed',
+                'scan_failed'.tr,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -44,7 +44,7 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
               ),
               const SizedBox(height: 8),
               Text(
-                'QR Code Scan failed, please try again',
+                'qr_scan_failed_retry'.tr,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
@@ -70,9 +70,9 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                         ),
                         foregroundColor: const Color(0xFF374151),
                       ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.black87),
+                      child: Text(
+                        'cancel'.tr,
+                        style: const TextStyle(color: Colors.black87),
                       ),
                     ),
                   ),
@@ -99,9 +99,9 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                         foregroundColor: Colors.white,
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Scan again',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      child: Text(
+                        'scan_again'.tr,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -138,19 +138,19 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                 child: SvgPicture.asset(AssetImages.success),
               ),
               const SizedBox(height: 14),
-              const Text(
-                'Scanned Successfully!',
-                style: TextStyle(
+              Text(
+                'scanned_successfully'.tr,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Your QR Code scanned Successfully!',
+              Text(
+                'qr_scanned_successfully'.tr,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.black54,
                   height: 1.3,
@@ -185,18 +185,18 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Select Your Plug',
-                    style: TextStyle(
+                  Text(
+                    'select_your_plug'.tr,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Station: #SF-092-MB',
-                    style: TextStyle(
+                  Text(
+                    "${'station'.tr}: #SF-092-MB",
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: Colors.black54,
@@ -237,9 +237,9 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Continue',
-                        style: TextStyle(
+                      child: Text(
+                        'continue'.tr,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -315,8 +315,8 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                         Icon(Icons.circle, size: 12, color: Colors.green),
                         SizedBox(width: 8),
                         Text(
-                          'Available',
-                          style: TextStyle(
+                          'available'.tr,
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF6B7280),
@@ -474,11 +474,11 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                 ),
 
 
-                TextButton(onPressed: (){
-                    _showScanSuccessDialogAndNavigate();
-                }, 
-                child: Text("Success")
-                ),
+                // TextButton(onPressed: (){
+                //     _showScanSuccessDialogAndNavigate();
+                // }, 
+                // child: Text("Success")
+                // ),
                 
 
                 const Spacer(),

@@ -64,7 +64,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
       _totalAmount = 'KHR (៛) ${_formatCurrencyDouble((orderData?.totalAmount ?? 0).toDouble())}';
       _totalKwh = '${orderData?.totalKwh ?? 0} kWh';
       _showDiscount = (orderData?.discount ?? 0) > 0;
-      _discountLabel = 'Discount (${orderData?.discountPercentage ?? 0}%)';
+      _discountLabel = "${'discount'.tr} (${orderData?.discountPercentage ?? 0}%)";
     } else if (args != null && args is Map) {
       _transactionId = args['transactionId']?.toString() ?? 'N/A';
       _stationName = args['stationName']?.toString() ?? 'N/A';
@@ -76,7 +76,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
       final cleanDiscount = _discount.replaceAll(RegExp(r'[^0-9.]'), '');
       final parsedDiscount = double.tryParse(cleanDiscount) ?? 0.0;
       _showDiscount = parsedDiscount > 0;
-      _discountLabel = 'Discount';
+      _discountLabel = 'discount'.tr;
     } else {
       _transactionId = '00001';
       _stationName = 'Station 1';
@@ -96,136 +96,136 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
     super.dispose();
   }
 
-  Future<void> _showPlugInDialog() async {
-    _plugInDialogTimer?.cancel();
+  // Future<void> _showPlugInDialog() async {
+  //   _plugInDialogTimer?.cancel();
 
-    final canPopBackToChargingInfo =
-        Get.previousRoute == AppRoutes.evChargingInformation;
+  //   final canPopBackToChargingInfo =
+  //       Get.previousRoute == AppRoutes.evChargingInformation;
 
-    final secondsLeft = 5.obs;
-    var handled = false;
+  //   final secondsLeft = 5.obs;
+  //   var handled = false;
 
-    void closeDialogIfOpen() {
-      if (Get.isDialogOpen == true) {
-        Get.back();
-      }
-    }
+  //   void closeDialogIfOpen() {
+  //     if (Get.isDialogOpen == true) {
+  //       Get.back();
+  //     }
+  //   }
 
-    void navigateToPaymentFlow() {
-      if (handled) return;
-      handled = true;
-      _plugInDialogTimer?.cancel();
-      closeDialogIfOpen();
-      Get.offNamed(AppRoutes.evPaymentFlow);
-    }
+  //   void navigateToPaymentFlow() {
+  //     if (handled) return;
+  //     handled = true;
+  //     _plugInDialogTimer?.cancel();
+  //     closeDialogIfOpen();
+  //     Get.offNamed(AppRoutes.evPaymentFlow);
+  //   }
 
-    void navigateBackToChargingInfo() {
-      if (handled) return;
-      handled = true;
-      _plugInDialogTimer?.cancel();
-      closeDialogIfOpen();
+  //   void navigateBackToChargingInfo() {
+  //     if (handled) return;
+  //     handled = true;
+  //     _plugInDialogTimer?.cancel();
+  //     closeDialogIfOpen();
 
-      if (canPopBackToChargingInfo && Get.key.currentState?.canPop() == true) {
-        Get.back();
-        return;
-      }
+  //     if (canPopBackToChargingInfo && Get.key.currentState?.canPop() == true) {
+  //       Get.back();
+  //       return;
+  //     }
 
-      Get.offNamed(AppRoutes.evChargingInformation);
-    }
+  //     Get.offNamed(AppRoutes.evChargingInformation);
+  //   }
 
-    _plugInDialogTimer = Timer.periodic(const Duration(seconds: 1), (t) {
-      if (secondsLeft.value <= 1) {
-        secondsLeft.value = 0;
-        t.cancel();
-        navigateToPaymentFlow();
-        return;
-      }
-      secondsLeft.value = secondsLeft.value - 1;
-    });
+  //   _plugInDialogTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+  //     if (secondsLeft.value <= 1) {
+  //       secondsLeft.value = 0;
+  //       t.cancel();
+  //       navigateToPaymentFlow();
+  //       return;
+  //     }
+  //     secondsLeft.value = secondsLeft.value - 1;
+  //   });
 
-    await Get.dialog(
-      PopScope(
-        canPop: false,
-        child: Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          insetPadding: const EdgeInsets.symmetric(horizontal: 18),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 18),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  AssetImages.green_car,
-                  width: 140,
-                  height: 140,
-                  fit: BoxFit.contain,
-                ),
-                const Text(
-                  'Please plug in the charger',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Plug the charger into your car',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Obx(
-                  () => Text(
-                    'Continue in ${secondsLeft.value}s',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: OutlinedButton(
-                    onPressed: navigateBackToChargingInfo,
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      side: const BorderSide(color: Color(0xFFE0E0E0)),
-                      foregroundColor: const Color(0xFF374151),
-                    ),
-                    child: const Text(
-                      'Return',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      barrierDismissible: false,
-    ).whenComplete(() {
-      if (!handled) {
-        _plugInDialogTimer?.cancel();
-      }
-    });
-  }
+  //   await Get.dialog(
+  //     PopScope(
+  //       canPop: false,
+  //       child: Dialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(16),
+  //         ),
+  //         insetPadding: const EdgeInsets.symmetric(horizontal: 18),
+  //         child: Padding(
+  //           padding: const EdgeInsets.fromLTRB(18, 22, 18, 18),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Image.asset(
+  //                 AssetImages.green_car,
+  //                 width: 140,
+  //                 height: 140,
+  //                 fit: BoxFit.contain,
+  //               ),
+  //               const Text(
+  //                 'Please plug in the charger',
+  //                 textAlign: TextAlign.center,
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.w700,
+  //                   color: Colors.black,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 8),
+  //               Text(
+  //                 'Plug the charger into your car',
+  //                 textAlign: TextAlign.center,
+  //                 style: TextStyle(
+  //                   fontSize: 14,
+  //                   fontWeight: FontWeight.w400,
+  //                   color: Colors.grey.shade500,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 10),
+  //               Obx(
+  //                 () => Text(
+  //                   'Continue in ${secondsLeft.value}s',
+  //                   style: TextStyle(
+  //                     fontSize: 13,
+  //                     fontWeight: FontWeight.w500,
+  //                     color: Colors.grey.shade700,
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 18),
+  //               SizedBox(
+  //                 width: double.infinity,
+  //                 height: 48,
+  //                 child: OutlinedButton(
+  //                   onPressed: navigateBackToChargingInfo,
+  //                   style: OutlinedButton.styleFrom(
+  //                     shape: RoundedRectangleBorder(
+  //                       borderRadius: BorderRadius.circular(10),
+  //                     ),
+  //                     side: const BorderSide(color: Color(0xFFE0E0E0)),
+  //                     foregroundColor: const Color(0xFF374151),
+  //                   ),
+  //                   child: const Text(
+  //                     'Return',
+  //                     style: TextStyle(
+  //                       fontSize: 16,
+  //                       fontWeight: FontWeight.w600,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //     barrierDismissible: false,
+  //   ).whenComplete(() {
+  //     if (!handled) {
+  //       _plugInDialogTimer?.cancel();
+  //     }
+  //   });
+  // }
 
   Future<void> _onConfirmPayment() async {
     if (_isConfirming) return;
@@ -385,9 +385,9 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
               const SizedBox(height: 24),
 
               // --- Title & Subtitle ---
-              const Text(
-                'Verification',
-                style: TextStyle(
+              Text(
+                'verification'.tr,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -397,7 +397,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
-                  'Please check to make sure all information are correct.',
+                  'verify_info_correct'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -413,19 +413,19 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    _InfoRow(label: 'Transaction id', value: _transactionId),
-                    _InfoRow(label: 'Station Name', value: _stationName),
-                    _InfoRow(label: 'Order Date', value: _orderDate),
-                    _InfoRow(label: 'Sub Total', value: _subTotal),
+                    _InfoRow(label: 'transaction_id'.tr, value: _transactionId),
+                    _InfoRow(label: 'station_name'.tr, value: _stationName),
+                    _InfoRow(label: 'order_date'.tr, value: _orderDate),
+                    _InfoRow(label: 'ev_sub_total'.tr, value: _subTotal),
                     if (_showDiscount)
                       _InfoRow(label: _discountLabel, value: _discount),
                     _InfoRow(
-                      label: 'Total Amout',
+                      label: 'total_amount'.tr,
                       value: _totalAmount,
                       fontWeight: FontWeight.w600,
                     ),
                     _InfoRow(
-                      label: 'Total kWh',
+                      label: 'total_kwh'.tr,
                       value: _totalKwh,
                       isLast: true,
                       fontWeight: FontWeight.w600,
@@ -451,9 +451,9 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Confirm Payment',
-                      style: TextStyle(
+                    child: Text(
+                      'confirm_payment'.tr,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,

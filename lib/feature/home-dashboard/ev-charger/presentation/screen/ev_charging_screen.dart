@@ -23,6 +23,9 @@ class EvChargerScreen extends GetView<EvChargerController> {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
 
+  final ValueNotifier<double> _currentCarouselPage =
+      ValueNotifier<double>(0.0);
+
   late final Future<Uint8List?> _carChargingBytes = _loadEmbeddedPngBytes(
     AssetImages.ic_car_charging,
   );
@@ -407,23 +410,41 @@ class EvChargerScreen extends GetView<EvChargerController> {
       children: [
         SizedBox(
           width: double.infinity,
-          child: CarouselSlider(
-            items: imageUrls.map((url) => _buildCarouselImage(url)).toList(),
-            carouselController: _carouselController,
-            options: CarouselOptions(
-              height: 180,
-              viewportFraction: 1.0,
-              enableInfiniteScroll: true,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 3),
-              onPageChanged: (index, reason) {
-                controller.updateCurrentSlideIndex(index);
-              },
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is ScrollUpdateNotification) {
+                final metrics = notification.metrics;
+                if (metrics.viewportDimension > 0) {
+                  _currentCarouselPage.value =
+                      metrics.pixels / metrics.viewportDimension;
+                }
+              }
+              return false;
+            },
+            child: CarouselSlider(
+              items: imageUrls.map((url) => _buildCarouselImage(url)).toList(),
+              carouselController: _carouselController,
+              options: CarouselOptions(
+                height: 180,
+                viewportFraction: 1.0,
+                enableInfiniteScroll: true,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 3),
+                onPageChanged: (index, reason) {
+                  controller.updateCurrentSlideIndex(index);
+                  _currentCarouselPage.value = index.toDouble();
+                },
+              ),
             ),
           ),
         ),
         const SizedBox(height: 8),
-        Obx(() => _buildCarouselIndicators(imageUrls.length)),
+        ValueListenableBuilder<double>(
+          valueListenable: _currentCarouselPage,
+          builder: (context, currentPage, child) {
+            return _buildCarouselIndicators(imageUrls.length, currentPage);
+          },
+        ),
         const SizedBox(height: 20),
       ],
     );
@@ -453,18 +474,20 @@ class EvChargerScreen extends GetView<EvChargerController> {
     );
   }
 
-  Widget _buildCarouselIndicators(int count) {
+  Widget _buildCarouselIndicators(int count, double currentPage) {
+    final int activeIndex = currentPage.round() % count;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(count, (index) {
-        return Container(
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           width: 8,
           height: 8,
           margin: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color:
-                controller.state.currentSlideIndex == index
+                activeIndex == index
                     ? AppColors.primaryColor
                     : Colors.grey.withValues(alpha: 0.5),
           ),
@@ -542,12 +565,22 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     builder: (wallet) {
                       return wallet.isLoadingBalance.value
                           ? const SizedBox(height: 40)
-                          : Text(
-                            "${wallet.totalBalance.value.toStringAsFixed(2)} KHR",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.titleColor,
+                          : SizedBox(
+                            width: double.infinity,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "${wallet.formatAmount(wallet.totalBalance.value)} KHR",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.titleColor,
+                                ),
+                              ),
                             ),
                           );
                     },
@@ -659,7 +692,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Total Points".tr,
+                    'total_points'.tr,
                     style: const TextStyle(
                       color: AppColors.greyColor,
                       fontWeight: FontWeight.w600,
@@ -676,7 +709,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     final currentPoint = point?.currentPoint ?? 0;
 
                     return Text(
-                      "$currentPoint pts",
+                      "$currentPoint ${'pts'.tr}",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -727,7 +760,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                                   height: 20,
                                 ),
                         label: Text(
-                          isCharging ? 'Redeem' : "History".tr,
+                          isCharging ? 'redeem'.tr : 'history'.tr,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -754,8 +787,8 @@ class EvChargerScreen extends GetView<EvChargerController> {
           child: _buildActionButton(
             // Icons.ev_station,
             SvgPicture.asset(AssetImages.ic_station, width: 15, height: 15),
-            // "ev_charger".tr,
-            "Map Station",
+            "ev_station".tr,
+            // "Map Station",
             () {
               Get.toNamed(AppRoutes.evAllStations);
             },
@@ -775,7 +808,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
         Expanded(
           child: _buildActionButton(
             SvgPicture.asset(AssetImages.voucher, width: 15, height: 15),
-            "Voucher".tr,
+            'voucher'.tr,
             () {
               Get.toNamed(AppRoutes.evVoucher);
             },

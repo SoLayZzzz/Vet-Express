@@ -65,12 +65,12 @@ class _ChargingInformationScreenState
     final isKwhTab = controller.isKwhTab.value;
     if (isKwhTab) {
       final text = controller.kwhController.text;
-      if (text == "Full Charge") return "Full Charge";
+      if (text == "Full Charge") return 'full_charge'.tr;
       final val = double.tryParse(text) ?? 0.0;
       return 'KHR (៛) ${_formatCurrency(val * 2400)}';
     } else {
       final text = controller.khrController.text;
-      if (text == "Full Charge") return "Full Charge";
+      if (text == "Full Charge") return 'full_charge'.tr;
       final val = double.tryParse(text.replaceAll(',', '')) ?? 0.0;
       return 'KHR (៛) ${_formatCurrency(val)}';
     }
@@ -81,14 +81,14 @@ class _ChargingInformationScreenState
     final discount = controller.getCalculatedDiscount().toDouble();
     if (isKwhTab) {
       final text = controller.kwhController.text;
-      if (text == "Full Charge") return "Full Charge";
+      if (text == "Full Charge") return 'full_charge'.tr;
       final val = double.tryParse(text) ?? 0.0;
       final subTotal = val * 2400;
       final total = subTotal - discount;
       return 'KHR (៛) ${_formatCurrency(total < 0 ? 0 : total)}';
     } else {
       final text = controller.khrController.text;
-      if (text == "Full Charge") return "Full Charge";
+      if (text == "Full Charge") return 'full_charge'.tr;
       final val = double.tryParse(text.replaceAll(',', '')) ?? 0.0;
       final total = val - discount;
       return 'KHR (៛) ${_formatCurrency(total < 0 ? 0 : total)}';
@@ -112,9 +112,9 @@ class _ChargingInformationScreenState
             Get.back();
           },
         ),
-        title: const Text(
-          'Charging Information',
-          style: TextStyle(
+        title: Text(
+          'charging_information'.tr,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.w500,
@@ -136,7 +136,7 @@ class _ChargingInformationScreenState
                     const SizedBox(height: 15),
 
                     Text(
-                      'Electrical input information',
+                      'electrical_input_info'.tr,
                       style: TextStyle(
                         color: Colors.grey.shade700,
                         fontSize: 14,
@@ -151,14 +151,14 @@ class _ChargingInformationScreenState
                     // --- 3. Promo & Points Rows ---
                     _buildListTile(
                       iconAsset: AssetImages.apply_code,
-                      title: 'Apply Promotion Code',
+                      title: 'apply_promotion_code'.tr,
                       valueOfff: '5% OFF',
                       iconSize: 15,
                       onTap: _showPromotionCodeDialog,
                     ),
                     _buildListTile(
                       iconAsset: AssetImages.star,
-                      title: 'Apply Point',
+                      title: 'apply_point'.tr,
                       valueOfff: '20 points',
                       iconSize: 20,
                       onTap: _showApplyPointDialog,
@@ -167,7 +167,7 @@ class _ChargingInformationScreenState
 
                     // --- 4. Custom Preferred Input Field ---
                     Text(
-                      'Or enter your preferred amount',
+                      'or_enter_preferred_amount'.tr,
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                     const SizedBox(height: 8),
@@ -207,13 +207,13 @@ class _ChargingInformationScreenState
                     const SizedBox(height: 15),
 
                     // --- 5. Dynamic Pricing Section ---
-                    Obx(() => _buildPriceRow('Sub Total', _getSubTotal())),
+                    Obx(() => _buildPriceRow('ev_sub_total'.tr, _getSubTotal())),
                     const SizedBox(height: 5),
                     Obx(() {
                       final discount = controller.getCalculatedDiscount();
                       final discountPct = controller.getCalculatedDiscountPercentage();
                       return _buildPriceRow(
-                        'Discount ($discountPct%)',
+                        "${'discount'.tr} ($discountPct%)",
                         '-KHR (៛) ${_formatCurrency(discount.toDouble())}',
                       );
                     }),
@@ -223,7 +223,7 @@ class _ChargingInformationScreenState
                     ),
                     Obx(
                       () => _buildPriceRow(
-                        'Total Price',
+                        'total_price'.tr,
                         _getTotalPrice(),
                         isTotal: true,
                       ),
@@ -232,7 +232,7 @@ class _ChargingInformationScreenState
 
                     // --- 6. Payment Method Section ---
                     Text(
-                      'Choose your payment methods',
+                      'choose_payment_method'.tr,
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                     const SizedBox(height: 10),
@@ -266,14 +266,14 @@ class _ChargingInformationScreenState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'E-Wallet',
+                                  'e_wallet'.tr,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
                                   ),
                                 ),
                                 Text(
-                                  'Scan to pay with your E-Wallet',
+                                  'scan_to_pay_ewallet'.tr,
                                   style: TextStyle(
                                     color: Colors.grey.shade600,
                                     fontSize: 12,
@@ -320,9 +320,9 @@ class _ChargingInformationScreenState
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Continue',
-                      style: TextStyle(
+                    child: Text(
+                      'continue'.tr,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -351,12 +351,6 @@ class _ChargingInformationScreenState
         isSelected ? AppColors.primaryColor : Colors.grey.shade500;
     final double strokeWidth = isSelected ? 2.0 : 1.2;
 
-    final bool isActive =
-        voucher.displayStatus == 1 ||
-        (voucher.statusText?.toLowerCase() == 'active');
-    final Color statusColor = isActive ? const Color(0xFF16A34A) : Colors.grey;
-    final String statusText =
-        voucher.statusText ?? (isActive ? 'Active' : 'In Active');
     final String discountPct =
         voucher.discountType == 1
             ? '${(voucher.discountValue ?? 0.0).toStringAsFixed(1)}%'
@@ -437,9 +431,9 @@ class _ChargingInformationScreenState
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                'OFF',
-                                style: TextStyle(
+                              Text(
+                                'off'.tr,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
@@ -516,20 +510,6 @@ class _ChargingInformationScreenState
                                       ),
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.circle,
-                                    size: 8,
-                                    color: statusColor,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    statusText,
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
                                 ],
                               ),
                               const SizedBox(height: 4),
@@ -545,7 +525,7 @@ class _ChargingInformationScreenState
                           ),
                           Text(
                             voucher.expiresDate != null
-                                ? 'Valid Till - ${voucher.expiresDate}'
+                                ? "${'valid_till'.tr} - ${voucher.expiresDate}"
                                 : '',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -597,14 +577,14 @@ class _ChargingInformationScreenState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Failed to load list"),
+                Text('failed_to_load_list'.tr),
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed:
                       isKwhTab
                           ? controller.fetchKwhData
                           : controller.fetchPriceData,
-                  child: const Text("Retry"),
+                  child: Text('retry'.tr),
                 ),
               ],
             ),
@@ -613,9 +593,9 @@ class _ChargingInformationScreenState
       }
 
       if (list.isEmpty) {
-        return const SizedBox(
+        return SizedBox(
           height: 100,
-          child: Center(child: Text("No items available")),
+          child: Center(child: Text('no_items_available'.tr)),
         );
       }
 
@@ -636,7 +616,7 @@ class _ChargingInformationScreenState
           final String label =
               item.name ??
               (item.isFullCharge == 1
-                  ? "Full Charge"
+                  ? 'full_charge'.tr
                   : (isKwhTab ? "${item.value} kWh" : "KHR ${item.value}"));
 
           return GestureDetector(
@@ -700,7 +680,7 @@ class _ChargingInformationScreenState
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Kilowatt/hour',
+                        'kilowatt_hour'.tr,
                         style: TextStyle(
                           color: isKwhTab ? Colors.white : Colors.grey.shade700,
                           fontWeight: FontWeight.w500,
@@ -730,7 +710,7 @@ class _ChargingInformationScreenState
                       ),
                       children: [
                         TextSpan(
-                          text: "Amount",
+                          text: 'amount'.tr,
                           style: TextStyle(
                             color: !isKwhTab ? Colors.white : Colors.grey[600],
                             fontWeight: FontWeight.normal,
@@ -818,10 +798,10 @@ class _ChargingInformationScreenState
             children: [
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Apply Promotion Code',
-                      style: TextStyle(
+                      'apply_promotion_code'.tr,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
@@ -846,7 +826,7 @@ class _ChargingInformationScreenState
                           controller.searchQuery.value = val;
                         },
                         decoration: InputDecoration(
-                          hintText: 'Code',
+                          hintText: 'promo_code'.tr,
                           hintStyle: TextStyle(color: Colors.grey.shade400),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -974,9 +954,9 @@ class _ChargingInformationScreenState
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.black87),
+                      child: Text(
+                        'cancel'.tr,
+                        style: const TextStyle(color: Colors.black87),
                       ),
                     ),
                   ),
@@ -995,9 +975,9 @@ class _ChargingInformationScreenState
                         ),
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Apply',
-                        style: TextStyle(
+                      child: Text(
+                        'apply'.tr,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -1040,10 +1020,10 @@ class _ChargingInformationScreenState
                 children: [
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Apply Point',
-                          style: TextStyle(
+                          'apply_point'.tr,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
@@ -1059,14 +1039,14 @@ class _ChargingInformationScreenState
                   const SizedBox(height: 14),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Text(
-                        'Total Points',
-                        style: TextStyle(color: Colors.black54, fontSize: 13),
+                        'total_points'.tr,
+                        style: const TextStyle(color: Colors.black54, fontSize: 13),
                       ),
                       Text(
-                        '190 Points',
-                        style: TextStyle(
+                        '190 ${'points'.tr}',
+                        style: const TextStyle(
                           color: Colors.black87,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -1075,9 +1055,9 @@ class _ChargingInformationScreenState
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Choose amount',
-                    style: TextStyle(color: Colors.black54, fontSize: 13),
+                  Text(
+                    'choose_amount'.tr,
+                    style: const TextStyle(color: Colors.black54, fontSize: 13),
                   ),
                   const SizedBox(height: 10),
                   Obx(() {
@@ -1144,7 +1124,7 @@ class _ChargingInformationScreenState
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '${opt['point']} Points',
+                                      "${opt['point']} ${'points'.tr}",
                                       style: TextStyle(
                                         color:
                                             isSelected
@@ -1163,9 +1143,9 @@ class _ChargingInformationScreenState
                     );
                   }),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Or enter your preferred amount',
-                    style: TextStyle(color: Colors.black54, fontSize: 13),
+                  Text(
+                    'or_enter_preferred_amount'.tr,
+                    style: const TextStyle(color: Colors.black54, fontSize: 13),
                   ),
                   const SizedBox(height: 8),
                   TextField(
@@ -1177,9 +1157,9 @@ class _ChargingInformationScreenState
                       });
                     },
                     decoration: InputDecoration(
-                      hintText: 'Enter',
+                      hintText: 'enter'.tr,
                       hintStyle: TextStyle(color: Colors.grey.shade400),
-                      suffixText: 'Point',
+                      suffixText: 'point'.tr,
                       suffixStyle: TextStyle(color: Colors.black),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -1200,9 +1180,9 @@ class _ChargingInformationScreenState
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    '1 kWh = 100Points',
-                    style: TextStyle(
+                  Text(
+                    'kwh_equal_100_points'.tr,
+                    style: const TextStyle(
                       color: Color(0xFFE26A15),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -1221,9 +1201,9 @@ class _ChargingInformationScreenState
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(color: Colors.black87),
+                          child: Text(
+                            'cancel'.tr,
+                            style: const TextStyle(color: Colors.black87),
                           ),
                         ),
                       ),
@@ -1255,9 +1235,9 @@ class _ChargingInformationScreenState
                             ),
                             elevation: 0,
                           ),
-                          child: const Text(
-                            'Apply',
-                            style: TextStyle(
+                          child: Text(
+                            'apply'.tr,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

@@ -126,7 +126,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
                   walletController.isLoadingBalance.value
                       ? const CircularProgressIndicator()
                       : Text(
-                        '${walletController.totalBalance.value.toStringAsFixed(2)} KHR',
+                        '${walletController.formatAmount(walletController.totalBalance.value)} KHR',
                         style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -384,7 +384,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${typeInfo['prefix']} ${displayAmount.toStringAsFixed(2)} KHR',
+                    '${typeInfo['prefix']} ${walletController.formatAmount(displayAmount)} KHR',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -497,7 +497,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
   }
 
   Widget _buildTopUpDetailSheet(Transaction transaction) {
-    final amount = (transaction.amount ?? 0).toStringAsFixed(2);
+    final amount = controller.formatAmount(transaction.amount ?? 0);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -526,7 +526,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
   }
 
   Widget _buildSpendDetailSheet(Transaction transaction) {
-    final amount = (transaction.amount ?? 0).toStringAsFixed(2);
+    final amount = controller.formatAmount(transaction.amount ?? 0);
     final id = (transaction.id ?? 0).toString().padLeft(5, '0');
     return Column(
       mainAxisSize: MainAxisSize.min,

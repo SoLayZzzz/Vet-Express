@@ -146,7 +146,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
         _buildMemberOptions(
           onTap: () => Get.toNamed(AppRoutes.evMembershipBenefit),
           iconPath: AssetImages.ic_membership,
-          title: 'Membership Benefit',
+          title: 'membership_benefit'.tr,
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -160,7 +160,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
             );
           },
           iconPath: AssetImages.ic_history_membership,
-          title: 'History',
+          title: 'history'.tr,
         ),
       ],
     );
@@ -205,7 +205,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildFilterChip(
-            label: 'All',
+            label: 'all'.tr,
             isSelected: _selectedFilter == 'all',
             onTap: () {
               setState(() => _selectedFilter = 'all');
@@ -215,7 +215,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
             },
           ),
           _buildFilterChip(
-            label: 'Earned',
+            label: 'earned'.tr,
             isSelected: _selectedFilter == 'income',
             onTap: () {
               setState(() => _selectedFilter = 'income');
@@ -225,7 +225,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
             },
           ),
           _buildFilterChip(
-            label: 'Spend',
+            label: 'spend'.tr,
             isSelected: _selectedFilter == 'expense',
             onTap: () {
               setState(() => _selectedFilter = 'expense');
@@ -293,7 +293,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                 ),
-                child: Text('Retry'.tr),
+                child: Text('retry'.tr),
               ),
             ),
           ),
@@ -314,7 +314,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
       if (transactionsToShow.isEmpty) {
         return SliverFillRemaining(
           hasScrollBody: false,
-          child: Center(child: Text('No data'.tr)),
+          child: Center(child: Text('no_data'.tr)),
         );
       }
 
@@ -455,7 +455,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${typeInfo['prefix']} ${displayAmount.toStringAsFixed(0)} Points',
+                    "${typeInfo['prefix']} ${displayAmount.toStringAsFixed(0)} ${'points'.tr}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -508,7 +508,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildSheetHeader('Transaction Detail'),
+                    _buildSheetHeader('transaction_detail'.tr),
                     const SizedBox(height: 12),
                     SizedBox(
                       width: 220,
@@ -522,7 +522,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                           foregroundColor: Colors.white,
                           elevation: 0,
                         ),
-                        child: Text('Retry'.tr),
+                        child: Text('retry'.tr),
                       ),
                     ),
                   ],
@@ -538,9 +538,9 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildSheetHeader('Transaction Detail'),
+                    _buildSheetHeader('transaction_detail'.tr),
                     const SizedBox(height: 12),
-                    Text('No detail'.tr),
+                    Text('no_detail'.tr),
                   ],
                 );
               }
@@ -551,31 +551,31 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildSheetHeader('Transaction Detail'),
+                  _buildSheetHeader('transaction_detail'.tr),
                   const SizedBox(height: 6),
                   _buildSheetRow(
-                    left: 'Transaction id',
+                    left: 'transaction_id'.tr,
                     right: detail.transactionId ?? '-',
                   ),
                   _buildSheetRow(
-                    left: 'Station Name',
+                    left: 'station_name'.tr,
                     right: detail.stationName ?? '-',
                   ),
                   _buildSheetRow(
-                    left: 'Order Date',
+                    left: 'order_date'.tr,
                     right: detail.orderDate ?? '-',
                   ),
                   _buildSheetRow(
-                    left: 'Sub Total',
+                    left: 'ev_sub_total'.tr,
                     right: 'KHR (៛) ${nf.format(detail.subTotal ?? 0)}',
                   ),
                   _buildSheetRow(
-                    left: 'Discount (${detail.discountPercent ?? 0}%)',
+                    left: "${'discount'.tr} (${detail.discountPercent ?? 0}%)",
                     right:
                         '-KHR (៛) ${nf.format(detail.discountAmount ?? 0)}',
                   ),
                   _buildSheetRow(
-                    left: 'Total Amount',
+                    left: 'total_amount'.tr,
                     right: 'KHR (៛) ${nf.format(detail.totalAmount ?? 0)}',
                     rightStyle: const TextStyle(
                       color: Colors.black87,
@@ -584,14 +584,14 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                     ),
                   ),
                   _buildSheetRow(
-                    left: 'Total kWh',
+                    left: 'total_kwh'.tr,
                     right: '${detail.totalKwh ?? 0} kWh',
                   ),
                   _buildSheetRow(
-                    left: isEarned ? 'Point Earned' : 'Point Spend',
+                    left: isEarned ? 'point_earned'.tr : 'point_spend'.tr,
                     right: isEarned
-                        ? '+ ${(transaction.amount ?? 0).toStringAsFixed(0)} Points'
-                        : '- ${detail.pointSpend ?? 0} Points',
+                        ? "+ ${(transaction.amount ?? 0).toStringAsFixed(0)} ${'points'.tr}"
+                        : "- ${detail.pointSpend ?? 0} ${'points'.tr}",
                     rightStyle: TextStyle(
                       color:
                           isEarned
@@ -711,9 +711,9 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
     final inputDate = DateTime(date.year, date.month, date.day);
 
     if (inputDate == today) {
-      return 'Today';
+      return 'today'.tr;
     } else if (inputDate == yesterday) {
-      return 'Yesterday';
+      return 'yesterday'.tr;
     } else {
       return DateFormat('dd MMMM yyyy').format(date);
     }
@@ -731,7 +731,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
         onPressed: () => Get.back(),
       ),
       title: Text(
-        'Membership'.tr,
+        'membership'.tr,
         style: const TextStyle(
           color: Colors.black87,
           fontWeight: FontWeight.w600,
@@ -804,18 +804,18 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                         children: [
                           RichText(
                             text: TextSpan(
-                              text: "${_membershipInfo?.currentPoint ?? 0} points ",
+                              text: "${_membershipInfo?.currentPoint ?? 0} ${'points'.tr} ",
                               style: TextStyle(color: Colors.green, fontSize: 14),
                               children: [
                                 TextSpan(
-                                  text: "will expires in",
+                                  text: 'will_expire_in'.tr,
                                   style: TextStyle(
                                     color: Colors.black.withValues(alpha: 0.6),
                                     fontSize: 14,
                                   ),
                                 ),
                                 TextSpan(
-                                  text: " ${_membershipInfo?.expiringInDays ?? 0} days",
+                                  text: " ${_membershipInfo?.expiringInDays ?? 0} ${'days'.tr}",
                                   style: TextStyle(color: Colors.green, fontSize: 14),
                                 ),
                               ],

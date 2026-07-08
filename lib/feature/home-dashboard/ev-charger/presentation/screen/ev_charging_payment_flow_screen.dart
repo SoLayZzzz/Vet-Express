@@ -55,9 +55,9 @@ class _EvChargingPaymentFlowScreenState extends State<EvChargingPaymentFlowScree
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Continue',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    child: Text(
+                      'continue'.tr,
+                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -76,9 +76,9 @@ class _EvChargingPaymentFlowScreenState extends State<EvChargingPaymentFlowScree
         SvgPicture.asset(AssetImages.success, width: 80,height: 80,),
        
         const SizedBox(height: 10),
-        const Text(
-          'Payment Successfully',
-          style: TextStyle(
+        Text(
+          'payment_successfully'.tr,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Colors.black,
@@ -86,7 +86,7 @@ class _EvChargingPaymentFlowScreenState extends State<EvChargingPaymentFlowScree
         ),
         const SizedBox(height: 6),
         Text(
-          'The charging process will begin shortly',
+          'charging_will_begin_shortly'.tr,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w400,

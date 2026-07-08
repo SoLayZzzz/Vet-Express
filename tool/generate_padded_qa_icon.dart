@@ -17,7 +17,7 @@ import 'package:image/image.dart' as img;
    }
  
    const canvasSize = 1024;
-   const logoSize = 720;
+   const logoSize = 500;
    final resized = img.copyResize(
      source,
      width: logoSize,
@@ -31,7 +31,7 @@ import 'package:image/image.dart' as img;
    final offsetX = (canvasSize - resized.width) ~/ 2;
    final offsetY = (canvasSize - resized.height) ~/ 2;
    img.compositeImage(canvas, resized, dstX: offsetX, dstY: offsetY);
- 
+  
    outputFile.writeAsBytesSync(img.encodePng(canvas));
    stdout.writeln('Created ${outputFile.path}');
  }

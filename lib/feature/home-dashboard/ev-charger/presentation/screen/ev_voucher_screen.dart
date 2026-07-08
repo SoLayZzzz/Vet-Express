@@ -26,7 +26,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          'Voucher'.tr,
+          'voucher'.tr,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -46,7 +46,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Enter or scan voucher code'.tr,
+                    'enter_or_scan_voucher_code'.tr,
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: 14,
@@ -63,7 +63,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                             onChanged:
                                 (val) => controller.searchQuery.value = val,
                             decoration: InputDecoration(
-                              hintText: 'Code'.tr,
+                              hintText: 'promo_code'.tr,
                               filled: true,
                               fillColor: Colors.white,
                               contentPadding: const EdgeInsets.symmetric(
@@ -238,7 +238,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                           ),
                         ),
                         child: Text(
-                          'Cancel'.tr,
+                          'cancel'.tr,
                           style: const TextStyle(
                             color: Color(0xFF374151),
                             fontSize: 16,
@@ -263,7 +263,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                           ),
                         ),
                         child: Text(
-                          'Add Voucher'.tr,
+                          'add_voucher'.tr,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -289,20 +289,14 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
     const double borderRadius = 14;
     final Color borderColor = Colors.grey.shade500;
 
-    final bool isActive =
-        voucher.displayStatus == 1 ||
-        (voucher.statusText?.toLowerCase() == 'active');
-    final Color statusColor = isActive ? const Color(0xFF16A34A) : Colors.grey;
-    final String statusText =
-        voucher.statusText ?? (isActive ? 'Active' : 'In Active');
     final String discountPct =
         voucher.discountType == 1
             ? '${(voucher.discountValue ?? 0.0).toStringAsFixed(1)}%'
             : '\$${voucher.discountValue}';
     final String discountOff =
         voucher.discountType == 1
-            ? '${voucher.discountValue}% OFF'
-            : '\$${voucher.discountValue} OFF';
+            ? "${voucher.discountValue}% ${'off'.tr}"
+            : "\$${voucher.discountValue} ${'off'.tr}";
 
     final String banner = voucher.banner ?? '';
     final String bannerUrl =
@@ -374,9 +368,9 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                'OFF',
-                                style: TextStyle(
+                              Text(
+                                'off'.tr,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
@@ -453,20 +447,6 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                                       ),
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.circle,
-                                    size: 8,
-                                    color: statusColor,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    statusText,
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
                                 ],
                               ),
                               const SizedBox(height: 4),
@@ -482,7 +462,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                           ),
                           Text(
                             voucher.expiresDate != null
-                                ? 'Valid Till - ${voucher.expiresDate}'
+                                ? "${'valid_till'.tr} - ${voucher.expiresDate}"
                                 : '',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

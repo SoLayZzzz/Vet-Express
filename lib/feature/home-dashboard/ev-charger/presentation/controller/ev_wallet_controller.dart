@@ -10,6 +10,8 @@ class EvWalletController extends GetxController {
 
   EvWalletController(this.useCase);
 
+  final NumberFormat _amountFormatter = NumberFormat('#,##0.00', 'en_US');
+
   // Transaction data
   final RxList<Group> walletTransactions = <Group>[].obs;
   final RxList<Group> filteredTransactions = <Group>[].obs;
@@ -339,6 +341,10 @@ class EvWalletController extends GetxController {
   // Get display amount
   double getDisplayAmount(double? amount) {
     return amount ?? 0.0;
+  }
+
+  String formatAmount(double amount) {
+    return _amountFormatter.format(amount);
   }
 
   // Update balance after top-up - Fetch from backend instead
