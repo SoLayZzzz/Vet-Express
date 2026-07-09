@@ -117,11 +117,6 @@ class _AdsScreenState extends State<AdsScreen>
       if (ok) {
         log("➡️ Navigating to HomeScreen");
         Get.offAllNamed(AppRoutes.home);
-        //  Get.to(
-        //             () => TermScreen(from: 1, title: 'condition-ticket'.tr),
-        //             transition: Transition.rightToLeft,
-        //             duration: const Duration(milliseconds: Constrains.duration),
-        //           );
       } else {
         log("➡️ Navigating to SignInScreen");
         Get.offAllNamed(AppRoutes.signIn);
@@ -225,174 +220,326 @@ class _AdsScreenState extends State<AdsScreen>
     return _buildAdsCarousel(size);
   }
 
-  /// Ads carousel
   Widget _buildAdsCarousel(Size size) {
     final reversedImages = widget.images.reversed.toList();
 
     return Scaffold(
       body: Container(
-        color: AppColors.backgroundColor,
-        child: Stack(
-          children: [
-            // Carousel for multiple images
-            if (widget.images.length == 1)
-              SizedBox(
-                width: size.width,
-                height: size.height,
-                child: CachedDiskImage(
-                  imageUrl: widget.images.first,
-                  fit: BoxFit.fill,
-                ),
-              )
-            else
-              CarouselSlider(
-                options: CarouselOptions(
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 3),
-                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  pauseAutoPlayOnTouch: true,
-                  viewportFraction: 1.0,
-                  enlargeCenterPage: false,
+        color: Colors.black,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // Carousel for multiple images
+              if (widget.images.length == 1)
+                SizedBox(
+                  width: size.width,
                   height: size.height,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      activeIndex = index;
-                    });
-                  },
+                  child: CachedDiskImage(imageUrl: widget.images.first, fit: BoxFit.contain),
+                )
+              else
+                CarouselSlider(
+                  options: CarouselOptions(
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    pauseAutoPlayOnTouch: true,
+                    viewportFraction: 1.0,
+                    enlargeCenterPage: false,
+                    height: size.height,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        activeIndex = index;
+                      });
+                    },
+                  ),
+                  items:
+                      reversedImages
+                          .map(
+                            (item) => SizedBox(
+                              width: size.width,
+                              height: size.height,
+                              child: CachedDiskImage(imageUrl: item, fit: BoxFit.contain),
+                            ),
+                          )
+                          .toList(),
                 ),
-                items:
-                    reversedImages
-                        .map(
-                          (item) => SizedBox(
-                            width: size.width,
-                            height: size.height,
-                            child: CachedDiskImage(
-                              imageUrl: item,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        )
-                        .toList(),
-              ),
 
-            // Controls overlay wrapped in SafeArea
-            SafeArea(
-              child: Stack(
-                children: [
-                  // Page indicator (only show if we have multiple images)
-                  if (widget.images.length > 1)
-                    Positioned(
-                      bottom: 10,
-                      left: 0,
-                      right: 0,
-                      child: Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: AnimatedSmoothIndicator(
-                              activeIndex: activeIndex,
-                              count: reversedImages.length,
-                              effect: const ExpandingDotsEffect(
-                                activeDotColor: AppColors.primaryColor,
-                                dotHeight: 9,
-                                dotWidth: 9,
-                              ),
-                            ),
+              // Page indicator (only show if we have multiple images)
+              if (widget.images.length > 1)
+                Positioned(
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: AnimatedSmoothIndicator(
+                          activeIndex: activeIndex,
+                          count: reversedImages.length,
+                          effect: const ExpandingDotsEffect(
+                            activeDotColor: AppColors.primaryColor,
+                            dotHeight: 9,
+                            dotWidth: 9,
                           ),
                         ),
                       ),
                     ),
-
-                  // Countdown + Skip
-                  Positioned(
-                    right: 10,
-                    bottom: 20,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // Countdown Timer
-                        Container(
-                          width: 45,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Center(
-                            child: TweenAnimationBuilder<Duration>(
-                              duration: const Duration(milliseconds: 6000),
-                              tween: Tween(
-                                begin: const Duration(seconds: 6),
-                                end: const Duration(seconds: 0),
-                              ),
-                              onEnd: () {
-                                if (mounted && _shouldAutoNavigate) {
-                                  _navigateBasedOnLoginStatus();
-                                }
-                              },
-                              builder: (_, Duration value, __) {
-                                final seconds = value.inSeconds;
-                                return Text(
-                                  '$seconds',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: AppColors.textColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        // Skip Button
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            side: const BorderSide(color: AppColors.whiteColor),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0),
-                            ),
-                          ),
-                          onPressed: () {
-                            log("👆 Skip button pressed");
-                            _shouldAutoNavigate = false;
-                            _navigateBasedOnLoginStatus();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 24,
-                            ),
-                            child: Text(
-                              "skip".tr,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: AppColors.whiteColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                ],
+                ),
+
+              // Countdown + Skip
+              Positioned(
+                right: 10,
+                bottom: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Countdown Timer
+                    Container(
+                      width: 45,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: TweenAnimationBuilder<Duration>(
+                          duration: const Duration(milliseconds: 6000),
+                          tween: Tween(
+                            begin: const Duration(seconds: 6),
+                            end: const Duration(seconds: 0),
+                          ),
+                          onEnd: () {
+                            if (mounted && _shouldAutoNavigate) {
+                              _navigateBasedOnLoginStatus();
+                            }
+                          },
+                          builder: (_, Duration value, __) {
+                            final seconds = value.inSeconds;
+                            return Text(
+                              '$seconds',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.textColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    // Skip Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        side: const BorderSide(color: AppColors.whiteColor),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                      ),
+                      onPressed: () {
+                        log("👆 Skip button pressed");
+                        _shouldAutoNavigate = false;
+                        _navigateBasedOnLoginStatus();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+                        child: Text(
+                          "skip".tr,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+
+  /// Ads carousel
+  // Widget _buildAdsCarousel(Size size) {
+  //   final reversedImages = widget.images.reversed.toList();
+
+  //   return Scaffold(
+  //     body: Container(
+  //       color: AppColors.backgroundColor,
+  //       child: Stack(
+  //         children: [
+  //           // Carousel for multiple images
+  //           if (widget.images.length == 1)
+  //             SizedBox(
+  //               width: size.width,
+  //               height: size.height,
+  //               child: CachedDiskImage(
+  //                 imageUrl: widget.images.first,
+  //                 fit: BoxFit.fill,
+  //               ),
+  //             )
+  //           else
+  //             CarouselSlider(
+  //               options: CarouselOptions(
+  //                 autoPlay: true,
+  //                 autoPlayInterval: const Duration(seconds: 3),
+  //                 autoPlayAnimationDuration: const Duration(milliseconds: 800),
+  //                 autoPlayCurve: Curves.fastOutSlowIn,
+  //                 pauseAutoPlayOnTouch: true,
+  //                 viewportFraction: 1.0,
+  //                 enlargeCenterPage: false,
+  //                 height: size.height,
+  //                 onPageChanged: (index, reason) {
+  //                   setState(() {
+  //                     activeIndex = index;
+  //                   });
+  //                 },
+  //               ),
+  //               items:
+  //                   reversedImages
+  //                       .map(
+  //                         (item) => SizedBox(
+  //                           width: size.width,
+  //                           height: size.height,
+  //                           child: CachedDiskImage(
+  //                             imageUrl: item,
+  //                             fit: BoxFit.fill,
+  //                           ),
+  //                         ),
+  //                       )
+  //                       .toList(),
+  //             ),
+      
+  //           // Controls overlay wrapped in SafeArea
+  //           SafeArea(
+  //             child: Stack(
+  //               children: [
+  //                 // Page indicator (only show if we have multiple images)
+  //                 if (widget.images.length > 1)
+  //                   Positioned(
+  //                     bottom: 10,
+  //                     left: 0,
+  //                     right: 0,
+  //                     child: Center(
+  //                       child: Container(
+  //                         decoration: BoxDecoration(
+  //                           color: Colors.grey[200],
+  //                           borderRadius: BorderRadius.circular(10),
+  //                         ),
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.all(4),
+  //                           child: AnimatedSmoothIndicator(
+  //                             activeIndex: activeIndex,
+  //                             count: reversedImages.length,
+  //                             effect: const ExpandingDotsEffect(
+  //                               activeDotColor: AppColors.primaryColor,
+  //                               dotHeight: 9,
+  //                               dotWidth: 9,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+      
+  //                 // Countdown + Skip
+  //                 Positioned(
+  //                   right: 10,
+  //                   bottom: 20,
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.end,
+  //                     children: [
+  //                       // Countdown Timer
+  //                       Container(
+  //                         width: 45,
+  //                         height: 35,
+  //                         decoration: BoxDecoration(
+  //                           color: Colors.white,
+  //                           borderRadius: BorderRadius.circular(20),
+  //                         ),
+  //                         child: Center(
+  //                           child: TweenAnimationBuilder<Duration>(
+  //                             duration: const Duration(milliseconds: 6000),
+  //                             tween: Tween(
+  //                               begin: const Duration(seconds: 6),
+  //                               end: const Duration(seconds: 0),
+  //                             ),
+  //                             onEnd: () {
+  //                               if (mounted && _shouldAutoNavigate) {
+  //                                 _navigateBasedOnLoginStatus();
+  //                               }
+  //                             },
+  //                             builder: (_, Duration value, __) {
+  //                               final seconds = value.inSeconds;
+  //                               return Text(
+  //                                 '$seconds',
+  //                                 textAlign: TextAlign.center,
+  //                                 style: const TextStyle(
+  //                                   color: AppColors.textColor,
+  //                                   fontSize: 18,
+  //                                   fontWeight: FontWeight.bold,
+  //                                 ),
+  //                               );
+  //                             },
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       const SizedBox(height: 5),
+  //                       // Skip Button
+  //                       ElevatedButton(
+  //                         style: ElevatedButton.styleFrom(
+  //                           padding: EdgeInsets.zero,
+  //                           backgroundColor: Colors.transparent,
+  //                           shadowColor: Colors.transparent,
+  //                           side: const BorderSide(color: AppColors.whiteColor),
+  //                           shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(0),
+  //                           ),
+  //                         ),
+  //                         onPressed: () {
+  //                           log("👆 Skip button pressed");
+  //                           _shouldAutoNavigate = false;
+  //                           _navigateBasedOnLoginStatus();
+  //                         },
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.symmetric(
+  //                             vertical: 10,
+  //                             horizontal: 24,
+  //                           ),
+  //                           child: Text(
+  //                             "skip".tr,
+  //                             style: const TextStyle(
+  //                               fontSize: 18,
+  //                               color: AppColors.whiteColor,
+  //                               fontWeight: FontWeight.bold,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void loadLanguage() {
     final language = AppPref.getLanguage();

@@ -340,6 +340,18 @@ class PaymentAbaController extends GetxController {
         );
         Map<dynamic, dynamic> result = jsonDecode(response.body);
         final status = '${result['status']}';
+        if (type == 3) {
+          debugPrint(
+            '==================================================\n'
+            '💳 ALIPAY PAYMENT DATA RESPONSE\n'
+            '==================================================\n'
+            '📦 Response Body: ${response.body}\n'
+            '🆔 Transaction ID: $transactionId\n'
+            '🔑 Token: $token\n'
+            '📊 Status: $status\n'
+            '==================================================',
+          );
+        }
         if (status == '1') {
           debugPrint(
             'Check status transaction == 1. Checking terminal payment completion.',
@@ -459,6 +471,19 @@ class PaymentAbaController extends GetxController {
         debugPrint(
           'PaymentAbaController.checkTransactionABAComplete.status=${result['status']}',
         );
+        if (type == 3) {
+          debugPrint(
+            '==================================================\n'
+            '💳 ALIPAY TRANSACTION DATA RESPONSE\n'
+            '==================================================\n'
+            '📦 Response Body: ${response.body}\n'
+            '🆔 Transaction ID: $transactionId\n'
+            '🔑 Token: $token\n'
+            '📊 Status: ${result['status']}\n'
+            '🏷️ Transaction Code: ${result['transactionCode'] ?? transactionId}\n'
+            '==================================================',
+          );
+        }
         final status = '${result['status']}';
         if (status == '1') {
           debugPrint('Check status transaction $title == 1');

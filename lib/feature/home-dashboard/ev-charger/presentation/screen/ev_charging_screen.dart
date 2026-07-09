@@ -405,74 +405,147 @@ class EvChargerScreen extends GetView<EvChargerController> {
     );
   }
 
-  Widget _buildDynamicCarousel(List<String> imageUrls) {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification is ScrollUpdateNotification) {
-                final metrics = notification.metrics;
-                if (metrics.viewportDimension > 0) {
-                  _currentCarouselPage.value =
-                      metrics.pixels / metrics.viewportDimension;
-                }
+Widget _buildDynamicCarousel(List<String> imageUrls) {
+  return Column(
+    children: [
+      SizedBox(
+        width: double.infinity,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (notification) {
+            if (notification is ScrollUpdateNotification) {
+              final metrics = notification.metrics;
+              if (metrics.viewportDimension > 0) {
+                _currentCarouselPage.value =
+                    metrics.pixels / metrics.viewportDimension;
               }
-              return false;
-            },
-            child: CarouselSlider(
-              items: imageUrls.map((url) => _buildCarouselImage(url)).toList(),
-              carouselController: _carouselController,
-              options: CarouselOptions(
-                height: 180,
-                viewportFraction: 1.0,
-                enableInfiniteScroll: true,
-                autoPlay: true,
-                autoPlayInterval: const Duration(seconds: 3),
-                onPageChanged: (index, reason) {
-                  controller.updateCurrentSlideIndex(index);
-                  _currentCarouselPage.value = index.toDouble();
-                },
-              ),
+            }
+            return false;
+          },
+          child: CarouselSlider(
+            items: imageUrls.map((url) => _buildCarouselImage(url)).toList(),
+            carouselController: _carouselController,
+            options: CarouselOptions(
+              aspectRatio: 16 / 7, 
+              viewportFraction: 1.0,
+              enableInfiniteScroll: true,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              onPageChanged: (index, reason) {
+                controller.updateCurrentSlideIndex(index);
+                _currentCarouselPage.value = index.toDouble();
+              },
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        ValueListenableBuilder<double>(
-          valueListenable: _currentCarouselPage,
-          builder: (context, currentPage, child) {
-            return _buildCarouselIndicators(imageUrls.length, currentPage);
-          },
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
+      ),
+      const SizedBox(height: 8),
+      ValueListenableBuilder<double>(
+        valueListenable: _currentCarouselPage,
+        builder: (context, currentPage, child) {
+          return _buildCarouselIndicators(imageUrls.length, currentPage);
+        },
+      ),
+      const SizedBox(height: 20),
+    ],
+  );
+}
+  // Widget _buildDynamicCarousel(List<String> imageUrls) {
+  //   return Column(
+  //     children: [
+  //       SizedBox(
+  //         width: double.infinity,
+  //         child: NotificationListener<ScrollNotification>(
+  //           onNotification: (notification) {
+  //             if (notification is ScrollUpdateNotification) {
+  //               final metrics = notification.metrics;
+  //               if (metrics.viewportDimension > 0) {
+  //                 _currentCarouselPage.value =
+  //                     metrics.pixels / metrics.viewportDimension;
+  //               }
+  //             }
+  //             return false;
+  //           },
+  //           child: CarouselSlider(
+  //             items: imageUrls.map((url) => _buildCarouselImage(url)).toList(),
+  //             carouselController: _carouselController,
+  //             options: CarouselOptions(
+  //               // height: 180,
+  //               height: 280,
+  //               viewportFraction: 1.0,
+  //               enableInfiniteScroll: true,
+  //               autoPlay: true,
+  //               autoPlayInterval: const Duration(seconds: 3),
+  //               onPageChanged: (index, reason) {
+  //                 controller.updateCurrentSlideIndex(index);
+  //                 _currentCarouselPage.value = index.toDouble();
+  //               },
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //       const SizedBox(height: 8),
+  //       ValueListenableBuilder<double>(
+  //         valueListenable: _currentCarouselPage,
+  //         builder: (context, currentPage, child) {
+  //           return _buildCarouselIndicators(imageUrls.length, currentPage);
+  //         },
+  //       ),
+  //       const SizedBox(height: 20),
+  //     ],
+  //   );
+  // }
 
   Widget _buildCarouselImage(String url) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      color: Colors.black, // Dark background to frame the full image nicely
       child: CachedNetworkImage(
         imageUrl: url,
         width: double.infinity,
-        height: 200,
         fit: BoxFit.cover,
-        placeholder:
-            (context, url) => Container(
-              color: Colors.grey[200],
-              child: const SizedBox.shrink(),
-            ),
-        errorWidget:
-            (context, url, error) => Container(
-              color: Colors.grey[200],
-              child: const Center(
-                child: Icon(Icons.image, size: 50, color: Colors.grey),
-              ),
-            ),
+        placeholder: (context, url) => Container(
+          color: Colors.grey[200],
+          child: const SizedBox.shrink(),
+        ),
+        errorWidget: (context, url, error) => Container(
+          color: Colors.grey[200],
+          child: const Center(
+            child: Icon(Icons.image, size: 50, color: Colors.grey),
+          ),
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+//   Widget _buildCarouselImage(String url) {
+//   return ClipRRect(
+//     borderRadius: BorderRadius.circular(12),
+//     child: Container(
+//       // Optional: Adds a background color behind the image 
+//       // so the "see full image" blank spaces look intentional.
+//       color: Colors.black, 
+//       child: CachedNetworkImage(
+//         imageUrl: url,
+//         width: double.infinity,
+//         height: 280,
+//         // fit: BoxFit.contain,
+//          fit: BoxFit.cover,
+//         placeholder: (context, url) => Container(
+//           color: Colors.grey[200],
+//           child: const SizedBox.shrink(),
+//         ),
+//         errorWidget: (context, url, error) => Container(
+//           color: Colors.grey[200],
+//           child: const Center(
+//             child: Icon(Icons.image, size: 50, color: Colors.grey),
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }
 
   Widget _buildCarouselIndicators(int count, double currentPage) {
     final int activeIndex = currentPage.round() % count;

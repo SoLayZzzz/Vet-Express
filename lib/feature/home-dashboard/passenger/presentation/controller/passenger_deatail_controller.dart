@@ -86,7 +86,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
   }) {
     if (seatCount <= 0) return;
 
-    if (companyType != 4 && nameControllers.isNotEmpty) {
+    if (nameControllers.isNotEmpty) {
       if (nameControllers[0].text.trim().isEmpty && name.trim().isNotEmpty) {
         nameControllers[0].text = name.trim();
       }
@@ -1076,45 +1076,37 @@ class PassengerDetailController extends StateController<PassengerUistate> {
       syncUserProfileToForm();
       _ensurePassengerSelectionSlots();
 
-      if (ValueStatic.companyTypeOneWay != 4) {
-        if (state.genderOneWay.isNotEmpty &&
-            (g == 1 || g == 2) &&
-            (state.genderOneWay[0] == '0' || state.genderOneWay[0].isEmpty)) {
-          state.genderOneWay[0] = g.toString();
-        }
+      if (state.genderOneWay.isNotEmpty &&
+          (g == 1 || g == 2) &&
+          (state.genderOneWay[0] == '0' || state.genderOneWay[0].isEmpty)) {
+        state.genderOneWay[0] = g.toString();
       }
-      if (ValueStatic.companyTypeOneWay != 4) {
-        if (state.nationalOneWay.isNotEmpty &&
-            natId > 0 &&
-            state.nationalOneWay[0] == 0) {
-          state.nationalOneWay[0] = natId;
-        }
-        if (state.nationalityIds.isNotEmpty && natId > 0) {
-          final current = state.nationalityIds[0] ?? 0;
-          if (current == 0) {
-            state.nationalityIds[0] = natId;
-          }
+      if (state.nationalOneWay.isNotEmpty &&
+          natId > 0 &&
+          state.nationalOneWay[0] == 0) {
+        state.nationalOneWay[0] = natId;
+      }
+      if (state.nationalityIds.isNotEmpty && natId > 0) {
+        final current = state.nationalityIds[0] ?? 0;
+        if (current == 0) {
+          state.nationalityIds[0] = natId;
         }
       }
 
-      if (ValueStatic.companyTypeTwoWay != 4) {
-        if (state.genderTwoWay.isNotEmpty &&
-            (g == 1 || g == 2) &&
-            (state.genderTwoWay[0] == '0' || state.genderTwoWay[0].isEmpty)) {
-          state.genderTwoWay[0] = g.toString();
-        }
+      if (state.genderTwoWay.isNotEmpty &&
+          (g == 1 || g == 2) &&
+          (state.genderTwoWay[0] == '0' || state.genderTwoWay[0].isEmpty)) {
+        state.genderTwoWay[0] = g.toString();
       }
-      if (ValueStatic.companyTypeTwoWay != 4) {
-        if (state.nationalTwoWay.isNotEmpty &&
-            natId > 0 &&
-            state.nationalTwoWay[0] == 0) {
-          state.nationalTwoWay[0] = natId;
-        }
-        if (state.nationalityIdsTwoWay.isNotEmpty && natId > 0) {
-          final current = state.nationalityIdsTwoWay[0] ?? 0;
-          if (current == 0) {
-            state.nationalityIdsTwoWay[0] = natId;
-          }
+      if (state.nationalTwoWay.isNotEmpty &&
+          natId > 0 &&
+          state.nationalTwoWay[0] == 0) {
+        state.nationalTwoWay[0] = natId;
+      }
+      if (state.nationalityIdsTwoWay.isNotEmpty && natId > 0) {
+        final current = state.nationalityIdsTwoWay[0] ?? 0;
+        if (current == 0) {
+          state.nationalityIdsTwoWay[0] = natId;
         }
       }
 
