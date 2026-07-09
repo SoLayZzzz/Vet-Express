@@ -34,9 +34,9 @@ class SlideWidget extends StatelessWidget {
           options: CarouselOptions(
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 6),
+            aspectRatio: 16 / 5, 
             viewportFraction: 1.0,
             enlargeCenterPage: false,
-            height: MediaQuery.of(Get.context!).size.height * 0.16,
             initialPage: 0,
             autoPlayCurve: Curves.fastOutSlowIn,
             enableInfiniteScroll: true,
@@ -47,16 +47,14 @@ class SlideWidget extends StatelessWidget {
               controller.imgList
                   .map(
                     (item) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
                         child: SizedBox(
                           width: double.infinity,
                           child: CachedImage(
                             imageUrl: item,
-                            fit: BoxFit.cover,
-                            height:
-                                MediaQuery.of(Get.context!).size.height * 0.16,
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),

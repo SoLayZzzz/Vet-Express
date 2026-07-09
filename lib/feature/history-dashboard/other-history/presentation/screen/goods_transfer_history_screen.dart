@@ -1,10 +1,7 @@
 import 'dart:developer';
 
 import 'package:express_vet/asset_image.dart';
-import 'package:express_vet/feature/history-dashboard/other-history/presentation/screen/review_screen.dart';
-import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 
 import 'goods_information_screen.dart';
@@ -302,52 +299,12 @@ class GoodsTransferHistoryScreen
                 );
               }
               if ((data.data?.body?.data)!.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        AssetImages.ic_empty,
-                        width: 150,
-                        height: 150,
-                      ),
-                      Text(
-                        'no_data'.tr,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                return _buildNoData();
               }
             }
           } else if (data.hasError) {
             log('error ${data.error}');
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    AssetImages.ic_empty,
-                    width: 150,
-                    height: 150,
-                  ),
-                  Text(
-                    'no_data'.tr,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return _buildNoData();
           }
           return const Center(
             child: SizedBox(
@@ -376,6 +333,16 @@ class GoodsTransferHistoryScreen
       return FutureBuilder<TransferListResponse>(
         future: future,
         builder: (context, data) {
+          if (data.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: SizedBox(
+                height: 50.0,
+                width: 50.0,
+                child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
+              ),
+            );
+          }
+
           if (data.hasData && (data.data?.body?.data?.isNotEmpty ?? false)) {
             return Stack(
               children: [
@@ -394,19 +361,20 @@ class GoodsTransferHistoryScreen
               ],
             );
           }
-          return Center(
-            child: Text(
-              'no_data'.tr,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.primaryColor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          );
+          return _buildNoData();
         },
       );
     });
+  }
+
+  Widget _buildNoData() {
+    return Center(
+      child: Image.asset(
+        AssetImages.ic_empty,
+        width: 150,
+        height: 150,
+      ),
+    );
   }
 
   // Widget _surveyButton({
