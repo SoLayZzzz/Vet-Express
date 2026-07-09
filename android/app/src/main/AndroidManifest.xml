@@ -75,7 +75,7 @@
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Ucrop.CropTheme"/> <!--this line is updated-->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

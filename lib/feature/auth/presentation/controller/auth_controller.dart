@@ -116,9 +116,14 @@ class AuthController extends StateController<AuthUiState> {
         );
         return;
       }
-      ScaffoldMessenger.of(
-        Get.context!,
-      ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+      // ScaffoldMessenger.of(
+      //   Get.context!,
+      // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+      alertDialogOneButton(
+          title: 'information'.tr,
+          description: 'this_phone_number_have_been_registered'.tr,
+          buttonText: 'yes'.tr,
+        );
     } catch (e) {
       Loading().loadingClose();
       uiState.value.errorMessage.value = e.toString();
@@ -247,12 +252,17 @@ class AuthController extends StateController<AuthUiState> {
         );
         return;
       }
-      ScaffoldMessenger.of(
-        Get.context!,
-      ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+      // ScaffoldMessenger.of(
+      //   Get.context!,
+      // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
     } catch (e) {
       Loading().loadingClose();
       uiState.value.errorMessage.value = e.toString();
+      alertDialogOneButton(
+          title: 'information'.tr,
+          description: 'sms_code_invalid'.tr,
+          buttonText: 'yes'.tr,
+        );
     }
   }
 
@@ -287,9 +297,9 @@ class AuthController extends StateController<AuthUiState> {
           Get.offAllNamed(AppRoutes.signIn);
           return;
         }
-        ScaffoldMessenger.of(
-          Get.context!,
-        ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+        // ScaffoldMessenger.of(
+        //   Get.context!,
+        // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
       }
     } catch (e) {
       Loading().loadingClose();
@@ -318,9 +328,14 @@ class AuthController extends StateController<AuthUiState> {
         );
         return;
       }
-      ScaffoldMessenger.of(
-        Get.context!,
-      ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+      // ScaffoldMessenger.of(
+      //   Get.context!,
+      // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+       alertDialogOneButton(
+          title: 'information'.tr,
+          description: 'this_phone_number_not_registered'.tr,
+          buttonText: 'yes'.tr,
+        );
     } catch (e) {
       Loading().loadingClose();
     }
@@ -574,9 +589,14 @@ class AuthController extends StateController<AuthUiState> {
 
       if (tokenType == null || token == null) {
         uiState.value.errorMessage.value = 'try_again'.tr;
-        ScaffoldMessenger.of(
-          Get.context!,
-        ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+        // ScaffoldMessenger.of(
+        //   Get.context!,
+        // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+         alertDialogOneButton(
+          title: 'invalid'.tr,
+          description: 'check_password'.tr,
+          buttonText: 'yes'.tr,
+        );
         return;
       }
 
@@ -599,9 +619,9 @@ class AuthController extends StateController<AuthUiState> {
       Loading().loadingClose();
       log('login error', error: e);
       uiState.value.errorMessage.value = e.toString();
-      ScaffoldMessenger.of(
-        Get.context!,
-      ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
+      // ScaffoldMessenger.of(
+      //   Get.context!,
+      // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
     } finally {
       uiState.value.isLoading.value = false;
     }

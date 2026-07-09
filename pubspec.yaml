@@ -35,7 +35,7 @@ dependencies:
   location: ^8.0.0
   geocoding: ^3.0.0
   onesignal_flutter: ^5.3.4
-  image_cropper: ^9.1.0
+  image_cropper: ^11.0.0
   smooth_page_indicator: ^1.2.1
   flutter_rating_bar: ^4.0.1
   app_links: ^6.4.0
@@ -126,3 +126,4 @@ flutter:
 # android run
 # flutter run -d emulator-5554 --flavor qa --dart-define=FLAVOR=qa
 # flutter run -d emulator-5554 --flavor prod --dart-define=FLAVOR=prod
+# flutter run -d DY4HE6PJOVIRAMHY --flavor prod --dart-define=FLAVOR=prod

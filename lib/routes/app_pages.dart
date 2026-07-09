@@ -467,7 +467,17 @@ class AppPages {
 
     GetPage(
       name: AppRoutes.scanQr,
-      page: () => const ScanQrScreen(),
+      page: () {
+        final args = Get.arguments;
+        int? scanFrom;
+        if (args is Map) {
+          final scanFromArg = args['scanFrom'];
+          if (scanFromArg is int) scanFrom = scanFromArg;
+        } else if (args is int) {
+          scanFrom = args;
+        }
+        return ScanQrScreen(scanFrom: scanFrom);
+      },
       binding: ScanQrBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),

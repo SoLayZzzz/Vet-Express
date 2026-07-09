@@ -630,6 +630,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
             ),
             Text(
               (bookingData.data?.body?.data?[0].code).toString(),

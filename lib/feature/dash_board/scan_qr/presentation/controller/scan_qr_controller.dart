@@ -606,6 +606,9 @@ class ScanQrController extends StateController<ScanQrUiState> {
             toolbarTitle: 'crop_qr_code'.tr,
             toolbarColor: AppColors.primaryColor,
             toolbarWidgetColor: AppColors.whiteColor,
+            statusBarLight: false,
+            navBarLight: false,
+            cropStyle: CropStyle.rectangle,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: false,
             aspectRatioPresets: const [
@@ -616,8 +619,14 @@ class ScanQrController extends StateController<ScanQrUiState> {
           ),
           IOSUiSettings(
             title: 'crop_qr_code'.tr,
+            cropStyle: CropStyle.rectangle,
             aspectRatioLockEnabled: true,
             resetAspectRatioEnabled: false,
+            aspectRatioPresets: const [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+            ],
           ),
         ],
       );
