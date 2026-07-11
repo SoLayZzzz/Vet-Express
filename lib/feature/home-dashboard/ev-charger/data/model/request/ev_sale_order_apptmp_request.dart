@@ -7,8 +7,8 @@ class EvSaleOrderApptmpRequest {
   final int voucherId;
   final int membershipRedeemId;
   final int totalKwh;
-  final int totalPrice;
-  final int grandTotalPrice;
+  final double totalPrice;
+  final double grandTotalPrice;
 
   EvSaleOrderApptmpRequest({
     required this.chargerUsername,

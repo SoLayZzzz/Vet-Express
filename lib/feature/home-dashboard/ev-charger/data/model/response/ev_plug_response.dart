@@ -1,10 +1,10 @@
-class AmountPriceAndKwhResponse {
+class EvPlugResponse {
   Header? header;
   Body? body;
 
-  AmountPriceAndKwhResponse({this.header, this.body});
+  EvPlugResponse({this.header, this.body});
 
-  AmountPriceAndKwhResponse.fromJson(Map<String, dynamic> json) {
+  EvPlugResponse.fromJson(Map<String, dynamic> json) {
     header =
         json['header'] != null ? new Header.fromJson(json['header']) : null;
     body = json['body'] != null ? new Body.fromJson(json['body']) : null;
@@ -74,29 +74,23 @@ class Body {
 }
 
 class Data {
-  int? id;
-  String? name;
-  String? description;
-  double? value;
-  int? isFullCharge;
+  int? gunId;
+  String? gunName;
+  int? isAvailable;
 
-  Data({this.id, this.name, this.description, this.value, this.isFullCharge});
+  Data({this.gunId, this.gunName, this.isAvailable});
 
   Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    description = json['description'];
-    value = json['value'];
-    isFullCharge = json['isFullCharge'];
+    gunId = json['gunId'];
+    gunName = json['gunName'];
+    isAvailable = json['isAvailable'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['description'] = this.description;
-    data['value'] = this.value;
-    data['isFullCharge'] = this.isFullCharge;
+    data['gunId'] = this.gunId;
+    data['gunName'] = this.gunName;
+    data['isAvailable'] = this.isAvailable;
     return data;
   }
 }

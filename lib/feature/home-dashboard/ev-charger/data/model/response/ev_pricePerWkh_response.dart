@@ -1,10 +1,10 @@
-class AmountPriceAndKwhResponse {
+class EvPricePerWkhResponse {
   Header? header;
   Body? body;
 
-  AmountPriceAndKwhResponse({this.header, this.body});
+  EvPricePerWkhResponse({this.header, this.body});
 
-  AmountPriceAndKwhResponse.fromJson(Map<String, dynamic> json) {
+  EvPricePerWkhResponse.fromJson(Map<String, dynamic> json) {
     header =
         json['header'] != null ? new Header.fromJson(json['header']) : null;
     body = json['body'] != null ? new Body.fromJson(json['body']) : null;
@@ -47,19 +47,14 @@ class Header {
 class Body {
   bool? status;
   String? message;
-  List<Data>? data;
+  Data? data;
 
   Body({this.status, this.message, this.data});
 
   Body.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
-    }
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -67,36 +62,27 @@ class Body {
     data['status'] = this.status;
     data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
 }
 
 class Data {
-  int? id;
-  String? name;
-  String? description;
-  double? value;
-  int? isFullCharge;
+  int? stationId;
+  double? pricePerKwh;
 
-  Data({this.id, this.name, this.description, this.value, this.isFullCharge});
+  Data({this.stationId, this.pricePerKwh});
 
   Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    description = json['description'];
-    value = json['value'];
-    isFullCharge = json['isFullCharge'];
+    stationId = json['stationId'];
+    pricePerKwh = (json['pricePerKwh'] as num?)?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['description'] = this.description;
-    data['value'] = this.value;
-    data['isFullCharge'] = this.isFullCharge;
+    data['stationId'] = this.stationId;
+    data['pricePerKwh'] = this.pricePerKwh;
     return data;
   }
 }

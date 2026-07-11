@@ -549,6 +549,13 @@ class ScanQrController extends StateController<ScanQrUiState> {
     }
   }
 
+  /// Resets permission-related flags when the app is resumed (e.g. user returned from system settings).
+  void onAppResumed() {
+    debugPrint('ScanQrController: App resumed, resetting permission flags.');
+    _openingAppSettings = false;
+    _isPermissionDialogOpen = false;
+  }
+
   Future<bool> ensureCameraPermission() async {
     try {
       final status = await Permission.camera.status;

@@ -13,6 +13,7 @@ import 'package:vector_math/vector_math_64.dart' as math;
 import 'dart:math' as math;
 import 'package:express_vet/routes/app_routes.dart';
 import '../controller/ev_detail_charging_controller.dart';
+import '../controller/ev_charger_controller.dart';
 
 class EvDetailCharging extends StatefulWidget {
   const EvDetailCharging({super.key});
@@ -24,7 +25,10 @@ class EvDetailCharging extends StatefulWidget {
 class _EvDetailChargingState extends State<EvDetailCharging> {
   late final EvDetailChargingController controller;
   StreamSubscription<int>? _percentSubscription;
+  Worker? _isChargingWorker;
+  Worker? _isChargingLoadingWorker;
   bool _fullyChargedDialogShown = false;
+  bool _isRoutingBack = false;
 
   late final Future<Uint8List?> _stopChargBytes = _loadEmbeddedPngBytes(
     AssetImages.stopCharg,
@@ -44,6 +48,49 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
         _showFullyChargedIfNeeded();
       }
     });
+
+    if (Get.isRegistered<EvChargerController>()) {
+      final evChargerController = Get.find<EvChargerController>();
+      _checkAndRouteBack(evChargerController);
+      _isChargingWorker = ever(evChargerController.isCharging, (_) {
+        _checkAndRouteBack(evChargerController);
+      });
+      _isChargingLoadingWorker = ever(evChargerController.isChargingLoading, (_) {
+        _checkAndRouteBack(evChargerController);
+      });
+    }
+  }
+
+  void _checkAndRouteBack(EvChargerController evChargerController) {
+    if (_isRoutingBack) return;
+    if (evChargerController.isChargingLoading.value) return;
+    if (!evChargerController.isChargingStatusLoaded) return;
+    if (evChargerController.isCharging.value != 0) return;
+    _isRoutingBack = true;
+    _fullyChargedDialogShown = true;
+    _isChargingWorker?.dispose();
+    _isChargingLoadingWorker?.dispose();
+    _percentSubscription?.cancel();
+    _showLoadingAndRouteBack();
+  }
+
+  void _showLoadingAndRouteBack() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (Get.isDialogOpen ?? false) Get.back();
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(color: AppColors.primaryColor),
+        ),
+        barrierDismissible: false,
+      );
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (Get.isDialogOpen ?? false) {
+          Get.back();
+        }
+        Get.offNamed(AppRoutes.home);
+      });
+    });
   }
 
   void _showFullyChargedIfNeeded() {
@@ -58,6 +105,8 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
 
   @override
   void dispose() {
+    _isChargingWorker?.dispose();
+    _isChargingLoadingWorker?.dispose();
     _percentSubscription?.cancel();
     super.dispose();
   }
@@ -341,7 +390,21 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
     final confirmed = await _showStopConfirmDialog();
     if (confirmed != true) return;
 
-    await controller.stopCharging();
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(color: AppColors.primaryColor),
+      ),
+      barrierDismissible: false,
+    );
+
+    try {
+      await controller.stopCharging();
+    } finally {
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+    }
+
     Get.offNamed(AppRoutes.home);
   }
 

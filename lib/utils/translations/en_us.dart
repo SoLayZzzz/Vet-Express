@@ -195,6 +195,7 @@ final Map<String, String> enUS = {
   "tap_to_pay_with_khqr": "Tap to pay with KHQR",
   "please_enter_valid_amount": "Please enter a valid amount",
   "please_select_payment_method": "Please select a payment method",
+  "no_payment_methods_available": "No payment methods available",
   "warning": "Warning",
   "checkout_qr_url_empty": "Checkout QR URL is Empty",
 
@@ -229,6 +230,31 @@ final Map<String, String> enUS = {
   "scan_another_qr": "Scan Another QR",
   "go_to_wallet": "Go to Wallet",
   "total_kwh": "Total kWh",
+
+  // EV charging card & detail
+  "View Detail": "View Detail",
+  "Your vehicle is charging": "Your vehicle is charging",
+  "Charging": "Charging",
+  "Battery": "Battery",
+  "Estimated Time": "Estimated Time",
+  "Time Elapsed": "Time Elapsed",
+  "Current": "Current",
+  "Voltage": "Voltage",
+  "Energy": "Energy",
+  "Estimated Cost": "Estimated Cost",
+  "Note": "Note",
+  "You cannot unplug the power while charging.": "You cannot unplug the power while charging.",
+  "Stop": "Stop",
+  "Message": "Message",
+  "Do you really want to stop the charging process?": "Do you really want to stop the charging process?",
+  "Cancel": "Cancel",
+  "Fully Charged!": "Fully Charged!",
+  "Please unplug the charger before traveling.\nThank you.": "Please unplug the charger before traveling.\nThank you.",
+  "Continue": "Continue",
+
+  // EV wallet sheet
+  "top_up_detail": "Top-up Detail",
+  "wallet_amount": "Amount",
 
   "distance": "Distance",
   "km": "km",

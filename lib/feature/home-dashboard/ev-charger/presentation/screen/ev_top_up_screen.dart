@@ -174,7 +174,7 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
             padding: const EdgeInsets.all(20),
             child: Center(
               child: Text(
-                'No payment methods available',
+                'no_payment_methods_available'.tr,
                 style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
               ),
             ),
@@ -314,6 +314,10 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
   Widget _buildTopUpButton() {
     return GetBuilder<EvTopUpController>(
       builder: (controller) {
+        final showABA = controller.isPaymentMethodEnabled('ABA');
+        final showAC = controller.isPaymentMethodEnabled('AC');
+        if (!showABA && !showAC) return const SizedBox.shrink();
+
         return SizedBox(
           width: double.infinity,
           height: 50,

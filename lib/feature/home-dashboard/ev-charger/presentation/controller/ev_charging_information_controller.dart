@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_plug_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart' show EvSaleOrderApptmpResponse;
 import 'package:express_vet/feature/home-dashboard/ev-charger/domain/uscase/ev_charger_usecase.dart';
@@ -20,8 +21,13 @@ class EvChargingInformationController extends GetxController {
 
   EvChargingInformationController(this.useCase);
 
+  static String formatValue(double? value) {
+    if (value == null) return '';
+    return value == value.toInt() ? value.toInt().toString() : value.toString();
+  }
+
   final RxBool isKwhTab = true.obs;
-  final RxInt selectedGridIndex = 0.obs;
+  final RxInt selectedGridIndex = (-1).obs;
 
   final RxList<Data> kwhList = <Data>[].obs;
   final RxList<Data> priceList = <Data>[].obs;
@@ -51,11 +57,15 @@ class EvChargingInformationController extends GetxController {
   final TextEditingController promoCodeController = TextEditingController();
   final TextEditingController pointController = TextEditingController();
 
+  final FocusNode kwhFocusNode = FocusNode();
+  final FocusNode khrFocusNode = FocusNode();
+
   final RxString chargerUsername = ''.obs;
   final RxInt plugId = 0.obs;
   final RxBool isContinuing = false.obs;
 
   final RxString inputAmount = ''.obs;
+  final RxDouble pricePerKwh = 0.0.obs;
 
   @override
   void onInit() {
@@ -65,6 +75,7 @@ class EvChargingInformationController extends GetxController {
       chargerUsername.value = args['chargerUsername']?.toString() ?? '';
       plugId.value = int.tryParse(args['plugId']?.toString() ?? '0') ?? 0;
     }
+    fetchPricePerKwh();
     fetchKwhData();
     fetchPriceData();
     fetchVoucherList();
@@ -92,7 +103,18 @@ class EvChargingInformationController extends GetxController {
       inputAmount.value = khrController.text;
     });
 
-    debounce(inputAmount, (_) => runPromotionCalculate(), time: const Duration(milliseconds: 500));
+    kwhFocusNode.addListener(() {
+      if (!kwhFocusNode.hasFocus && kwhController.text.isEmpty) {
+        _syncTextFieldWithSelection();
+      }
+    });
+    khrFocusNode.addListener(() {
+      if (!khrFocusNode.hasFocus && khrController.text.isEmpty) {
+        _syncTextFieldWithSelection();
+      }
+    });
+
+    debounce(inputAmount, (_) => runPromotionCalculate(), time: const Duration(milliseconds: 300));
   }
 
   @override
@@ -101,6 +123,8 @@ class EvChargingInformationController extends GetxController {
     khrController.dispose();
     promoCodeController.dispose();
     pointController.dispose();
+    kwhFocusNode.dispose();
+    khrFocusNode.dispose();
     super.onClose();
   }
 
@@ -140,7 +164,9 @@ class EvChargingInformationController extends GetxController {
 
   void selectTab(bool isKwh) {
     isKwhTab.value = isKwh;
-    selectedGridIndex.value = 0;
+    selectedGridIndex.value = -1;
+    kwhController.text = '';
+    khrController.text = '';
     applyVoucherDiscount.value = null;
     applyVoucherDiscountPercentage.value = null;
     selectedRedeemId.value = null;
@@ -164,27 +190,38 @@ class EvChargingInformationController extends GetxController {
     runPromotionCalculate();
   }
 
-  void _syncTextFieldWithSelection() {
+  /// Returns the display text for the currently selected option on the active tab.
+  String getSelectedOptionValue() {
     final index = selectedGridIndex.value;
-    if (isKwhTab.value) {
-      if (kwhList.isNotEmpty && index >= 0 && index < kwhList.length) {
-        final item = kwhList[index];
-        if (item.isFullCharge == 1) {
-          kwhController.text = "Full Charge";
-        } else {
-          kwhController.text = item.value?.toString() ?? "";
-        }
-      }
-    } else {
-      if (priceList.isNotEmpty && index >= 0 && index < priceList.length) {
-        final item = priceList[index];
-        if (item.isFullCharge == 1) {
-          khrController.text = "Full Charge";
-        } else {
-          khrController.text = item.value?.toString() ?? "";
-        }
-      }
+    final list = isKwhTab.value ? kwhList : priceList;
+    if (list.isNotEmpty && index >= 0 && index < list.length) {
+      final item = list[index];
+      return formatValue(item.value);
     }
+    return "";
+  }
+
+  void _syncTextFieldWithSelection() {
+    final text = getSelectedOptionValue();
+    if (text.isEmpty) return;
+    if (isKwhTab.value) {
+      kwhController.value = kwhController.value.copyWith(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    } else {
+      khrController.value = khrController.value.copyWith(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    }
+  }
+
+  bool get canContinue {
+    final text = inputAmount.value.trim().replaceAll(',', '');
+    if (text.isEmpty) return false;
+    final value = double.tryParse(text);
+    return value != null && value > 0;
   }
 
   Future<void> fetchVoucherList() async {
@@ -270,38 +307,31 @@ class EvChargingInformationController extends GetxController {
       );
       return;
     }
-    try {
-      final response = await useCase.applyVoucher(
-        context: Get.context!,
-        request: EvVoucherRequest(code: code.trim()),
-      );
 
-      if (response.body?.status == true) {
-        Get.snackbar(
-          'success'.tr,
-          response.body?.message ?? 'Voucher applied successfully',
-          backgroundColor: Colors.white,
-          colorText: Colors.green,
-          snackPosition: SnackPosition.TOP,
-        );
-        promoCodeController.text = code.trim();
-        applyVoucherDiscount.value = response.body?.discount;
-        applyVoucherDiscountPercentage.value = response.body?.discountPercentage;
-        runPromotionCalculate();
-        Get.back();
-      } else {
-        Get.snackbar(
-          'error'.tr,
-          response.body?.message ?? 'Failed to apply voucher',
-          backgroundColor: Colors.white,
-          colorText: Colors.red,
-          snackPosition: SnackPosition.TOP,
-        );
-      }
-    } catch (e) {
+    promoCodeController.text = code.trim();
+    calculateResponse.value = null;
+    applyVoucherDiscount.value = null;
+    applyVoucherDiscountPercentage.value = null;
+
+    await runPromotionCalculate();
+
+    final response = calculateResponse.value;
+    if (response?.body?.status == true) {
+      final calculatedData = response?.body?.data;
+      applyVoucherDiscount.value = calculatedData?.discountAmountKhr;
+      applyVoucherDiscountPercentage.value = calculatedData?.discountPercentage;
+      Get.snackbar(
+        'success'.tr,
+        response?.body?.message ?? 'Promotion applied successfully',
+        backgroundColor: Colors.white,
+        colorText: Colors.green,
+        snackPosition: SnackPosition.TOP,
+      );
+      Get.back();
+    } else {
       Get.snackbar(
         'error'.tr,
-        e.toString(),
+        response?.body?.message ?? 'Failed to apply promotion',
         backgroundColor: Colors.white,
         colorText: Colors.red,
         snackPosition: SnackPosition.TOP,
@@ -318,61 +348,102 @@ class EvChargingInformationController extends GetxController {
     return null;
   }
 
-  int getCalculatedTotalKwh() {
-    if (isKwhTab.value) {
-      final text = kwhController.text.trim();
-      if (text == "Full Charge" || text.isEmpty) {
-        for (var item in kwhList) {
-          if (item.isFullCharge == 1) {
-            return (item.value ?? 999.0).round();
-          }
-        }
-        return 999;
+  double get _rate => pricePerKwh.value > 0 ? pricePerKwh.value : 2400.0;
+
+  Future<void> fetchPricePerKwh() async {
+    final username = chargerUsername.value.isEmpty ? 'ev01' : chargerUsername.value;
+    try {
+      final res = await useCase.evPricePerWkh(
+        context: Get.context!,
+        request: EvPlugRequest(chargerUserName: username),
+      );
+      if (res.header?.result == true && res.header?.statusCode == 200) {
+        pricePerKwh.value = res.body?.data?.pricePerKwh ?? 2400.0;
+      } else {
+        pricePerKwh.value = 2400.0;
       }
-      final val = double.tryParse(text) ?? 10.0;
-      return val.round();
-    } else {
-      final text = khrController.text.replaceAll(',', '').trim();
-      if (text == "Full Charge" || text.isEmpty) {
-        for (var item in priceList) {
-          if (item.isFullCharge == 1) {
-            return ((item.value ?? 100000.0) / 2400).round();
-          }
-        }
-        return 42;
-      }
-      final priceVal = double.tryParse(text) ?? 12000.0;
-      return (priceVal / 2400).round();
+    } catch (e) {
+      debugPrint('Error fetching price per kWh: $e');
+      pricePerKwh.value = 2400.0;
+    } finally {
+      runPromotionCalculate();
     }
   }
 
-  int getCalculatedTotalPrice() {
+  int getCalculatedTotalKwh() {
     if (isKwhTab.value) {
       final text = kwhController.text.trim();
-      if (text == "Full Charge" || text.isEmpty) {
-        for (var item in kwhList) {
-          if (item.isFullCharge == 1) {
-            return ((item.value ?? 999.0) * 2400).round();
-          }
-        }
-        return (999.0 * 2400).round();
-      }
-      final val = double.tryParse(text) ?? 10.0;
-      return (val * 2400).round();
+      if (text.isEmpty) return 0;
+      final val = double.tryParse(text) ?? 0.0;
+      return val.round();
     } else {
       final text = khrController.text.replaceAll(',', '').trim();
-      if (text == "Full Charge" || text.isEmpty) {
-        for (var item in priceList) {
-          if (item.isFullCharge == 1) {
-            return (item.value ?? 100000.0).round();
-          }
-        }
-        return 100000;
-      }
-      final priceVal = double.tryParse(text) ?? 12000.0;
-      return priceVal.round();
+      if (text.isEmpty) return 0;
+      final priceVal = double.tryParse(text) ?? 0.0;
+      return (priceVal / _rate).round();
     }
   }
+
+  double getCalculatedTotalPrice() {
+    if (isKwhTab.value) {
+      final text = kwhController.text.trim();
+
+      if (text == "Full Charge") {
+        for (var item in kwhList) {
+          if (item.isFullCharge == 1) {
+            return (item.value ?? 999.0) * _rate;
+          }
+        }
+        return 999.0 * _rate;
+      }
+
+      if (text.isEmpty) return 0.0;
+      final val = double.tryParse(text) ?? 0.0;
+      return val * _rate;
+    } else {
+      final text = khrController.text.replaceAll(',', '').trim();
+
+      if (text == "Full Charge") {
+        for (var item in priceList) {
+          if (item.isFullCharge == 1) {
+            return item.value ?? 100000.0;
+          }
+        }
+        return 100000.0;
+      }
+
+      if (text.isEmpty) return 0.0;
+      return double.tryParse(text) ?? 0.0;
+    }
+  }
+
+  // int getCalculatedTotalPrice() {
+  //   if (isKwhTab.value) {
+  //     final text = kwhController.text.trim();
+  //     if (text == "Full Charge" || text.isEmpty) {
+  //       for (var item in kwhList) {
+  //         if (item.isFullCharge == 1) {
+  //           return ((item.value ?? 999.0) * 2400).round();
+  //         }
+  //       }
+  //       return (999.0 * 2400).round();
+  //     }
+  //     final val = double.tryParse(text) ?? 10.0;
+  //     return (val * 2400).round();
+  //   } else {
+  //     final text = khrController.text.replaceAll(',', '').trim();
+  //     if (text == "Full Charge" || text.isEmpty) {
+  //       for (var item in priceList) {
+  //         if (item.isFullCharge == 1) {
+  //           return (item.value ?? 100000.0).round();
+  //         }
+  //       }
+  //       return 100000;
+  //     }
+  //     final priceVal = double.tryParse(text) ?? 12000.0;
+  //     return priceVal.round();
+  //   }
+  // }
 
   int getCalculatedDiscount() {
     if (applyVoucherDiscount.value != null) {
@@ -415,7 +486,7 @@ class EvChargingInformationController extends GetxController {
     return 0;
   }
 
-  int getCalculatedGrandTotalPrice() {
+  double getCalculatedGrandTotalPrice() {
     final totalPrice = getCalculatedTotalPrice();
     final discount = getCalculatedDiscount();
     final grandTotal = totalPrice - discount;
@@ -433,7 +504,8 @@ class EvChargingInformationController extends GetxController {
       final request = EvSaleOrderApptmpRequest(
         chargerUsername: chargerUsername.value.isEmpty ? 'ev01' : chargerUsername.value,
         plugId: plugId.value == 0 ? 1 : plugId.value,
-        paymentMethod: 3,
+        // paymentMethod: 3,
+        paymentMethod: 5,
         discountPercentage: getCalculatedDiscountPercentage(),
         discount: getCalculatedDiscount(),
         voucherId: appliedVoucher?.id ?? 0,
@@ -452,7 +524,7 @@ class EvChargingInformationController extends GetxController {
 
       debugPrint("ev sale order apptmp response: ${jsonEncode(response.toJson())}");
 
-      if (response.header?.statusCode == 200) {
+      if (response.header?.statusCode == 200 && response.body?.status == true) {
         Loading().loadingClose();
         didNavigate = true;
         await Future.delayed(const Duration(milliseconds: 100));
@@ -463,6 +535,7 @@ class EvChargingInformationController extends GetxController {
         return response;
       }
 
+      Loading().loadingClose();
       Get.snackbar(
         'error'.tr,
         response.body?.message ?? 'Failed to create sale order',
@@ -472,6 +545,7 @@ class EvChargingInformationController extends GetxController {
       );
       return null;
     } catch (e) {
+      Loading().loadingClose();
       Get.snackbar(
         'error'.tr,
         e.toString(),

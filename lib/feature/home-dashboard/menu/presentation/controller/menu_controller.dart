@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/feature/auth/data/model/response/check_version_response.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:express_vet/feature/auth/presentation/binding/auth_binding.dart';
@@ -92,6 +97,14 @@ class MenuController extends StateController<MenuUiState>
       } catch (_) {}
 
       await _refreshUserStatics();
+
+      if (Get.context != null) {
+        try {
+          await checkVersionUpdate(Get.context!);
+        } catch (e) {
+          debugPrint('checkVersionUpdate error: $e');
+        }
+      }
 
       _initialized = true;
     }
@@ -257,7 +270,174 @@ class MenuController extends StateController<MenuUiState>
     final context = Get.context;
     if (context == null) return;
     ScaffoldMessenger.of(
-      context,
+      Get.context!,
     ).showSnackBar(SnackBar(content: Text('can_not_open'.tr)));
   }
+
+  // ===========
+
+checkVersionUpdate(context) async {
+  try {
+    final response = await http
+        .post(Uri.parse('${BaseUrl.BASE_URL}auth/checkVersion'))
+        .timeout(const Duration(seconds: Constrains.timeout30));
+
+    if (response.statusCode == 200) {
+      debugPrint('==========> This is response check version ==>>${response.body}');
+      final checkVersionResponse = CheckVersionResponse.fromJson(jsonDecode(response.body));
+      if (Platform.isAndroid) {
+        if (double.parse((checkVersionResponse.body?.android).toString()) >
+            double.parse(BaseUrl.APP_VERSION)) {
+          showDialog(
+            barrierColor: Colors.black26,
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return androidUpdate(context);
+            },
+          );
+        }
+      } else {
+        if (double.parse((checkVersionResponse.body?.ios).toString()) >
+            double.parse(BaseUrl.APP_VERSION)) {
+          showDialog(
+            barrierColor: Colors.black26,
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return iosUpdate(context);
+            },
+          );
+        }
+      }
+    } else {
+      throw Exception('Failed to load to server!!');
+    }
+  } catch (e) {
+    throw Exception('Failed to load to server!!');
+  }
+}
+
+Dialog androidUpdate(context) {
+  return Dialog(
+    elevation: 0,
+    backgroundColor: const Color(0xffffffff),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+    child: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 15),
+          Text('update'.tr, style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 30),
+          Text('update_info'.tr, textAlign: TextAlign.start),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Visibility(
+                    visible: false,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      width: MediaQuery.of(context).size.width / 4,
+                      height: 50,
+                      child: Center(
+                        child: Text('No thanks', style: TextStyle(color: Colors.green[700])),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                InkWell(
+                  onTap: () {
+                    openDeepLink(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green[700],
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    width: MediaQuery.of(context).size.width / 4,
+                    height: 50,
+                    child: Center(
+                      child: Text('update_now'.tr, style: const TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+          Image.asset('assets/images/play_store.png', height: 40),
+        ],
+      ),
+    ),
+  );
+}
+
+Dialog iosUpdate(context) {
+  return Dialog(
+    elevation: 0,
+    backgroundColor: const Color(0xffffffff),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+    child: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 15),
+          Text('update'.tr, style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 30),
+          Text('update_info'.tr, textAlign: TextAlign.center),
+          const SizedBox(height: 20),
+          const Divider(),
+          InkWell(
+            onTap: () {
+              openDeepLink(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Text(
+                  'update_now'.tr,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Future<void> openDeepLink(context) async {
+  Navigator.pop(context);
+  if (Platform.isAndroid) {
+    final Uri playStoreUrl = Uri.parse(
+      'https://play.google.com/store/apps/details?id=vireak_bunthan.udaya.com.vet_logistic',
+    );
+    await launchUrl(playStoreUrl, mode: LaunchMode.externalApplication);
+  } else if (Platform.isIOS) {
+    final Uri appStoreUrl = Uri.parse(
+      'https://apps.apple.com/al/app/aba-mobile-bank/id1326432564',
+    );
+    await launchUrl(appStoreUrl, mode: LaunchMode.externalApplication);
+  }
+}
 }

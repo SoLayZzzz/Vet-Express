@@ -8,19 +8,18 @@ import '../../data/network/ev_charging_websocket.dart';
 import 'ev_charger_controller.dart';
 
 class EvDetailChargingController extends GetxController {
-  final RxInt percent = 1.obs;
-  final RxString estimatedTime = '30 mins'.obs;
-  final RxString timeElapsed = '14 mins'.obs;
-  final RxString current = '60 A'.obs;
-  final RxString voltage = '500 V'.obs;
-  final RxString energy = '6 / 15 kWh'.obs;
-  final RxString estimatedCost = '៛2,000.00'.obs;
+  final RxInt percent = 0.obs;
+  final RxString estimatedTime = ''.obs;
+  final RxString timeElapsed = ''.obs;
+  final RxString current = ''.obs;
+  final RxString voltage = ''.obs;
+  final RxString energy = ''.obs;
+  final RxString estimatedCost = ''.obs;
   final RxString transactionId = ''.obs;
   final RxString chargerUsername = ''.obs;
 
   WebSocketChannel? _channel;
   StreamSubscription? _wsSubscription;
-  Timer? _timer;
   bool _shouldReconnect = true;
   Timer? _reconnectTimer;
   Completer<bool>? _stopCompleter;
@@ -34,15 +33,6 @@ class EvDetailChargingController extends GetxController {
       chargerUsername.value = args['chargerUsername'] ?? '';
     }
 
-    _timer = Timer.periodic(const Duration(milliseconds: 80), (_) {
-      if (percent.value >= 100) {
-        _timer?.cancel();
-        _timer = null;
-        return;
-      }
-      percent.value = (percent.value + 1).clamp(0, 100);
-    });
-
     _connectWebSocket();
   }
 
@@ -55,12 +45,18 @@ class EvDetailChargingController extends GetxController {
     try {
       _channel = WebSocketChannel.connect(Uri.parse(wsUrl));
 
-      final stompSend =
-          'SEND\ndestination:/topic/ocpi/commands/$username\ncontent-type:application/json\n\n\u0000';
+      final stompConnect = 'CONNECT\naccept-version:1.1,1.2\nheart-beat:10000,10000\n\n\u0000';
+      final stompSubscribe = 'SUBSCRIBE\nid:sub-0\ndestination:/topic/ocpi/metervalues/$username\n\n\u0000';
 
-      debugPrint('destination:/topic/ocpi/commands/$username');
-      debugPrint('content-type:application/json');
-      _channel!.sink.add(stompSend);
+      debugPrint('Sending STOMP CONNECT');
+      _channel!.sink.add(stompConnect);
+
+      Future.delayed(const Duration(milliseconds: 250), () {
+        if (_channel != null && _shouldReconnect) {
+          debugPrint('Sending STOMP SUBSCRIBE to /topic/ocpi/metervalues/$username');
+          _channel!.sink.add(stompSubscribe);
+        }
+      });
 
       _wsSubscription = _channel!.stream.listen(
         (message) {
@@ -105,8 +101,6 @@ class EvDetailChargingController extends GetxController {
       final dataMap = jsonDecode(rawJson);
       if (dataMap is Map<String, dynamic>) {
         final chargingData = EvChargingData.fromJson(dataMap);
-        _timer?.cancel();
-        _timer = null;
 
         percent.value = chargingData.percent;
         estimatedTime.value = chargingData.estimatedTime;
@@ -136,13 +130,9 @@ class EvDetailChargingController extends GetxController {
   }
 
   Future<bool> stopCharging() {
-    _timer?.cancel();
-    _timer = null;
-
     final username = chargerUsername.value.isNotEmpty ? chargerUsername.value : 'ev01';
     final data = {
       'command_type': 'STOP_SESSION',
-      'command_tpye': 'STOP_SESSION',
       'transactionId': transactionId.value,
     };
     final payload = jsonEncode(data);
@@ -153,7 +143,7 @@ class EvDetailChargingController extends GetxController {
 
     _stopCompleter = Completer<bool>();
     return _stopCompleter!.future.timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: 5),
       onTimeout: () => true,
     );
   }
@@ -162,11 +152,10 @@ class EvDetailChargingController extends GetxController {
   void onClose() {
     _shouldReconnect = false;
     _reconnectTimer?.cancel();
-    _timer?.cancel();
     _wsSubscription?.cancel();
     _channel?.sink.close();
     if (Get.isRegistered<EvChargerController>()) {
-      Get.find<EvChargerController>().fetchChargingStatus();
+      Get.find<EvChargerController>().fetchChargingStatus(force: true);
     }
     super.onClose();
   }

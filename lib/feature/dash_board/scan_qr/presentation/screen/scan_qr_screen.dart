@@ -50,9 +50,10 @@ class _ScanQrScreenState extends State<ScanQrScreen> with WidgetsBindingObserver
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Restart scanner when app is resumed (e.g., returning from bottom nav)
+    // Restart scanner when app is resumed (e.g., returning from system settings after granting permission)
     if (state == AppLifecycleState.resumed) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.onAppResumed();
         controller.onScreenVisible();
       });
     }
@@ -63,6 +64,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> with WidgetsBindingObserver
     super.didChangeDependencies();
     // Restart scanner when returning from navigation (e.g., bottom nav)
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.onAppResumed();
       controller.onScreenVisible();
     });
   }

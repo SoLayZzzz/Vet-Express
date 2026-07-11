@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:express_vet/base/network_data_source.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_plug_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_sale_order_apptmp_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
@@ -10,7 +11,9 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_plug_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_pricePerWkh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_apply_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart';
@@ -268,6 +271,7 @@ class EvChargerNetworkRequest {
     required dynamic context,
   }) async {
     try {
+      debugPrint('fetchWalletAmount endpoint: ${Endpoint.evSaleOrderWalletAmount}');
       final json = await evDataSource.postJson(
         Endpoint.evSaleOrderWalletAmount,
         timeout: const Duration(seconds: Constrains.timeout30),
@@ -650,11 +654,48 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      debugPrint('======> fetchChargingStatus response: ${jsonEncode(json)}');
+      debugPrint('======> fetchChoosePaymentMethod response: ${jsonEncode(json)}');
       return ChoosePaymentResponse.fromJson(json);
     } catch (_) {
       rethrow;
     }
   }
+
+  Future<EvPlugResponse> evPlug({
+    required dynamic context,
+    required EvPlugRequest request,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evGunList,
+        body: request.toJson(),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('======> evPlug response: ${jsonEncode(json)}');
+      return EvPlugResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+ Future<EvPricePerWkhResponse> evPricePerWkh({
+    required dynamic context,
+    required EvPlugRequest request,
+  }) async {
+    try {
+      final json = await evDataSource.postJson(
+        Endpoint.evPricePerKwh,
+        body: request.toJson(),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('======> evPricePerWkh response: ${jsonEncode(json)}');
+      return EvPricePerWkhResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
 }
 

@@ -390,19 +390,20 @@ class EvTopUpController extends GetxController {
     try {
       isLoadingPaymentMethods(true);
       // Real data from Api
-      // final response = await useCase.fetchChoosePaymentMethod(
-      //   context: Get.context!,
-      // );
-      // if (response.status) {
-      //   paymentMethods.assignAll(response.data.data);
-      // }
+      final response = await useCase.fetchChoosePaymentMethod(
+        context: Get.context!,
+      );
+      if (response.header?.result == true && response.header?.statusCode == 200) {
+        final methods = response.body?.data ?? [];
+        paymentMethods.assignAll(methods);
+      }
 
       // Fake data for testing
-      paymentMethods.assignAll([
-        Datum(name: 'ABA', status: 1),
-        Datum(name: 'AC', status: 0),
-      ]);
-      
+      // paymentMethods.assignAll([
+      //   Datum(name: 'ABA', status: 1),
+      //   Datum(name: 'AC', status: 0),
+      // ]);
+
     } catch (e) {
       debugPrint('Error fetching payment methods: $e');
     } finally {

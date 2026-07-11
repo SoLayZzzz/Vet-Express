@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../../../base/base_url.dart';
 import '../../../../../base/state_controller.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
+import '../../../../../routes/app_routes.dart';
 import '../../data/model/response/ev_contact_response.dart';
 import '../../data/model/response/ev_news_feed_response.dart';
 import '../../data/model/response/ev_slide_show_response.dart';
@@ -26,7 +27,21 @@ class EvChargerController extends StateController<EvChargerUiState> {
   final RxInt isCharging = 0.obs;
   final RxString chargingTransactionId = ''.obs;
   final RxString chargingChargerUsername = ''.obs;
+  final RxBool isChargingLoading = false.obs;
+  bool isChargingStatusLoaded = false;
+  bool _hasChargingStatusLoaded = false;
+  bool _isChargingStatusRequestInProgress = false;
   Timer? _chargingStatusTimer;
+  Timer? _timeTimer;
+  StreamController<DateTime>? _timeController;
+
+  Stream<DateTime> get timeStream {
+    _timeController ??= StreamController<DateTime>.broadcast();
+    _timeTimer ??= Timer.periodic(const Duration(minutes: 1), (_) {
+      _timeController?.add(DateTime.now());
+    });
+    return _timeController!.stream;
+  }
 
   EvChargerController(this.useCase);
 
@@ -42,7 +57,7 @@ class EvChargerController extends StateController<EvChargerUiState> {
       }
     });
     loadHomeData();
-    _chargingStatusTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    _chargingStatusTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       fetchChargingStatus();
     });
   }
@@ -50,6 +65,8 @@ class EvChargerController extends StateController<EvChargerUiState> {
   @override
   void onClose() {
     _chargingStatusTimer?.cancel();
+    _timeTimer?.cancel();
+    _timeController?.close();
     super.onClose();
   }
 
@@ -534,7 +551,18 @@ class EvChargerController extends StateController<EvChargerUiState> {
     return double.tryParse(amount) ?? 0.0;
   }
 
-  Future<void> fetchChargingStatus() async {
+  Future<void> fetchChargingStatus({bool force = false}) async {
+    if (!force &&
+        Get.currentRoute.isNotEmpty &&
+        Get.currentRoute != AppRoutes.evCharger &&
+        Get.currentRoute != AppRoutes.evDetailCharging) {
+      return;
+    }
+    if (_isChargingStatusRequestInProgress) return;
+    _isChargingStatusRequestInProgress = true;
+    if (!_hasChargingStatusLoaded) {
+      isChargingLoading.value = true;
+    }
     try {
       final EvChargingStatusResponse res = await useCase.fetchChargingStatus(
         context: Get.context!,
@@ -545,8 +573,23 @@ class EvChargerController extends StateController<EvChargerUiState> {
         isCharging.value = chargingStatus ?? 0;
         chargingTransactionId.value = res.body?.data?.transactionId ?? '';
         chargingChargerUsername.value = res.body?.data?.chargerUsername ?? '';
+
+        if (isCharging.value == 1 && !_hasChargingStatusLoaded) {
+          _hasChargingStatusLoaded = true;
+          // Show the loading placeholder briefly before revealing the card the first time.
+          Future.delayed(const Duration(milliseconds: 300), () {
+            isChargingLoading.value = false;
+          });
+        }
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      isChargingStatusLoaded = true;
+      if (!_hasChargingStatusLoaded) {
+        isChargingLoading.value = false;
+      }
+      _isChargingStatusRequestInProgress = false;
+    }
   }
 
   Future<EvCalculateResponse> evCalculate({

@@ -47,8 +47,8 @@ android {
         applicationId = "vireak_bunthan.udaya.com.vet_logistic"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 124
-        versionName = "2.1.3"
+        versionCode = 128
+        versionName = "2.2.0"
     }
 
     signingConfigs {

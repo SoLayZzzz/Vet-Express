@@ -78,15 +78,15 @@ class BaseUrl {
   // Use for chagring ev
   static final String BASE_URL_WEB_SOCKET =
       _flavor == 'prod'
-          ? 'wss://qacltom.udaya-tech.com/OCPI/ws'
+          ? 'wss://newpapi.utebi.com/OCPI/ws'
           : 'wss://qacltom.udaya-tech.com/OCPI/ws';
 
   // Version App
-  static String APP_VERSION_ANDROID = '2.1.4';
-  static String APP_VERSION_IOS = '2.1.4';
+  static String APP_VERSION_ANDROID = '2.2.0'; 
+  static String APP_VERSION_IOS = '2.2.0';
 
   // for check app update must be double value
-  static String APP_VERSION = '2.14';
+  static String APP_VERSION = '2.20';
 }
 
 

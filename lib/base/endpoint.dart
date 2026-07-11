@@ -119,6 +119,7 @@ class Endpoint {
 
   static const String evDropdownContactUsList = 'dropdown/contact-us/list';
   static const String evDropdownFaqsList = 'dropdown/faqs/list';
+  static const String evGunList = 'dropdown/gun/list';
   static const String evDropdownPrivacyPolicyList =
       'dropdown/privacy-policy/list';
   static const String evDropdownSlideShowsList = 'dropdown/slide-shows/list';
@@ -159,4 +160,5 @@ class Endpoint {
   static const String ev_checkZone = 'station/check-zone';
   static const String ev_calculate = 'promotion/calculate';
   static const String ev_choosePayment = 'payment/methods';
+  static const String evPricePerKwh = 'station/price-per-kwh';
 }

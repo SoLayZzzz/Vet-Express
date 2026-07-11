@@ -1,13 +1,17 @@
-import 'dart:developer';
+import 'dart:async';
+
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_scan_qr_response.dart'
     as ev_scan;
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_plug_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_plug_response.dart' as ev_plug;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:location/location.dart' as loc_pkg;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_station_controller.dart';
 import 'ev_wallet_controller.dart';
+import '../../../../../utils/alert_dialog.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 import '../../../../../routes/app_routes.dart';
 
@@ -38,13 +42,139 @@ class EvScannerController extends GetxController {
   var scanResult = Rx<String?>(null);
   var transactionData = Rxn<ev_scan.Datum>();
   var errorMessage = Rx<String?>(null);
+  var plugList = RxList<ev_plug.Data>();
+
+  // Permission state
+  bool _isPermissionDialogOpen = false;
+  bool _openingAppSettings = false;
+  bool _isDisposed = false;
 
   // Mobile Scanner Controller
   final MobileScannerController cameraController = MobileScannerController(
+    autoStart: false,
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
     torchEnabled: false,
   );
+
+  /// Resets permission flags when the app returns from the background/system settings.
+  void onAppResumed() {
+    debugPrint('EvScannerController: App resumed, resetting permission flags.');
+    _openingAppSettings = false;
+    _isPermissionDialogOpen = false;
+  }
+
+  /// Ensures camera permission is granted. Requests it if denied, and shows a
+  /// settings dialog if permanently denied. Returns true if granted.
+  Future<bool> ensureCameraPermission() async {
+    try {
+      final status = await Permission.camera.status;
+      debugPrint('EvScannerController: Camera permission status: $status');
+      if (status.isGranted) return true;
+
+      if (_openingAppSettings || _isPermissionDialogOpen) {
+        debugPrint(
+          'EvScannerController: Already routing to settings or permission dialog open.',
+        );
+        return false;
+      }
+
+      if (status.isDenied || status.isLimited) {
+        debugPrint('EvScannerController: Requesting camera permission...');
+        final req = await Permission.camera.request();
+        debugPrint('EvScannerController: Camera permission request result: $req');
+        if (req.isGranted) return true;
+      }
+
+      debugPrint(
+        'EvScannerController: Permission denied. Showing custom permission alert dialog.',
+      );
+      await _displayPermissionDialog(
+        'information'.tr,
+        'camera_permission_error'.tr,
+      );
+      return false;
+    } catch (e) {
+      debugPrint('EvScannerController: ensureCameraPermission error: $e');
+      return false;
+    }
+  }
+
+  Future<void> _displayPermissionDialog(
+    String title,
+    String description,
+  ) async {
+    if (_isPermissionDialogOpen) return;
+    _isPermissionDialogOpen = true;
+
+    final completer = Completer<void>();
+
+    alertDialogTwoButton(
+      title: title,
+      description: description,
+      buttonText1: 'cancel'.tr,
+      buttonText2: 'setting'.tr,
+      onButtonPressed1: () {
+        Get.back();
+        if (!completer.isCompleted) completer.complete();
+      },
+      onButtonPressed2: () async {
+        Get.back();
+        _isPermissionDialogOpen = false;
+        _openingAppSettings = true;
+        if (!completer.isCompleted) completer.complete();
+        debugPrint('EvScannerController: Routing to App Settings...');
+        await openAppSettings();
+      },
+    );
+
+    await completer.future;
+    if (!_openingAppSettings) {
+      _isPermissionDialogOpen = false;
+    }
+  }
+
+  /// Starts the camera after verifying permission. Call this when the screen
+  /// becomes visible or when the app is resumed from settings.
+  Future<void> startCamera() async {
+    if (_isDisposed) return;
+    debugPrint(
+      'EvScannerController: startCamera() requested. isRunning: ${cameraController.value.isRunning}',
+    );
+    if (cameraController.value.isRunning) return;
+
+    try {
+      final allowed = await ensureCameraPermission();
+      if (!allowed || _isDisposed) return;
+      if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+        return;
+      }
+      debugPrint('EvScannerController: Starting camera scanner...');
+      await cameraController.start();
+      debugPrint('EvScannerController: Camera scanner successfully started.');
+    } on MobileScannerException catch (e) {
+      debugPrint('EvScannerController: Error starting scanner: $e');
+      final message = e.toString().toLowerCase();
+      if (message.contains('permission')) {
+        await _displayPermissionDialog(
+          'information'.tr,
+          'camera_permission_error'.tr,
+        );
+      }
+    } catch (e) {
+      debugPrint('EvScannerController: Error starting scanner: $e');
+    }
+  }
+
+  Future<void> stopCamera() async {
+    try {
+      if (cameraController.value.isRunning) {
+        await cameraController.stop();
+      }
+    } catch (e) {
+      debugPrint('EvScannerController: Error stopping scanner: $e');
+    }
+  }
 
   // Handle QR detection
   void onQRDetect(BarcodeCapture capture) {
@@ -176,7 +306,7 @@ class EvScannerController extends GetxController {
           retryScan();
         },
       ),
-      barrierColor: Colors.black.withOpacity(0.8),
+      barrierColor: Colors.black.withValues(alpha: 0.8),
       barrierDismissible: false,
     );
   }
@@ -199,7 +329,7 @@ class EvScannerController extends GetxController {
           retryScan(); // Restart scanning
         },
       ),
-      barrierColor: Colors.black.withOpacity(0.8),
+      barrierColor: Colors.black.withValues(alpha: 0.8),
       barrierDismissible: false,
     );
   }
@@ -385,9 +515,7 @@ class EvScannerController extends GetxController {
     resetScanner();
     isScanning.value = true;
     // Restart the camera so it can detect QR codes again
-    try {
-      cameraController.start();
-    } catch (_) {}
+    startCamera();
   }
 
   void resetScanner() {
@@ -396,6 +524,24 @@ class EvScannerController extends GetxController {
     scanResult.value = null;
     transactionData.value = null;
     errorMessage.value = null;
+    plugList.clear();
+  }
+
+  Future<bool> fetchPlugList(String chargerUsername) async {
+    try {
+      final request = EvPlugRequest(chargerUserName: chargerUsername);
+      final response = await useCase.evPlug(
+        context: Get.context!,
+        request: request,
+      );
+      if (response.body?.status == true && response.body?.data != null) {
+        plugList.assignAll(response.body!.data!);
+        return plugList.isNotEmpty;
+      }
+    } catch (e) {
+      debugPrint('EvScannerController.fetchPlugList error: $e');
+    }
+    return false;
   }
 
   Future<bool> checkZone(String chargerUsername) async {
@@ -453,7 +599,13 @@ class EvScannerController extends GetxController {
 
     if (inZone) {
       scanResult.value = chargerUsername;
-      onSuccess();
+      final hasPlugs = await fetchPlugList(chargerUsername);
+      if (hasPlugs) {
+        onSuccess();
+      } else {
+        errorMessage.value = "No available plug found for this station.";
+        onFailure();
+      }
     } else {
       errorMessage.value = "You are not in the station zone.";
       onFailure();
@@ -462,7 +614,8 @@ class EvScannerController extends GetxController {
 
   @override
   void onClose() {
-    cameraController.dispose();
+    _isDisposed = true;
+    stopCamera().then((_) => cameraController.dispose()).catchError((_) {});
     super.onClose();
   }
 }
@@ -714,7 +867,7 @@ class _FullScreenPaymentSuccessDialog extends StatelessWidget {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
+                        color: Colors.green.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -765,7 +918,7 @@ class _FullScreenPaymentSuccessDialog extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 15,
                       offset: const Offset(0, -5),
                     ),

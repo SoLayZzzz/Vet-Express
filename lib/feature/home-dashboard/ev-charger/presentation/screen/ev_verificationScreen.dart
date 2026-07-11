@@ -53,6 +53,13 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
   void initState() {
     super.initState();
     _orderArgs = Get.arguments;
+    debugPrint('====>> [EvVerificationScreen] _orderArgs runtimeType: ${_orderArgs.runtimeType}');
+    debugPrint('====>> [EvVerificationScreen] _orderArgs: $_orderArgs');
+    if (_orderArgs is EvSaleOrderApptmpResponse) {
+      try {
+        debugPrint('====>> [EvVerificationScreen] order args JSON: ${jsonEncode(_orderArgs.toJson())}');
+      } catch (_) {}
+    }
     final args = _orderArgs;
     if (args != null && args is EvSaleOrderApptmpResponse) {
       final orderData = args.body?.data;
@@ -65,6 +72,16 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
       _totalKwh = '${orderData?.totalKwh ?? 0} kWh';
       _showDiscount = (orderData?.discount ?? 0) > 0;
       _discountLabel = "${'discount'.tr} (${orderData?.discountPercentage ?? 0}%)";
+      debugPrint('====>> [EvVerificationScreen] parsed from EvSaleOrderApptmpResponse:');
+      debugPrint('transactionId: $_transactionId');
+      debugPrint('stationName: $_stationName');
+      debugPrint('orderDate: $_orderDate');
+      debugPrint('subTotal: $_subTotal');
+      debugPrint('discount: $_discount');
+      debugPrint('totalAmount: $_totalAmount');
+      debugPrint('totalKwh: $_totalKwh');
+      debugPrint('discountPercentage: ${orderData?.discountPercentage ?? 0}');
+      debugPrint('showDiscount: $_showDiscount');
     } else if (args != null && args is Map) {
       _transactionId = args['transactionId']?.toString() ?? 'N/A';
       _stationName = args['stationName']?.toString() ?? 'N/A';
@@ -77,6 +94,15 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
       final parsedDiscount = double.tryParse(cleanDiscount) ?? 0.0;
       _showDiscount = parsedDiscount > 0;
       _discountLabel = 'discount'.tr;
+      debugPrint('====>> [EvVerificationScreen] parsed from Map:');
+      debugPrint('transactionId: $_transactionId');
+      debugPrint('stationName: $_stationName');
+      debugPrint('orderDate: $_orderDate');
+      debugPrint('subTotal: $_subTotal');
+      debugPrint('discount: $_discount');
+      debugPrint('totalAmount: $_totalAmount');
+      debugPrint('totalKwh: $_totalKwh');
+      debugPrint('showDiscount: $_showDiscount');
     } else {
       _transactionId = '00001';
       _stationName = 'Station 1';
@@ -279,12 +305,12 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
       // Extract transactionId, totalKwh, and totalPrice from the response data, default to 0 if not present
       String transactionIdVal = "0";
       int totalKwhVal = 0;
-      int totalPriceVal = 0;
+      double totalPriceVal = 0;
 
       if (orderData != null) {
         transactionIdVal = orderData.transactionId ?? "0";
         totalKwhVal = orderData.totalKwh ?? 0;
-        totalPriceVal = orderData.totalAmount ?? 0;
+        totalPriceVal = (orderData.totalAmount ?? 0).toDouble();
       } else if (args != null && args is Map) {
         transactionIdVal = args['transactionId']?.toString() ?? "0";
         
@@ -294,7 +320,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
 
         final priceStr = (args['totalAmount'] ?? args['subTotal'] ?? args['totalPrice'] ?? "0").toString();
         final cleanPrice = priceStr.replaceAll(RegExp(r'[^0-9.]'), '');
-        totalPriceVal = double.tryParse(cleanPrice)?.round() ?? 0;
+        totalPriceVal = double.tryParse(cleanPrice) ?? 0.0;
       }
 
 
@@ -313,7 +339,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
         'evse_uid': evseUidVal,
         'transactionId': transactionIdVal,
         'isFullCharge': isFullChargeVal,
-        'paymentMethod': 3,
+        'paymentMethod': 5,
         'plug': plugIdVal,
         'durations': 0,
         'totalKwh': totalKwhVal,

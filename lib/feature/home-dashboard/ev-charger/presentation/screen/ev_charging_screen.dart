@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/value_statics.dart';
+import '../../../../../base/endpoint.dart';
 import '../controller/ev_charger_controller.dart';
 import '../controller/ev_wallet_controller.dart';
 import '../../../../../utils/app_colors.dart';
@@ -35,6 +37,8 @@ class EvChargerScreen extends GetView<EvChargerController> {
     return Scaffold(
       appBar: _buildAppBar(),
       body: Obx(() {
+        // Ensure Obx is always listening to isCharging so it rebuilds in real time
+        final _ = controller.isCharging.value;
         final s = controller.state;
 
         final isInitialLoading =
@@ -153,14 +157,27 @@ class EvChargerScreen extends GetView<EvChargerController> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Obx(() {
-              if (controller.isCharging.value != 1) {
-                return const SizedBox.shrink();
-              }
-              return Column(
-                children: [_buildCardCharging(), const SizedBox(height: 15)],
-              );
-            }),
+            // New Ui
+            // Obx(() {
+            //   if (controller.isCharging.value != 1) {
+            //     return const SizedBox.shrink();
+            //   }
+            //   if (controller.isChargingLoading.value) {
+            //     return Column(
+            //       children: [
+            //         _buildCardChargingLoading(),
+            //         const SizedBox(height: 15),
+            //       ],
+            //     );
+            //   }
+            //   return Column(
+            //     children: [_buildCardCharging(), const SizedBox(height: 15)],
+            //   );
+            // }),
+
+            // Fake
+            _buildCardCharging(),
+            const SizedBox(height: 15),
 
             _buildBalanceCard(),
 
@@ -176,6 +193,46 @@ class EvChargerScreen extends GetView<EvChargerController> {
         ),
       ),
     );
+  }
+
+  Widget _buildSectionIcon(int hour) {
+    if (hour >= 0 && hour < 12) {
+      return const Icon(
+        Icons.wb_sunny,
+        size: 30,
+        color: Colors.orange,
+      );
+    } else if (hour >= 12 && hour < 17) {
+      return const Icon(
+        Icons.wb_cloudy,
+        size: 30,
+        color: Colors.amber,
+      );
+    } else {
+      return const Icon(
+        Icons.nights_stay,
+        size: 30,
+        color: Colors.indigo,
+      );
+    }
+  }
+
+  String _getGreetingWithUserName() {
+    if (controller.isCharging.value == 1) {
+      return 'You are charging now';
+    }
+    final hour = DateTime.now().hour;
+    final String greeting;
+    if (hour >= 0 && hour < 12) {
+      greeting = 'Good Morning,';
+    } else if (hour >= 12 && hour < 17) {
+      greeting = 'Good Afternoon,';
+    } else {
+      greeting = 'Good Evening,';
+    }
+    final userName = ValueStatic.username;
+    if (userName.isEmpty) return greeting;
+    return '$greeting $userName';
   }
 
   Widget _buildCardCharging() {
@@ -198,29 +255,44 @@ class EvChargerScreen extends GetView<EvChargerController> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned(
-                            bottom: -30,
-                            right: -30,
-                            child: Image.asset(
-                              AssetImages.gifCharging,
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.contain,
-                              gaplessPlayback: true,
+                    // SizedBox(
+                    //   height: 40,
+                    //   width: 40,
+                    //   child: Stack(
+                    //     clipBehavior: Clip.none,
+                    //     children: [
+                    //       // Positioned(
+                    //       //   bottom: -60,
+                    //       //   right: -60,
+                    //       //   child: StreamBuilder<DateTime>(
+                    //       //     stream: _timeStream,
+                    //       //     initialData: DateTime.now(),
+                    //       //     builder: (context, snapshot) {
+                    //       //       final hour = snapshot.data?.hour ?? DateTime.now().hour;
+                    //       //       return _buildSectionIcon(hour);
+                    //       //     },
+                    //       //   ),
+                    //       // ),
+                    //     ],
+                    //   ),
+                    // ),
+                    Row(
+                      children: [
+                        StreamBuilder<DateTime>(
+                              stream: controller.timeStream,
+                              initialData: DateTime.now(),
+                              builder: (context, snapshot) {
+                                final hour = snapshot.data?.hour ?? DateTime.now().hour;
+                                return _buildSectionIcon(hour);
+                              },
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      'Your vehicle is charging',
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
+                            SizedBox(width: 10,),
+                        //
+                        Text(
+                          _getGreetingWithUserName(),
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -238,33 +310,48 @@ class EvChargerScreen extends GetView<EvChargerController> {
                       ),
                     ),
                     // View detail button
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        _connectWebSocketAndNavigate(
-                          controller.chargingTransactionId.value,
-                          controller.chargingChargerUsername.value,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      label: Text(
-                        "View Detail".tr,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.whiteColor,
-                        ),
-                      ),
-                    ),
+                    _buildDetailButton(),
                   ],
                 ),
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailButton() {
+    if (controller.isCharging.value != 1) {
+      return const SizedBox.shrink();
+    }
+
+    return ElevatedButton.icon(
+      onPressed: () async {
+        await controller.fetchChargingStatus();
+        if (controller.isCharging.value != 1) return;
+        if (controller.chargingTransactionId.value.isEmpty ||
+            controller.chargingChargerUsername.value.isEmpty) {
+          return;
+        }
+        _connectWebSocketAndNavigate(
+          controller.chargingTransactionId.value,
+          controller.chargingChargerUsername.value,
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primaryColor,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      // icon: const Icon(Icons.arrow_forward, color: AppColors.whiteColor),
+      label: Text(
+        "View Detail".tr,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: AppColors.whiteColor,
         ),
       ),
     );
@@ -510,6 +597,13 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
   }
 
   Widget _buildTotalBalance() {
+    final wallet = Get.find<EvWalletController>();
+    debugPrint(
+      '====>> ****** [EvChargingScreen._buildTotalBalance] endpoint: ${Endpoint.evSaleOrderWalletAmount}, '
+      'isLoadingBalance: ${wallet.isLoadingBalance.value}, '
+      'totalBalance: ${wallet.totalBalance.value}, '
+      'formatted: ${wallet.formatAmount(wallet.totalBalance.value)} KHR',
+    );
     return InkWell(
       onTap: () {
         Get.toNamed(AppRoutes.evWallet);
@@ -628,8 +722,6 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
     return InkWell(
       onTap: () {
         final point = controller.state.membershipInfoResponse?.body?.data;
-        final isCharging = controller.isCharging.value == 1;
-
         Get.toNamed(
             AppRoutes.evMembership,
             arguments: <String, dynamic>{
@@ -638,20 +730,6 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
             },
           );
 
-        // if (isCharging) {
-        //   Get.toNamed(
-        //     AppRoutes.evRedeemPoint,
-        //     arguments: <String, dynamic>{'points': point},
-        //   );
-        // } else {
-        //   // Get.toNamed(
-        //   //   AppRoutes.evMembership,
-        //   //   arguments: <String, dynamic>{
-        //   //     'section': 'menu',
-        //   //     'membershipInfo': point,
-        //   //   },
-        //   // );
-        // }
       },
       child: Container(
         width: double.infinity,

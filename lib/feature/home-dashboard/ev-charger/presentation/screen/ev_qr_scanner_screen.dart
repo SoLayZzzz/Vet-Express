@@ -7,9 +7,51 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../controller/ev_scanner_controller.dart';
+import '../binding/ev_charger_binding.dart';
 
-class EvQrScannerScreen extends GetView<EvScannerController> {
+class EvQrScannerScreen extends StatefulWidget {
   const EvQrScannerScreen({super.key});
+
+  @override
+  State<EvQrScannerScreen> createState() => _EvQrScannerScreenState();
+}
+
+class _EvQrScannerScreenState extends State<EvQrScannerScreen>
+    with WidgetsBindingObserver {
+  late EvScannerController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    if (!Get.isRegistered<EvScannerController>()) {
+      EvChargerBinding().dependencies();
+    }
+    controller = Get.find<EvScannerController>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.startCamera();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.onAppResumed();
+        controller.startCamera();
+      });
+    } else if (state == AppLifecycleState.paused) {
+      controller.stopCamera();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    controller.stopCamera();
+    super.dispose();
+  }
 
   Future<void> _showScanFailedDialog() {
     controller.isScanning.value = false;
@@ -79,16 +121,9 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                   const SizedBox(width: 14),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: () {
                         Get.back();
                         controller.retryScan();
-                        try {
-                          await controller.cameraController.stop();
-                        } catch (_) {}
-
-                        try {
-                          await controller.cameraController.start();
-                        } catch (_) {}
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -195,7 +230,7 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "${'station'.tr}: #SF-092-MB",
+                    "${'station'.tr}: ${controller.scanResult.value ?? ''}",
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -203,37 +238,46 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  _buildPlugOptionCard(
-                    title: 'Plug A',
-                    selected: selectedPlugIndex == 0,
-                    onTap: () => setModalState(() => selectedPlugIndex = 0),
-                  ),
-                  const SizedBox(height: 14),
-                  _buildPlugOptionCard(
-                    title: 'Plug B',
-                    selected: selectedPlugIndex == 1,
-                    onTap: () => setModalState(() => selectedPlugIndex = 1),
-                  ),
+                  ...controller.plugList.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final plug = entry.value;
+                    final available = plug.isAvailable == 1;
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index == controller.plugList.length - 1 ? 0 : 14,
+                      ),
+                      child: _buildPlugOptionCard(
+                        title: 'Plug ${plug.gunName ?? index + 1}',
+                        selected: selectedPlugIndex == index,
+                        available: available,
+                        onTap: () => setModalState(() => selectedPlugIndex = index),
+                      ),
+                    );
+                  }),
                   const SizedBox(height: 22),
                   SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
-                      onPressed: () {
-                        final chargerUser = controller.scanResult.value ?? 'ev01';
-                        final plugNum = selectedPlugIndex + 1;
-                        Get.back();
-                        controller.resetScanner();
-                        Get.offNamed(
-                          AppRoutes.evChargingInformation,
-                          arguments: {
-                            'chargerUsername': chargerUser,
-                            'plugId': plugNum,
-                          },
-                        );
-                      },
+                      onPressed: controller.plugList[selectedPlugIndex].isAvailable == 1
+                          ? () {
+                              final chargerUser = controller.scanResult.value ?? 'ev01';
+                              final selectedPlugData = controller.plugList[selectedPlugIndex];
+                              final plugId = selectedPlugData.gunId ?? selectedPlugIndex + 1;
+                              Get.back();
+                              controller.resetScanner();
+                              Get.offNamed(
+                                AppRoutes.evChargingInformation,
+                                arguments: {
+                                  'chargerUsername': chargerUser,
+                                  'plugId': plugId,
+                                },
+                              );
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
+                        disabledBackgroundColor: Colors.grey.shade400,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         elevation: 0,
                       ),
@@ -265,12 +309,15 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
   Widget _buildPlugOptionCard({
     required String title,
     required bool selected,
-    required VoidCallback onTap,
+    required bool available,
+    required VoidCallback? onTap,
   }) {
     final Color borderColor = selected ? const Color(0xFF0B3BDB) : const Color(0xFFC9CAD9);
     final Color backgroundColor = selected ? const Color(0xFFF4F7FF) : const Color(0xFFF3F4F6);
     final Color iconBg = selected ? const Color(0xFF2D5BFF) : const Color(0xFFEDEEF2);
     final Color iconColor = selected ? Colors.white : const Color(0xFF6B7280);
+    final Color statusColor = available ? Colors.green : Colors.red;
+    final String statusText = available ? 'available'.tr : 'unavailable'.tr;
 
     return Material(
       color: Colors.transparent,
@@ -299,23 +346,23 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, 
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style:   TextStyle(
+                      style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
-                        color: selected ?  Color(0xFF33358A) : Colors.black
+                        color: selected ? const Color(0xFF33358A) : Colors.black
                       ),
                     ),
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.circle, size: 12, color: Colors.green),
-                        SizedBox(width: 8),
+                        Icon(Icons.circle, size: 12, color: statusColor),
+                        const SizedBox(width: 8),
                         Text(
-                          'available'.tr,
+                          statusText,
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -327,14 +374,12 @@ class EvQrScannerScreen extends GetView<EvScannerController> {
                   ],
                 ),
               ),
-             
-             selected ?
+              selected ?
               SvgPicture.asset(
                 AssetImages.select,
                 width: 20,
                 height: 20,
               ) : const SizedBox.shrink(),
-             
             ],
           ),
         ),

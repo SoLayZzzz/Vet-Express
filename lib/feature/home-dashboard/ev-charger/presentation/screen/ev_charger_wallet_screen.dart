@@ -6,6 +6,7 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../controller/ev_wallet_controller.dart';
+import '../../../../../../base/endpoint.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../routes/app_routes.dart';
 
@@ -62,6 +63,12 @@ class EvWalletScreen extends GetView<EvWalletController> {
     BuildContext context,
     EvWalletController walletController,
   ) {
+    debugPrint(
+      '[EvWalletScreen._buildSliverHeader] endpoint: ${Endpoint.evSaleOrderWalletAmount}, '
+      'isLoadingBalance: ${walletController.isLoadingBalance.value}, '
+      'totalBalance: ${walletController.totalBalance.value}, '
+      'formatted: ${walletController.formatAmount(walletController.totalBalance.value)} KHR',
+    );
     return SliverAppBar(
       expandedHeight: 280.0,
       pinned: true,
@@ -501,18 +508,18 @@ class EvWalletScreen extends GetView<EvWalletController> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildSheetHeader('Top-up Detail'),
+        _buildSheetHeader('top_up_detail'.tr),
         const SizedBox(height: 6),
         _buildSheetRow(
-          left: 'Date',
+          left: 'date'.tr,
           right: transaction.createdDate ?? '-',
         ),
         _buildSheetRow(
-          left: 'Amont',
+          left: 'wallet_amount'.tr,
           right: '$amount KHR',
         ),
         _buildSheetRow(
-          left: 'Top-up',
+          left: 'top_up'.tr,
           right: '+ $amount KHR',
           rightStyle: const TextStyle(
             color: Color(0xFF16A34A),
@@ -531,20 +538,20 @@ class EvWalletScreen extends GetView<EvWalletController> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildSheetHeader('Transaction Detail'),
+        _buildSheetHeader('transaction_details'.tr),
         const SizedBox(height: 6),
-        _buildSheetRow(left: 'Transaction id', right: id),
+        _buildSheetRow(left: 'transaction_id'.tr, right: id),
         _buildSheetRow(
-          left: 'Station Name',
+          left: 'station_name'.tr,
           right: transaction.description ?? '-',
         ),
         _buildSheetRow(
-          left: 'Order Date',
+          left: 'order_date'.tr,
           right: transaction.createdDate ?? '-',
         ),
-        _buildSheetRow(left: 'Total Amount', right: '$amount KHR'),
+        _buildSheetRow(left: 'total_amount'.tr, right: '$amount KHR'),
         _buildSheetRow(
-          left: 'Amount',
+          left: 'wallet_amount'.tr,
           right: '- $amount KHR',
           rightStyle: const TextStyle(
             color: Color(0xFFEF4444),

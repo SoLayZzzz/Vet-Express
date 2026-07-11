@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../../../../base/base_url.dart';
 import '../../../../../utils/app_pref.dart';
@@ -207,6 +208,8 @@ class EvChargingData {
   final String estimatedCost;
   final String status; // 'charging', 'stopped', 'completed'
 
+  static final NumberFormat _costFormatter = NumberFormat('#,##0.00', 'en_US');
+
   EvChargingData({
     required this.percent,
     required this.estimatedTime,
@@ -219,15 +222,47 @@ class EvChargingData {
   });
 
   factory EvChargingData.fromJson(Map<String, dynamic> json) {
+    final commandType = json['command_type'] as String?;
+
+    if (commandType == 'MeterValues') {
+      final soc = (json['soc'] as num?)?.toInt() ?? 0;
+      final duration = (json['duration'] as num?)?.toInt() ?? 0;
+      final remaining = (json['remaining'] as num?)?.toInt() ?? 0;
+      final w = (json['w'] as num?)?.toDouble() ?? 0.0;
+      final kwh = (json['kwh'] as num?)?.toDouble() ?? 0.0;
+      final rate = (json['rate'] as num?)?.toDouble() ?? 0.0;
+      final cost = kwh * rate;
+
+      return EvChargingData(
+        percent: soc,
+        estimatedTime: _formatDuration(remaining),
+        timeElapsed: _formatDuration(duration),
+        current: w >= 1000 ? '${(w / 1000).toStringAsFixed(2)} kW' : '${w.toStringAsFixed(0)} W',
+        voltage: json['voltage'] != null ? '${json['voltage']} V' : '0 V',
+        energy: '${kwh.toStringAsFixed(2)} kWh',
+        estimatedCost: '៛${_costFormatter.format(cost)}',
+        status: 'charging',
+      );
+    }
+
     return EvChargingData(
       percent: json['percent'] as int? ?? 0,
-      estimatedTime: json['estimatedTime'] as String? ?? '30 mins',
-      timeElapsed: json['timeElapsed'] as String? ?? '14 mins',
-      current: json['current'] as String? ?? '60 A',
-      voltage: json['voltage'] as String? ?? '500 V',
-      energy: json['energy'] as String? ?? '6 / 15 kWh',
-      estimatedCost: json['estimatedCost'] as String? ?? '៛2,000.00',
+      estimatedTime: json['estimatedTime'] as String? ?? '',
+      timeElapsed: json['timeElapsed'] as String? ?? '',
+      current: json['current'] as String? ?? '',
+      voltage: json['voltage'] as String? ?? '',
+      energy: json['energy'] as String? ?? '',
+      estimatedCost: json['estimatedCost'] as String? ?? '',
       status: json['status'] as String? ?? 'charging',
     );
+  }
+
+  static String _formatDuration(int seconds) {
+    if (seconds <= 0) return '0 min';
+    if (seconds < 60) return '$seconds sec';
+    if (seconds < 3600) return '${seconds ~/ 60} min';
+    final hours = seconds ~/ 3600;
+    final mins = (seconds % 3600) ~/ 60;
+    return '$hours hr ${mins}min';
   }
 }

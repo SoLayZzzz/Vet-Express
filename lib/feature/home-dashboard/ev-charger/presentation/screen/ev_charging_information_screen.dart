@@ -1,4 +1,5 @@
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charger_controller.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,6 +21,7 @@ class EvChargingInformationScreen extends StatefulWidget {
 class _ChargingInformationScreenState
     extends State<EvChargingInformationScreen> {
   late final EvChargingInformationController controller;
+  late final EvChargerController evChargerController;
 
 
   @override
@@ -32,6 +34,11 @@ class _ChargingInformationScreenState
     }
     controller.kwhController.addListener(_onTextChanged);
     controller.khrController.addListener(_onTextChanged);
+    if (!Get.isRegistered<EvChargerController>()) {
+      evChargerController = Get.put(EvChargerController(Get.find()));
+    } else {
+      evChargerController = Get.find<EvChargerController>();
+    }
   }
 
   void _onTextChanged() {
@@ -48,6 +55,22 @@ class _ChargingInformationScreenState
   }
 
   void _onContinue() {
+    final isKwhTab = controller.isKwhTab.value;
+    debugPrint('====>> [EvChargingInformationScreen._onContinue]');
+    debugPrint('isKwhTab: $isKwhTab');
+    debugPrint('selectedGridIndex: ${controller.selectedGridIndex.value}');
+    debugPrint('selectedOptionValue: ${controller.getSelectedOptionValue()}');
+    debugPrint('kwhController.text: ${controller.kwhController.text}');
+    debugPrint('khrController.text: ${controller.khrController.text}');
+    debugPrint('inputAmount: ${controller.inputAmount.value}');
+    debugPrint('calculatedTotalPrice: ${controller.getCalculatedTotalPrice()}');
+    debugPrint('calculatedDiscount: ${controller.getCalculatedDiscount()}');
+    debugPrint('calculatedDiscountPercentage: ${controller.getCalculatedDiscountPercentage()}');
+    debugPrint('calculatedGrandTotalPrice: ${controller.getCalculatedGrandTotalPrice()}');
+    debugPrint('chargerUsername: ${controller.chargerUsername.value}');
+    debugPrint('plugId: ${controller.plugId.value}');
+    debugPrint('selectedVoucherCode: ${controller.selectedVoucherCode.value}');
+    debugPrint('selectedRedeemId: ${controller.selectedRedeemId.value}');
     controller.createSaleOrderAppTmp();
   }
 
@@ -63,36 +86,47 @@ class _ChargingInformationScreenState
 
   String _getSubTotal() {
     final isKwhTab = controller.isKwhTab.value;
+    final text = isKwhTab ? controller.kwhController.text : controller.khrController.text;
+    if (text == "Full Charge") return 'full_charge'.tr;
+
     if (isKwhTab) {
-      final text = controller.kwhController.text;
-      if (text == "Full Charge") return 'full_charge'.tr;
-      final val = double.tryParse(text) ?? 0.0;
-      return 'KHR (៛) ${_formatCurrency(val * 2400)}';
+      final totalKhr = controller.getCalculatedTotalPrice();
+      return 'KHR (៛) ${_formatCurrency(totalKhr)}';
     } else {
-      final text = controller.khrController.text;
-      if (text == "Full Charge") return 'full_charge'.tr;
-      final val = double.tryParse(text.replaceAll(',', '')) ?? 0.0;
-      return 'KHR (៛) ${_formatCurrency(val)}';
+      final totalKwh = controller.getCalculatedTotalKwh().toDouble();
+      return '${totalKwh.toStringAsFixed(2)} kWh';
     }
   }
 
   String _getTotalPrice() {
-    final isKwhTab = controller.isKwhTab.value;
-    final discount = controller.getCalculatedDiscount().toDouble();
-    if (isKwhTab) {
-      final text = controller.kwhController.text;
-      if (text == "Full Charge") return 'full_charge'.tr;
-      final val = double.tryParse(text) ?? 0.0;
-      final subTotal = val * 2400;
-      final total = subTotal - discount;
-      return 'KHR (៛) ${_formatCurrency(total < 0 ? 0 : total)}';
-    } else {
-      final text = controller.khrController.text;
-      if (text == "Full Charge") return 'full_charge'.tr;
-      final val = double.tryParse(text.replaceAll(',', '')) ?? 0.0;
-      final total = val - discount;
-      return 'KHR (៛) ${_formatCurrency(total < 0 ? 0 : total)}';
+    final text = controller.isKwhTab.value ? controller.kwhController.text : controller.khrController.text;
+    if (text == "Full Charge") return 'full_charge'.tr;
+
+    final total = controller.getCalculatedGrandTotalPrice();
+    return 'KHR (៛) ${_formatCurrency(total < 0 ? 0 : total)}';
+  }
+
+  String _buildVoucherValue() {
+    final percentage = controller.applyVoucherDiscountPercentage.value;
+    if (percentage != null && percentage > 0) {
+      return '${percentage.toStringAsFixed(0)}% ${'off'.tr}';
     }
+    final amount = controller.applyVoucherDiscount.value;
+    if (amount != null && amount > 0) {
+      return '-${_formatCurrency(amount)} KHR';
+    }
+    return '';
+  }
+
+  String _buildPointValue() {
+    if (controller.selectedRedeemId.value == null) return '';
+    final pointText = controller.pointController.text.trim();
+    if (pointText.isEmpty) return '';
+    final parsed = int.tryParse(pointText);
+    if (parsed != null) {
+      return '${_formatCurrency(parsed.toDouble())} ${'points'.tr}';
+    }
+    return '$pointText ${'points'.tr}';
   }
 
   @override
@@ -149,21 +183,27 @@ class _ChargingInformationScreenState
                     const SizedBox(height: 12),
 
                     // --- 3. Promo & Points Rows ---
-                    _buildListTile(
-                      iconAsset: AssetImages.apply_code,
-                      title: 'apply_promotion_code'.tr,
-                      valueOfff: '5% OFF',
-                      iconSize: 15,
-                      onTap: _showPromotionCodeDialog,
-                    ),
-                    _buildListTile(
-                      iconAsset: AssetImages.star,
-                      title: 'apply_point'.tr,
-                      valueOfff: '20 points',
-                      iconSize: 20,
-                      onTap: _showApplyPointDialog,
-                    ),
-                    const SizedBox(height: 10),
+                    if (controller.canContinue) ...[
+                      Obx(
+                        () => _buildListTile(
+                          iconAsset: AssetImages.apply_code,
+                          title: 'apply_promotion_code'.tr,
+                          valueOfff: _buildVoucherValue(),
+                          iconSize: 15,
+                          onTap: _showPromotionCodeDialog,
+                        ),
+                      ),
+                      Obx(
+                        () => _buildListTile(
+                          iconAsset: AssetImages.star,
+                          title: 'apply_point'.tr,
+                          valueOfff: _buildPointValue(),
+                          iconSize: 20,
+                          onTap: _showApplyPointDialog,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
 
                     // --- 4. Custom Preferred Input Field ---
                     Text(
@@ -178,11 +218,17 @@ class _ChargingInformationScreenState
                             isKwhTab
                                 ? controller.kwhController
                                 : controller.khrController,
+                        focusNode:
+                            isKwhTab
+                                ? controller.kwhFocusNode
+                                : controller.khrFocusNode,
                         keyboardType: TextInputType.number,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
+                          // hintText: controller.getSelectedOptionValue(),
+                          hintStyle: TextStyle(color: Colors.grey[500]),
                           suffixText: isKwhTab ? 'kWh' : 'KHR',
                           suffixStyle: TextStyle(color: Colors.grey[800]),
                           contentPadding: const EdgeInsets.symmetric(
@@ -301,37 +347,73 @@ class _ChargingInformationScreenState
               ),
             ),
 
+            // if(controller.canContinue)
+            // // --- 7. Bottom Button ---
+            // Padding(
+            //   padding: const EdgeInsets.only(bottom: 16.0),
+            //   child: SizedBox(
+            //     width: double.infinity,
+            //     height: 50,
+            //     child: Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 16),
+            //       child: ElevatedButton(
+            //         onPressed: () {
+            //           _onContinue();
+            //         },
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: AppColors.primaryColor,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(8),
+            //           ),
+            //           elevation: 0,
+            //         ),
+            //         child: Text(
+            //           'continue'.tr,
+            //           style: const TextStyle(
+            //             color: Colors.white,
+            //             fontSize: 16,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             // --- 7. Bottom Button ---
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _onContinue();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      'continue'.tr,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+Padding(
+  padding: const EdgeInsets.only(bottom: 16.0),
+  child: SizedBox(
+    width: double.infinity,
+    height: 50,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ElevatedButton(
+        onPressed: () {
+          if (controller.canContinue) {
+            _onContinue();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: controller.canContinue
+              ? AppColors.primaryColor
+              : Colors.grey,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          elevation: 0,
+        ),
+        child: Text(
+          'continue'.tr,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ),
+  ),
+),
           ],
         ),
       ),
@@ -758,14 +840,15 @@ class _ChargingInformationScreenState
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             ),
             const Spacer(),
-            Text(
-              valueOfff,
-              style: TextStyle(
-                color: AppColors.primaryColor,
-                fontWeight: FontWeight.w600,
+            if (valueOfff.isNotEmpty)
+              Text(
+                valueOfff,
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(width: 15),
+            if (valueOfff.isNotEmpty) const SizedBox(width: 15),
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
@@ -998,6 +1081,7 @@ class _ChargingInformationScreenState
   Future<void> _showApplyPointDialog() {
     controller.pointController.text = '';
     int selectedIndex = -1;
+     final point = evChargerController.state.membershipInfoResponse?.body?.data;
 
     // Refresh point list from API when dialog opens
     controller.fetchPointList();
@@ -1044,14 +1128,32 @@ class _ChargingInformationScreenState
                         'total_points'.tr,
                         style: const TextStyle(color: Colors.black54, fontSize: 13),
                       ),
-                      Text(
-                        '190 ${'points'.tr}',
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      // Text(
+                      //   '190 ${'points'.tr}',
+                      //   style: const TextStyle(
+                      //     color: Colors.black87,
+                      //     fontSize: 13,
+                      //     fontWeight: FontWeight.w600,
+                      //   ),
+                      // ),
+                      //
+                         Obx(() {
+                    final isLoading = evChargerController.state.isLoadingMembershipInfo;
+                    if (isLoading) return const SizedBox(height: 40);
+
+                    final point =
+                        evChargerController.state.membershipInfoResponse?.body?.data;
+                    final currentPoint = point?.currentPoint ?? 0;
+
+                    return Text(
+                      "$currentPoint ${'pts'.tr}",
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.titleColor,
                       ),
+                    );
+                  }),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -1142,52 +1244,52 @@ class _ChargingInformationScreenState
                       }),
                     );
                   }),
-                  const SizedBox(height: 12),
-                  Text(
-                    'or_enter_preferred_amount'.tr,
-                    style: const TextStyle(color: Colors.black54, fontSize: 13),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: controller.pointController,
-                    keyboardType: TextInputType.number,
-                    onChanged: (val) {
-                      setDialogState(() {
-                        selectedIndex = -1;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'enter'.tr,
-                      hintStyle: TextStyle(color: Colors.grey.shade400),
-                      suffixText: 'point'.tr,
-                      suffixStyle: TextStyle(color: Colors.black),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade400),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'kwh_equal_100_points'.tr,
-                    style: const TextStyle(
-                      color: Color(0xFFE26A15),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  // const SizedBox(height: 12),
+                  // Text(
+                  //   'or_enter_preferred_amount'.tr,
+                  //   style: const TextStyle(color: Colors.black54, fontSize: 13),
+                  // ),
+                  // const SizedBox(height: 8),
+                  // TextField(
+                  //   controller: controller.pointController,
+                  //   keyboardType: TextInputType.number,
+                  //   onChanged: (val) {
+                  //     setDialogState(() {
+                  //       selectedIndex = -1;
+                  //     });
+                  //   },
+                  //   decoration: InputDecoration(
+                  //     hintText: 'enter'.tr,
+                  //     hintStyle: TextStyle(color: Colors.grey.shade400),
+                  //     suffixText: 'point'.tr,
+                  //     suffixStyle: TextStyle(color: Colors.black),
+                  //     contentPadding: const EdgeInsets.symmetric(
+                  //       horizontal: 12,
+                  //       vertical: 12,
+                  //     ),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       borderSide: BorderSide(color: Colors.grey.shade300),
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       borderSide: BorderSide(color: Colors.grey.shade300),
+                  //     ),
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //       borderSide: BorderSide(color: Colors.grey.shade400),
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 8),
+                  // Text(
+                  //   'kwh_equal_100_points'.tr,
+                  //   style: const TextStyle(
+                  //     color: Color(0xFFE26A15),
+                  //     fontSize: 12,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
