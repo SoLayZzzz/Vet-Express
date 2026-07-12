@@ -985,7 +985,7 @@ final Map<String, String> zhCN = {
   'kilowatt_hour': '千瓦/小时',
   'failed_to_load_list': '加载列表失败',
   'no_items_available': '暂无可用项目',
-  'promo_code': '代码',
+  'promo_code_ev': '代码',
   'enter': '输入',
   'point': '积分',
   'kwh_equal_100_points': '1 kWh = 100 积分',

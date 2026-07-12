@@ -233,7 +233,12 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.evQrScanner,
-      page: () => const EvQrScannerScreen(),
+      page: () {
+        final args = Get.arguments as Map<dynamic, dynamic>?;
+        return EvQrScannerScreen(
+          isVoucherMode: (args?['isVoucherMode'] as bool?) ?? false,
+        );
+      },
       binding: EvChargerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),

@@ -1,5 +1,6 @@
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charger_controller.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -860,11 +861,26 @@ Padding(
     );
   }
 
+  Future<void> _scanVoucherCode() async {
+    final result = await Get.toNamed(
+      AppRoutes.evQrScanner,
+      arguments: {'isVoucherMode': true},
+    );
+
+    if (result is String && result.isNotEmpty) {
+      controller.promoCodeController.text = result;
+      controller.searchQuery.value = result;
+      controller.selectedVoucherCode.value = result;
+      await controller.searchVoucher(result);
+    }
+  }
+
   Future<void> _showPromotionCodeDialog() {
     // Reset selected code and input field on open to avoid stale state
     controller.selectedVoucherCode.value = '';
     controller.promoCodeController.text = '';
     controller.searchQuery.value = '';
+    controller.searchVoucher('');
 
     return Get.dialog(
       Dialog(
@@ -947,15 +963,28 @@ Padding(
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Container(
-                    height: 44,
-                    width: 44,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2D4CFF),
-                      borderRadius: BorderRadius.circular(8),
+                  // Container(
+                  //   height: 44,
+                  //   width: 44,
+                  //   decoration: BoxDecoration(
+                  //     color: const Color(0xFF2D4CFF),
+                  //     borderRadius: BorderRadius.circular(8),
+                  //   ),
+                  //   alignment: Alignment.center,
+                  //   child: SvgPicture.asset(AssetImages.small_scan),
+                  // ),
+                   GestureDetector(
+                    onTap: () { _scanVoucherCode(); },
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2D4CFF),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: SvgPicture.asset(AssetImages.small_scan),
                     ),
-                    alignment: Alignment.center,
-                    child: SvgPicture.asset(AssetImages.small_scan),
                   ),
                 ],
               ),
@@ -1010,12 +1039,17 @@ Padding(
                           voucher: voucher,
                           isSelected: isSelected,
                           onTap: () {
-                            controller.selectedVoucherCode.value =
+                            // controller.selectedVoucherCode.value =
+                            //     voucher.voucherCode ?? '';
+                            // controller.promoCodeController.text =
+                            //     voucher.voucherCode ?? '';
+                            // controller.searchQuery.value =
+                            //     voucher.voucherCode ?? '';
+                             controller.selectedVoucherCode.value =
                                 voucher.voucherCode ?? '';
-                            controller.promoCodeController.text =
-                                voucher.voucherCode ?? '';
-                            controller.searchQuery.value =
-                                voucher.voucherCode ?? '';
+                            controller.applySelectedVoucher(
+                              voucher.voucherCode ?? '',
+                            );
                           },
                         );
                       });

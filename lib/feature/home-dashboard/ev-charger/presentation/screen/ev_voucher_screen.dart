@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -63,7 +64,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                             onChanged:
                                 (val) => controller.searchQuery.value = val,
                             decoration: InputDecoration(
-                              hintText: 'promo_code'.tr,
+                              hintText: 'promo_code_ev'.tr,
                               filled: true,
                               fillColor: Colors.white,
                               contentPadding: const EdgeInsets.symmetric(
@@ -106,16 +107,29 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Container(
-                        height: 44,
-                        width: 44,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2D4CFF),
-                          borderRadius: BorderRadius.circular(8),
+                      GestureDetector(
+                        onTap: () { _openQrScanner(); },
+                        child: Container(
+                          height: 44,
+                          width: 44,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2D4CFF),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(AssetImages.small_scan),
                         ),
-                        alignment: Alignment.center,
-                        child: SvgPicture.asset(AssetImages.small_scan),
                       ),
+                      // Container(
+                      //   height: 44,
+                      //   width: 44,
+                      //   decoration: BoxDecoration(
+                      //     color: const Color(0xFF2D4CFF),
+                      //     borderRadius: BorderRadius.circular(8),
+                      //   ),
+                      //   alignment: Alignment.center,
+                      //   child: SvgPicture.asset(AssetImages.small_scan),
+                      // ),
                     ],
                   ),
                 ],
@@ -176,6 +190,19 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
         ),
       ),
     );
+  }
+
+   Future<void> _openQrScanner() async {
+    final result = await Get.toNamed(
+      AppRoutes.evQrScanner,
+      arguments: {'isVoucherMode': true},
+    );
+
+    if (result is String && result.isNotEmpty) {
+      controller.searchController.text = result;
+      controller.searchQuery.value = result;
+      await controller.searchVoucher(result);
+    }
   }
 
   void _showAddVoucherDialog(BuildContext context, String voucherCode) {

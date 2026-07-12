@@ -20,6 +20,9 @@ class EvVoucherController extends GetxController {
   final searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
 
+  String _lastSearchCode = '';
+  DateTime? _lastSearchAt;
+
   @override
   void onInit() {
     fetchVouchers();
@@ -100,9 +103,21 @@ class EvVoucherController extends GetxController {
 
   Future<void> searchVoucher(String code) async {
     if (code.trim().isEmpty) {
+       _lastSearchCode = '';
+      _lastSearchAt = DateTime.now();
       fetchVouchers();
       return;
     }
+
+    if (code.trim() == _lastSearchCode &&
+        _lastSearchAt != null &&
+        DateTime.now().difference(_lastSearchAt!).inMilliseconds <= 600) {
+      return;
+    }
+
+    _lastSearchCode = code.trim();
+    _lastSearchAt = DateTime.now();
+
     try {
       isLoading(true);
       hasError(false);

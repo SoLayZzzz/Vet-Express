@@ -57,6 +57,9 @@ class EvChargingInformationController extends GetxController {
   final TextEditingController promoCodeController = TextEditingController();
   final TextEditingController pointController = TextEditingController();
 
+  String _lastSearchCode = '';
+  DateTime? _lastSearchAt;
+
   final FocusNode kwhFocusNode = FocusNode();
   final FocusNode khrFocusNode = FocusNode();
 
@@ -258,9 +261,21 @@ class EvChargingInformationController extends GetxController {
 
   Future<void> searchVoucher(String code) async {
     if (code.trim().isEmpty) {
+      _lastSearchCode = '';
+      _lastSearchAt = DateTime.now();
       fetchVoucherList();
       return;
     }
+
+    if (code.trim() == _lastSearchCode &&
+        _lastSearchAt != null &&
+        DateTime.now().difference(_lastSearchAt!).inMilliseconds <= 600) {
+      return;
+    }
+
+    _lastSearchCode = code.trim();
+    _lastSearchAt = DateTime.now();
+
     try {
       isLoadingVouchers(true);
       final response = await useCase.searchVoucher(

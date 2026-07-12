@@ -10,7 +10,9 @@ import '../controller/ev_scanner_controller.dart';
 import '../binding/ev_charger_binding.dart';
 
 class EvQrScannerScreen extends StatefulWidget {
-  const EvQrScannerScreen({super.key});
+  const EvQrScannerScreen({super.key, this.isVoucherMode = false});
+
+  final bool isVoucherMode;
 
   @override
   State<EvQrScannerScreen> createState() => _EvQrScannerScreenState();
@@ -28,6 +30,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
       EvChargerBinding().dependencies();
     }
     controller = Get.find<EvScannerController>();
+    controller.resetScanner();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.startCamera();
     });
@@ -259,7 +262,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
-                      onPressed: controller.plugList[selectedPlugIndex].isAvailable == 1
+                      onPressed: controller.plugList.isNotEmpty && controller.plugList[selectedPlugIndex].isAvailable == 1
                           ? () {
                               final chargerUser = controller.scanResult.value ?? 'ev01';
                               final selectedPlugData = controller.plugList[selectedPlugIndex];
@@ -415,6 +418,12 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                     } catch (_) {}
                   }
 
+                   if (widget.isVoucherMode) {
+                    controller.isScanning.value = false;
+                    Get.back(result: qrData);
+                    return;
+                  }
+
                   final firstChar = qrData.substring(0, 1);
                   final isLetter = RegExp(r'[a-zA-Z]').hasMatch(firstChar);
                   if (isLetter) {
@@ -504,13 +513,15 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                     color: const Color(0xFFE65100).withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(Icons.qr_code_scanner, color: Colors.white),
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          "Please scan the EV Charger QR code to confirm your payment",
+                          widget.isVoucherMode
+                              ? "Please scan the voucher QR code"
+                              : "Please scan the EV Charger QR code to confirm your payment",
                           style: TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ),

@@ -130,7 +130,10 @@ class MenuScreen extends GetView<menu.MenuController> {
                   () {
                   _navigateToBoatBooking();
                 }),
-                _buildMenuView(AssetImages.ev_charger, 'ev_charger'.tr, () {
+                _buildMenuView(
+                  AssetImages.ev_charger, 
+                  'ev_charger'.tr, 
+                  () {
                   Get.toNamed(AppRoutes.evCharger);
                 }),
                 _buildMenuView(

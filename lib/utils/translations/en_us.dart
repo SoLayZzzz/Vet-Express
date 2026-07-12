@@ -1122,7 +1122,7 @@ final Map<String, String> enUS = {
   'kilowatt_hour': 'Kilowatt/hour',
   'failed_to_load_list': 'Failed to load list',
   'no_items_available': 'No items available',
-  'promo_code': 'Code',
+  'promo_code_ev': 'Promo Code',
   'enter': 'Enter',
   'point': 'Point',
   'kwh_equal_100_points': '1 kWh = 100 Points',

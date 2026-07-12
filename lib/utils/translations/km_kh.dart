@@ -1104,7 +1104,7 @@ final Map<String, String> kmKH = {
   'kilowatt_hour': 'គិឡូវ៉ាត់/ម៉ោង',
   'failed_to_load_list': 'បរាជ័យក្នុងការផ្ទុកបញ្ជី',
   'no_items_available': 'មិនមានធាតុទំនេរ',
-  'promo_code': 'កូដ',
+  'promo_code_ev': 'កូដ',
   'enter': 'បញ្ចូល',
   'point': 'ពិន្ទុ',
   'kwh_equal_100_points': '1 kWh = 100 ពិន្ទុ',
