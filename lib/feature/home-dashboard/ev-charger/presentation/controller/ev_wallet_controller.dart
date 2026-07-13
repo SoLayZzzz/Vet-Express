@@ -96,11 +96,6 @@ class EvWalletController extends GetxController {
       if (response.body?.status == true) {
         final walletData = response.body?.data;
 
-        // Update balance from wallet data if available
-        if (walletData?.totalBalance != null) {
-          totalBalance.value = walletData!.totalBalance!;
-        }
-
         final newGroups = walletData?.groups ?? [];
 
         if (!loadMore) {

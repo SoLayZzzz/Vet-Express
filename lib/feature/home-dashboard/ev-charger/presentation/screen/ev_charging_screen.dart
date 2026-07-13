@@ -598,9 +598,8 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
 
   Widget _buildTotalBalance() {
     final wallet = Get.find<EvWalletController>();
-    debugPrint(
+     debugPrint(
       '====>> ****** [EvChargingScreen._buildTotalBalance] endpoint: ${Endpoint.evSaleOrderWalletAmount}, '
-      'isLoadingBalance: ${wallet.isLoadingBalance.value}, '
       'totalBalance: ${wallet.totalBalance.value}, '
       'formatted: ${wallet.formatAmount(wallet.totalBalance.value)} KHR',
     );

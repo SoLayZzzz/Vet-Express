@@ -473,12 +473,14 @@ class EvChargerController extends StateController<EvChargerUiState> {
   List<EvNewsFeedDatum> get newsList =>
       state.newsFeedResponse?.body?.data ?? [];
 
-  String getFullImageUrl(String? relativeUrl) {
+ String getFullImageUrl(String? relativeUrl) {
     if (relativeUrl == null || relativeUrl.isEmpty) return '';
     if (relativeUrl.startsWith('http')) return relativeUrl;
     final cleanUrl =
         relativeUrl.startsWith('/') ? relativeUrl.substring(1) : relativeUrl;
-    return "${BaseUrl.BASE_URL_EV}$cleanUrl";
+    final fullUrl = '${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}${Uri.encodeFull(cleanUrl)}';
+    debugPrint('===>> Full image URL: $fullUrl');
+    return fullUrl;
   }
 
   String getFeedImageUrl(EvNewsFeedDatum item) => getFullImageUrl(item.feedUrl);
