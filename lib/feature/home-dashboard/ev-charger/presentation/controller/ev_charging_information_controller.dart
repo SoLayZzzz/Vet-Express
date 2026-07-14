@@ -540,17 +540,17 @@ class EvChargingInformationController extends GetxController {
       debugPrint("ev sale order apptmp response: ${jsonEncode(response.toJson())}");
 
       if (response.header?.statusCode == 200 && response.body?.status == true) {
-        Loading().loadingClose();
         didNavigate = true;
+        Loading().loadingClose();
         await Future.delayed(const Duration(milliseconds: 100));
-        Get.toNamed(
+      
+                Get.toNamed(
           AppRoutes.evVerification,
           arguments: response,
         );
         return response;
       }
 
-      Loading().loadingClose();
       Get.snackbar(
         'error'.tr,
         response.body?.message ?? 'Failed to create sale order',
@@ -560,14 +560,13 @@ class EvChargingInformationController extends GetxController {
       );
       return null;
     } catch (e) {
-      Loading().loadingClose();
-      Get.snackbar(
-        'error'.tr,
-        e.toString(),
-        backgroundColor: Colors.white,
-        colorText: Colors.red,
-        snackPosition: SnackPosition.TOP,
-      );
+      // Get.snackbar(
+      //   'error'.tr,
+      //   e.toString(),
+      //   backgroundColor: Colors.white,
+      //   colorText: Colors.red,
+      //   snackPosition: SnackPosition.TOP,
+      // );
       return null;
     } finally {
       if (!didNavigate) {

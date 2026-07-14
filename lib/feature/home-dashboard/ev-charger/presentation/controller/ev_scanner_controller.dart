@@ -8,10 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:location/location.dart' as loc_pkg;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
 import 'ev_wallet_controller.dart';
-import '../../../../../utils/alert_dialog.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 import '../../../../../routes/app_routes.dart';
 
@@ -44,10 +42,9 @@ class EvScannerController extends GetxController {
   var errorMessage = Rx<String?>(null);
   var plugList = RxList<ev_plug.Data>();
 
-  // Permission state
-  bool _isPermissionDialogOpen = false;
-  bool _openingAppSettings = false;
   bool _isDisposed = false;
+  bool _isStartingCamera = false;
+  bool _isStoppingCamera = false;
 
   // Mobile Scanner Controller
   final MobileScannerController cameraController = MobileScannerController(
@@ -57,122 +54,52 @@ class EvScannerController extends GetxController {
     torchEnabled: false,
   );
 
-  /// Resets permission flags when the app returns from the background/system settings.
+  /// Resets state when the app returns from the background.
   void onAppResumed() {
-    debugPrint('EvScannerController: App resumed, resetting permission flags.');
-    _openingAppSettings = false;
-    _isPermissionDialogOpen = false;
+    debugPrint('EvScannerController: App resumed.');
   }
 
-  /// Ensures camera permission is granted. Requests it if denied, and shows a
-  /// settings dialog if permanently denied. Returns true if granted.
-  Future<bool> ensureCameraPermission() async {
-    try {
-      final status = await Permission.camera.status;
-      debugPrint('EvScannerController: Camera permission status: $status');
-      if (status.isGranted) return true;
-
-      if (_openingAppSettings || _isPermissionDialogOpen) {
-        debugPrint(
-          'EvScannerController: Already routing to settings or permission dialog open.',
-        );
-        return false;
-      }
-
-      if (status.isDenied || status.isLimited) {
-        debugPrint('EvScannerController: Requesting camera permission...');
-        final req = await Permission.camera.request();
-        debugPrint('EvScannerController: Camera permission request result: $req');
-        if (req.isGranted) return true;
-      }
-
-      debugPrint(
-        'EvScannerController: Permission denied. Showing custom permission alert dialog.',
-      );
-      await _displayPermissionDialog(
-        'information'.tr,
-        'camera_permission_error'.tr,
-      );
-      return false;
-    } catch (e) {
-      debugPrint('EvScannerController: ensureCameraPermission error: $e');
-      return false;
-    }
-  }
-
-  Future<void> _displayPermissionDialog(
-    String title,
-    String description,
-  ) async {
-    if (_isPermissionDialogOpen) return;
-    _isPermissionDialogOpen = true;
-
-    final completer = Completer<void>();
-
-    alertDialogTwoButton(
-      title: title,
-      description: description,
-      buttonText1: 'cancel'.tr,
-      buttonText2: 'setting'.tr,
-      onButtonPressed1: () {
-        Get.back();
-        if (!completer.isCompleted) completer.complete();
-      },
-      onButtonPressed2: () async {
-        Get.back();
-        _isPermissionDialogOpen = false;
-        _openingAppSettings = true;
-        if (!completer.isCompleted) completer.complete();
-        debugPrint('EvScannerController: Routing to App Settings...');
-        await openAppSettings();
-      },
-    );
-
-    await completer.future;
-    if (!_openingAppSettings) {
-      _isPermissionDialogOpen = false;
-    }
-  }
-
-  /// Starts the camera after verifying permission. Call this when the screen
-  /// becomes visible or when the app is resumed from settings.
+  /// Starts the camera.
   Future<void> startCamera() async {
     if (_isDisposed) return;
     debugPrint(
-      'EvScannerController: startCamera() requested. isRunning: ${cameraController.value.isRunning}',
+      'EvScannerController: startCamera() requested. isRunning: ${cameraController.value.isRunning}, isStarting: $_isStartingCamera, isStopping: $_isStoppingCamera',
     );
+
+    // Already running — nothing to do.
     if (cameraController.value.isRunning) return;
 
+    // Prevent concurrent start calls.
+    if (_isStartingCamera || _isStoppingCamera) {
+      debugPrint('EvScannerController: Already starting or stopping, skipping startCamera.');
+      return;
+    }
+
+    _isStartingCamera = true;
     try {
-      final allowed = await ensureCameraPermission();
-      if (!allowed || _isDisposed) return;
-      if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
-        return;
-      }
-      debugPrint('EvScannerController: Starting camera scanner...');
+      if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) return;
+
+      debugPrint('EvScannerController: Starting camera directly...');
       await cameraController.start();
-      debugPrint('EvScannerController: Camera scanner successfully started.');
-    } on MobileScannerException catch (e) {
-      debugPrint('EvScannerController: Error starting scanner: $e');
-      final message = e.toString().toLowerCase();
-      if (message.contains('permission')) {
-        await _displayPermissionDialog(
-          'information'.tr,
-          'camera_permission_error'.tr,
-        );
-      }
+      debugPrint('EvScannerController: Camera started successfully.');
     } catch (e) {
-      debugPrint('EvScannerController: Error starting scanner: $e');
+      debugPrint('EvScannerController: Error starting camera: $e');
+    } finally {
+      _isStartingCamera = false;
     }
   }
 
   Future<void> stopCamera() async {
+    if (_isStoppingCamera) return;
+    _isStoppingCamera = true;
     try {
       if (cameraController.value.isRunning) {
         await cameraController.stop();
       }
     } catch (e) {
       debugPrint('EvScannerController: Error stopping scanner: $e');
+    } finally {
+      _isStoppingCamera = false;
     }
   }
 
@@ -507,7 +434,7 @@ class EvScannerController extends GetxController {
     resetScanner();
     Get.back();
     // If EvChargerScreen is not the first screen, navigate to it
-    Get.offNamed(AppRoutes.evWallet);
+   Get.offNamed(AppRoutes.evWallet);
   }
 
   // Helper methods

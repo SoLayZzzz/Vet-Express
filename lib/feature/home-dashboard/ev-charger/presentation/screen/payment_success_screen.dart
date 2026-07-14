@@ -79,8 +79,12 @@ class PaymentSuccessScreen extends GetView<EvTopUpController> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Go back to wallet screen
-                  Get.offNamed(AppRoutes.evWallet);
+                  // Go to wallet and remove the payment/top-up screens so
+                  // the back button returns to the EV charging screen.
+                  Get.offNamedUntil(
+                    AppRoutes.evWallet,
+                    ModalRoute.withName(AppRoutes.evCharger),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,

@@ -127,3 +127,4 @@ flutter:
 # flutter run -d emulator-5554 --flavor qa --dart-define=FLAVOR=qa
 # flutter run -d emulator-5554 --flavor prod --dart-define=FLAVOR=prod
 # flutter run -d DY4HE6PJOVIRAMHY --flavor prod --dart-define=FLAVOR=prod
+# flutter run -d DY4HE6PJOVIRAMHY --flavor qa --dart-define=FLAVOR=qa

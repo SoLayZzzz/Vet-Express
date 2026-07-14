@@ -316,7 +316,11 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
       builder: (controller) {
         final showABA = controller.isPaymentMethodEnabled('ABA');
         final showAC = controller.isPaymentMethodEnabled('AC');
+
+        // Hide button if no payment methods are available
         if (!showABA && !showAC) return const SizedBox.shrink();
+
+        final isNoPaymentSelected = controller.paymentMethodId.value == 0;
 
         return SizedBox(
           width: double.infinity,
@@ -334,7 +338,7 @@ class EvTopUpScreen extends GetView<EvTopUpController> {
                       controller.performTopUp();
                     },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
+              backgroundColor: isNoPaymentSelected ? Colors.grey : AppColors.primaryColor,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),

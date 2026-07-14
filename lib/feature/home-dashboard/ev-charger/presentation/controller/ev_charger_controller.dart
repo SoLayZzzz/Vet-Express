@@ -20,6 +20,7 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import '../uiState/ev_charger_ui_state.dart';
 import '../../../../../controller/connectivity_controller.dart';
+import 'ev_wallet_controller.dart';
 
 class EvChargerController extends StateController<EvChargerUiState> {
   final EvChargerUseCase useCase;
@@ -34,6 +35,8 @@ class EvChargerController extends StateController<EvChargerUiState> {
   Timer? _chargingStatusTimer;
   Timer? _timeTimer;
   StreamController<DateTime>? _timeController;
+
+  String _lastObservedRoute = '';
 
   Stream<DateTime> get timeStream {
     _timeController ??= StreamController<DateTime>.broadcast();
@@ -58,8 +61,21 @@ class EvChargerController extends StateController<EvChargerUiState> {
     });
     loadHomeData();
     _chargingStatusTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _refreshWalletBalanceIfReturnedToCharger();
       fetchChargingStatus();
     });
+  }
+
+  void _refreshWalletBalanceIfReturnedToCharger() {
+    final currentRoute = Get.currentRoute;
+    if (currentRoute == _lastObservedRoute) return;
+    _lastObservedRoute = currentRoute;
+
+    if (currentRoute == AppRoutes.evCharger) {
+      if (Get.isRegistered<EvWalletController>()) {
+        Get.find<EvWalletController>().fetchBalance();
+      }
+    }
   }
 
   @override

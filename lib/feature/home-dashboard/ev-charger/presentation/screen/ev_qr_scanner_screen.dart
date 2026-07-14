@@ -41,6 +41,8 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Reset permission flags (in case user just returned from app settings)
+        // then start the camera if it was stopped.
         controller.onAppResumed();
         controller.startCamera();
       });
@@ -294,6 +296,42 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                       ),
                     ),
                   ),
+
+                  // Fake
+
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   height: 54,
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //                final chargerUser = controller.scanResult.value ?? 'ev01';
+                  //             final selectedPlugData = controller.plugList[selectedPlugIndex];
+                  //             final plugId = selectedPlugData.gunId ?? selectedPlugIndex + 1;
+                  //                 Get.back();
+                  //             controller.resetScanner();
+                  //             Get.offNamed(
+                  //               AppRoutes.evChargingInformation,
+                  //               arguments: {
+                  //                 'chargerUsername': chargerUser,
+                  //                 'plugId': plugId,
+                  //               },
+                  //             );
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: AppColors.primaryColor,
+                  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  //       elevation: 0,
+                  //     ),
+                  //     child: Text(
+                  //       'Fake'.tr,
+                  //       style: const TextStyle(
+                  //         color: Colors.white,
+                  //         fontSize: 18,
+                  //         fontWeight: FontWeight.w700,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

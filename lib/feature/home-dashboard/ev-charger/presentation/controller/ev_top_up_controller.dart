@@ -93,6 +93,8 @@ class EvTopUpController extends GetxController {
         'Please enter a valid amount',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
       );
       return;
     }
@@ -103,6 +105,8 @@ class EvTopUpController extends GetxController {
         'Please select a payment method',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
       );
       return;
     }
@@ -178,6 +182,8 @@ class EvTopUpController extends GetxController {
             backgroundColor: Colors.red,
             colorText: Colors.white,
             duration: const Duration(milliseconds: 2000),
+            snackPosition: SnackPosition.BOTTOM,
+            margin: const EdgeInsets.all(16),
           );
         }
       } else {
@@ -191,6 +197,8 @@ class EvTopUpController extends GetxController {
         'Request timed out',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
       );
     } catch (e) {
       hasError.value = true;
@@ -200,6 +208,8 @@ class EvTopUpController extends GetxController {
         'Top-up failed: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
       );
     } finally {
       isLoading.value = false;
