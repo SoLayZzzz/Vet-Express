@@ -48,6 +48,40 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
 
   bool _uploadSuccess = false;
 
+   String _benefitsKeyFromPackageText({
+    required String? name,
+    required String? nameKh,
+    required String? nameCn,
+    required String? description,
+    required String? descriptionKh,
+    required String? descriptionCn,
+  }) {
+    final text =
+        '${name ?? ''} ${nameKh ?? ''} ${nameCn ?? ''} ${description ?? ''} ${descriptionKh ?? ''} ${descriptionCn ?? ''}'
+            .toLowerCase();
+
+    final numericTokens = text
+        .replaceAll(RegExp(r'[^0-9]'), ' ')
+        .split(RegExp(r'\s+'))
+        .where((t) => t.isNotEmpty)
+        .toSet();
+
+    bool containsAny(List<String> needles) => needles.any(text.contains);
+
+    final is30Days =
+        numericTokens.contains('30') && containsAny(['day', 'days', 'ថ្ងៃ', '天']);
+    final is6Months =
+        numericTokens.contains('6') && containsAny(['month', 'months', 'ខែ', '月', '个月']);
+    final is12Months =
+        numericTokens.contains('12') && containsAny(['month', 'months', 'ខែ', '月', '个月']);
+
+    if (is12Months) return 'package_benifits_des_12month';
+    if (is6Months) return 'package_benifits_des_6month';
+    if (is30Days) return 'package_benifits_des_30day';
+
+    return 'package_benifits_des_30day';
+  }
+
   // * Gender
   String? gender;
 
@@ -404,6 +438,26 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
                               ? snapshot.data!.body!.data![0].descriptionCn!
                               : snapshot.data!.body!.data![0].description ?? '')
                           : snapshot.data!.body!.data![0].description ?? '',
+                    ),
+                    const SizedBox(height: 10),
+                     Text(
+                      'package_benifits'.tr,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17,
+                        color: AppColors.secondaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _benefitsKeyFromPackageText(
+                        name: snapshot.data!.body!.data![0].name,
+                        nameKh: snapshot.data!.body!.data![0].nameKh,
+                        nameCn: snapshot.data!.body!.data![0].nameCn,
+                        description: snapshot.data!.body!.data![0].description,
+                        descriptionKh: snapshot.data!.body!.data![0].descriptionKh,
+                        descriptionCn: snapshot.data!.body!.data![0].descriptionCn,
+                      ).tr,
                     ),
                     const SizedBox(height: 10),
                     Text(

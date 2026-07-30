@@ -4,12 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/ui/registration_screen.dart';
 import '../../../../../models/china/customer_china_response.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/check_input.dart';
-import '../../../../../routes/app_routes.dart';
 
 class WarehouseAddressScreen extends GetView<ChinaController> {
   WarehouseAddressScreen({super.key});
@@ -125,10 +125,34 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
                   AssetImages.ic_bussness_ountline,
                   customer.branchName ?? '',
                 ),
+                
                 _buildContactRow(
                   AssetImages.ic_map_pin,
                   customer.address ?? '',
                 ),
+                //
+                InkWell(
+                  onTap: () async {
+                    final url = Uri.parse('https://t.me/solayZzzz');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                    } else {
+                      ScaffoldMessenger.of(Get.context!).showSnackBar(
+                        SnackBar(content: Text('can_not_open_telegram'.tr)),
+                      );
+                    }
+                  },
+                  child: Row(
+                    children: const [
+                      Icon(Icons.telegram, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Text(
+                        'Telegram suport link',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
@@ -255,7 +279,11 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
           //   'Vet Livhong',
           // ),
           _buildCopyableField('customer_code'.tr, customer.code ?? ''),
+          _buildCopyableField('warehouse_phone_khmer'.tr, '081451008'),
           _buildCopyableField('warehouse_phone'.tr, warehouse.telephone ?? ''),
+          //
+          // _buildCopyableField('warehouse_phone_khmer'.tr, '081451008'),
+          //
           _buildCopyableField(
             'address'.tr,
             warehouse.address ?? '',

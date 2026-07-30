@@ -27,7 +27,6 @@ class _EditChinaAddressScreenState extends State<EditChinaAddressScreen> {
   @override
   void initState() {
     super.initState();
-
     final args = Get.arguments;
     final CustomerChinaListData? customer =
         args is CustomerChinaListData ? args : null;

@@ -272,17 +272,23 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           ),
 
          
-          _item(
+          // _item(
+          //   label: 'email'.tr,
+          //   value:
+          //       _getEmailForDisplay(bookingData.data?.body?.data?[0].email) ==
+          //               '*@gmail.com'
+          //           ? '-'
+          //           : _getEmailForDisplay(
+          //               bookingData.data?.body?.data?[0].email,
+          //             ),
+          //   color: AppColors.secondaryColor,
+          // ),
+           _item(
             label: 'email'.tr,
-            value:
-                _getEmailForDisplay(bookingData.data?.body?.data?[0].email) ==
-                        '*@gmail.com'
-                    ? '-'
-                    : _getEmailForDisplay(
-                        bookingData.data?.body?.data?[0].email,
-                      ),
+            value: _getEmailForDisplay(bookingData.data?.body?.data?[0].email),
             color: AppColors.secondaryColor,
           ),
+          //
           _item(
             label: 'telephone_num'.tr,
             value: _getTelephoneForDisplay(
@@ -834,10 +840,17 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     return _formatTelephone(trimmed);
   }
 
-  String _getEmailForDisplay(dynamic emailValue) {
+ String _getEmailForDisplay(dynamic emailValue) {
     final raw = emailValue?.toString() ?? '';
     final trimmed = raw.trim();
+
     if (trimmed.isEmpty || trimmed == 'null') return '-';
+
+    // Backend sometimes returns a placeholder like "*@gmail.com" when user has no email.
+    if (trimmed == '*@gmail.com' || trimmed == '@gmail.com') return '-';
+    final lower = trimmed.toLowerCase();
+    if (lower == 'null@gmail.com' || lower == 'user@gmail.com') return '-';
+
     return trimmed;
   }
 

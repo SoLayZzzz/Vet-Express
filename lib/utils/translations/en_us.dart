@@ -76,8 +76,10 @@ final Map<String, String> enUS = {
   'warehouse_details': 'Warehouse Details',
   'warehouse_name': 'Warehouse name',
   'customer_code': 'Customer code',
-  'warehouse_phone': 'Warehouse phone number',
+  'warehouse_phone': 'China Warehouse phone number',
+  'warehouse_phone_khmer': 'Cambodia Warehouse  phone number',
   'no_warehouse_data_for_transport':
+
       'No warehouse data for this transport type',
   'land': 'Land',
   'sea': 'Sea',
@@ -922,6 +924,14 @@ final Map<String, String> enUS = {
   "condition-ticket": "Terms & Conditions For Ticket",
   "condition-logistic": "Terms & Conditions For Logistics",
   "condition-buvaSea": "Terms & Conditions For Buvasea",
+
+  //
+   "package_benifits": "Package Benefits",
+        "package_benifits_des_12month" : "• Valid for 12 months\n• 100% discount on eligible VET Express and VET Air Bus tickets within Cambodia (excluding VET Air Bus First Class)\n• 60% discount on eligible VET Speed Ferry, international VET Express and VET Air Bus tickets (excluding VET Air Bus First Class)\n• 15% discount on accommodation rates during weekdays and 10% discount on weekends and public holidays at participating VET Resorts",
+        "package_benifits_des_30day": "• Valid for 30 Days\n• 100% discount on eligible VET Express and VET Air Bus tickets (excluding VET Air Bus First Class)\n• 60% discount on eligible VET Speed Ferry tickets\n• 15% discount on accommodation rates during weekdays and 10% discount on weekends and public holidays at participating VET Resorts",
+        "package_benifits_des_6month" : "• Valid for 6 months\n• 100% discount on eligible VET Express and VET Air Bus tickets within Cambodia (excluding VET Air Bus First Class)\n• 60% discount on eligible VET Speed Ferry, international VET Express and VET Air Bus tickets (excluding VET Air Bus First Class)\n• 15% discount on accommodation rates during weekdays and 10% discount on weekends and public holidays at participating VET Resorts",
+       
+  
 
   //* term condition logistic
   't1':

@@ -97,7 +97,6 @@ flutter:
         - asset: assets/fonts/Battambang.ttf
 
 
-
 #  // Logo QA
 #   static const String vet_logo_qa = 'assets/images/vet_logo_qa.jpg';
 #   // Logo Production

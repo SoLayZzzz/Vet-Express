@@ -22,30 +22,28 @@ class GoodsTransferHistoryScreen
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'goods_transfer_new'.tr),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            _buildTabBarSelect(context),
-
-            Obx(() {
-              if (!controller.isFiltering.value) return const SizedBox.shrink();
-              return Positioned.fill(
-                child: Container(
-                  color: Colors.black26,
-                  alignment: Alignment.center,
-                  child: const SizedBox(
-                    height: 50.0,
-                    width: 50.0,
-                    child: CircularProgressIndicator(
-                      value: null,
-                      strokeWidth: 5.0,
-                    ),
+      body: Stack(
+        children: [
+          _buildTabBarSelect(context),
+      
+          Obx(() {
+            if (!controller.isFiltering.value) return const SizedBox.shrink();
+            return Positioned.fill(
+              child: Container(
+                color: Colors.black26,
+                alignment: Alignment.center,
+                child: const SizedBox(
+                  height: 50.0,
+                  width: 50.0,
+                  child: CircularProgressIndicator(
+                    value: null,
+                    strokeWidth: 5.0,
                   ),
                 ),
-              );
-            }),
-          ],
-        ),
+              ),
+            );
+          }),
+        ],
       ),
     );
   }
@@ -347,6 +345,7 @@ class GoodsTransferHistoryScreen
             return Stack(
               children: [
                 ListView.builder(
+                  padding: EdgeInsets.zero,
                   physics: const BouncingScrollPhysics(),
                   itemCount: data.data!.body!.data!.length,
                   itemBuilder: (context, index) {
@@ -486,7 +485,7 @@ class _TransferItemCardState extends State<TransferItemCard> {
         _onTrackOrderPressed();
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 15,),
+        margin: EdgeInsets.only(bottom: 15),
         decoration: BoxDecoration(
           color: Colors.white,
           // borderRadius: BorderRadius.circular(8),

@@ -64,6 +64,7 @@ final Map<String, String> zhCN = {
   'warehouse_name': '仓库名称',
   'customer_code': '客户代码',
   'warehouse_phone': '仓库电话',
+  'warehouse_phone_khmer': '柬埔寨仓库电话',
   'no_warehouse_data_for_transport': '暂无此类运输方式的仓库数据',
   'land': '陆运',
   'sea': '海运',
@@ -801,6 +802,12 @@ final Map<String, String> zhCN = {
   "condition-ticket": "购票条件",
   "condition-logistic": "快递运输条件",
   "condition-buvaSea": "船票购买条件",
+  //
+   "package_benifits": "Package Benefits",
+        "package_benifits_des_12month" : "• 有效期 12 个月\n• 柬埔寨境内符合条件的 VET Express 和 VET Air Bus 车票可享受 100% 折扣 (不包括 VET Air Bus 头等舱)\n• 符合条件的 VET Speed Ferry、国际线路 VET Express 及 VET Air Bus 车票可享受 60% 折扣 (不包括 VET Air Bus 头等舱)\n• 入住指定 VET Resorts，平日住宿可享受 15% 折扣，周末及公共假期可享受 10% 折扣",
+        "package_benifits_des_30day": "• 有效期30天\n• 符合条件的 VET Express 和 VET Air Bus 车票可享受 100% 折扣 (不包括 VET Air Bus 头等舱)\n• 符合条件的 VET Speed Ferry、VET Express 及 VET Air Bus 车票可享受 60% 折扣\n• 入住指定 VET 度假村，平日住宿享受 15% 折扣，周末及公共假期享受 10% 折扣",
+        "package_benifits_des_6month" : "• 有效期 6 个月\n• 柬埔寨境内符合条件的 VET Express 和 VET Air Bus 车票可享受 100% 折扣 (不包括 VET Air Bus 头等舱)\n• 符合条件的 VET Speed Ferry、国际线路 VET Express 及 VET Air Bus 车票可享受 60% 折扣 (不包括 VET Air Bus 头等舱)\n• 入住指定 VET Resorts，平日住宿可享受 15% 折扣，周末及公共假期可享受 10% 折扣",
+        
 
   //*term condition logistic
   't1': '本公司不接收运输武器、毒品及野生动物等物品。',

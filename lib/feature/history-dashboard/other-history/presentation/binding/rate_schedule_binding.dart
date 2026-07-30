@@ -21,7 +21,7 @@ class RateScheduleBinding implements Bindings {
     if (!Get.isRegistered<RateScheduleNetworkRequest>()) {
       Get.lazyPut(
         () => RateScheduleNetworkRequest(
-          NetworkDataSource(baseUrl: BaseUrl.BASE_URL),
+          NetworkDataSource(baseUrl: BaseUrl.BASE_URL_TICKET),
         ),
         fenix: true,
       );

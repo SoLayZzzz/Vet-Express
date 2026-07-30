@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:express_vet/base/state_controller.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/loading.dart';
