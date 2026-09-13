@@ -436,7 +436,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 10),
                     child: Text(
-                      '${'seat_number'.tr} ${(selectedSeats[index]).toString()}',
+                      '${(isGoingTrip ? ValueStatic.seatTypeOneWay : ValueStatic.seatTypeTwoWay) == 2 ? 'bed_no'.tr : 'seat_no'.tr} ${(selectedSeats[index]).toString()}',
                       style: const TextStyle(color: AppColors.textColor),
                     ),
                   ),

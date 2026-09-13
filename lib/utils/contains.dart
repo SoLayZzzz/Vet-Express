@@ -16,5 +16,5 @@ class Constrains {
   static const int timeout90 = 90; //* login
 
   // Navigate Duration
-  static const int duration = 300;
+  static const int duration = 350;
 }

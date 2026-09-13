@@ -63,7 +63,8 @@ final Map<String, String> kmKH = {
   'warehouse_details': 'ព័ត៌មានលម្អិតនៃឃ្លាំង',
   'warehouse_name': 'ឈ្មោះឃ្លាំង',
   'customer_code': 'លេខកូដអតិថិជន',
-  'warehouse_phone': 'លេខទូរស័ព្ទឃ្លាំងចិន',
+  // 'warehouse_phone': 'លេខទូរស័ព្ទឃ្លាំងចិន',
+  'warehouse_phone': 'លេខទូរស័ព្ទឃ្លាំង',
   'warehouse_phone_khmer': 'លេខទូរស័ព្ទឃ្លាំងកម្ពុជា',
   'no_warehouse_data_for_transport':
       'មិនមានទិន្នន័យឃ្លាំងសម្រាប់ការដឹកជញ្ជូនប្រភេទនេះទេ',
@@ -549,7 +550,9 @@ final Map<String, String> kmKH = {
   'search_ticket': "ស្វែងរក",
   'seat': "កៅអី",
   'seats': "កៅអី",
+  'seat_no': 'លេខកៅអី',
   'bed': 'គ្រែ',
+  'bed_no': 'លេខគ្រែ',
   'view_map': "មើលផែនទី",
 
   //payment_screen
@@ -638,6 +641,8 @@ final Map<String, String> kmKH = {
   'accommodation': "កន្លែងស្នាក់នៅ",
   'can_not_open_facebook': 'មិនអាចបើក Facebook',
   'can_not_open_telegram': 'មិនអាចបើក Telegram',
+  'warehouse_address_cambodia': 'អាសយដ្ឋានឃ្លាំងនៅកម្ពុជា',
+  'telegram_support': 'ទាក់ទងតាម Telegram',
   'book_resort': 'កក់ឥឡូវនេះ',
 
   // Select OTP

@@ -76,7 +76,8 @@ final Map<String, String> enUS = {
   'warehouse_details': 'Warehouse Details',
   'warehouse_name': 'Warehouse name',
   'customer_code': 'Customer code',
-  'warehouse_phone': 'China Warehouse phone number',
+  // 'warehouse_phone': 'China Warehouse phone number',
+  'warehouse_phone': 'Warehouse phone number',
   'warehouse_phone_khmer': 'Cambodia Warehouse  phone number',
   'no_warehouse_data_for_transport':
 
@@ -605,7 +606,9 @@ final Map<String, String> enUS = {
   'total_amount': "Total amount ",
   'seat': "Seats",
   'seats': "Seats",
+  'seat_no': 'Seat No.',
   'bed': "Beds",
+  'bed_no': 'Bed No.',
   'view_map': "View Map",
 
   //ticket_menu
@@ -626,6 +629,8 @@ final Map<String, String> enUS = {
   'accommodation': "Accommodation",
   'can_not_open_facebook': 'Can not open Facebook',
   'can_not_open_telegram': 'Can not open Telegram',
+  'warehouse_address_cambodia': 'Warehouse address in Cambodia',
+  'telegram_support': 'Contact Telegram Support',
   'book_resort': 'Book Now',
 
   // Select OTP

@@ -42,7 +42,7 @@ dependencies:
   external_app_launcher: ^4.0.3
   flutter_inappwebview: ^6.1.5
   readmore: ^3.0.0
-  flutter_font_icons: ^2.2.7
+  flutter_font_icons: ^3.0.0
   dropdown_button2: ^2.3.9
   google_maps_flutter: ^2.11.0
   mobile_scanner: ^7.2.0
@@ -89,6 +89,9 @@ flutter:
   uses-material-design: true
 
   fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
     - family: OpenSans
       fonts:
         - asset: assets/fonts/OpenSans.ttf
@@ -127,3 +130,9 @@ flutter:
 # flutter run -d emulator-5554 --flavor prod --dart-define=FLAVOR=prod
 # flutter run -d DY4HE6PJOVIRAMHY --flavor prod --dart-define=FLAVOR=prod
 # flutter run -d DY4HE6PJOVIRAMHY --flavor qa --dart-define=FLAVOR=qa
+# flutter run -d MEGA2NEU00023926  --flavor qa --dart-define=FLAVOR=qa  
+# flutter run -d MEGA2NEU00023926  --flavor prod --dart-define=FLAVOR=prod 
+
+# Build to store ============================
+# flutter build ipa --flavor prod --dart-define=FLAVOR=prod --release
+# flutter build appbundle --flavor prod --dart-define=FLAVOR=prod --release --tree-shake-icons

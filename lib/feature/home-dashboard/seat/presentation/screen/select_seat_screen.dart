@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/components/skeleton.dart';
@@ -60,18 +59,30 @@ class SelectSeatScreen extends StatelessWidget {
                 child: FutureBuilder<Map<dynamic, dynamic>>(
                   future: controller.state.futureSeatLayout,
                   builder: (context, seatData) {
+                    if (seatData.connectionState == ConnectionState.waiting ||
+                        seatData.connectionState == ConnectionState.active) {
+                      return Container(
+                        height: 16,
+                        width: 140,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      );
+                    }
+
                     int seatType = 1;
                     if (seatData.hasData) {
                       final data = seatData.data;
                       final body = data?['body'];
                       if (body is List && body.isNotEmpty) {
                         final first = body[0];
-                        seatType =
-                            (first['seatType'] is int)
-                                ? first['seatType'] as int
-                                : 1;
+                        seatType = (first['seatType'] is int)
+                            ? first['seatType'] as int
+                            : 1;
                       }
                     }
+
                     return Text(
                       seatType == 2 ? 'choose_bed'.tr : 'choose_seat'.tr,
                       style: const TextStyle(

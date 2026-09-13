@@ -24,6 +24,6 @@ String _getFontFamily() {
     return 'Battambang'; // Default font when locale is null
   }
 
-  // Use OpenSans for all other languages (English, Chinese, etc.)
-  return 'OpenSans';
+  // Use Inter for all other languages (English, Chinese, etc.)
+  return 'Inter';
 }

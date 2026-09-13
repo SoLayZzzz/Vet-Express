@@ -392,6 +392,11 @@ class _PaymentScreenState extends State<PaymentScreen>
     double apiPlatformDiscountAll,
     double baseTotalAll,
   ) {
+    final seatNoLabel =
+        (index == 0 ? ValueStatic.seatTypeOneWay : ValueStatic.seatTypeTwoWay) == 2
+            ? 'bed_no'.tr
+            : 'seat_no'.tr;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -410,6 +415,7 @@ class _PaymentScreenState extends State<PaymentScreen>
               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
 
+
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -420,7 +426,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (isBuvaSea) view('name_pro'.tr, seatDetail.name),
-                    view('seat_number'.tr, seatDetail.seatNumber),
+                    view(seatNoLabel, seatDetail.seatNumber),
                     view('gender'.tr, seatDetail.gender),
                     view('nationality'.tr, seatDetail.nationalityName),
                     if (seatDetail.dob!.isNotEmpty)
@@ -539,6 +545,10 @@ class _PaymentScreenState extends State<PaymentScreen>
     double baseTotalAll,
     double totalPayableAll,
   ) {
+    final seatNoLabel = ValueStatic.seatTypeOneWay == 2
+        ? 'bed_no'.tr
+        : 'seat_no'.tr;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -550,6 +560,7 @@ class _PaymentScreenState extends State<PaymentScreen>
               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
 
+
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -560,7 +571,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (isBuvaSea) view('name_pro'.tr, seatDetail.name),
-                    view('seat_number'.tr, seatDetail.seatNumber),
+                    view(seatNoLabel, seatDetail.seatNumber),
                     view('gender'.tr, seatDetail.gender),
                     view('nationality'.tr, seatDetail.nationalityName),
                     if (seatDetail.dob!.isNotEmpty)

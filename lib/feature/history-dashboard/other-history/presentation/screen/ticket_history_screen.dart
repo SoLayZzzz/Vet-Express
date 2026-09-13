@@ -16,6 +16,28 @@ import '../binding/ticket_detail_binding.dart';
 class TicketHistoryScreen extends GetView<TicketHistoryController> {
   const TicketHistoryScreen({super.key});
 
+  String _formatHHmm(String? raw) {
+    final original = (raw ?? '').trim();
+    if (original.isEmpty || original == 'null') return '';
+
+    final dt = DateTime.tryParse(original);
+    if (dt != null) return DateFormat('HH:mm').format(dt);
+
+    var s = original;
+    if (s.contains('T')) s = s.split('T').last;
+    if (s.contains(' ')) s = s.split(' ').last;
+    if (s.contains('.')) s = s.split('.').first;
+
+    if (RegExp(r'^\d{1,2}:\d{2}(:\d{2})?$').hasMatch(s)) {
+      final parts = s.split(':');
+      final h = int.tryParse(parts[0]) ?? 0;
+      final m = int.tryParse(parts[1]) ?? 0;
+      return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}';
+    }
+
+    return s;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,12 +144,9 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                             bookingData.data?.body?.data?[index].departure ??
                             "01:00:00";
 
-                        String dateTimeString = "$travelDate $departure";
-                        final DateFormat dateTimeFormat = DateFormat(
-                          'yyyy-MM-dd HH:mm:ss',
-                        );
-                        DateTime travelDateTime = dateTimeFormat.parse(
-                          dateTimeString,
+                        final DateTime travelDateTime = _parseTravelDateTime(
+                          travelDate,
+                          departure,
                         );
 
                         return Container(
@@ -216,6 +235,47 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                         vertical: 12,
                       ),
                     );
+  }
+
+  DateTime _parseTravelDateTime(String? travelDate, String departure) {
+    final travelDateStr = (travelDate ?? '').trim();
+    final departureStr = departure.trim();
+
+    DateTime? parsed;
+
+    if (departureStr.isNotEmpty && departureStr.contains('-')) {
+      parsed = DateTime.tryParse(departureStr);
+    }
+
+    if (parsed == null && travelDateStr.isNotEmpty && travelDateStr.contains(':')) {
+      parsed = DateTime.tryParse(travelDateStr);
+    }
+
+    if (parsed == null && travelDateStr.isNotEmpty && departureStr.isNotEmpty) {
+      final datePart = travelDateStr.split(' ').first;
+      final timePart = departureStr.contains(' ')
+          ? departureStr.split(' ').last
+          : departureStr;
+
+      final combined = '$datePart $timePart';
+      parsed = DateTime.tryParse(combined);
+
+      if (parsed == null) {
+        try {
+          parsed = DateFormat('yyyy-MM-dd HH:mm:ss').parseStrict(combined);
+        } catch (_) {
+          try {
+            parsed = DateFormat('yyyy-MM-dd HH:mm').parseStrict(combined);
+          } catch (_) {}
+        }
+      }
+    }
+
+    if (parsed == null && travelDateStr.isNotEmpty) {
+      parsed = DateTime.tryParse(travelDateStr.split(' ').first);
+    }
+
+    return parsed ?? DateTime.now();
   }
 
    Widget _buildDestination(AsyncSnapshot<BookingListModel> bookingData, int index) {
@@ -407,11 +467,14 @@ Widget _buldBusAndTime(
                                             width: 18,
                                             height: 18,
                                           ),
-                                          Text(" ${DateFormat('HH:mm').format(DateFormat('HH:mm').parse((bookingData.data?.body?.data?[index].departure).toString()))}", style: TextStyle(
-                                             color: AppColors.textColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                          ),),
+                                          Text(
+                                            " ${_formatHHmm(bookingData.data?.body?.data?[index].departure)}",
+                                            style: const TextStyle(
+                                              color: AppColors.textColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     )
@@ -581,10 +644,36 @@ Widget _buldBusAndTime(
                                   );
   }
 
-  
+  String _capitalizePlaceName(String? input) {
+    final s = (input ?? '').trim();
+    if (s.isEmpty) return '';
 
- 
+    final out = StringBuffer();
+    var capitalizeNext = true;
 
+    for (var i = 0; i < s.length; i++) {
+      final ch = s[i];
+      final isLetter = RegExp(r'[A-Za-z]').hasMatch(ch);
+
+      if (capitalizeNext && isLetter) {
+        out.write(ch.toUpperCase());
+        capitalizeNext = false;
+        continue;
+      }
+
+      if (isLetter) {
+        out.write(ch.toLowerCase());
+      } else {
+        out.write(ch);
+      }
+
+      if (ch == ' ' || ch == '-' || ch == '/') {
+        capitalizeNext = true;
+      }
+    }
+
+    return out.toString();
+  }
  
 
   String _calculateCountdown(DateTime travelDateTime) {

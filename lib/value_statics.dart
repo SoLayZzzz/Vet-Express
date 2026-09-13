@@ -5,6 +5,8 @@ class ValueStatic {
   static int companyTypeTwoWay = 0;
   static int vehicleTypeOneWay = 0;
   static int vehicleTypeTwoWay = 0;
+  static int seatTypeOneWay = 0;
+  static int seatTypeTwoWay = 0;
 
   static String desfrom = '';
   static String desfromId = '';
@@ -113,6 +115,8 @@ class ValueStatic {
     ValueStatic.companyTypeTwoWay = 0;
     ValueStatic.vehicleTypeOneWay = 0;
     ValueStatic.vehicleTypeTwoWay = 0;
+    ValueStatic.seatTypeOneWay = 0;
+    ValueStatic.seatTypeTwoWay = 0;
     ValueStatic.travelPackageDis = 0;
   }
 

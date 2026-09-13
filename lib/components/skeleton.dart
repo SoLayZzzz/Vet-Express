@@ -961,3 +961,136 @@ class PackageInfoSkeleton extends StatelessWidget {
   // @Preview()
   // static Widget preview() => const PackageInfoSkeleton();
 }
+
+class PackageHistorySkeleton extends StatelessWidget {
+  final int itemCount;
+
+  const PackageHistorySkeleton({
+    super.key,
+    this.itemCount = 3,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget box({double? width, required double height, double radius = 4}) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+    }
+
+    Widget item() {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            box(width: 140, height: 16),
+            const SizedBox(height: 20),
+            Center(
+              child: Container(
+                width: 130,
+                height: 130,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Divider(),
+            ),
+            box(width: 180, height: 16),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      box(width: 24, height: 24, radius: 6),
+                      const SizedBox(width: 10),
+                      Expanded(child: box(height: 14)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Row(
+                    children: [
+                      box(width: 24, height: 24, radius: 6),
+                      const SizedBox(width: 10),
+                      Expanded(child: box(height: 14)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      box(width: 24, height: 24, radius: 6),
+                      const SizedBox(width: 10),
+                      Expanded(child: box(height: 14)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Row(
+                    children: [
+                      box(width: 24, height: 24, radius: 6),
+                      const SizedBox(width: 10),
+                      Expanded(child: box(height: 14)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            box(width: double.infinity, height: 16),
+            const SizedBox(height: 12),
+            box(width: 220, height: 14),
+            const SizedBox(height: 10),
+            box(width: 180, height: 14),
+            const SizedBox(height: 10),
+            box(width: 200, height: 14),
+            const SizedBox(height: 10),
+            box(width: 160, height: 14),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(),
+            ),
+            box(width: 140, height: 16),
+            const SizedBox(height: 10),
+            box(width: double.infinity, height: 14),
+            const SizedBox(height: 8),
+            box(width: double.infinity, height: 14),
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      physics: const BouncingScrollPhysics(),
+      primary: false,
+      shrinkWrap: true,
+      itemCount: itemCount,
+      itemBuilder: (context, index) => item(),
+      separatorBuilder: (_, __) => const Padding(
+        padding: EdgeInsets.only(bottom: 8.0),
+        child: Divider(thickness: 1),
+      ),
+    );
+  }
+
+  @Preview()
+  static Widget preview() => const PackageHistorySkeleton();
+}

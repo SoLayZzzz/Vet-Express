@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -22,29 +24,42 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
         child: Obx(() {
           final future = controller.state.futureBuyList;
           if (future == null) {
-            return const Center(
-              child: SizedBox(
-                height: 50.0,
-                width: 50.0,
-                child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
-              ),
-            );
+            return const PackageHistorySkeleton();
           }
 
           return FutureBuilder<BuyTravelPackageListResponse>(
             future: future,
             builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.connectionState == ConnectionState.active) {
+                return const PackageHistorySkeleton();
+              }
+
               if (snapshot.hasData &&
                   snapshot.data!.header?.statusCode == 200 &&
                   snapshot.data?.header?.result == true) {
                 if (snapshot.data!.body!.isNotEmpty) {
+                  final packages = List<Body>.from(snapshot.data!.body!);
+
+                  packages.sort((a, b) {
+                    final aDate = DateTime.tryParse(a.packageDate ?? '');
+                    final bDate = DateTime.tryParse(b.packageDate ?? '');
+
+                    if (aDate != null && bDate != null) {
+                      final byDate = bDate.compareTo(aDate);
+                      if (byDate != 0) return byDate;
+                    }
+
+                    return (b.id ?? 0).compareTo(a.id ?? 0);
+                  });
+
                   return ListView.separated(
                     physics: const BouncingScrollPhysics(),
                     primary: false,
                     shrinkWrap: true,
-                    itemCount: snapshot.data!.body!.length,
+                    itemCount: packages.length,
                     itemBuilder: (context, index) {
-                      final models = snapshot.data!.body![index];
+                      final models = packages[index];
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 20),
                         child: Column(
@@ -71,11 +86,15 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                                   child: WidgetZoom(
                                     heroAnimationTag:
                                         'profile-image-${models.id}',
-                                    zoomWidget: Image.network(
-                                      models.photo!,
+                                    zoomWidget: CachedNetworkImage(
+                                      imageUrl: models.photo ?? '',
                                       width: 130,
                                       height: 130,
                                       fit: BoxFit.cover,
+                                      placeholder: (_, __) => Container(
+                                        color: Colors.grey[200],
+                                      ),
+                                      errorWidget: (_, __, ___) => placeHolder(),
                                     ),
                                   ),
                                 ),
@@ -265,16 +284,7 @@ class PackageHistoryScreen extends GetView<PackageHistoryController> {
                   ),
                 );
               }
-              return const Center(
-                child: SizedBox(
-                  height: 50.0,
-                  width: 50.0,
-                  child: CircularProgressIndicator(
-                    value: null,
-                    strokeWidth: 5.0,
-                  ),
-                ),
-              );
+              return const PackageHistorySkeleton();
             },
           );
         }),

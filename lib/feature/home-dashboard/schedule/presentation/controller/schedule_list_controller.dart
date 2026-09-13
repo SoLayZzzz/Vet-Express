@@ -209,6 +209,7 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
       ValueStatic.priceOriginalTwoWay = (data.priceOriginal ?? '').toString();
       ValueStatic.companyTypeTwoWay = (data.journeyType ?? 0);
       ValueStatic.vehicleTypeTwoWay = (data.vehicleType ?? 0);
+      ValueStatic.seatTypeTwoWay = (data.seatType ?? 0);
     } else {
       ValueStatic.departureGoTime = (data.departure).toString();
       ValueStatic.carGoType = (data.transportationType).toString();
@@ -218,6 +219,7 @@ class ScheduleListController extends StateController<ScheduleListUiState> {
       ValueStatic.priceOriginalOneWay = (data.priceOriginal ?? '').toString();
       ValueStatic.companyTypeOneWay = (data.journeyType ?? 0);
       ValueStatic.vehicleTypeOneWay = (data.vehicleType ?? 0);
+      ValueStatic.seatTypeOneWay = (data.seatType ?? 0);
     }
   }
 

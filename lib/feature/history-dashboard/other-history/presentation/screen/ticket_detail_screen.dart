@@ -505,7 +505,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _listSeat(
-                      label: "seat_number".tr,
+                      label:
+                          (bookingData.data!.body!.data![0].seatType == 2
+                              ? 'bed_no'.tr
+                              : 'seat_no'.tr),
                       value:
                           '${bookingData.data!.body!.data![0].bookingSeatDetailList![index].seatNumber}',
                     ),

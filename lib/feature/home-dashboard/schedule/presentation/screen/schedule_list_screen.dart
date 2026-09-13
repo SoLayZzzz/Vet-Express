@@ -16,6 +16,64 @@ import '../controller/schedule_list_controller.dart';
 class ScheduleListScreen extends StatelessWidget {
   const ScheduleListScreen({super.key});
 
+  int _statusRank(int? status) {
+    if (status == 1) return 0;
+    if (status == 3) return 1;
+    if (status == 4) return 2;
+    return 3;
+  }
+
+  int _timeToMinutes(String? raw) {
+    var s = (raw ?? '').trim();
+    if (s.contains(' ')) {
+      s = s.split(' ').last;
+    }
+    if (s.contains('.')) {
+      s = s.split('.').first;
+    }
+
+    if (RegExp(r'^\d{1,2}:\d{2}$').hasMatch(s)) {
+      final parts = s.split(':');
+      final h = int.tryParse(parts[0]) ?? 0;
+      final m = int.tryParse(parts[1]) ?? 0;
+      return (h * 60) + m;
+    }
+
+    if (RegExp(r'^\d{1,2}:\d{2}:\d{2}$').hasMatch(s)) {
+      final parts = s.split(':');
+      final h = int.tryParse(parts[0]) ?? 0;
+      final m = int.tryParse(parts[1]) ?? 0;
+      return (h * 60) + m;
+    }
+
+    final dt = DateTime.tryParse(s);
+    if (dt != null) return (dt.hour * 60) + dt.minute;
+
+    return 0;
+  }
+
+  String _formatHHmm(String? raw) {
+    final original = (raw ?? '').trim();
+    if (original.isEmpty || original == 'null') return '';
+
+    final dt = DateTime.tryParse(original);
+    if (dt != null) return DateFormat('HH:mm').format(dt);
+
+    var s = original;
+    if (s.contains('T')) s = s.split('T').last;
+    if (s.contains(' ')) s = s.split(' ').last;
+    if (s.contains('.')) s = s.split('.').first;
+
+    if (RegExp(r'^\d{1,2}:\d{2}(:\d{2})?$').hasMatch(s)) {
+      final parts = s.split(':');
+      final h = int.tryParse(parts[0]) ?? 0;
+      final m = int.tryParse(parts[1]) ?? 0;
+      return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}';
+    }
+
+    return s;
+  }
+
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments as Map<dynamic, dynamic>?;
@@ -29,7 +87,6 @@ class ScheduleListScreen extends StatelessWidget {
       controller = Get.find<ScheduleListController>(tag: tag);
     }
 
-    final bool useDiscount = true;
 
     return Scaffold(
       appBar: AppBar(
@@ -159,6 +216,21 @@ class ScheduleListScreen extends StatelessWidget {
     required bool applyFivePercentDiscount,
   }) {
     final body = scheduleData.data!.body;
+
+    body?.sort((a, b) {
+      final ar = _statusRank(a.status);
+      final br = _statusRank(b.status);
+      if (ar != br) return ar.compareTo(br);
+
+      final at = _timeToMinutes(a.departure);
+      final bt = _timeToMinutes(b.departure);
+      if (at != bt) return at.compareTo(bt);
+
+      final ap = a.price ?? double.infinity;
+      final bp = b.price ?? double.infinity;
+      return ap.compareTo(bp);
+    });
+
     final itemCount = body?.length ?? 0;
 
     return ListView.builder(
@@ -210,15 +282,9 @@ class ScheduleListScreen extends StatelessWidget {
         final bool hasNationRoad =
             nationRoadText != '' && nationRoadText != 'null';
 
-        final String departureText = DateFormat(
-          'HH:mm',
-        ).format(DateFormat('HH:mm').parse((item.departure).toString()));
-        final String durationText = DateFormat(
-          'HH:mm',
-        ).format(DateFormat('HH:mm').parse((item.duration).toString()));
-        final String arrivalText = DateFormat(
-          'HH:mm',
-        ).format(DateFormat('HH:mm').parse((item.arrival).toString()));
+        final String departureText = _formatHHmm(item.departure);
+        final String durationText = _formatHHmm(item.duration);
+        final String arrivalText = _formatHHmm(item.arrival);
 
         final int usedSeats = ((item.totalSeat)! - (item.seatAvailable)!);
         final String totalSeatText = (item.totalSeat).toString();
@@ -507,7 +573,7 @@ class ScheduleListScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (hasOriginalPrice) const SizedBox(width: 10),
+                          if (hasOriginalPrice) const SizedBox(width: 5),
                           Visibility(
                             visible:
                                 !hasOriginalPrice && applyFivePercentDiscount,
@@ -521,7 +587,7 @@ class ScheduleListScreen extends StatelessWidget {
                             ),
                           ),
                           if (!hasOriginalPrice && applyFivePercentDiscount)
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 5),
                           Visibility(
                             visible:
                                 !hasOriginalPrice && applyFivePercentDiscount,
