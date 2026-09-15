@@ -42,199 +42,354 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'ticket_history_new_1'.tr),
-      body: Obx(() {
-        final future = controller.state.futureListBooking;
-        if (future == null) {
-          return const Center(
-            child: SizedBox(
-              height: 50.0,
-              width: 50.0,
-              child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
-            ),
-          );
-        }
+      body: Column(
+        children: [
+          _buildTabBarSelect(context),
+          Expanded(
+            child: Obx(() {
+              final future = controller.state.futureListBooking;
 
-        return FutureBuilder<BookingListModel>(
-          future: future,
-          builder: (context, bookingData) {
-            if (bookingData.hasData) {
-              if ((bookingData.data?.body?.data)!.isNotEmpty) {
-                return SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      _buildListOfTicketHistory(bookingData),
-                    ],
-                  ),
-                );
-              }
-              if ((bookingData.data?.body?.data)!.isEmpty) {
-                return SizedBox(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        AssetImages.ic_empty,
-                        width: 150,
-                        height: 150,
-                      ),
-                      Text(
-                        "data_not_found".tr,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w500,
+              if (future == null) {
+                return TabBarView(
+                  controller: controller.tabController,
+                  children: const [
+                    Center(
+                      child: SizedBox(
+                        height: 50.0,
+                        width: 50.0,
+                        child: CircularProgressIndicator(
+                          value: null,
+                          strokeWidth: 5.0,
                         ),
                       ),
-                    ],
-                  ),
-                );
-              }
-            } else if (bookingData.hasError) {
-              return SizedBox(
-                height: double.infinity,
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      AssetImages.ic_empty,
-                      width: 150,
-                      height: 150,
                     ),
-                    Text(
-                      "data_not_found".tr,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.primaryColor,
-                        fontWeight: FontWeight.w500,
+                    Center(
+                      child: SizedBox(
+                        height: 50.0,
+                        width: 50.0,
+                        child: CircularProgressIndicator(
+                          value: null,
+                          strokeWidth: 5.0,
+                        ),
                       ),
                     ),
                   ],
-                ),
-              );
-            }
+                );
+              }
 
-            return const Center(
-              child: SizedBox(
-                height: 50.0,
-                width: 50.0,
-                child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
-              ),
-            );
-          },
-        );
-      }),
+              return FutureBuilder<BookingListModel>(
+                future: future,
+                builder: (context, bookingData) {
+                  if (bookingData.connectionState == ConnectionState.waiting) {
+                    return TabBarView(
+                      controller: controller.tabController,
+                      children: const [
+                        Center(
+                          child: SizedBox(
+                            height: 50.0,
+                            width: 50.0,
+                            child: CircularProgressIndicator(
+                              value: null,
+                              strokeWidth: 5.0,
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: SizedBox(
+                            height: 50.0,
+                            width: 50.0,
+                            child: CircularProgressIndicator(
+                              value: null,
+                              strokeWidth: 5.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  if (bookingData.hasError) {
+                    return TabBarView(
+                      controller: controller.tabController,
+                      children: [
+                        _buildEmptyState(),
+                        _buildEmptyState(),
+                      ],
+                    );
+                  }
+
+                  final all = bookingData.data?.body?.data ?? <BookingListDataItem>[];
+                  final now = DateTime.now();
+
+                  final upcoming = all.where((e) {
+                    final arriveDateTime = _parseTripEndDateTime(
+                      travelDate: e.travelDate,
+                      departure: e.departure,
+                      arrival: e.arrival,
+                    );
+                    return arriveDateTime.isAfter(now);
+                  }).toList();
+
+                  final history = all.where((e) {
+                    final arriveDateTime = _parseTripEndDateTime(
+                      travelDate: e.travelDate,
+                      departure: e.departure,
+                      arrival: e.arrival,
+                    );
+                    return !arriveDateTime.isAfter(now);
+                  }).toList();
+
+                  return TabBarView(
+                    controller: controller.tabController,
+                    children: [
+                      upcoming.isEmpty
+                          ? _buildEmptyState()
+                          : _buildTicketList(items: upcoming, context: context),
+                      _buildHistoryTab(items: history, context: context),
+                    ],
+                  );
+                },
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildListOfTicketHistory(AsyncSnapshot<BookingListModel> bookingData) {
+  Widget _buildTabBarSelect(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        height: 54, 
+        decoration: BoxDecoration(
+          color: const Color(0XFFE6E8EA), 
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Stack(
+          children: [
+            // 1. Static Vertical Divider
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                children: [
+                  Expanded(child: SizedBox()),
+                  VerticalDivider(color: Colors.black12, thickness: 1),
+                  Expanded(child: SizedBox()),
+                ],
+              ),
+            ),
+
+            // 2. The Actual TabBar
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: TabBar(
+                controller: controller.tabController,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.black54,
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                tabs: const [
+                  Tab(text: 'Upcoming'),
+                  Tab(text: 'History'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            AssetImages.ic_empty,
+            width: 150,
+            height: 150,
+          ),
+          Text(
+            "data_not_found".tr,
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryTab({
+    required List<BookingListDataItem> items,
+    required BuildContext context,
+  }) {
+    return Column(
+      children: [
+        _buildHistoryInfoBanner(),
+        Expanded(
+          child: items.isEmpty
+              ? _buildEmptyState()
+              : _buildTicketList(items: items, context: context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHistoryInfoBanner() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: Colors.black12, width: 0.6),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 6),
+              child:   Image.asset(AssetImages.ic_i,
+                width: 30,
+                height: 30,
+            ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text( 
+                    'information'.tr,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.secondaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'ticket_history_remove_after_12_months'.tr,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.greyColor,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTicketList({
+    required List<BookingListDataItem> items,
+    required BuildContext context,
+  }) {
     return ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: (bookingData.data?.body?.data)!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final String? travelDate =
-                            bookingData.data?.body?.data?[index].travelDate;
-                        final String departure =
-                            bookingData.data?.body?.data?[index].departure ??
-                            "01:00:00";
+      physics: const BouncingScrollPhysics(),
+      shrinkWrap: false,
+      itemCount: items.length,
+      itemBuilder: (BuildContext context, int index) {
+        final item = items[index];
 
-                        final DateTime travelDateTime = _parseTravelDateTime(
-                          travelDate,
-                          departure,
-                        );
+        final DateTime travelDateTime = _parseTripEndDateTime(
+          travelDate: item.travelDate,
+          departure: item.departure,
+          arrival: item.arrival,
+        );
 
-                        return Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: AppColors.whiteColor,
-                            border: Border.all(
-                              width: 0.2,
-                              color: AppColors.borderColor,
-                            ),
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(
-                                () => TicketDetailScreen(
-                                  id:
-                                      (bookingData
-                                              .data
-                                              ?.body
-                                              ?.data?[index]
-                                              .id)!
-                                          .toInt(),
-                                  journeyType:
-                                      bookingData.data?.body?.data?[index].journeyType,
-                                ),
-                                binding: TicketDetailBinding(),
-                                transition: Transition.rightToLeft,
-                                duration: const Duration(
-                                  milliseconds: Constrains.duration,
-                                ),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                children: [
-                                  _buildDestination(bookingData, index),
-                                  const SizedBox(height: 10),
-                                  _buildCodeAndDate(bookingData, index),
-                                  const SizedBox(height: 10),
-                                  _buldBusAndTime(bookingData, index),
-                                  //
-                                  if (bookingData
-                                          .data
-                                          ?.body
-                                          ?.data?[index]
-                                          .isLuckyDraw ==
-                                      1)
-                                    const SizedBox(height: 10),
-                                  if (bookingData
-                                          .data
-                                          ?.body
-                                          ?.data?[index]
-                                          .isLuckyDraw ==
-                                      1)
-                                  //
-                                    _buildIsLuckyDraw(),
-                                  if (bookingData
-                                          .data
-                                          ?.body
-                                          ?.data?[index]
-                                          .isTravelPackage ==
-                                      1)
-                                    const SizedBox(height: 10),
-                                  if (bookingData
-                                          .data
-                                          ?.body
-                                          ?.data?[index]
-                                          .isTravelPackage ==
-                                      1)
-                                    _buildIsTravelPackage(),
-                                  const SizedBox(height: 10),
-                                  _buildRateAndTimecount(travelDateTime, bookingData, index, context),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 10);
-                      },
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 12,
-                      ),
-                    );
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6),
+            color: AppColors.whiteColor,
+            border: Border.all(
+              width: 0.2,
+              color: AppColors.borderColor,
+            ),
+          ),
+          child: InkWell(
+            onTap: () {
+              Get.to(
+                () => TicketDetailScreen(
+                  id: item.id ?? 0,
+                  journeyType: item.journeyType,
+                ),
+                binding: TicketDetailBinding(),
+                transition: Transition.rightToLeft,
+                duration: const Duration(
+                  milliseconds: Constrains.duration,
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  _buildDestination(item),
+                  const SizedBox(height: 12),
+                  _buildCodeAndDate(item),
+                  const SizedBox(height: 12),
+                  _buldBusAndTime(item),
+                  //
+                  if (item.isLuckyDraw == 1) const SizedBox(height: 12),
+                  if (item.isLuckyDraw == 1) _buildIsLuckyDraw(),
+                  if (item.isTravelPackage == 1) const SizedBox(height: 12),
+                  if (item.isTravelPackage == 1) _buildIsTravelPackage(),
+                  const SizedBox(height: 12),
+                  _buildRateAndTimecount(travelDateTime, item, context),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(height: 10);
+      },
+      padding: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 12,
+      ),
+    );
   }
 
   DateTime _parseTravelDateTime(String? travelDate, String departure) {
@@ -278,320 +433,301 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
     return parsed ?? DateTime.now();
   }
 
-   Widget _buildDestination(AsyncSnapshot<BookingListModel> bookingData, int index) {
-    return Row(
-                                  children: [
-                                   Expanded(
-                                     child: Row(
-                                      children: [
-                                         Image.asset(
-                                        bookingData
-                                                    .data
-                                                    ?.body
-                                                    ?.data?[index]
-                                                    .journeyType ==
-                                                1
-                                            ? AssetImages.vet_logo
-                                            : bookingData
-                                                    .data
-                                                    ?.body
-                                                    ?.data?[index]
-                                                    .journeyType ==
-                                                2
-                                            ? AssetImages.buva_sea
-                                            : bookingData
-                                                    .data
-                                                    ?.body
-                                                    ?.data?[index]
-                                                    .journeyType ==
-                                                3
-                                            ? AssetImages.vet_air_bus_schedule
-                                            : AssetImages.buva_sea,
-                                        height: 30,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          "${bookingData.data?.body?.data?[index].destinationFrom} - ${bookingData.data?.body?.data?[index].destinationTo}",
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.titleColor,
-                                          ),
-                                        ),
-                                      ),
-                                      ],
-                                     ),
-                                     //
-                                     
-                                   ),
-                                    //
-                                     Row(
-                                       children: [
-                                         Image.asset(
-                                           AssetImages.user,
-                                           height: 20,
-                                         ),
-                                         const SizedBox(width: 6),
-                                         Text(
-                                           '${bookingData.data?.body?.data?[index].totalSeat}',
-                                           style: TextStyle(
-                                             fontSize: 14,
-                                             color: AppColors.primaryColor,
-                                             fontWeight: FontWeight.bold,
-                                           ),
-                                         ),
-                                       
-                                       ],
-                                     ),
-                                    
-                                  ],
-                                );
+  DateTime _parseTripEndDateTime({
+    required String? travelDate,
+    required String? departure,
+    required String? arrival,
+  }) {
+    final travelDateStr = (travelDate ?? '').trim();
+    final arrivalStr = (arrival ?? '').trim();
+
+    if (arrivalStr.isEmpty || arrivalStr == 'null') {
+      return _parseTravelDateTime(travelDate, (departure ?? '').trim());
+    }
+
+    DateTime? parsed;
+
+    if (arrivalStr.contains('-') || arrivalStr.contains('T')) {
+      parsed = DateTime.tryParse(arrivalStr);
+    }
+
+    if (parsed == null && travelDateStr.isNotEmpty) {
+      var timePart = arrivalStr;
+      if (timePart.contains('T')) timePart = timePart.split('T').last;
+      if (timePart.contains(' ')) timePart = timePart.split(' ').last;
+      if (timePart.contains('.')) timePart = timePart.split('.').first;
+
+      final datePart = travelDateStr.split(' ').first;
+      final combined = '$datePart $timePart';
+
+      parsed = DateTime.tryParse(combined);
+
+      if (parsed == null) {
+        try {
+          parsed = DateFormat('yyyy-MM-dd HH:mm:ss').parseStrict(combined);
+        } catch (_) {
+          try {
+            parsed = DateFormat('yyyy-MM-dd HH:mm').parseStrict(combined);
+          } catch (_) {}
+        }
+      }
+    }
+
+    return parsed ?? _parseTravelDateTime(travelDate, (departure ?? '').trim());
   }
 
-   Widget _buildCodeAndDate(AsyncSnapshot<BookingListModel> bookingData, int index) {
+  Widget _buildDestination(BookingListDataItem item) {
     return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
-                                          
-                                          Image.asset(
-                                            AssetImages.ic_ticket_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Flexible(
-                                            child: Text(
-                                              bookingData.data?.body?.data?[index].code ?? '-',
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Image.asset(
+                item.journeyType == 1
+                    ? AssetImages.vet_logo
+                    : item.journeyType == 2
+                        ? AssetImages.buva_sea
+                        : item.journeyType == 3
+                            ? AssetImages.vet_air_bus_schedule
+                            : AssetImages.buva_sea,
+                height: 30,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  "${_capitalizePlaceName(item.destinationFrom)} - ${_capitalizePlaceName(item.destinationTo)}",
+                  maxLines: 2,
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.titleColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Ionicons.person_outline,
+              size: 22,
+              color: AppColors.textColor,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '${item.totalSeat}',
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
-                                          
-                                        ],
-                                      ),
-                                    ),
-
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
-                                         
-                                           Image.asset(
-                                            AssetImages.ic_date_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            "${bookingData.data?.body?.data?[index].travelDate}",
-                                            style: const TextStyle(
-                                              color: AppColors.textColor,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
+  Widget _buildCodeAndDate(BookingListDataItem item) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Row(
+            children: [
+              Image.asset(
+                AssetImages.ic_ticket_history,
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  item.code ?? '-',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 2,
+          child: Row(
+            children: [
+              Image.asset(
+                AssetImages.ic_date_history,
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  "${item.travelDate}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
 
-Widget _buldBusAndTime(
-    AsyncSnapshot<BookingListModel> bookingData, 
-    int index) {
+Widget _buldBusAndTime(BookingListDataItem item) {
     return Row(
-        mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                          
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
-                                           Image.asset(
-                                            // AssetImages.ic_boat_history ,
-                                              bookingData
-                                                            .data
-                                                            ?.body
-                                                            ?.data?[index]
-                                                            .journeyType ==
-                                                        2 ||
-                                                    bookingData
-                                                            .data
-                                                            ?.body
-                                                            ?.data?[index]
-                                                            .journeyType ==
-                                                        4
-                                                ? AssetImages.ic_boat_history : AssetImages.ic_bus_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                         
-                                          const SizedBox(width: 6),
-                                          Flexible(
-                                            child: Text(
-                                              "${bookingData.data?.body?.data?[index].transportationType}",
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                color: AppColors.textColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    Expanded(
-                                      flex: 1,
-                                      child: Row(
-                                        children: [
-
-                                           Image.asset(
-                                            AssetImages.ic_time_history,
-                                            width: 18,
-                                            height: 18,
-                                          ),
-                                          Text(
-                                            " ${_formatHHmm(bookingData.data?.body?.data?[index].departure)}",
-                                            style: const TextStyle(
-                                              color: AppColors.textColor,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                );
+      children: [
+        Expanded(
+          flex: 3,
+          child: Row(
+            children: [
+              Image.asset(
+                // AssetImages.ic_boat_history ,
+                item.journeyType == 2 || item.journeyType == 4
+                    ? AssetImages.ic_boat_history
+                    : AssetImages.ic_bus_history,
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  "${item.transportationType}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: const TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 2,
+          child: Row(
+            children: [
+              Image.asset(
+                AssetImages.ic_time_history,
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  _formatHHmm(item.departure),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
   Widget _buildRateAndTimecount(
-    DateTime travelDateTime, 
-    AsyncSnapshot<BookingListModel> bookingData, 
-    int index, 
-    BuildContext context) {
+    DateTime travelDateTime,
+    BookingListDataItem item,
+    BuildContext context,
+  ) {
+    final now = DateTime.now();
+
     return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    if (travelDateTime.isBefore(
-                                      DateTime.now(),
-                                    ))
-                                      bookingData
-                                                  .data
-                                                  ?.body
-                                                  ?.data?[index]
-                                                  .isRate ==
-                                              0
-                                          ? InkWell(
-                                            onTap: () async {
-                                              final result = await Get.to(
-                                                () => RateScheduleScreen(
-                                                  scheduleId:
-                                                      bookingData
-                                                          .data
-                                                          ?.body
-                                                          ?.data?[index]
-                                                          .scheduleId,
-                                                  id:
-                                                      bookingData
-                                                          .data
-                                                          ?.body
-                                                          ?.data?[index]
-                                                          .id
-                                                          .toString(),
-                                                ),
-                                                transition:
-                                                    Transition
-                                                        .rightToLeft,
-                                                duration: const Duration(
-                                                  milliseconds:
-                                                      Constrains.duration,
-                                                ),
-                                              );
-                                          
-                                              if (result == true) {
-                                                controller
-                                                    .loadBookingList(
-                                                      context: context,
-                                                    );
-                                              }
-                                            },
-                                            child: const Row(
-                                              children: [
-                                                Icon(
-                                                  Ionicons
-                                                      .chatbubble_ellipses_outline,
-                                                  size: 18,
-                                                  color:
-                                                      AppColors
-                                                          .primaryColor,
-                                                ),
-                                                SizedBox(width: 6),
-                                                Text(
-                                                  'Rate a schedule',
-                                                  style: TextStyle(
-                                                    color:
-                                                        AppColors
-                                                            .primaryColor,
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                          : const Expanded(
-                                            flex: 1,
-                                            child: SizedBox(),
-                                          ),
-                                    if (travelDateTime.isAfter(
-                                      DateTime.now(),
-                                    ))
-                                      Expanded(
-                                        flex: 1,
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Ionicons.time_outline,
-                                              size: 18,
-                                              color: AppColors.primaryColor,
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              _calculateCountdown(
-                                                travelDateTime,
-                                              ),
-                                              style: const TextStyle(
-                                                color:
-                                                    AppColors.primaryColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                   
-                                  ],
-                                );
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (travelDateTime.isBefore(now))
+          item.isRate == 0
+              ? InkWell(
+                  onTap: () async {
+                    final result = await Get.to(
+                      () => RateScheduleScreen(
+                        scheduleId: item.scheduleId,
+                        id: item.id.toString(),
+                      ),
+                      transition: Transition.rightToLeft,
+                      duration: const Duration(
+                        milliseconds: Constrains.duration,
+                      ),
+                    );
+
+                    if (result == true) {
+                      controller.reloadBookingList();
+                    }
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Ionicons.chatbubble_ellipses_outline,
+                        size: 18,
+                        color: AppColors.primaryColor,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        'Rate a schedule',
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : const Expanded(
+                  flex: 1,
+                  child: SizedBox(),
+                ),
+        if (!travelDateTime.isBefore(now))
+          Expanded(
+            flex: 1,
+            child: Row(
+              children: [
+                const Icon(
+                  Ionicons.time_outline,
+                  size: 18,
+                  color: AppColors.primaryColor,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  _calculateCountdown(travelDateTime),
+                  style: const TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
   }
 
   Widget _buildIsTravelPackage() {

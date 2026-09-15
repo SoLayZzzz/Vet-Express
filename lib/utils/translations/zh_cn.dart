@@ -679,6 +679,8 @@ final Map<String, String> zhCN = {
   "Down Stair": "楼下",
   "Up Stair": "楼上",
   'search_ticket': "查询",
+  'ticket_history_remove_after_12_months':
+      '这些票券将在 12 个月后从您的票券历史记录中删除',
   'trip_info': "旅行明细",
   'seat': "座位",
   'seats': "座位",

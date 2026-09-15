@@ -18,12 +18,17 @@ import '../../../../../models/boarding_point.dart' as boarding;
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/contains.dart';
 import '../../../../../utils/style.dart';
+import '../../../../../utils/check_input.dart';
 import 'coupon_screen.dart';
 import '../../../../../base/web_view_screen.dart';
 
 class PassengerDetailScreen extends GetView<PassengerDetailController> {
   PassengerDetailScreen({super.key});
   final FocusNode inputFocusNode = FocusNode();
+
+  String _normalizePhone(String value) {
+    return value.replaceAll(RegExp(r'\D'), '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +112,26 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
   bool _shouldShowAmount(num value) {
     return value > 0;
+  }
+
+  Widget _pointIcon(String iconAsset) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Image.asset(
+        iconAsset,
+        width: 18,
+        height: 18,
+        color: AppColors.textColor,
+      ),
+    );
+  }
+
+  InputDecoration _boardingPointDecoration() {
+    return Style.inputText('');
+  }
+
+  InputDecoration _dropOffPointDecoration() {
+    return Style.inputText('');
   }
 
   Future<void> _showPointSelectionDialog({
@@ -224,6 +249,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
   Widget _pointPicker({
     required BuildContext context,
     required InputDecoration decoration,
+    required String iconAsset,
     required String dialogTitle,
     required List<boarding.Body> items,
     required int selectedIndex,
@@ -257,7 +283,9 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   );
                 },
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _pointIcon(iconAsset),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,24 +319,32 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   ],
                 ),
               )
-              : Column(
+              : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${(items[0].name)}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: AppColors.textColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "${items[0].address}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: AppColors.textColor,
+                  _pointIcon(iconAsset),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${(items[0].name)}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: AppColors.textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "${items[0].address}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: AppColors.textColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1024,13 +1060,17 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                 child: TextField(
                                   controller:
                                       controller.state.phoneNumberController,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.phone,
+                                  inputFormatters: [PhoneNumberFormatter()],
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: AppColors.textColor,
                                   ),
                                   onChanged: (value) {
-                                    if (value != ValueStatic.phone) {
+                                    final current = _normalizePhone(value);
+                                    final original =
+                                        _normalizePhone(ValueStatic.phone);
+                                    if (current != original) {
                                       controller.state.isPhone.value = true;
                                       controller.state.isTravelPackageOk.value =
                                           false;
@@ -1099,8 +1139,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                               // * travel package
                               // * check the phone number
                               if (enableDiscount)
-                                if (ValueStatic.phone ==
-                                    controller.state.phoneNumberController.text)
+                                if (_normalizePhone(ValueStatic.phone) ==
+                                    _normalizePhone(controller.state.phoneNumberController.text))
                                   ///one way
                                   if (ValueStatic.journeyType == 1)
                                     ///check the number of seat one way(can apply only when user book one seat)
@@ -1394,8 +1434,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
                               // * travel package
                               // * check the phone number
-                              if (ValueStatic.phone ==
-                                  controller.state.phoneNumberController.text)
+                              if (_normalizePhone(ValueStatic.phone) ==
+                                  _normalizePhone(controller.state.phoneNumberController.text))
                                 ///round trip
                                 if (ValueStatic.journeyType == 2)
                                   ///check the number of seat round trip(can apply only when user book one seat for one way and one seat for two way)
@@ -1949,42 +1989,102 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         ),
                       ),
 
-                      //* Terms and Conditions
+                      //* Terms and Conditions / Privacy Policy
                       SliverToBoxAdapter(
-                        child: GestureDetector(
-                          onTap: () {
-                            Get.to(
-                              () => const WebViewScreen(type: 1, ticketId: ''),
-                              duration: const Duration(
-                                milliseconds: Constrains.duration,
-                              ),
-                              transition: Transition.rightToLeft,
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 20,
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text.rich(
-                                TextSpan(
-                                  text: 'click'.tr,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 20,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Text(
+                                  'click'.tr,
                                   style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
                                   ),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: 'term and policy'.tr,
-                                      style: const TextStyle(
-                                        color: AppColors.secondaryColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if ((Get.locale?.languageCode ?? 'en') ==
+                                        'en')
+                                      const Text(
+                                        'the ',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.to(
+                                          () => const WebViewScreen(
+                                            type: 1,
+                                            ticketId: '',
+                                          ),
+                                          duration: const Duration(
+                                            milliseconds: Constrains.duration,
+                                          ),
+                                          transition: Transition.rightToLeft,
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: Size.zero,
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: Text(
+                                        'condition'.tr,
+                                        style: const TextStyle(
+                                          color: AppColors.secondaryColor,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
+                                const Text(
+                                  ' & ',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Get.to(
+                                      () => const WebViewScreen(
+                                        type: 5,
+                                        ticketId: '',
+                                      ),
+                                      duration: const Duration(
+                                        milliseconds: Constrains.duration,
+                                      ),
+                                      transition: Transition.rightToLeft,
+                                    );
+                                  },
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  child: Text(
+                                    'privacy_policy'.tr,
+                                    style: const TextStyle(
+                                      color: AppColors.secondaryColor,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -2277,7 +2377,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             (data.data?.body?.length != 1)
                                 ? _pointPicker(
                                   context: context,
-                                  decoration: Style.inputText(''),
+                                  decoration: _boardingPointDecoration(),
+                                  iconAsset: AssetImages.location_boarding,
                                   dialogTitle: 'boarding_point'.tr,
                                   items: data.data?.body ?? [],
                                   selectedIndex:
@@ -2341,26 +2442,34 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   },
                                 )
                                 : InputDecorator(
-                                  decoration: Style.inputText(''),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  decoration: _boardingPointDecoration(),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "${(data.data?.body?[0].name)}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                          color: AppColors.textColor,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        "${data.data?.body?[0].address}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14,
-                                          color: AppColors.textColor,
+                                      _pointIcon(AssetImages.location_boarding),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${(data.data?.body?[0].name)}",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                                color: AppColors.textColor,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              "${data.data?.body?[0].address}",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                color: AppColors.textColor,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -2439,7 +2548,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             (data.data?.body?.length != 1)
                                 ? _pointPicker(
                                   context: context,
-                                  decoration: Style.inputText(''),
+                                  decoration: _dropOffPointDecoration(),
+                                  iconAsset: AssetImages.location,
                                   dialogTitle: 'drop_off_point'.tr,
                                   items: data.data?.body ?? [],
                                   selectedIndex:
@@ -2503,26 +2613,34 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   },
                                 )
                                 : InputDecorator(
-                                  decoration: Style.inputText(''),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  decoration: _dropOffPointDecoration(),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "${(data.data?.body?[0].name)}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                          color: AppColors.textColor,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        "${data.data?.body?[0].address}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14,
-                                          color: AppColors.textColor,
+                                      _pointIcon(AssetImages.location),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${(data.data?.body?[0].name)}",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                                color: AppColors.textColor,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              "${data.data?.body?[0].address}",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                color: AppColors.textColor,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -2675,7 +2793,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             ),
                             _pointPicker(
                               context: context,
-                              decoration: Style.inputText(''),
+                              decoration: _boardingPointDecoration(),
+                              iconAsset: AssetImages.location_boarding,
                               dialogTitle: 'boarding_point'.tr,
                               items: data.data?.body ?? [],
                               selectedIndex:
@@ -2812,7 +2931,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             ),
                             _pointPicker(
                               context: context,
-                              decoration: Style.inputText(''),
+                              decoration: _dropOffPointDecoration(),
+                              iconAsset: AssetImages.location,
                               dialogTitle: 'drop_off_point'.tr,
                               items: data.data?.body ?? [],
                               selectedIndex:

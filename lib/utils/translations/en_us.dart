@@ -264,7 +264,7 @@ final Map<String, String> enUS = {
   "current_location": "Current location",
 
   //coupon
-  "promo_code": "Promo Code",
+  "promo_code": "Promotion Code",
   "enter_pro": "Enter Promo Code",
   "my_offer": "My Offers",
   "pro_message":
@@ -536,6 +536,8 @@ final Map<String, String> enUS = {
   'ticket_qr': 'Please show QR Code when boarding',
   'show_qr': 'Show QR Code',
   'search_ticket': "Search",
+  'ticket_history_remove_after_12_months':
+      'The tickets will be removed from your ticket history after 12 months',
 
   //payment_screen
   'choose_payment': 'Choose payment',

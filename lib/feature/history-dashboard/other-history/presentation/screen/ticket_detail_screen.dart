@@ -633,7 +633,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         child: Column(
           children: [
             Text(
-              "${(bookingData.data?.body?.data?[0].destinationFrom).toString()} - ${(bookingData.data?.body?.data?[0].destinationTo).toString()}",
+              // "${(bookingData.data?.body?.data?[0].destinationFrom).toString()} - ${(bookingData.data?.body?.data?[0].destinationTo).toString()}",
+              "${_capitalizePlaceName((bookingData.data?.body?.data?[0].destinationFrom).toString())} - ${_capitalizePlaceName((bookingData.data?.body?.data?[0].destinationTo).toString())}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -879,5 +880,36 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     final clean = feeString.replaceAll(r'$', '').trim();
     final value = double.tryParse(clean) ?? 0.0;
     return value > 0;
+  }
+
+   String _capitalizePlaceName(String? input) {
+    final s = (input ?? '').trim();
+    if (s.isEmpty) return '';
+
+    final out = StringBuffer();
+    var capitalizeNext = true;
+
+    for (var i = 0; i < s.length; i++) {
+      final ch = s[i];
+      final isLetter = RegExp(r'[A-Za-z]').hasMatch(ch);
+
+      if (capitalizeNext && isLetter) {
+        out.write(ch.toUpperCase());
+        capitalizeNext = false;
+        continue;
+      }
+
+      if (isLetter) {
+        out.write(ch.toLowerCase());
+      } else {
+        out.write(ch);
+      }
+
+      if (ch == ' ' || ch == '-' || ch == '/') {
+        capitalizeNext = true;
+      }
+    }
+
+    return out.toString();
   }
 }

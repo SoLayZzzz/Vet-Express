@@ -548,6 +548,8 @@ final Map<String, String> kmKH = {
   'total_ticket_price': 'សរុបចុងក្រោយ',
   'total_amount': "ទឹកប្រាក់សរុប ",
   'search_ticket': "ស្វែងរក",
+  'ticket_history_remove_after_12_months':
+      'សំបុត្រនឹងត្រូវបានដកចេញពីប្រវត្តិសំបុត្ររបស់អ្នកបន្ទាប់ពីរយៈពេល 12 ខែ',
   'seat': "កៅអី",
   'seats': "កៅអី",
   'seat_no': 'លេខកៅអី',

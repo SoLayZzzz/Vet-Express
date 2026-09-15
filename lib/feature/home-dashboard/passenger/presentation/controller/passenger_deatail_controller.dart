@@ -14,6 +14,7 @@ import 'package:express_vet/base/state_controller.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/data/model/request/check_booking_package_request.dart';
 import 'package:express_vet/feature/home-dashboard/passenger/presentation/uistate/passenger_uistate.dart';
 import 'package:express_vet/feature/auth/data/model/response/nationality_response.dart';
+import 'package:express_vet/utils/check_input.dart';
 
 import '../../domain/uscase/passernger_uscase.dart';
 
@@ -979,6 +980,7 @@ class PassengerDetailController extends StateController<PassengerUistate> {
               ? body!.name!.trim()
               : (body?.username ?? '').trim();
       final phone = (body?.telephone ?? '').trim();
+      final normalizedPhone = phone.replaceAll(RegExp(r'\D'), '');
       final email = (body?.email ?? '').trim();
       final dob = (body?.dob ?? '').trim();
       final gender = body?.gender ?? 0;
@@ -994,13 +996,15 @@ class PassengerDetailController extends StateController<PassengerUistate> {
         state.usernameController.text = ValueStatic.username;
       }
 
-      if (phone.isNotEmpty) {
-        ValueStatic.phone = phone;
+      if (normalizedPhone.isNotEmpty) {
+        ValueStatic.phone = normalizedPhone;
         if (!onlyIfEmpty || state.phoneNumberController.text.isEmpty) {
-          state.phoneNumberController.text = phone;
+          state.phoneNumberController.text =
+              CheckInput.formatPhoneNumber(normalizedPhone);
         }
       } else if (!onlyIfEmpty && ValueStatic.phone.isNotEmpty) {
-        state.phoneNumberController.text = ValueStatic.phone;
+        state.phoneNumberController.text =
+            CheckInput.formatPhoneNumber(ValueStatic.phone);
       }
 
       if (email.isNotEmpty) {
@@ -1032,7 +1036,8 @@ class PassengerDetailController extends StateController<PassengerUistate> {
         }
         if (state.phoneNumberController.text.isEmpty &&
             ValueStatic.phone.isNotEmpty) {
-          state.phoneNumberController.text = ValueStatic.phone;
+          state.phoneNumberController.text =
+              CheckInput.formatPhoneNumber(ValueStatic.phone);
         }
         if (state.emailController.text.isEmpty &&
             ValueStatic.email.isNotEmpty) {

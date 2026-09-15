@@ -356,7 +356,7 @@ class GoodsTransferHistoryScreen
                   },
                 ),
 
-                _filterButton(context: context),
+                // _filterButton(context: context),
               ],
             );
           }
@@ -578,22 +578,23 @@ class _TransferItemCardState extends State<TransferItemCard> {
                                 "${widget.item.destinationToEn}",
                                 style: TextStyle(fontSize: 12, fontFamily: "Inter"),
                               ),
-                              Text(
-                                "${widget.item.receiverTelephone}",
-                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
-                              ),
                             ],
                           ),
                           //
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                               Text(
+                                "${widget.item.receiverTelephone}",
+                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                              ),
                               Text(
                                 '${'qty'.tr}: ${widget.item.qty}/1',
                                 style: const TextStyle(fontSize: 12, fontFamily: "Inter"),
                               ),
                             ],
                           ),
+                         
                         ],
                       ),
                     ),
@@ -689,6 +690,72 @@ class _TransferItemCardState extends State<TransferItemCard> {
               //     ],
               //   ),
               // ),
+              //
+               Padding(
+                 padding: const EdgeInsets.symmetric(vertical: 15),
+                 child: Container(
+                              height: 1,
+                              width: double.infinity,
+                              color: AppColors.lineGray
+                            ),
+               ),
+               // Prince of COD
+                Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                               Row(
+                                 children: [
+                                   Text(
+                                    "COD: ",
+                                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        fontFamily: "Inter"
+                      )),
+                                  Text(
+                                    "\$33.00",
+                                     style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        fontFamily: "Inter"
+                      )
+                                  ),
+                                 ],
+                               ),
+                              Text(
+                                'Pending',
+                                 style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        fontFamily: "Inter",
+                        color: AppColors.redColor
+                      )
+                              ),
+                            ],
+                          ),
+
+                  //         child: Text(
+                  //     // widget.item.code ?? "",
+                  //     widget.item?.date ?? "",
+                  //     maxLines: 1,
+                  //     overflow: TextOverflow.ellipsis,
+                  //     style: const TextStyle(
+                  //       fontWeight: FontWeight.w600,
+                  //       fontSize: 14,
+                  //       fontFamily: "Inter"
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(width: 8),
+                  // Text(
+                  //   _returnStatus(widget.item.status),
+                  //   style: TextStyle(
+                  //     fontFamily: "Inter",
+                  //     color: AppColors.primaryColor,
+                  //     fontWeight: FontWeight.w600,
+                  //   ),
+                  // ),
+                         
             ],
           ),
         ),

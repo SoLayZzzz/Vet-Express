@@ -3,6 +3,25 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import '../utils/app_bar.dart';
 
+enum Environment { local, qa, prod }
+
+class Env {
+  static const String flavorName =
+      String.fromEnvironment('FLAVOR', defaultValue: 'qa');
+
+  static Environment get current {
+    switch (flavorName) {
+      case 'prod':
+        return Environment.prod;
+      case 'local':
+        return Environment.local;
+      case 'qa':
+      default:
+        return Environment.qa;
+    }
+  }
+}
+
 class WebViewScreen extends StatefulWidget {
   final int type;
   final String ticketId;
@@ -43,12 +62,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   transparentBackground: true,
                 ),
                 onProgressChanged:
-                    (_, load) => setState(
-                      () =>
-                          isLoading == 100
-                              ? isLoading = true
-                              : isLoading = false,
-                    ),
+                    (_, load) => setState(() => isLoading = load != 100),
                 onReceivedServerTrustAuthRequest:
                     (_, __) async => ServerTrustAuthResponse(
                       action: ServerTrustAuthResponseAction.PROCEED,
@@ -68,17 +82,50 @@ class _WebViewScreenState extends State<WebViewScreen> {
     );
   }
 
+  // Future<void> checkUrl(int type) async {
+  //   switch (type) {
+  //     case 1:
+  //       url = 'https://www.vireakbuntham.com/terms-conditions-ticket';
+  //       appBarTitle = 'agree'.tr;
+  //       break;
+  //     case 2:
+  //       url = 'https://www.vtenh.com/km/';
+  //       break;
+  //     case 5:
+  //       url = 'https://www.vtenh.com/';
+  //       break;
+  //     case 3:
+  //       url = 'https://instagram.com/vireak_buntham?igshid=YmMyMTA2M2Y=';
+  //       break;
+  //     case 4:
+  //       url = 'https://vireakbuntham.com/feed-back?ticketId=${widget.ticketId}';
+  //       break;
+  //     default:
+  //       url = '';
+  //       break;
+  //   }
+  //   setState(() {});
+  // }
   Future<void> checkUrl(int type) async {
     switch (type) {
       case 1:
-        url = 'https://www.vireakbuntham.com/terms-conditions-ticket';
+        url = switch (Env.current) {
+          Environment.qa => 'https://qavetwebbus.udaya-tech.com/terms-conditions-ticket',
+          Environment.local => 'https://qavetwebbus.udaya-tech.com/terms-conditions-ticket',
+          Environment.prod => 'https://www.vireakbuntham.com/terms-conditions-ticket',
+        };
+        appBarTitle = 'agree'.tr;
+        break;
+      case 5:
+        url = switch (Env.current) {
+          Environment.qa => 'https://qavetwebbus.udaya-tech.com/privacy-policy-tickets',
+          Environment.local => 'https://qavetwebbus.udaya-tech.com/privacy-policy-tickets',
+          Environment.prod => 'https://www.vireakbuntham.com/privacy-policy-tickets',
+        };
         appBarTitle = 'agree'.tr;
         break;
       case 2:
         url = 'https://www.vtenh.com/km/';
-        break;
-      case 5:
-        url = 'https://www.vtenh.com/';
         break;
       case 3:
         url = 'https://instagram.com/vireak_buntham?igshid=YmMyMTA2M2Y=';

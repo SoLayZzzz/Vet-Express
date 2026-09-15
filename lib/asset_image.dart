@@ -42,6 +42,7 @@ class AssetImages {
   static const String membership_active = 'assets/icons/membership-active.png';
 
   static const String location = 'assets/icons/ic_location.png';
+  static const String location_boarding = 'assets/icons/ic_location_boarding.png';
   static const String location_active = 'assets/icons/location-active.png';
   static const String location_in_active = 'assets/icons/location_inactive.png';
 
@@ -265,6 +266,7 @@ class AssetImages {
   static const String ic_vet_vip = "assets/images/ic_vet_vip.jpg";
   static const String ic_card_ticket_vip_background =
       "assets/icons/card_ticket_vip_background.png";
+  static const String ic_i = "assets/icons/ic_i.png";
 
   // static const String ic_recieved = "assets/images/icon_recieved.png";
   static const String ic_recieved = "assets/icons/send.png";

@@ -75,7 +75,7 @@ class GoodsTransferHistoryController
     final future = goodsTransferHistoryUseCase.fetchTransferList(
       context: context,
       page: 1,
-      rowPerPage: 100,
+      rowPerPage: 50,
       desFrom: desFromId,
       desTo: desToId,
       type: type,
