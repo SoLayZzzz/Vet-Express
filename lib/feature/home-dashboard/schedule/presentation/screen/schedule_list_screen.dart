@@ -268,10 +268,12 @@ class ScheduleListScreen extends StatelessWidget {
             item.journeyType == 1
                 ? AssetImages.vet_logo
                 : item.journeyType == 2
-                ? AssetImages.buva_sea
+                // ? AssetImages.buva_sea
+                ? AssetImages.booking_boat
                 : item.journeyType == 3
                 ? AssetImages.vet_air_bus_schedule
-                : AssetImages.buva_sea;
+                // : AssetImages.buva_sea;
+                : AssetImages.booking_boat;
         final Color accentColor =
             item.journeyType != 3
                 ? AppColors.primaryColor

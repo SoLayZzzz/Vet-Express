@@ -1,5 +1,6 @@
 import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:express_vet/value_statics.dart';
@@ -24,7 +25,32 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
 
 
     return Scaffold(
-      appBar: AppBarVET().appBar(context, controller.appBarTitle),
+      // appBar: AppBarVET().appBar(context, controller.appBarTitle),
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor:
+            ValueStatic.ticketType == '3'
+                ? AppColors.airBusColor
+                : AppColors.primaryColor,
+        leading: IconButton(
+          icon: const Icon(
+            Ionicons.chevron_back_outline,
+            color: AppColors.whiteColor,
+          ),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          controller.appBarTitle,
+          style: const TextStyle(
+            color: AppColors.whiteColor,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -174,14 +200,14 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                             'departing_from'.tr,
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: AppColors.greyColor,
+                              color: AppColors.placeholderColor,
                             ),
                           )
                           : Text(
                             formController.fromName.value,
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textColor,
+                              color: AppColors.mainTitle,
                             ),
                           );
                     }),
@@ -234,14 +260,14 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                             'going_to'.tr,
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: AppColors.greyColor,
+                              color: AppColors.placeholderColor,
                             ),
                           )
                           : Text(
                             formController.toName.value,
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textColor,
+                              color: AppColors.mainTitle,
                             ),
                           );
                     }),
@@ -322,11 +348,16 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Obx(() {
+                            final value = formController.goDate.value;
+                            final bool isEmpty =
+                                value.isEmpty || value == 'return_date'.tr;
                             return Text(
-                              formController.goDate.value,
-                              style: const TextStyle(
+                              value,
+                              style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textColor,
+                                color: isEmpty
+                                    ? AppColors.placeholderColor
+                                    : AppColors.mainTitle,
                               ),
                             );
                           }),
@@ -404,11 +435,16 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Obx(() {
+                            final value = formController.backDate.value;
+                            final bool isEmpty =
+                                value.isEmpty || value == 'return_date'.tr;
                             return Text(
-                              formController.backDate.value,
-                              style: const TextStyle(
+                              value,
+                              style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textColor,
+                                color: isEmpty
+                                    ? AppColors.placeholderColor
+                                    : AppColors.mainTitle,
                               ),
                             );
                           }),

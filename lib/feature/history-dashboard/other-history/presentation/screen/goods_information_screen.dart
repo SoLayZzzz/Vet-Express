@@ -451,7 +451,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
       border: Border.all(color: Colors.grey.shade200),
     ),
     child: Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -600,6 +600,9 @@ Widget _buildReceiverBox({
   required String toLabel,
   required String destination,
 }) {
+  final labelText = label.replaceAll(RegExp(r'\s*:\s*'), ':').trim();
+  final toLabelText = toLabel.replaceAll(RegExp(r'\s*:\s*'), ':').trim();
+
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     decoration: BoxDecoration(
@@ -614,7 +617,10 @@ Widget _buildReceiverBox({
           children: [
             SizedBox(
               width: 80,
-              child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+              child: Text(
+                labelText,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
             ),
             Expanded(
               child: Text(phoneNumber),
@@ -627,7 +633,10 @@ Widget _buildReceiverBox({
           children: [
             SizedBox(
               width: 80,
-              child: Text(toLabel, style: const TextStyle(fontWeight: FontWeight.w500)),
+              child: Text(
+                toLabelText,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
             ),
             Expanded(
               child: Text(destination),

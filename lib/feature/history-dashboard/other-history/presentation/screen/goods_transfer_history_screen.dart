@@ -1,11 +1,11 @@
 import 'dart:developer';
 
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'goods_information_screen.dart';
-import '../../../../../feature/home-dashboard/self_service/presentation/screen/self_service_qr_list_screen.dart';
 import '../../data/model/response/transfer_list_response.dart';
 import '../../../../../models/request_transfer/self_service_response.dart';
 import '../../../../../utils/alert_dialog_filter.dart';
@@ -157,143 +157,178 @@ class GoodsTransferHistoryScreen
             if ((data.data?.header?.result) == true &&
                 (data.data?.header?.statusCode) == 200) {
               if ((data.data?.body?.data)!.isNotEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: (data.data?.body?.data)!.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.only(top: 12.0),
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: AppColors.whiteColor,
-                          border: Border.all(
-                            width: 0.5,
-                            color: AppColors.borderColor,
-                          ),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Get.to(
-                              () => SelfServiceQRListScreen(
-                                qrCode:
-                                    (data.data?.body?.data?[index].code)
-                                        .toString(),
-                              ),
-                              transition: Transition.rightToLeft,
-                              duration: const Duration(
-                                milliseconds: Constrains.duration,
-                              ),
-                            );
-                          },
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: (data.data?.body?.data)!.length,
+                  itemBuilder: (context, index) {
+                    final item = data.data?.body?.data?[index];
+                    if (item == null) return const SizedBox.shrink();
+                
+                    void openQr() {
+                      Get.toNamed(
+                        AppRoutes.selfServiceQrList,
+                        arguments: {
+                          'qrCode': item.code.toString(),
+                        },
+                      );
+                    }
+                
+                    return Container(
+                      margin: const EdgeInsets.only(top: 12.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.whiteColor,
+                      ),
+                      child: InkWell(
+                        onTap: openQr,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'sender_tel'.tr,
-                                    style: const TextStyle(color: Colors.grey),
+                                  Expanded(
+                                    child: Text(
+                                      "${'self_service_sender_contact'.tr}: ${item.senderTelephone}",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.titleColor,
+                                      ),
+                                    ),
                                   ),
+                                  const SizedBox(width: 10),
                                   Text(
-                                    'phone_of_receiver'.tr,
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    (data
-                                            .data
-                                            ?.body
-                                            ?.data?[index]
-                                            .senderTelephone)
-                                        .toString(),
-                                  ),
-                                  Text(
-                                    (data
-                                            .data
-                                            ?.body
-                                            ?.data?[index]
-                                            .receiverTelephone)
-                                        .toString(),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                'destination'.tr,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                (data.data?.body?.data?[index].destinationTo)
-                                    .toString(),
-                              ),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'item_price'.tr,
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
-                                  Text(
-                                    'amount'.tr,
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "\$${data.data?.body?.data?[index].itemValue}",
-                                  ),
-                                  Text(
-                                    "${data.data?.body?.data?[index].itemQty} ${data.data?.body?.data?[index].uomName}",
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                'date'.tr,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    (data.data?.body?.data?[index].date)
-                                        .toString(),
-                                  ),
-                                  Text(
-                                    'view_qr_code'.tr,
+                                    "\$${item.itemValue}",
                                     style: const TextStyle(
+                                     fontSize: 14,
+                                      fontWeight: FontWeight.w700,
                                       color: AppColors.primaryColor,
                                     ),
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 5),
+                              Text(
+                                "${'date'.tr}: ${item.date}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.titleColor,
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF0F2F5),
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Image.asset(
+                                        AssetImages.ic_self_service,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 13),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'self_service_receiver_contact'.tr,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.titleColor,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          item.receiverTelephone.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: AppColors.textColor,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          item.destinationTo.toString(),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: AppColors.textColor,
+                                          ),
+                                        ),
+                                        Text(
+                                          "${'amount'.tr}: ${item.itemQty} ${item.uomName}",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: AppColors.textColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                
+                               Padding(
+                                 padding: const EdgeInsets.symmetric(vertical: 12),
+                                 child: Container(
+                            height: 0.7,
+                            width: double.infinity,
+                            color: AppColors.lineGray
+                          ),
+                               ),
+                
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: InkWell(
+                                  onTap: openQr,
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor
+                                          .withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: Text(
+                                      'view_qr_code'.tr,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 );
               }
               if ((data.data?.body?.data)!.isEmpty) {
@@ -331,36 +366,37 @@ class GoodsTransferHistoryScreen
       return FutureBuilder<TransferListResponse>(
         future: future,
         builder: (context, data) {
+          final Widget content;
           if (data.connectionState == ConnectionState.waiting) {
-            return const Center(
+            content = const Center(
               child: SizedBox(
                 height: 50.0,
                 width: 50.0,
                 child: CircularProgressIndicator(value: null, strokeWidth: 5.0),
               ),
             );
-          }
-
-          if (data.hasData && (data.data?.body?.data?.isNotEmpty ?? false)) {
-            return Stack(
-              children: [
-                ListView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: data.data!.body!.data!.length,
-                  itemBuilder: (context, index) {
-                    return TransferItemCard(
-                      item: data.data!.body!.data![index],
-                      type: type,
-                    );
-                  },
-                ),
-
-                // _filterButton(context: context),
-              ],
+          } else if (data.hasData && (data.data?.body?.data?.isNotEmpty ?? false)) {
+            content = ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: const BouncingScrollPhysics(),
+              itemCount: data.data!.body!.data!.length,
+              itemBuilder: (context, index) {
+                return TransferItemCard(
+                  item: data.data!.body!.data![index],
+                  type: type,
+                );
+              },
             );
+          } else {
+            content = _buildNoData();
           }
-          return _buildNoData();
+
+          return Stack(
+            children: [
+              Positioned.fill(child: content),
+              _filterButton(context: context),
+            ],
+          );
         },
       );
     });
@@ -421,7 +457,11 @@ class GoodsTransferHistoryScreen
         child: InkWell(
           onTap: () async {
             final result = await Get.dialog<List<int>>(
-              const AlertDialogFilter(),
+              AlertDialogFilter(
+                initialDesFromId: controller.desFromId,
+                initialDesToId: controller.desToId,
+                initialStatusId: controller.statusId,
+              ),
               barrierColor: Colors.black26,
             );
 

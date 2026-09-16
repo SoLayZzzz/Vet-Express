@@ -119,8 +119,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
       padding: const EdgeInsets.only(right: 8),
       child: Image.asset(
         iconAsset,
-        width: 18,
-        height: 18,
+        width: 20,
+        height: 20,
         color: AppColors.textColor,
       ),
     );
@@ -439,19 +439,38 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     required List<TextEditingController> passportControllers,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      margin: const EdgeInsets.only(top: 15.0),
+      padding: const EdgeInsets.all(15),
       color: AppColors.whiteColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'information_of_travel'.tr,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: AppColors.titleColor,
-            ),
-          ),
+                'information_of_travel'.tr,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: AppColors.titleColor,
+                ),
+              ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       'information_of_travel'.tr,
+          //       style: const TextStyle(
+          //         fontWeight: FontWeight.w600,
+          //         fontSize: 14,
+          //         color: AppColors.titleColor,
+          //       ),
+          //     ),
+          //     // const Icon(
+          //     //   Ionicons.chevron_down,
+          //     //   size: 18,
+          //     //   color: AppColors.textColor,
+          //     // ),
+          //   ],
+          // ),
           ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -471,9 +490,21 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 10),
-                    child: Text(
-                      '${(isGoingTrip ? ValueStatic.seatTypeOneWay : ValueStatic.seatTypeTwoWay) == 2 ? 'bed_no'.tr : 'seat_no'.tr} ${(selectedSeats[index]).toString()}',
-                      style: const TextStyle(color: AppColors.textColor),
+                    child: Text.rich(
+                      TextSpan(
+                        style: const TextStyle(color: AppColors.textColor),
+                        children: [
+                          TextSpan(
+                            text:
+                                '${(isGoingTrip ? ValueStatic.seatTypeOneWay : ValueStatic.seatTypeTwoWay) == 2 ? 'bed_no'.tr : 'seat_no'.tr} ',
+                          style: const TextStyle(fontWeight: FontWeight.w400),
+                          ),
+                          TextSpan(
+                            text: (selectedSeats[index]).toString(),
+                            style: const TextStyle(color: AppColors.seatNumberColor),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   // const SizedBox(height: 5),
@@ -904,8 +935,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: selected ? AppColors.primaryColor : AppColors.deepGrey,
-                  width: 2,
+                  color: selected ? AppColors.seatNumberColor : AppColors.deepGrey,
+                  width: 1,
                 ),
               ),
               child: Center(
@@ -917,12 +948,12 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color:
-                        selected ? AppColors.primaryColor : Colors.transparent,
+                        selected ? AppColors.seatNumberColor : Colors.transparent,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 4),
             Text(label, style: const TextStyle(fontSize: 14)),
           ],
         ),
@@ -2304,16 +2335,16 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                   ],
                 ),
               ),
+              const SizedBox(height: 10),
+              Text(
+                '${'return_date'.tr}: ${ValueStatic.backDate}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: AppColors.titleColor,
+                ),
+              ),
               // const SizedBox(height: 10),
-              // Text(
-              //   'departure_date:'.tr + ValueStatic.backDate,
-              //   style: const TextStyle(
-              //     fontWeight: FontWeight.w400,
-              //     fontSize: 14,
-              //     color: AppColors.titleColor,
-              //   ),
-              // ),
-
               //* boarding point two way
               FutureBuilder<boarding.CarPointResponse>(
                 future: controller.state.futureBoardingPointTwoWay,
@@ -2549,7 +2580,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                 ? _pointPicker(
                                   context: context,
                                   decoration: _dropOffPointDecoration(),
-                                  iconAsset: AssetImages.location,
+                                 iconAsset: AssetImages.ic_dropOff_locaiton,
                                   dialogTitle: 'drop_off_point'.tr,
                                   items: data.data?.body ?? [],
                                   selectedIndex:
@@ -2617,7 +2648,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _pointIcon(AssetImages.location),
+                                      _pointIcon(AssetImages.ic_dropOff_locaiton),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -2730,6 +2761,15 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                       ),
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '${'departure_date'.tr}: ${ValueStatic.goDate}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                 fontSize: 14,
+                 color: AppColors.titleColor,
                 ),
               ),
 
@@ -2932,7 +2972,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                             _pointPicker(
                               context: context,
                               decoration: _dropOffPointDecoration(),
-                              iconAsset: AssetImages.location,
+                              iconAsset: AssetImages.ic_dropOff_locaiton,
                               dialogTitle: 'drop_off_point'.tr,
                               items: data.data?.body ?? [],
                               selectedIndex:

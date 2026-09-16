@@ -82,11 +82,11 @@ class BaseUrl {
           : 'wss://qacltom.udaya-tech.com/OCPI/ws';
 
   // Version App
-  static String APP_VERSION_ANDROID = '2.2.0'; 
-  static String APP_VERSION_IOS = '2.2.0';
+  static String APP_VERSION_ANDROID = '2.3.0'; 
+  static String APP_VERSION_IOS = '2.3.0';
 
   // for check app update must be double value
-  static String APP_VERSION = '2.20';
+  static String APP_VERSION = '2.30';
 }
 
 

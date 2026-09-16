@@ -26,7 +26,7 @@ class PaymentOptionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(top: 10),
+        margin: const EdgeInsets.only(top: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
@@ -35,7 +35,7 @@ class PaymentOptionCard extends StatelessWidget {
                     ? (ValueStatic.ticketType == '3'
                         ? AppColors.airBusColor
                         : AppColors.primaryColor)
-                    : Colors.grey,
+                    : AppColors.borderColor,
           ),
         ),
         child: Padding(

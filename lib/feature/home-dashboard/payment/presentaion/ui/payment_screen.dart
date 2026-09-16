@@ -216,7 +216,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           children: [
                             //* choose payment
                             Text(
-                              'choose_payment'.tr,
+                              'choose_payment_method'.tr,
                               style: TextStyle(
                                 fontSize: 16,
                                 color: AppColors.titleColor,
@@ -263,7 +263,7 @@ class _PaymentScreenState extends State<PaymentScreen>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "payment_method".tr,
+          "payment_method_choose".tr,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(width: 10),
@@ -415,6 +415,7 @@ class _PaymentScreenState extends State<PaymentScreen>
               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
 
+            SizedBox(height: 4,),
 
             ListView.separated(
               shrinkWrap: true,
@@ -511,7 +512,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: AppColors.textColor,
+                            color: AppColors.titleColor,
                           ),
                         ),
                         const Spacer(),
@@ -557,9 +558,10 @@ class _PaymentScreenState extends State<PaymentScreen>
           children: [
             Text(
               '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: AppColors.mainTitle),
             ),
 
+            SizedBox(height: 8,),
 
             ListView.separated(
               shrinkWrap: true,
@@ -590,7 +592,7 @@ class _PaymentScreenState extends State<PaymentScreen>
 
             // Display order payment details
             Padding(
-              padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+              padding: const EdgeInsets.only(top: 0, bottom: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -624,7 +626,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                       "\$${selectedDiscountAmount.toStringAsFixed(2)}",
                       textColor: AppColors.greyColor,
                     ),
-                  const Divider(height: 10, thickness: 1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: const Divider(height: 10, thickness: 1),
+                  ),
 
                   if (_hasVisibleAmount(selectedServiceFeeAmount) ||
                       controller.state.paymentMethodId == 6 ||
@@ -671,11 +676,11 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_khqr,
             title: const Text(
               'ABA KHQR',
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
             ),
             subtitleWidget: Text(
               'tap_to_pay_with_KHQR'.tr,
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
+              style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
             ),
             value: 1,
             isSelected: uiState.paymentMethodSelected == 1,
@@ -694,11 +699,11 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_wing,
             title: const Text(
               'Wing Bank',
-              style: TextStyle(fontWeight: FontWeight.w600),
+               style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
             ),
             subtitleWidget: Text(
               'tap_to_pay_wing'.tr,
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
+              style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
             ),
             value: 4,
             isSelected: uiState.paymentMethodSelected == 4,
@@ -717,11 +722,11 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_acleda,
             title: const Text(
               'ACLEDA',
-              style: TextStyle(fontWeight: FontWeight.w600),
+               style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
             ),
             subtitleWidget: Text(
               'tap_to_pay_acleda'.tr,
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
+              style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
             ),
             value: 5,
             isSelected: uiState.paymentMethodSelected == 5,
@@ -740,7 +745,7 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_big_visa,
             title: const Text(
               'Credit/Debit Card',
-              style: TextStyle(fontWeight: FontWeight.w600),
+               style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
             ),
             subtitleWidget: Image.asset(AssetImages.ic_small_visa, height: 14),
             value: 2,
@@ -760,11 +765,11 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_alipay,
             title: const Text(
               'AliPay',
-              style: TextStyle(fontWeight: FontWeight.w600),
+              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
             ),
             subtitleWidget: Text(
               'tap_to_pay_with_ALIPAY'.tr,
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
+               style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
             ),
             value: 3,
             isSelected: uiState.paymentMethodSelected == 3,
@@ -811,15 +816,16 @@ class _PaymentScreenState extends State<PaymentScreen>
               child: Row(
                 children: [
                   Text(
-                    'total_price'.tr,
+                    'total_price_payment'.tr,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       color: Colors.black,
                       // fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                   Text(
-                    "\$${totalPayableAll.toStringAsFixed(2)}",
+                    " \$${totalPayableAll.toStringAsFixed(2)}",
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black,

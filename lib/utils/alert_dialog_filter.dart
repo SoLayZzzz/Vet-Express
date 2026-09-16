@@ -2,30 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:express_vet/feature/common/netowrk/destination_network_request.dart';
-import '../feature/common/model/reponse/destination_from.dart';
-import '../feature/common/model/reponse/destination_to.dart';
+import '../feature/common/model/reponse/destination_from.dart' as destination_from;
+import '../feature/common/model/reponse/destination_to.dart' as destination_to;
 import 'app_colors.dart';
 
 class AlertDialogFilter extends StatefulWidget {
-  const AlertDialogFilter({super.key});
+  final int initialDesFromId;
+  final int initialDesToId;
+  final int initialStatusId;
+
+  const AlertDialogFilter({
+    super.key,
+    this.initialDesFromId = 0,
+    this.initialDesToId = 0,
+    this.initialStatusId = 0,
+  });
 
   @override
   AlertDialogFilterState createState() => AlertDialogFilterState();
 }
 
 class AlertDialogFilterState extends State<AlertDialogFilter> {
-  late Future<DesFromResponse> futureDesFrom;
-  late Future<DesToResponse> futureDesTo;
+  late Future<destination_from.DesFromResponse> futureDesFrom;
+  late Future<destination_to.DesToResponse> futureDesTo;
   final DestinationNetworkRequest _destination = DestinationNetworkRequest();
 
   bool _loadingDesFrom = true;
   bool _loadingDesTo = true;
 
-  late String desFrom;
+  String desFrom = 'All';
   bool desFromCondition = true;
   int? desFromId = 0;
 
-  late String desTo;
+  String desTo = 'All';
   bool desToCondition = true;
   int? desToId = 0;
   bool enable = true;
@@ -38,7 +47,7 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
 
   var itemsKh = ['ទាំងអស់', 'ផ្ញើរបញើរ', 'ដឹកជញ្ជូន', 'ដល់ទិសទៅ', 'បានទទួល'];
 
-  void _setFutureDesFrom(Future<DesFromResponse> future) {
+  void _setFutureDesFrom(Future<destination_from.DesFromResponse> future) {
     _loadingDesFrom = true;
     futureDesFrom = future;
     future.whenComplete(() {
@@ -49,7 +58,7 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
     });
   }
 
-  void _setFutureDesTo(Future<DesToResponse> future) {
+  void _setFutureDesTo(Future<destination_to.DesToResponse> future) {
     _loadingDesTo = true;
     futureDesTo = future;
     future.whenComplete(() {
@@ -60,15 +69,41 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
     });
   }
 
+  String _allLabel(bool isEn) => isEn ? 'All' : 'ទាំងអស់';
+
+  String _safeLabel(String? value, bool isEn) {
+    final v = value?.trim();
+    if (v == null || v.isEmpty || v.toLowerCase() == 'null') {
+      return _allLabel(isEn);
+    }
+    return v;
+  }
+
+  void _syncStatusText() {
+    final idx = statusId >= 0 && statusId < items.length ? statusId : 0;
+    if (Get.locale.toString() == 'en_US') {
+      status = items[idx];
+    } else {
+      statusKh = itemsKh[idx];
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    desFromId = widget.initialDesFromId;
+    desToId = widget.initialDesToId;
+    statusId = widget.initialStatusId;
+
+    _syncStatusText();
+
+    final isEn = Get.locale.toString() == 'en_US';
+    desFrom = _allLabel(isEn);
+    desTo = _allLabel(isEn);
+
     _setFutureDesFrom(_destination.getDesFrom(context));
-    _setFutureDesTo(_destination.getDesTo(context, 0));
-    Get.locale.toString() == 'en_US'
-        ? status = items[0]
-        : statusKh = itemsKh[0];
-    //status = items[0];
+    _setFutureDesTo(_destination.getDesTo(context, desFromId ?? 0));
   }
 
   @override
@@ -91,39 +126,172 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
                 ),
               ),
 
-              FutureBuilder<DesFromResponse>(
+              FutureBuilder<destination_from.DesFromResponse>(
                 future: futureDesFrom,
                 builder: (context, data) {
                   //print(data);
-                  if (data.hasData) {
-                    if ((data.data?.header?.result) == true &&
-                        (data.data?.header?.statusCode) == 200) {
-                      if ((data.data?.body?.data)!.isNotEmpty) {
-                        if (desFromCondition) {
-                          desFrom =
-                              Get.locale.toString() == 'en_US'
-                                  ? (data
-                                          .data
-                                          ?.body
-                                          ?.data?[0]
-                                          .destinationsFromName)
-                                      .toString()
-                                  : (data
-                                          .data
-                                          ?.body
-                                          ?.data?[0]
-                                          .destinationsFromNameKh)
-                                      .toString();
-                          desFromCondition = false;
-                        }
+                  final isEn = Get.locale.toString() == 'en_US';
+                  final allItem = destination_from.Data(
+                    destinationsFromId: '0',
+                    destinationsFromName: 'All',
+                    destinationsFromNameKh: 'ទាំងអស់',
+                    code: '',
+                    id: 0,
+                  );
 
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 15,
-                            left: 10,
-                            right: 10,
-                          ),
-                          child: InputDecorator(
+                  final list =
+                      data.data?.body?.data ?? const <destination_from.Data>[];
+                  final listWithAll = <destination_from.Data>[
+                    allItem,
+                    ...list.where((e) {
+                      final id = e.id ?? int.tryParse(e.destinationsFromId ?? '');
+                      return id != 0;
+                    }),
+                  ];
+
+                  if (desFromCondition) {
+                    destination_from.Data? selected;
+                    if ((desFromId ?? 0) != 0) {
+                      selected = listWithAll.firstWhereOrNull((e) {
+                        final id = e.id ?? int.tryParse(e.destinationsFromId ?? '');
+                        return id == desFromId;
+                      });
+                    }
+                    selected ??= listWithAll.first;
+
+                    desFromId =
+                        selected.id ?? int.tryParse(selected.destinationsFromId ?? '') ?? 0;
+                    desFrom =
+                        isEn
+                            ? _safeLabel(selected.destinationsFromName, isEn)
+                            : _safeLabel(selected.destinationsFromNameKh, isEn);
+                    desFromCondition = false;
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      top: 15,
+                      left: 10,
+                      right: 10,
+                    ),
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.fromLTRB(
+                          20,
+                          10,
+                          10,
+                          0,
+                        ),
+                        labelText: 'Destination From',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: desFrom,
+                          onChanged: (value) {
+                            if (value == null) return;
+                            final selected = listWithAll.firstWhereOrNull((e) {
+                              final name =
+                                  isEn
+                                      ? _safeLabel(e.destinationsFromName, isEn)
+                                      : _safeLabel(e.destinationsFromNameKh, isEn);
+                              return name == value;
+                            });
+
+                            setState(() {
+                              desFrom = value;
+                              desFromId =
+                                  selected?.id ??
+                                  int.tryParse(selected?.destinationsFromId ?? '') ??
+                                  0;
+
+                              desTo = _allLabel(isEn);
+                              desToId = 0;
+                              desToCondition = true;
+                              _setFutureDesTo(
+                                _destination.getDesTo(context, desFromId ?? 0),
+                              );
+                            });
+                          },
+                          items:
+                              listWithAll
+                                  .map((e) {
+                                    final label =
+                                        isEn
+                                            ? _safeLabel(e.destinationsFromName, isEn)
+                                            : _safeLabel(e.destinationsFromNameKh, isEn);
+                                    return DropdownMenuItem<String>(
+                                      value: label,
+                                      child: SizedBox(
+                                        width: MediaQuery.sizeOf(context).width * 0.6,
+                                        child: Text(label),
+                                      ),
+                                    );
+                                  })
+                                  .toList(),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: FutureBuilder<destination_to.DesToResponse>(
+                  future: futureDesTo,
+                  builder: (context, data) {
+                    //print(data);
+                    final isEn = Get.locale.toString() == 'en_US';
+                    final allItem = destination_to.Data(
+                      destinationsToId: '0',
+                      destinationsToName: 'All',
+                      destinationsToNameKh: 'ទាំងអស់',
+                      code: '',
+                      id: 0,
+                    );
+
+                    final list =
+                        data.data?.body?.data ?? const <destination_to.Data>[];
+                    final listWithAll = <destination_to.Data>[
+                      allItem,
+                      ...list.where((e) {
+                        final id = e.id ?? int.tryParse(e.destinationsToId ?? '');
+                        return id != 0;
+                      }),
+                    ];
+
+                    if (desToCondition) {
+                      destination_to.Data? selected;
+                      if ((desToId ?? 0) != 0) {
+                        selected = listWithAll.firstWhereOrNull((e) {
+                          final id = e.id ?? int.tryParse(e.destinationsToId ?? '');
+                          return id == desToId;
+                        });
+                      }
+                      selected ??= listWithAll.first;
+
+                      desToId =
+                          selected.id ?? int.tryParse(selected.destinationsToId ?? '') ?? 0;
+                      desTo =
+                          isEn
+                              ? _safeLabel(selected.destinationsToName, isEn)
+                              : _safeLabel(selected.destinationsToNameKh, isEn);
+                      desToCondition = false;
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5,
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: Column(
+                        children: [
+                          InputDecorator(
                             decoration: InputDecoration(
                               isDense: true,
                               contentPadding: const EdgeInsets.fromLTRB(
@@ -132,201 +300,54 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
                                 10,
                                 0,
                               ),
-                              labelText: 'Destination From',
+                              labelText: 'Destination To',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                value: desFrom,
+                                value: desTo,
                                 onChanged: (value) {
+                                  if (value == null) return;
+                                  final selected = listWithAll.firstWhereOrNull((e) {
+                                    final name =
+                                        isEn
+                                            ? _safeLabel(e.destinationsToName, isEn)
+                                            : _safeLabel(e.destinationsToNameKh, isEn);
+                                    return name == value;
+                                  });
+
                                   setState(() {
-                                    desFrom = value.toString();
+                                    desTo = value;
+                                    desToId =
+                                        selected?.id ??
+                                        int.tryParse(selected?.destinationsToId ?? '') ??
+                                        0;
                                   });
                                 },
                                 items:
-                                    data.data?.body?.data
-                                        ?.map(
-                                          (value) => DropdownMenuItem<String>(
-                                            value:
-                                                Get.locale.toString() == 'en_US'
-                                                    ? value.destinationsFromName
-                                                        .toString()
-                                                    : value
-                                                        .destinationsFromNameKh
-                                                        .toString(),
-                                            onTap: () {
-                                              //print(value);
-                                              if (value.destinationsFromId ==
-                                                  '0') {
-                                                desFromId = 0;
-                                              } else {
-                                                desFromId = value.id;
-                                              }
-                                              desToCondition = true;
-                                              setState(() {
-                                                _setFutureDesTo(
-                                                  _destination.getDesTo(
-                                                    context,
-                                                    desToId!,
-                                                  ),
-                                                );
-                                              });
-                                            },
+                                    listWithAll
+                                        .map((e) {
+                                          final label =
+                                              isEn
+                                                  ? _safeLabel(e.destinationsToName, isEn)
+                                                  : _safeLabel(e.destinationsToNameKh, isEn);
+                                          return DropdownMenuItem<String>(
+                                            value: label,
                                             child: SizedBox(
-                                              width:
-                                                  MediaQuery.sizeOf(
-                                                    context,
-                                                  ).width *
-                                                  0.6,
-                                              child: Text(
-                                                Get.locale.toString() == 'en_US'
-                                                    ? value.destinationsFromName
-                                                        .toString()
-                                                    : value
-                                                        .destinationsFromNameKh
-                                                        .toString(),
-                                              ),
+                                              width: MediaQuery.sizeOf(context).width * 0.6,
+                                              child: Text(label),
                                             ),
-                                          ),
-                                        )
+                                          );
+                                        })
                                         .toList(),
                               ),
                             ),
                           ),
-                        );
-                      }
-                    }
-                  } else if (data.hasError) {
-                    return const Text('');
-                  }
-
-                  return const SizedBox(height: 60);
-                },
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: FutureBuilder<DesToResponse>(
-                  future: futureDesTo,
-                  builder: (context, data) {
-                    //print(data);
-                    if (data.hasData) {
-                      if ((data.data?.header?.result) == true &&
-                          (data.data?.header?.statusCode) == 200) {
-                        if ((data.data?.body?.data)!.isNotEmpty) {
-                          if (desToCondition) {
-                            desTo =
-                                (data.data?.body?.data?[0].destinationsToName)
-                                    .toString();
-                            desTo =
-                                Get.locale.toString() == 'en_US'
-                                    ? (data
-                                            .data
-                                            ?.body
-                                            ?.data?[0]
-                                            .destinationsToName)
-                                        .toString()
-                                    : (data
-                                            .data
-                                            ?.body
-                                            ?.data?[0]
-                                            .destinationsToNameKh)
-                                        .toString();
-                            desToCondition = false;
-                          }
-
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                              top: 5,
-                              left: 10,
-                              right: 10,
-                            ),
-                            child: Column(
-                              children: [
-                                InputDecorator(
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.fromLTRB(
-                                      20,
-                                      10,
-                                      10,
-                                      0,
-                                    ),
-                                    labelText: 'Destination To',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: desTo,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          desTo = value.toString();
-                                        });
-                                      },
-                                      items:
-                                          data.data?.body?.data
-                                              ?.map(
-                                                (
-                                                  value,
-                                                ) => DropdownMenuItem<String>(
-                                                  value:
-                                                      Get.locale.toString() ==
-                                                              'en_US'
-                                                          ? value
-                                                              .destinationsToName
-                                                              .toString()
-                                                          : value
-                                                              .destinationsToNameKh
-                                                              .toString(),
-                                                  onTap: () {
-                                                    //print('destination' + value.destinationsToId.toString());
-                                                    if (value
-                                                            .destinationsToId ==
-                                                        '0') {
-                                                      desToId = 0;
-                                                      //print('condition' + desToId.toString());
-                                                    } else {
-                                                      desToId = value.id;
-                                                    }
-                                                    setState(() {});
-                                                  },
-                                                  child: SizedBox(
-                                                    width:
-                                                        MediaQuery.sizeOf(
-                                                          context,
-                                                        ).width *
-                                                        0.6,
-                                                    child: Text(
-                                                      Get.locale.toString() ==
-                                                              'en_US'
-                                                          ? value
-                                                              .destinationsToName
-                                                              .toString()
-                                                          : value
-                                                              .destinationsToNameKh
-                                                              .toString(),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                      }
-                    } else if (data.hasError) {
-                      return const Text('');
-                    }
-
-                    return const SizedBox(height: 60);
+                        ],
+                      ),
+                    );
                   },
                 ),
               ),
@@ -358,57 +379,27 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
                                   ? status
                                   : statusKh,
                           onChanged: (value) {
+                            if (value == null) return;
                             setState(() {
-                              Get.locale.toString() == 'en_US'
-                                  ? status = value.toString()
-                                  : statusKh = value.toString();
+                              final isEn = Get.locale.toString() == 'en_US';
+                              if (isEn) {
+                                status = value;
+                                statusId = items.indexOf(value).clamp(0, items.length - 1);
+                              } else {
+                                statusKh = value;
+                                statusId = itemsKh.indexOf(value).clamp(0, itemsKh.length - 1);
+                              }
                             });
                           },
                           items:
-                              Get.locale.toString() == 'en_US'
-                                  ? items
-                                      .map(
-                                        (value) => DropdownMenuItem<String>(
-                                          value: value,
-                                          onTap: () {
-                                            if (value == 'All') {
-                                              statusId = 0;
-                                            } else if (value == 'Posting') {
-                                              statusId = 1;
-                                            } else if (value == 'Shipping') {
-                                              statusId = 2;
-                                            } else if (value == 'Arrival') {
-                                              statusId = 3;
-                                            } else if (value == 'Received') {
-                                              statusId = 4;
-                                            }
-                                          },
-                                          child: Text(value),
-                                        ),
-                                      )
-                                      .toList()
-                                  : itemsKh
-                                      .map(
-                                        (value) => DropdownMenuItem<String>(
-                                          value: value,
-                                          onTap: () {
-                                            //print(value);
-                                            if (value == 'ទាំងអស់') {
-                                              statusId = 0;
-                                            } else if (value == 'ផ្ញើរបញ្ញើ') {
-                                              statusId = 1;
-                                            } else if (value == 'ដឹកជញ្ជូន') {
-                                              statusId = 2;
-                                            } else if (value == 'ដល់ទិសទៅ') {
-                                              statusId = 3;
-                                            } else if (value == 'បានទទួល') {
-                                              statusId = 4;
-                                            }
-                                          },
-                                          child: Text(value),
-                                        ),
-                                      )
-                                      .toList(),
+                              (Get.locale.toString() == 'en_US' ? items : itemsKh)
+                                  .map(
+                                    (value) => DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                       ),
                     ),
@@ -445,6 +436,15 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
                           onPressed: () {
                             desFromCondition = true;
                             desToCondition = true;
+                            desFromId = 0;
+                            desToId = 0;
+                            statusId = 0;
+                            _syncStatusText();
+
+                            final isEn = Get.locale.toString() == 'en_US';
+                            desFrom = _allLabel(isEn);
+                            desTo = _allLabel(isEn);
+
                             setState(() {
                               _setFutureDesFrom(
                                 _destination.getDesFrom(context),
@@ -453,7 +453,6 @@ class AlertDialogFilterState extends State<AlertDialogFilter> {
                                 _destination.getDesTo(context, 0),
                               );
                             });
-                            status = items[0];
 
                             List<int> list = <int>[];
                             list.add(0);

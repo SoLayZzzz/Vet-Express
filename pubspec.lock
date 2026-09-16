@@ -693,6 +693,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  iconic:
+    dependency: "direct main"
+    description:
+      name: iconic
+      sha256: f48cd90331b2674f01c3a6eccb976d9141fe601fde9cde8124488ebdc305a7e3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   iconsax_flutter:
     dependency: transitive
     description:

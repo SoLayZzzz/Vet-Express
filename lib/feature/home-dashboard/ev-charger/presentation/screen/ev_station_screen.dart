@@ -11,12 +11,13 @@ import 'package:url_launcher/url_launcher.dart';
 import '../controller/ev_station_controller.dart';
 
 import '../../../../../utils/app_colors.dart';
+import '../../../../../routes/app_routes.dart';
 
 class EvAllStationScreen extends GetView<EvStationController> {
   const EvAllStationScreen({super.key});
 
   void _openSearchScreen() {
-    Get.to(() => const EvStationSearchScreen());
+    Get.toNamed(AppRoutes.evSearchStations);
   }
 
   void _onStationSelected(EvStationListDatum station) {
@@ -39,7 +40,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
 
   void _showProvinceFilterDialog() {
     controller.filteredProvinces.assignAll(controller.allProvinces);
-    Get.to(() => const EvProvinceFilterScreen());
+    Get.toNamed(AppRoutes.evSelectProvince);
   }
 
   @override
@@ -400,6 +401,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      height: 96,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -427,13 +429,13 @@ class EvAllStationScreen extends GetView<EvStationController> {
                 bottomLeft: Radius.circular(12),
               ),
               child: Image.network(
-                "https://newpapisystem.utebi.com/vetEvChargerFrontendAPi" +
-                    station.imageUrl.toString(),
-                width: 110,
+                'https://newpapisystem.utebi.com/vetEvChargerFrontendAPi${station.imageUrl}',
+                width: 90,
+                alignment: Alignment.centerLeft,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: 110,
+                    width: 90,
                     color: Colors.grey[200],
                     child: const Icon(Icons.ev_station, color: Colors.grey),
                   );
@@ -444,10 +446,9 @@ class EvAllStationScreen extends GetView<EvStationController> {
             // RIGHT SIDE CONTENT
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Header: Name + Favorite Button
                     Row(
@@ -458,7 +459,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
                             station.name ?? 'Unknown Station',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                               color: Colors.black87,
                             ),
                             maxLines: 1,
@@ -487,28 +488,28 @@ class EvAllStationScreen extends GetView<EvStationController> {
                       ],
                     ),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
 
                     // Address
                     Text(
                       station.address ?? 'No address available',
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: Colors.grey[600],
-                        fontSize: 13,
-                        height: 1.3,
+                        fontSize: 12,
+                        height: 1.2,
                       ),
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
 
                     // Connector & Price Info
                     Row(
                       children: [
                         Icon(
                           Icons.ev_station,
-                          size: 16,
+                          size: 14,
                           color: Colors.blueGrey[700],
                         ),
                         const SizedBox(width: 4),
@@ -516,43 +517,29 @@ class EvAllStationScreen extends GetView<EvStationController> {
                           "DC 1/6",
                           style: TextStyle(
                             color: Colors.grey[700],
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Row(
-                      children: [
+                        const Spacer(),
                         Icon(
                           Icons.attach_money,
-                          size: 16,
+                          size: 14,
                           color: Colors.blueGrey[700],
                         ),
                         const SizedBox(width: 2),
-                        Text(
-                          "Start from ",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
                         Text(
                           "${station.pricePerKwh?.toStringAsFixed(2) ?? '0.35'} KHR/kWh",
                           style: const TextStyle(
                             color: Color(0xFFE65100),
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                            fontSize: 11,
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 8),
+                    const Spacer(),
 
                     // Bottom Actions: Direction & Distance
                     Row(
@@ -568,15 +555,15 @@ class EvAllStationScreen extends GetView<EvStationController> {
                             children: [
                               Icon(
                                 Icons.location_on_outlined,
-                                size: 18,
+                                size: 16,
                                 color: Colors.blue,
                               ),
-                              SizedBox(width: 4),
+                              const SizedBox(width: 4),
                               Text(
                                 "direction".tr,
                                 style: TextStyle(
                                   color: Colors.blue,
-                                  fontSize: 13,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -588,8 +575,8 @@ class EvAllStationScreen extends GetView<EvStationController> {
 
                         controller.isLocationLoading.value
                             ? Container(
-                              width: 50,
-                              height: 14,
+                              width: 44,
+                              height: 12,
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 borderRadius: BorderRadius.circular(4),
@@ -599,7 +586,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
                               _calculateDistance(station.lats, station.longs),
                               style: TextStyle(
                                 color: Colors.grey[500],
-                                fontSize: 13,
+                                fontSize: 12,
                               ),
                             ),
                       ],

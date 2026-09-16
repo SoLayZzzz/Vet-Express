@@ -10,7 +10,7 @@ class AppColors {
   static const titleColor = Color(0xFF20292F);
   //static const Color = Color(0xFF374151);
   static const textColor = Color(0xFF545454);
-  static const borderColor = Color(0xFFC6C6C6);
+  static const borderColor = Color(0xFFDADDE1);
   static const backgroundColor = Color(0xFFF3F3F3);
   static const greyColor = Color(0xFF808080);
   static const seeMoreColor = Color(0xFF007BFF);
@@ -21,4 +21,10 @@ class AppColors {
   static const deepBlueLight = Color(0xFFE7F1FB);
   static const viewMapColor = Color(0xFFFFA733);
   static const lightPrimaryColor = Color(0xFFFFD8B6);
+  //
+  static const placeholderColor = Color(0xFF6B7280);
+  static const mainTitle = Color(0xFF20292F);
+  static const informationColor = Color(0xFF3772B9);
+  static const seatNumberColor = Color(0xFF2F80ED);
+  static const subTitleColor = Color(0xFF545B6C);
 }

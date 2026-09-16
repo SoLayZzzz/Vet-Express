@@ -65,7 +65,7 @@ class MenuScreen extends GetView<menu.MenuController> {
                 color: AppColors.whiteColor,
                 fontSize: 20,
                 fontFamily: 'OpenSans',
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],

@@ -32,7 +32,7 @@ class Style {
         borderSide: BorderSide(color: AppColors.redColor, width: 1.0),
         borderRadius: BorderRadius.all(Radius.circular(4)),
       ),
-      prefixIcon: iconLeft != null ? Icon(iconLeft, color: AppColors.textColor) : null,
+      prefixIcon: iconLeft != null ? Icon(iconLeft, color: AppColors.textColor, size: 24) : null,
       suffixIcon: iconRight != null
           ? IconButton(
               onPressed: onPressed,

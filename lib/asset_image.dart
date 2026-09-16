@@ -65,7 +65,9 @@ class AssetImages {
   static const String booking_bus = 'assets/images/ic_booking_bus_new.png';
   static const String booking_air_bus =
       'assets/images/ic_booking_air_bus_new.png';
-  static const String booking_boat = 'assets/images/ic_booking_boat_new.png';
+  // static const String booking_boat = 'assets/images/ic_booking_boat_new.png';
+  static const String booking_boat = 'assets/icons/speed_ferry.png';
+  // speed_ferry.png
   // static const String booking_boat = 'assets/images/vet_speed_ferry.png';
   static const String rental_car = 'assets/images/car_rental.png';
 
@@ -162,6 +164,7 @@ class AssetImages {
 
   static const String line = "assets/images/img_line.png";
   static const String coupon = "assets/icons/icon_coupon.png";
+  static const String ic_dropOff_locaiton = "assets/icons/dropOff_icon.png";
 
   // =========================
   // Payment screen
@@ -267,6 +270,8 @@ class AssetImages {
   static const String ic_card_ticket_vip_background =
       "assets/icons/card_ticket_vip_background.png";
   static const String ic_i = "assets/icons/ic_i.png";
+  static const String ic_self_service = "assets/icons/self_service.png";
+ 
 
   // static const String ic_recieved = "assets/images/icon_recieved.png";
   static const String ic_recieved = "assets/icons/send.png";

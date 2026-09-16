@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -250,16 +252,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
     required List<BookingListDataItem> items,
     required BuildContext context,
   }) {
-    return Column(
-      children: [
-        _buildHistoryInfoBanner(),
-        Expanded(
-          child: items.isEmpty
-              ? _buildEmptyState()
-              : _buildTicketList(items: items, context: context),
-        ),
-      ],
-    );
+    return _HistoryTabBody(screen: this, items: items, context: context);
   }
 
   Widget _buildHistoryInfoBanner() {
@@ -298,7 +291,7 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.secondaryColor,
+                      color: AppColors.informationColor,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -486,10 +479,12 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                 item.journeyType == 1
                     ? AssetImages.vet_logo
                     : item.journeyType == 2
-                        ? AssetImages.buva_sea
+                        // ? AssetImages.buva_sea
+                        ? AssetImages.booking_boat
                         : item.journeyType == 3
                             ? AssetImages.vet_air_bus_schedule
-                            : AssetImages.buva_sea,
+                            // : AssetImages.buva_sea,
+                            : AssetImages.booking_boat, 
                 height: 30,
                 fit: BoxFit.contain,
               ),
@@ -836,5 +831,84 @@ Widget _buldBusAndTime(BookingListDataItem item) {
     }
 
     return "Less than a minute";
+  }
+}
+
+class _HistoryTabBody extends StatefulWidget {
+  final TicketHistoryScreen screen;
+  final List<BookingListDataItem> items;
+
+  const _HistoryTabBody({
+    required this.screen,
+    required this.items,
+    required BuildContext context,
+  });
+
+  @override
+  State<_HistoryTabBody> createState() => _HistoryTabBodyState();
+}
+
+class _HistoryTabBodyState extends State<_HistoryTabBody> {
+  Timer? _bannerTimer;
+  bool _showBanner = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncBannerVisibility(widget.items);
+  }
+
+  @override
+  void didUpdateWidget(covariant _HistoryTabBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.items != widget.items) {
+      _syncBannerVisibility(widget.items);
+    }
+  }
+
+  void _syncBannerVisibility(List<BookingListDataItem> items) {
+    final hasData = items.isNotEmpty;
+    _bannerTimer?.cancel();
+    _bannerTimer = null;
+
+    if (!hasData) {
+      if (_showBanner) {
+        setState(() => _showBanner = false);
+      }
+      return;
+    }
+
+    if (!_showBanner) {
+      setState(() => _showBanner = true);
+    }
+
+    _bannerTimer = Timer(const Duration(seconds: 12), () {
+      if (!mounted) return;
+      setState(() => _showBanner = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _bannerTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (widget.items.isNotEmpty && _showBanner)
+          widget.screen._buildHistoryInfoBanner(),
+        Expanded(
+          child: widget.items.isEmpty
+              ? widget.screen._buildEmptyState()
+              : widget.screen._buildTicketList(
+                  items: widget.items,
+                  context: context,
+                ),
+        ),
+      ],
+    );
   }
 }

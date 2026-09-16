@@ -8,7 +8,15 @@ class DesFromResponse {
 
   DesFromResponse.fromJson(Map<String, dynamic> json) {
     header = json['header'] != null ? Header.fromJson(json['header']) : null;
-    body = json['body'] != null ? Body.fromJson(json['body']) : null;
+
+    final rawBody = json['body'];
+    if (rawBody is Map<String, dynamic>) {
+      body = Body.fromJson(rawBody);
+    } else if (rawBody is List) {
+      body = Body.fromList(rawBody);
+    } else {
+      body = null;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -40,10 +48,23 @@ class Body {
             : null;
     if (json['data'] != null) {
       data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+      (json['data'] as List<dynamic>).forEach((v) {
+        if (v is Map<String, dynamic>) {
+          data!.add(Data.fromJson(v));
+        }
       });
     }
+  }
+
+  Body.fromList(List<dynamic> list) {
+    status = true;
+    message = null;
+    pagination = null;
+    data =
+        list
+            .whereType<Map<String, dynamic>>()
+            .map((v) => Data.fromJson(v))
+            .toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -98,11 +119,22 @@ class Data {
   });
 
   Data.fromJson(Map<String, dynamic> json) {
-    destinationsFromId = json['destinationsFromId'];
-    destinationsFromName = json['destinationsFromName'];
-    destinationsFromNameKh = json['destinationsFromNameKh'];
-    code = json['code'];
-    id = json['id'];
+    destinationsFromId =
+        (json['destinationsFromId'] ?? json['id'] ?? json['destinationsFromID'])
+            ?.toString();
+    destinationsFromName =
+        (json['destinationsFromName'] ?? json['name'])?.toString();
+    destinationsFromNameKh =
+        (json['destinationsFromNameKh'] ?? json['nameKh'] ?? json['name_kh'])
+            ?.toString();
+    code = json['code']?.toString();
+
+    final rawId = json['id'];
+    id =
+        rawId is int
+            ? rawId
+            : int.tryParse(rawId?.toString() ?? '') ??
+                int.tryParse(destinationsFromId ?? '');
   }
 
   Map<String, dynamic> toJson() {
