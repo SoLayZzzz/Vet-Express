@@ -204,6 +204,7 @@ final Map<String, String> zhCN = {
   "confirm_payment": "确认付款",
   "payment_successful": "付款成功！",
   'payment_comeplete': '付款成功',
+  'and': ' 和 ',
   "scan_another_qr": "扫描另一个二维码",
   "go_to_wallet": "前往钱包",
   "total_kwh": "总用电量",
@@ -247,6 +248,12 @@ final Map<String, String> zhCN = {
   "transaction_summary": "交易摘要",
   "energy": "电量",
   "date": "日期",
+
+   // Self Service
+  'fullname_required': '请输入全名',
+  'phoneNumber_reuired': '请务必输入电话号码',
+  'vetbranch_required': '请选择您附近的 (VET) 分支机构',
+  'address_required':'地址为必填项',
 
   //coupon
   "promo_code": "优惠码",
@@ -1018,4 +1025,5 @@ final Map<String, String> zhCN = {
   'charging_will_begin_shortly': '充电过程即将开始',
   'voucher': '凭证',
   'enter_or_scan_voucher_code': '输入或扫描凭证码',
+  'minimum_charge_is': '最低充值金额为',
 };

@@ -4,6 +4,7 @@ import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/components/skeleton.dart';
 import 'package:express_vet/feature/home-dashboard/seat/presentation/controller/select_seat_controller.dart';
 import 'package:flutter/material.dart';
+import '../../../../../utils/platform_insets.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/app_bar.dart';
@@ -37,6 +38,9 @@ class SelectSeatScreen extends StatelessWidget {
       controller = Get.find<SelectSeatController>(tag: tag);
     }
 
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -45,6 +49,10 @@ class SelectSeatScreen extends StatelessWidget {
         }),
       ),
       body: SafeArea(
+        top: useSafeArea,
+        bottom: useSafeArea,
+        left: useSafeArea,
+        right: useSafeArea,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -252,10 +260,22 @@ class SelectSeatScreen extends StatelessWidget {
               return controller.state.selectedSeat.isNotEmpty
                   ? Container(
                     width: double.infinity,
-                    color: AppColors.whiteColor,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          offset: const Offset(0, -1),
+                          blurRadius: 1,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    padding: EdgeInsets.fromLTRB(
+                      15,
+                      10,
+                      15,
+                      10 + iosBottomInset,
                     ),
                     child: globalButton(
                       context: context,

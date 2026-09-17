@@ -5,6 +5,7 @@ import 'package:express_vet/value_statics.dart';
 
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/platform_insets.dart';
 
 import '../../../../../routes/app_routes.dart';
 import '../controller/self_service_controller.dart';
@@ -24,143 +25,112 @@ class SelfServiceQRScreen extends GetView<SelfServiceController> {
 
   @override
   Widget build(BuildContext context) {
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
+
     return Scaffold(
       appBar: AppBarVET().appBarNotBack(context, 'successful_deposit'.tr),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: Stack(
-          children: [
-            Positioned(
-              child: Column(
+        child: SafeArea(
+          top: useSafeArea,
+          bottom: useSafeArea,
+          left: useSafeArea,
+          right: useSafeArea,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 10,
+                bottom: 20,
+              ),
+              child: 
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            ValueStatic().clearSelfService();
-                            Get.offAllNamed(
-                              AppRoutes.home,
-                              arguments: {'from': 0},
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 2.3,
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'home'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Spacer(),
-                        InkWell(
-                          onTap: () {
-                            ValueStatic().clearSelfService();
-                            Get.offAllNamed(
-                              AppRoutes.home,
-                              arguments: {'from': 1},
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 2.3,
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'book_more'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 20),
+                  Text(
+                    'plz_show'.tr,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  const SizedBox(height: 50),
+                  SizedBox(
+                    height: 200,
+                    width: 200,
+                    child: QrImageView(
+                      data: _qrCode,
+                      version: QrVersions.auto,
+                      size: 200.0,
                     ),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    _qrCode,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  const SizedBox(height: 50),
+                  Text(
+                    'plz_view'.tr,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                 ],
               ),
             ),
-            SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    top: 10,
-                    bottom: 20,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 20),
-                      Text(
-                        'plz_show'.tr,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 50),
-                      SizedBox(
-                        height: 200,
-                        width: 200,
-                        child: QrImageView(
-                          data: _qrCode,
-                          version: QrVersions.auto,
-                          size: 200.0,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      Text(
-                        _qrCode,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 50),
-                      Text(
-                        'plz_view'.tr,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        bottom: useSafeArea,
+        child: Container(
+          color: AppColors.whiteColor,
+          padding: EdgeInsets.fromLTRB(20, 10, 20, 10 + iosBottomInset),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () {
+                  ValueStatic().clearSelfService();
+                  Get.offAllNamed(AppRoutes.home, arguments: {'from': 0});
+                },
+                child: _buildButton(context, 'home'.tr),
               ),
-            ),
-          ],
+              const Spacer(),
+              InkWell(
+                onTap: () {
+                  ValueStatic().clearSelfService();
+                  Get.offAllNamed(AppRoutes.home, arguments: {'from': 1});
+                },
+                child: _buildButton(context, 'book_more'.tr),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButton(BuildContext context, String label) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 2.3,
+      height: 48,
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 13, color: Colors.white),
         ),
       ),
     );

@@ -429,7 +429,11 @@ class MenuScreen extends GetView<menu.MenuController> {
 
     Get.toNamed(
       AppRoutes.ticketMenu,
-      arguments: {'type': 2, 'appBarTitle': 'booking_boat_new'.tr},
+      arguments: {
+        'type': 2,
+        // 'appBarTitle': 'booking_boat_new'.tr
+        'appBarTitle': 'booking_boat'.tr
+        },
     );
   }
 

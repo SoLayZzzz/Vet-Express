@@ -1,3 +1,4 @@
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
@@ -36,142 +37,110 @@ class SelfServiceCheckScreen extends GetView<SelfServiceController> {
     final itemPriceText = _argString('itemPrice', itemPrice);
     final amountText = _argString('amount', amount);
 
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
+
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'check_information'.tr),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: Stack(
-          children: [
-            Positioned(
+        child: SafeArea(
+          top: useSafeArea,
+          bottom: useSafeArea,
+          left: useSafeArea,
+          right: useSafeArea,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 10,
+                bottom: 20,
+              ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            controller.saveSelfService(
-                              context,
-                              ValueStatic.locationId,
-                              amountText,
-                              itemPriceText,
-                              receiverPhoneText,
-                              senderPhoneText,
-                              ValueStatic.uomId,
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 2.3,
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'save'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Spacer(),
-                        InkWell(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 2.3,
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'edit'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'plz_check'.tr,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
+                  const SizedBox(height: 30),
+                  textView(context, 'sender_telephone'.tr, senderPhoneText),
+                  const SizedBox(height: 15),
+                  textView(context, 'receiver_telephone'.tr, receiverPhoneText),
+                  const SizedBox(height: 15),
+                  textView(context, 'pro_city'.tr, ValueStatic.provinceName),
+                  const SizedBox(height: 15),
+                  textView(context, 'location'.tr, ValueStatic.locationName),
+                  const SizedBox(height: 15),
+                  textView(context, 'item_price'.tr, '$itemPriceText\$'),
+                  const SizedBox(height: 15),
+                  textView(context, 'amount'.tr, amountText),
+                  const SizedBox(height: 15),
+                  textView(context, 'unit'.tr, ValueStatic.uomName),
                 ],
               ),
             ),
-            SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    top: 10,
-                    bottom: 20,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-                      Text(
-                        'plz_check'.tr,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      textView(context, 'sender_telephone'.tr, senderPhoneText),
-                      const SizedBox(height: 15),
-                      textView(
-                        context,
-                        'receiver_telephone'.tr,
-                        receiverPhoneText,
-                      ),
-                      const SizedBox(height: 15),
-                      textView(
-                        context,
-                        'pro_city'.tr,
-                        ValueStatic.provinceName,
-                      ),
-                      const SizedBox(height: 15),
-                      textView(
-                        context,
-                        'location'.tr,
-                        ValueStatic.locationName,
-                      ),
-                      const SizedBox(height: 15),
-                      textView(context, 'item_price'.tr, '$itemPriceText\$'),
-                      const SizedBox(height: 15),
-                      textView(context, 'amount'.tr, amountText),
-                      const SizedBox(height: 15),
-                      textView(context, 'unit'.tr, ValueStatic.uomName),
-                    ],
-                  ),
-                ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        bottom: useSafeArea,
+        child: Container(
+          color: AppColors.whiteColor,
+          padding: EdgeInsets.fromLTRB(20, 10, 20, 10 + iosBottomInset),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () {
+                  controller.saveSelfService(
+                    context,
+                    ValueStatic.locationId,
+                    amountText,
+                    itemPriceText,
+                    receiverPhoneText,
+                    senderPhoneText,
+                    ValueStatic.uomId,
+                  );
+                },
+                child: _checkButton(context, 'save'.tr),
               ),
-            ),
-          ],
+              const Spacer(),
+              InkWell(
+                onTap: () {
+                  Get.back();
+                },
+                child: _checkButton(context, 'edit'.tr),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _checkButton(BuildContext context, String label) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 2.3,
+      height: 48,
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 13, color: Colors.white),
         ),
       ),
     );

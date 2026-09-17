@@ -572,74 +572,71 @@ class _TransferItemCardState extends State<TransferItemCard> {
               SizedBox(height: 10),
       
               // 2. Body Section (Gray Background)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: AppColors.deepBlue,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Image.asset(AssetImages.ic_recieved),
-                      ), // Ensure this exists
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: AppColors.deepBlue,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Image.asset(AssetImages.ic_recieved),
+                    ), // Ensure this exists
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Local NO. ${widget.item.code}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                fontFamily: "Inter"
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "${widget.item.destinationFromEn}",
+                              style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                            ),
                               Text(
-                                "Local NO. ${widget.item.code}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  fontFamily: "Inter"
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                "${widget.item.destinationFromEn}",
-                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
-                              ),
-                                Text(
-                                "${widget.item.senderTelephone}",
-                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
-                              ),
-                              Text(
-                                "${widget.item.destinationToEn}",
-                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
-                              ),
-                            ],
-                          ),
-                          //
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                               Text(
-                                "${widget.item.receiverTelephone}",
-                                style: TextStyle(fontSize: 12, fontFamily: "Inter"),
-                              ),
-                              Text(
-                                '${'qty'.tr}: ${widget.item.qty}/1',
-                                style: const TextStyle(fontSize: 12, fontFamily: "Inter"),
-                              ),
-                            ],
-                          ),
-                         
-                        ],
-                      ),
+                              "${widget.item.senderTelephone}",
+                              style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                            ),
+                            Text(
+                              "${widget.item.destinationToEn}",
+                              style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                            ),
+                          ],
+                        ),
+                        //
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                             Text(
+                              "${widget.item.receiverTelephone}",
+                              style: TextStyle(fontSize: 12, fontFamily: "Inter"),
+                            ),
+                            Text(
+                              '${'qty'.tr}: ${widget.item.qty}/1',
+                              style: const TextStyle(fontSize: 12, fontFamily: "Inter"),
+                            ),
+                          ],
+                        ),
+                       
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               // Padding(
               //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

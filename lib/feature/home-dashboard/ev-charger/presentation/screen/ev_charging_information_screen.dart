@@ -3,6 +3,7 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/contr
 import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -224,6 +225,8 @@ class _ChargingInformationScreenState
                                 ? controller.kwhFocusNode
                                 : controller.khrFocusNode,
                         keyboardType: TextInputType.number,
+                        inputFormatters:
+                            isKwhTab ? null : [_KhrInputFormatter()],
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
                           filled: true,
@@ -248,6 +251,22 @@ class _ChargingInformationScreenState
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(color: Colors.grey),
                           ),
+                        ),
+                      );
+                    }),
+                    Obx(() {
+                      if (!controller.isBelowMinChargeable) {
+                        return const SizedBox.shrink();
+                      }
+                      final min = controller.minChargeableAmount;
+                      final minText = controller.isKwhTab.value
+                          ? '1 kWh'
+                          : 'KHR (៛) ${_formatCurrency(min)}';
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          '${'minimum_charge_is'.tr} $minText',
+                          style: TextStyle(color: Colors.red.shade600, fontSize: 12),
                         ),
                       );
                     }),
@@ -392,6 +411,18 @@ Padding(
         onPressed: () {
           if (controller.canContinue) {
             _onContinue();
+          } else if (controller.isBelowMinChargeable) {
+            final min = controller.minChargeableAmount;
+            final minText = controller.isKwhTab.value
+                ? '1 kWh'
+                : 'KHR (៛) ${_formatCurrency(min)}';
+            Get.snackbar(
+              'error'.tr,
+              '${'minimum_charge_is'.tr} $minText',
+              backgroundColor: Colors.white,
+              colorText: Colors.red,
+              snackPosition: SnackPosition.TOP,
+            );
           }
         },
         style: ElevatedButton.styleFrom(
@@ -1587,5 +1618,29 @@ class _VoucherBorderPainter extends CustomPainter {
         oldDelegate.borderRadius != borderRadius ||
         oldDelegate.color != color ||
         oldDelegate.strokeWidth != strokeWidth;
+  }
+}
+
+/// Formats numeric input for the KHR amount field with thousand separators
+/// (e.g. `000,000,000`). Non-digit characters are stripped automatically.
+class _KhrInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+    if (digits.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+    final formatted = EvChargingInformationController.formatKhrAmount(digits);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+      composing: TextRange.empty,
+    );
   }
 }

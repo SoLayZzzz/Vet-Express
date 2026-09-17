@@ -183,7 +183,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                 });
               },
               child: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -218,8 +218,8 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
                           Text(
                             text,
                             style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textColor,
+                              fontSize: 12,
+                              color: AppColors.detailColor,
                             ),
                           ),
                           const SizedBox(width: 4),
@@ -248,7 +248,7 @@ class _GoodsInformationScreenState extends State<GoodsInformationScreen> {
               : true;
 
         final Color statusColor =
-            isReached ? AppColors.primaryColor : AppColors.textColor;
+            isReached ? AppColors.primaryColor : AppColors.detailColor;
 
         Widget statusWidget;
         switch (move.status) {
@@ -654,7 +654,7 @@ Widget _buildReceiverBox({
     String des,
     String msg,
     String created, {
-    Color colorText = AppColors.textColor,
+    Color colorText = AppColors.detailColor,
     bool? view = true,
   }) {
     return Column(
@@ -673,12 +673,12 @@ Widget _buildReceiverBox({
         const SizedBox(height: 5),
         Text(
           msg,
-          style: const TextStyle(fontSize: 12, color: AppColors.textColor),
+          style: const TextStyle(fontSize: 12, color: AppColors.detailColor),
         ),
         const SizedBox(height: 5),
         Text(
           created,
-          style: const TextStyle(fontSize: 12, color: AppColors.textColor),
+          style: const TextStyle(fontSize: 12, color: AppColors.detailColor),
         ),
       ],
     );

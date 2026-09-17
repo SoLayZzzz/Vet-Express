@@ -293,6 +293,8 @@ class AssetImages {
   static const String ic_map_agency = "assets/images/ic_map_agency.png";
   static const String ic_map_branch_ios = "assets/images/ic_map_branch_ios.png";
   static const String ic_map_agency_ios = "assets/images/ic_map_agency_ios.png";
+  static const String ic_map_filter = "assets/icons/map_filter.png";
+  
 
   // =========================
   // Scan QR

@@ -8,37 +8,94 @@ class Style {
         borderRadius: BorderRadius.all(Radius.circular(4)));
   }
 
+  // static InputDecoration inputText(
+  //   String hint, {
+  //   String? suffixText,
+  //   IconData? iconLeft,
+  //   IconData? iconRight,
+
+  //   VoidCallback? onPressed, // Optional callback function
+  // }) {
+  //   return InputDecoration(
+  //     isDense: true,
+  //     contentPadding: const EdgeInsets.all(12),
+  //     hintText: hint,
+  //     hintStyle: const TextStyle(color: AppColors.greyColor),
+  //     suffixText: suffixText,
+  //     border: outlineInputBorder(),
+  //     enabledBorder: outlineInputBorder(),
+  //     focusedBorder: outlineInputBorder(),
+  //     errorBorder: const OutlineInputBorder(
+  //       borderSide: BorderSide(color: AppColors.redColor, width: 1.0),
+  //       borderRadius: BorderRadius.all(Radius.circular(4)),
+  //     ),
+  //     focusedErrorBorder: const OutlineInputBorder(
+  //       borderSide: BorderSide(color: AppColors.redColor, width: 1.0),
+  //       borderRadius: BorderRadius.all(Radius.circular(4)),
+  //     ),
+  //     prefixIcon: iconLeft != null ? Icon(iconLeft, color: AppColors.textColor, size: 24) : null,
+  //     suffixIcon: iconRight != null
+  //         ? IconButton(
+  //             onPressed: onPressed,
+  //             icon: Icon(iconRight, color: AppColors.borderColor),
+  //           )
+  //         : null,
+  //   );
+  // }
+
   static InputDecoration inputText(
-    String hint, {
-    String? suffixText,
-    IconData? iconLeft,
-    IconData? iconRight,
-    VoidCallback? onPressed, // Optional callback function
-  }) {
-    return InputDecoration(
-      isDense: true,
-      contentPadding: const EdgeInsets.all(12),
-      hintText: hint,
-      hintStyle: const TextStyle(color: AppColors.greyColor),
-      suffixText: suffixText,
-      border: outlineInputBorder(),
-      enabledBorder: outlineInputBorder(),
-      focusedBorder: outlineInputBorder(),
-      errorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.redColor, width: 1.0),
-        borderRadius: BorderRadius.all(Radius.circular(4)),
+  String hint, {
+  String? suffixText,
+  IconData? iconLeft,
+  IconData? iconRight,
+  double iconLeftSize = 24,
+  double iconRightSize = 24,
+  VoidCallback? onPressed,
+}) {
+  return InputDecoration(
+    isDense: true,
+    contentPadding: const EdgeInsets.all(12),
+    hintText: hint,
+    hintStyle: const TextStyle(color: AppColors.greyColor),
+    suffixText: suffixText,
+    border: outlineInputBorder(),
+    enabledBorder: outlineInputBorder(),
+    focusedBorder: outlineInputBorder(),
+    errorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppColors.redColor,
+        width: 1.0,
       ),
-      focusedErrorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.redColor, width: 1.0),
-        borderRadius: BorderRadius.all(Radius.circular(4)),
+      borderRadius: BorderRadius.all(
+        Radius.circular(4),
       ),
-      prefixIcon: iconLeft != null ? Icon(iconLeft, color: AppColors.textColor, size: 24) : null,
-      suffixIcon: iconRight != null
-          ? IconButton(
-              onPressed: onPressed,
-              icon: Icon(iconRight, color: AppColors.borderColor),
-            )
-          : null,
-    );
-  }
+    ),
+    focusedErrorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(
+        color: AppColors.redColor,
+        width: 1.0,
+      ),
+      borderRadius: BorderRadius.all(
+        Radius.circular(4),
+      ),
+    ),
+    prefixIcon: iconLeft != null
+        ? Icon(
+            iconLeft,
+            color: AppColors.textColor,
+            size: iconLeftSize,
+          )
+        : null,
+    suffixIcon: iconRight != null
+        ? IconButton(
+            onPressed: onPressed,
+            icon: Icon(
+              iconRight,
+              color: AppColors.borderColor,
+              size: iconRightSize,
+            ),
+          )
+        : null,
+  );
+}
 }

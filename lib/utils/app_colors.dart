@@ -27,4 +27,5 @@ class AppColors {
   static const informationColor = Color(0xFF3772B9);
   static const seatNumberColor = Color(0xFF2F80ED);
   static const subTitleColor = Color(0xFF545B6C);
+   static const detailColor = Color(0xFF6C7281);
 }

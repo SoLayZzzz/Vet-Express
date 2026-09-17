@@ -26,6 +26,23 @@ class EvChargingInformationController extends GetxController {
     return value == value.toInt() ? value.toInt().toString() : value.toString();
   }
 
+  /// Formats a numeric string with thousand separators (e.g. 000,000,000).
+  /// Non-digit characters are stripped before formatting.
+  static String formatKhrAmount(String input) {
+    final digits = input.replaceAll(RegExp(r'[^\d]'), '');
+    if (digits.isEmpty) return '';
+    final buffer = StringBuffer();
+    int count = 0;
+    for (int i = digits.length - 1; i >= 0; i--) {
+      if (count != 0 && count % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(digits[i]);
+      count++;
+    }
+    return buffer.toString().split('').reversed.join();
+  }
+
   final RxBool isKwhTab = true.obs;
   final RxInt selectedGridIndex = (-1).obs;
 
@@ -213,18 +230,34 @@ class EvChargingInformationController extends GetxController {
         selection: TextSelection.collapsed(offset: text.length),
       );
     } else {
+      final formatted = formatKhrAmount(text);
       khrController.value = khrController.value.copyWith(
-        text: text,
-        selection: TextSelection.collapsed(offset: text.length),
+        text: formatted,
+        selection: TextSelection.collapsed(offset: formatted.length),
       );
     }
   }
+
+  /// Minimum chargeable amount. On the KHR tab this is the price of 1 kWh
+  /// (the rate, e.g. 2,400). On the kWh tab this is 1 kWh.
+  double get minChargeableAmount => isKwhTab.value ? 1.0 : _rate;
 
   bool get canContinue {
     final text = inputAmount.value.trim().replaceAll(',', '');
     if (text.isEmpty) return false;
     final value = double.tryParse(text);
-    return value != null && value > 0;
+    if (value == null || value <= 0) return false;
+    return value >= minChargeableAmount;
+  }
+
+  /// Returns true when the user entered a positive value that is below the
+  /// minimum chargeable amount (so the UI can show a helpful message).
+  bool get isBelowMinChargeable {
+    final text = inputAmount.value.trim().replaceAll(',', '');
+    if (text.isEmpty) return false;
+    final value = double.tryParse(text);
+    if (value == null || value <= 0) return false;
+    return value < minChargeableAmount;
   }
 
   Future<void> fetchVoucherList() async {

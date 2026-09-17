@@ -1,3 +1,4 @@
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,8 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
 
   @override
   Widget build(BuildContext context) {
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'self_service'.tr),
       body: GestureDetector(
@@ -341,8 +344,18 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
         ),
       ),
       bottomNavigationBar: SafeArea(
+        top: useSafeArea,
+        bottom: useSafeArea,
+        left: useSafeArea,
+        right: useSafeArea,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+           padding: EdgeInsets.fromLTRB(
+                      15,
+                      10,
+                      15,
+                      10 + iosBottomInset,
+                    ),
           color: AppColors.whiteColor,
           width: double.infinity,
           child: globalButton(

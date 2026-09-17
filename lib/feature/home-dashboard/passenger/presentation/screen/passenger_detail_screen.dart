@@ -1,6 +1,7 @@
 import 'package:date_format_field/date_format_field.dart';
 import 'package:express_vet/asset_image.dart';
 import 'package:flutter/material.dart';
+import '../../../../../utils/platform_insets.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -44,14 +45,24 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
     final args = Get.arguments as Map<dynamic, dynamic>?;
     final enableDiscount = (args?['enableDiscount'] as bool?) ?? false;
 
+    final useSafeArea = PlatformInsets.useSafeArea;
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
         appBar: AppBarVET().appBar(context, 'passenger'.tr),
-        body: SafeArea(child: _buildPassengerNoDiscount()),
-        // body: SafeArea(child: _buildPassengerHaveDiscount()),
+        body: SafeArea(
+          top: useSafeArea,
+          bottom: useSafeArea,
+          left: useSafeArea,
+          right: useSafeArea,
+          child:
+              enableDiscount
+                  ? _buildPassengerHaveDiscount()
+                  : _buildPassengerNoDiscount(),
+        ),
       ),
     );
   }
@@ -501,7 +512,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                           ),
                           TextSpan(
                             text: (selectedSeats[index]).toString(),
-                            style: const TextStyle(color: AppColors.seatNumberColor),
+                            style: const TextStyle(color: AppColors.seatNumberColor, fontWeight: FontWeight.w400),
                           ),
                         ],
                       ),
@@ -2081,8 +2092,8 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                                     ),
                                   ],
                                 ),
-                                const Text(
-                                  ' & ',
+                                 Text(
+                                  'and'.tr,
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
@@ -2337,7 +2348,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
               ),
               const SizedBox(height: 10),
               Text(
-                '${'return_date'.tr}: ${ValueStatic.backDate}',
+                '${'departure_date'.tr}: ${ValueStatic.backDate}',
                 style: const TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 14,
@@ -2367,7 +2378,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         return Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.only(top: 10, bottom: 4),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -2539,7 +2550,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         return Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.only(top: 10, bottom: 4),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -2795,7 +2806,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         return Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.only(top: 10, bottom: 4),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -2933,7 +2944,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                         return Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                             padding: const EdgeInsets.only(top: 10, bottom: 4),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -3078,12 +3089,28 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
   }
 
   Widget _buildButtonToPaymentScreen(BuildContext context) {
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return SafeArea(
+      top: false,
+      left: false,
+      right: false,
+      bottom: useSafeArea,
       child: Container(
-        color: AppColors.whiteColor,
         width: double.infinity,
+        decoration: BoxDecoration(
+          color: AppColors.whiteColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              offset: const Offset(0, -1),
+              blurRadius: 1,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10 + iosBottomInset),
           child: globalButton(
             context: context,
             buttonText: 'process_to_payment'.tr,

@@ -104,7 +104,10 @@ class TicketMenuScreen extends GetView<TicketMenuPageController> {
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: globalButton(
+      child: 
+      globalButton
+      // orangeButton
+      (
         context: context,
         buttonText: 'find_now'.tr,
         buttonColor:

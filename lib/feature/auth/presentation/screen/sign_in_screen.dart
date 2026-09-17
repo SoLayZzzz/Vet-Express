@@ -7,6 +7,7 @@ import 'package:express_vet/utils/check_input.dart';
 import 'package:express_vet/utils/contains.dart';
 import 'package:express_vet/utils/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 
@@ -86,100 +87,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 20),
-                      TextFormField(
-                        focusNode: _phoneFocusNode,
-                        controller:
-                            controller.uiState.value.signInPhoneController,
-                        autofocus: true,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        keyboardType: TextInputType.emailAddress,
-                        inputFormatters: [PhoneOrEmailFormatter()],
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textColor,
-                        ),
-                        validator: (String? value) {
-                          final cleanValue = (value ?? '').trim();
-                          if (cleanValue.isEmpty) {
-                            return 'phone_req'.tr;
-                          }
-                          // Check if it is an email (contains '@')
-                          if (cleanValue.contains('@')) {
-                            final emailError = CheckInput()
-                                .validateEmailAddress(cleanValue);
-                            if (emailError != null) {
-                              return 'phone_inco'.tr;
-                            }
-                            return null;
-                          } else {
-                            // Check if phone number format is valid (at least 9 digits)
-                            final phoneClean = cleanValue.replaceAll(' ', '');
-                            final isNumeric = RegExp(
-                              r'^\+?[0-9]+$',
-                            ).hasMatch(phoneClean);
-                            if (!isNumeric || phoneClean.length < 9) {
-                              return 'phone_inco'.tr;
-                            }
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 16,
-                          ),
-                          hintText: 'phone_num'.tr,
-                          enabledBorder: Style.outlineInputBorder(),
-                          focusedBorder: Style.outlineInputBorder(),
-                          errorBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.redColor,
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                          ),
-                          focusedErrorBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.redColor,
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                          ),
-                        ),
-                      ),
+                      _emailField(),
                       const SizedBox(height: 20),
-                      Obx(() {
-                        final ui = controller.uiState.value;
-                        return TextFormField(
-                          controller:
-                              controller.uiState.value.signInPasswordController,
-                          autofocus: false,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textColor,
-                          ),
-                          validator: (String? value) {
-                            return CheckInput().checkLength(
-                              value!,
-                              0,
-                              'pass_req'.tr,
-                              'pass_inco'.tr,
-                            );
-                          },
-                          decoration: Style.inputText(
-                            'pass'.tr,
-                            iconRight:
-                                ui.signInPasswordVisible.value
-                                    ? Ionicons.eye
-                                    : Ionicons.eye_off_outline,
-                            onPressed:
-                                controller.toggleSignInPasswordVisibility,
-                          ),
-                          obscureText: !ui.signInPasswordVisible.value,
-                        );
-                      }),
+                      _passwordField(),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -374,5 +284,118 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
+  }
+
+  Widget _passwordField() {
+    return Obx(() {
+                      final ui = controller.uiState.value;
+                      return TextFormField(
+                        controller:
+                            controller.uiState.value.signInPasswordController,
+                        autofocus: false,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textColor,
+                        ),
+                        validator: (String? value) {
+                          return CheckInput().checkLength(
+                            value!,
+                            0,
+                            'pass_req'.tr,
+                            'pass_inco'.tr,
+                          );
+                        },
+                        decoration: Style.inputText(
+                          'pass'.tr,
+                          iconRight:
+                              ui.signInPasswordVisible.value
+                                  ? Ionicons.eye
+                                  : Ionicons.eye_off_outline,
+                          onPressed:
+                              controller.toggleSignInPasswordVisibility,
+                        ),
+                        obscureText: !ui.signInPasswordVisible.value,
+                      );
+                    });
+  }
+
+  Widget _emailField() {
+    return TextFormField(
+                      focusNode: _phoneFocusNode,
+                      controller:
+                          controller.uiState.value.signInPhoneController,
+                      autofocus: true,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      keyboardType: TextInputType.emailAddress,
+                      // inputFormatters: [PhoneOrEmailFormatter()],
+                      inputFormatters: [
+                            TextInputFormatter.withFunction((oldValue, newValue) {
+                              final text = newValue.text;
+                              final isOnlyDigits = RegExp(r'^\d*$').hasMatch(text);
+                              if (isOnlyDigits && text.length > 10) {
+                                final trimmed = text.substring(0, 10);
+                                return TextEditingValue(
+                                  text: trimmed,
+                                  selection: TextSelection.collapsed(offset: trimmed.length),
+                                );
+                              }
+                              return newValue;
+                            }),
+                          ],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textColor,
+                      ),
+                      validator: (String? value) {
+                        final cleanValue = (value ?? '').trim();
+                        if (cleanValue.isEmpty) {
+                          return 'phone_req'.tr;
+                        }
+                        // Check if it is an email (contains '@')
+                        if (cleanValue.contains('@')) {
+                          final emailError = CheckInput()
+                              .validateEmailAddress(cleanValue);
+                          if (emailError != null) {
+                            return 'phone_inco'.tr;
+                          }
+                          return null;
+                        } else {
+                          // Check if phone number format is valid (at least 9 digits)
+                          final phoneClean = cleanValue.replaceAll(' ', '');
+                          final isNumeric = RegExp(
+                            r'^\+?[0-9]+$',
+                          ).hasMatch(phoneClean);
+                          if (!isNumeric || phoneClean.length < 9) {
+                            return 'phone_inco'.tr;
+                          }
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
+                        hintText: 'phone_num'.tr,
+                        enabledBorder: Style.outlineInputBorder(),
+                        focusedBorder: Style.outlineInputBorder(),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColors.redColor,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColors.redColor,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                      ),
+                    );
   }
 }

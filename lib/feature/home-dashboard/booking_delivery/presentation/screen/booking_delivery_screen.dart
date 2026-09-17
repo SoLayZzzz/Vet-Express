@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/button.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,8 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
 
   @override
   Widget build(BuildContext context) {
+     final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'booking_delivery'.tr),
       body: GestureDetector(

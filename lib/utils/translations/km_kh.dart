@@ -273,6 +273,12 @@ final Map<String, String> kmKH = {
 
   'search': 'ស្វែងរក',
 
+  // Self Service
+  'fullname_required': 'សូមបំពេញឈ្មោះពេញ',
+  'phoneNumber_reuired': 'សូមបំពេញលេខទូរសព្ទ',
+  'vetbranch_required': 'សូមបំពេញសាខា VET ដែលនៅជិតលោកអ្នក',
+  'address_required':'សូមបំពេញអាសយដ្ឋាន',
+
   // Sign In Screen..................
   'welcome': 'សូមស្វាគមន៍',
   'phone_num': 'លេខទូរស័ព្ទ / អ៊ីម៉ែល',
@@ -510,6 +516,7 @@ final Map<String, String> kmKH = {
   'passport': "លេខលិខិតឆ្លងដែន",
   'passport_number': 'លេខលិខិតឆ្លងដែន',
   'is_not_apply': ' មិនត្រូវគ្នានឹងតម្លៃសំបុត្រទេ',
+  'and': ' និង ',
 
   //user detail ដោយចុច 'ដំណើរការដើម្បីចូលបង់ប្រាក់' អ្នកយល់ព្រមនឹង លក្ខខណ្ឌនិងគោលការណ៍ឯកជនភាព
   "click": "ដោយចុច 'ដំណើរការដើម្បីចូលបង់ប្រាក់' អ្នកយល់ព្រមនឹង",
@@ -1136,4 +1143,5 @@ final Map<String, String> kmKH = {
   'charging_will_begin_shortly': 'ដំណើរការសាកថ្មនឹងចាប់ផ្តើមឆាប់ៗ',
   'voucher': 'ប័ណ្ណទូទាត់',
   'enter_or_scan_voucher_code': 'បញ្ចូលឬស្កេនកូដប័ណ្ណទូទាត់',
+  'minimum_charge_is': 'តម្លៃអប្បបរមាគឺ',
 };

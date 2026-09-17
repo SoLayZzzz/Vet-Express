@@ -24,6 +24,7 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _addressController;
+  final _formKey = GlobalKey<FormState>();
 
   void _clearControllerState() {
     controller.name.value = '';
@@ -114,7 +115,9 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        child: Column(
+        child: Form(
+          key: _formKey,
+          child: Column(
           children: [
             const SizedBox(height: 16),
 
@@ -122,6 +125,11 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
               label: 'full_name'.tr,
               hint: 'full_name'.tr,
               controller: _nameController,
+              validator:
+                  (value) =>
+                      (value == null || value.trim().isEmpty)
+                          ? 'fullname_required'.tr
+                          : null,
               onChanged: (value) => controller.name.value = value,
             ),
             const SizedBox(height: 16),
@@ -132,6 +140,11 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               inputFormatters: [PhoneNumberFormatter()],
+              validator:
+                  (value) =>
+                      (value == null || value.trim().isEmpty)
+                          ? 'phoneNumber_reuired'.tr
+                          : null,
               onChanged: (value) => controller.phone.value = value,
             ),
             const SizedBox(height: 16),
@@ -144,6 +157,11 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
               hint: 'address'.tr,
               controller: _addressController,
               maxLines: 3,
+              validator:
+                  (value) =>
+                      (value == null || value.trim().isEmpty)
+                          ? 'address_required'.tr
+                          : null,
               onChanged: (value) => controller.address.value = value,
             ),
 
@@ -172,15 +190,12 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
                       : () async {
                         // Clear any previous error message
                         controller.errorMessage.value = '';
-            
-                        // First, validate form fields
-                        final validationError = _validateForm();
-                        if (validationError.isNotEmpty) {
-                          // Show dialog for validation errors
-                          _showErrorDialog(validationError);
+
+                        // Validate form fields — shows inline red errors
+                        if (!(_formKey.currentState?.validate() ?? false)) {
                           return;
                         }
-            
+
                         // Attempt registration
                         final success = await controller.registerCustomer();
                         if (success) {
@@ -206,26 +221,10 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
                       ),
             ),
           ],
+          ),
         ),
       ),
     );
-  }
-
-  // Validate form fields
-  String _validateForm() {
-    if (controller.name.value.isEmpty) {
-      return 'please_enter_full_name'.tr;
-    }
-    if (controller.phone.value.isEmpty) {
-      return 'please_enter_phone_number'.tr;
-    }
-    if (controller.selectedBranch.value == null) {
-      return 'please_select_branch_near_you'.tr;
-    }
-    if (controller.address.value.isEmpty) {
-      return 'please_enter_address'.tr;
-    }
-    return '';
   }
 
   // Show error dialog using your existing style
@@ -352,6 +351,7 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
     required String hint,
     required TextEditingController controller,
     required Function(String) onChanged,
+    String? Function(String?)? validator,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
@@ -379,11 +379,13 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        TextField(
+        TextFormField(
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: validator,
           onChanged: (value) {
             onChanged(value);
           },
@@ -396,7 +398,9 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
               fontSize: 14,
             ),
             fillColor: Colors.grey[100],
-            contentPadding: const EdgeInsets.all(14),
+            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+            prefix: const SizedBox(width: 14),
+            suffix: const SizedBox(width: 14),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: Colors.grey[300]!),
@@ -404,6 +408,14 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: const Color(0xFFD35F27)),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.redColor),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.redColor),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
@@ -439,55 +451,85 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        InkWell(
-          onTap: () {
-            Get.to(() => ProvinceSelectionScreen());
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: controller.isBranchSelected ? 2 : 12,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: /*controller.isBranchSelected ? const Color(0xFFD35F27) :*/
-                    Colors.grey[300]!,
-              ),
-            ),
-            child: Row(
+        FormField<String>(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator:
+              (_) =>
+                  controller.selectedBranch.value == null
+                      ? 'vetbranch_required'.tr
+                      : null,
+          builder: (field) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Obx(
-                    () => Text(
-                      _getBranchDisplayText(),
-                      style: TextStyle(
+                InkWell(
+                  onTap: () async {
+                    await Get.to(() => ProvinceSelectionScreen());
+                    field.didChange(controller.selectedBranch.value?.name);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: controller.isBranchSelected ? 2 : 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
                         color:
-                            controller.isBranchSelected
-                                ? Colors.black
-                                : Colors.grey,
+                            field.hasError
+                                ? AppColors.redColor
+                                : Colors.grey[300]!,
                       ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Obx(
+                            () => Text(
+                              _getBranchDisplayText(),
+                              style: TextStyle(
+                                color:
+                                    controller.isBranchSelected
+                                        ? Colors.black
+                                        : Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Obx(
+                          () =>
+                              controller.isBranchSelected
+                                  ? IconButton(
+                                    icon: const Icon(Icons.close, size: 20),
+                                    onPressed: () {
+                                      controller.clearAllSelections();
+                                      field.didChange(null);
+                                    },
+                                  )
+                                  : const Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: Colors.grey,
+                                  ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Obx(
-                  () =>
-                      controller.isBranchSelected
-                          ? IconButton(
-                            icon: const Icon(Icons.close, size: 20),
-                            onPressed: () {
-                              controller.clearAllSelections();
-                            },
-                          )
-                          : const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.grey,
-                          ),
-                ),
+                if (field.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      field.errorText!,
+                      style: const TextStyle(
+                        color: AppColors.redColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
               ],
-            ),
-          ),
+            );
+          },
         ),
         const SizedBox(height: 8),
         Obx(

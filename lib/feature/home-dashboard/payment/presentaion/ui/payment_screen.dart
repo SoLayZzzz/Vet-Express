@@ -19,6 +19,8 @@ import '../controller/payment_controller.dart';
 import '../../../passenger/presentation/controller/booking.dart';
 import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/button.dart';
+import '../../../../../utils/platform_insets.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String id;
@@ -244,6 +246,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                               apiPlatformDiscountAll,
                               baseTotalAll,
                             ),
+
                           ],
                         ),
                       ),
@@ -393,7 +396,10 @@ class _PaymentScreenState extends State<PaymentScreen>
     double baseTotalAll,
   ) {
     final seatNoLabel =
-        (index == 0 ? ValueStatic.seatTypeOneWay : ValueStatic.seatTypeTwoWay) == 2
+        (index == 0
+                    ? ValueStatic.seatTypeOneWay
+                    : ValueStatic.seatTypeTwoWay) ==
+                2
             ? 'bed_no'.tr
             : 'seat_no'.tr;
 
@@ -415,7 +421,7 @@ class _PaymentScreenState extends State<PaymentScreen>
               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
 
-            SizedBox(height: 4,),
+            SizedBox(height: 4),
 
             ListView.separated(
               shrinkWrap: true,
@@ -474,7 +480,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                       "\$${widget.datas.body!.totalDiscountTravel}",
                       textColor: AppColors.greyColor,
                     ),
-                     const Divider(thickness: 1),
+                  const Divider(thickness: 1),
                   if (_hasVisibleAmount(selectedDiscountAmount))
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -546,9 +552,8 @@ class _PaymentScreenState extends State<PaymentScreen>
     double baseTotalAll,
     double totalPayableAll,
   ) {
-    final seatNoLabel = ValueStatic.seatTypeOneWay == 2
-        ? 'bed_no'.tr
-        : 'seat_no'.tr;
+    final seatNoLabel =
+        ValueStatic.seatTypeOneWay == 2 ? 'bed_no'.tr : 'seat_no'.tr;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -558,10 +563,14 @@ class _PaymentScreenState extends State<PaymentScreen>
           children: [
             Text(
               '${data.destinationFrom}${' - '.tr}${data.destinationTo}',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: AppColors.mainTitle),
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                color: AppColors.mainTitle,
+              ),
             ),
 
-            SizedBox(height: 8,),
+            SizedBox(height: 8),
 
             ListView.separated(
               shrinkWrap: true,
@@ -628,7 +637,11 @@ class _PaymentScreenState extends State<PaymentScreen>
                     ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: const Divider(height: 10, thickness: 1),
+                    child: const Divider(
+                      height: 10,
+                      thickness: 1,
+                      color: AppColors.borderColor,
+                    ),
                   ),
 
                   if (_hasVisibleAmount(selectedServiceFeeAmount) ||
@@ -676,11 +689,17 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_khqr,
             title: const Text(
               'ABA KHQR',
-              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.mainTitle,
+              ),
             ),
             subtitleWidget: Text(
               'tap_to_pay_with_KHQR'.tr,
-              style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppColors.subTitleColor,
+              ),
             ),
             value: 1,
             isSelected: uiState.paymentMethodSelected == 1,
@@ -699,11 +718,17 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_wing,
             title: const Text(
               'Wing Bank',
-               style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.mainTitle,
+              ),
             ),
             subtitleWidget: Text(
               'tap_to_pay_wing'.tr,
-              style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppColors.subTitleColor,
+              ),
             ),
             value: 4,
             isSelected: uiState.paymentMethodSelected == 4,
@@ -722,11 +747,17 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_acleda,
             title: const Text(
               'ACLEDA',
-               style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.mainTitle,
+              ),
             ),
             subtitleWidget: Text(
               'tap_to_pay_acleda'.tr,
-              style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppColors.subTitleColor,
+              ),
             ),
             value: 5,
             isSelected: uiState.paymentMethodSelected == 5,
@@ -745,7 +776,10 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_big_visa,
             title: const Text(
               'Credit/Debit Card',
-               style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.mainTitle,
+              ),
             ),
             subtitleWidget: Image.asset(AssetImages.ic_small_visa, height: 14),
             value: 2,
@@ -765,11 +799,17 @@ class _PaymentScreenState extends State<PaymentScreen>
             asset: AssetImages.ic_alipay,
             title: const Text(
               'AliPay',
-              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.mainTitle),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.mainTitle,
+              ),
             ),
             subtitleWidget: Text(
               'tap_to_pay_with_ALIPAY'.tr,
-               style: const TextStyle(fontSize: 10, color: AppColors.subTitleColor),
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppColors.subTitleColor,
+              ),
             ),
             value: 3,
             isSelected: uiState.paymentMethodSelected == 3,
@@ -792,7 +832,13 @@ class _PaymentScreenState extends State<PaymentScreen>
     required String totalAmountForApi,
   }) {
     final isPaymentSelected = uiState.paymentMethodSelected != 0;
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return SafeArea(
+      top: false,
+      left: false,
+      right: false,
+      bottom: useSafeArea,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -806,92 +852,43 @@ class _PaymentScreenState extends State<PaymentScreen>
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Total amount
-            Expanded(
-              flex: 2,
-              child: Row(
-                children: [
-                  Text(
-                    'total_price_payment'.tr,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      // fontWeight: FontWeight.w500,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  Text(
-                    " \$${totalPayableAll.toStringAsFixed(2)}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            //
-            // Button pay
-            Expanded(
-              flex: 2,
-              child: SizedBox(
-                height: 50,
-                child: ElevatedButton(
-                  onPressed:
-                      isPaymentSelected
-                          ? () async {
-                            if (uiState.paymentMethodSelected == 5) {
-                              await controller.processBooking(
-                                context: context,
-                                transactionId: widget.id,
-                                totalAmount: totalAmountForApi,
-                              );
-                              final token = controller.state.newToken;
-                              if (token.isNotEmpty && context.mounted) {
-                                showDialog(
-                                  barrierColor: Colors.black26,
-                                  context: context,
-                                  builder: (dialogContext) {
-                                    return dialogOptionACLEDA(widget.id, token);
-                                  },
-                                );
-                              }
-                            } else {
-                              controller.processBooking(
-                                context: context,
-                                transactionId: widget.id,
-                                totalAmount: totalAmountForApi,
-                              );
-                            }
-                          }
-                          : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    disabledBackgroundColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    disabledForegroundColor: AppColors.titleColor,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: AppColors.primaryColor, width: 1),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'pay_now'.tr,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+        padding: EdgeInsets.fromLTRB(15, 10, 15, iosBottomInset),
+        child: globalButton(
+          context: context,
+          buttonText:
+              '${'pay_now'.tr} \$${totalPayableAll.toStringAsFixed(2)}',
+          buttonColor:
+              isPaymentSelected
+                  ? (ValueStatic.ticketType == '3'
+                      ? AppColors.airBusColor
+                      : AppColors.primaryColor)
+                  : AppColors.greyColor,
+          onPressed: () async {
+            if (!isPaymentSelected) return;
+            if (uiState.paymentMethodSelected == 5) {
+              await controller.processBooking(
+                context: context,
+                transactionId: widget.id,
+                totalAmount: totalAmountForApi,
+              );
+              final token = controller.state.newToken;
+              if (token.isNotEmpty && context.mounted) {
+                showDialog(
+                  barrierColor: Colors.black26,
+                  context: context,
+                  builder: (dialogContext) {
+                    return dialogOptionACLEDA(widget.id, token);
+                  },
+                );
+              }
+            } else {
+              controller.processBooking(
+                context: context,
+                transactionId: widget.id,
+                totalAmount: totalAmountForApi,
+              );
+            }
+          },
         ),
       ),
     );

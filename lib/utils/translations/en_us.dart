@@ -472,7 +472,7 @@ final Map<String, String> enUS = {
   'from': 'From',
   'note': 'Note',
   'status': 'Status',
-  'tracking_detail': 'Tracking Detail',
+  'tracking_detail': 'Tracking Details',
   'no_qr_code_found': 'This QR Code is not found.',
   'posting': 'Posting',
   'shipping': 'Shipping',
@@ -491,7 +491,7 @@ final Map<String, String> enUS = {
   'passenger': "Passenger Details",
   'travel_ticket_form': 'Travel Ticket From',
   'round_trip_ticket': 'Round Trip Ticket',
-  'departure_date:': 'Departure Date : ',
+  // 'departure_date:': 'Travel date : ',
   'seat_number': 'Seat number',
   'female': 'Female',
   'nationality_choose': 'Choose Nationality',
@@ -520,6 +520,7 @@ final Map<String, String> enUS = {
   'passport': "Passport No.",
   'passport_number': 'Passport No.',
   'is_not_apply': ' does not match the ticket price',
+  'and': ' and ',
 
   //ticket_history
   'ticket_history': 'Ticket History',
@@ -527,7 +528,7 @@ final Map<String, String> enUS = {
   'ticket_code': 'Ticket Code',
   'transaction_id': 'Transaction ID',
   'booking_date': 'Booked date',
-  'departure_date': 'Departure Date',
+  'departure_date': 'Travel date',
   'transportation_type': 'Transportation Type',
   // 'payment': 'Payment type',
   'ticket_price': 'Ticket Price',
@@ -667,6 +668,11 @@ final Map<String, String> enUS = {
   'amount_is_required': 'Amount is required',
   'unit_is_required': 'Unit is required',
   'please_select_province': 'Please select province/city',
+
+  'fullname_required': 'Full name is required',
+  'phoneNumber_reuired': 'Phone number is required',
+  'vetbranch_required': 'VET branch near you is required',
+  'address_required':'Address is required',
 
   //self_service_qr
   'successful_deposit': 'Successful Deposit',
@@ -935,7 +941,7 @@ final Map<String, String> enUS = {
   "condition": "Terms & Conditions",
   "condition-ticket": "Terms & Conditions For Ticket",
   "condition-logistic": "Terms & Conditions For Logistics",
-  "condition-buvaSea": "Terms & Conditions For Buvasea",
+  "condition-buvaSea": "Terms & Conditions For VET Speed Ferry",
 
   //
    "package_benifits": "Package Benefits",
@@ -1103,7 +1109,7 @@ final Map<String, String> enUS = {
   "b61":
       "Passengers are responsible for the safety of their personal belongings and valuables.",
   "b62":
-      "Buva Sea Speedboat will not be held liable for any loss or damage to personal items.",
+      "Vireak Buntham Speed Ferry will not be held liable for any loss or damage to personal items.",
 
   "b7": "7. Ticket Policy",
   "b71":
@@ -1159,4 +1165,5 @@ final Map<String, String> enUS = {
   'charging_will_begin_shortly': 'The charging process will begin shortly',
   'voucher': 'Voucher',
   'enter_or_scan_voucher_code': 'Enter or scan voucher code',
+  'minimum_charge_is': 'Minimum charge is',
 };

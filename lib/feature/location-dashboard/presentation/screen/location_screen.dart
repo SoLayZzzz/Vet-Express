@@ -333,32 +333,63 @@ class LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: TextFormField(
-                        onTap: () {
-                          Get.to(
-                            () => LocationSearchScreen(allBranches: _allBranches),
-                            transition: Transition.rightToLeft,
-                            duration: const Duration(milliseconds: 350),
-                          );
-                        },
-                        autofocus: false,
-                        readOnly: true,
-                        showCursor: false,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        keyboardType: TextInputType.phone,
-                        style: const TextStyle(fontSize: 14),
-                        decoration: Style.inputText(
-                          'search_virak'.tr,
-                          iconLeft: Icons.location_on_outlined,
-                        ),
-                      ),
-                    ),
-                  ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: TextFormField(
+                                  onTap: () {
+                                    Get.to(
+                                      () => LocationSearchScreen(allBranches: _allBranches),
+                                      transition: Transition.rightToLeft,
+                                      duration: const Duration(milliseconds: 350),
+                                    );
+                                  },
+                                  autofocus: false,
+                                  readOnly: true,
+                                  showCursor: false,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  keyboardType: TextInputType.phone,
+                                  style: const TextStyle(fontSize: 14),
+                                  decoration: Style.inputText(
+                                    'search_virak'.tr,
+                                    // iconLeft: Icons.location_on_outlined,
+                                    iconRight: Icons.search,
+                                    iconRightSize: 35
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                  // Expanded(
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(6),
+                  //     ),
+                  //     child: TextFormField(
+                  //       onTap: () {
+                  //         Get.to(
+                  //           () => LocationSearchScreen(allBranches: _allBranches),
+                  //           transition: Transition.rightToLeft,
+                  //           duration: const Duration(milliseconds: 350),
+                  //         );
+                  //       },
+                  //       autofocus: false,
+                  //       readOnly: true,
+                  //       showCursor: false,
+                  //       autovalidateMode: AutovalidateMode.onUserInteraction,
+                  //       keyboardType: TextInputType.phone,
+                  //       style: const TextStyle(fontSize: 14),
+                  //       decoration: Style.inputText(
+                  //         'search_virak'.tr,
+                  //         iconLeft: Icons.location_on_outlined,
+                  //         iconLeftSize: 26
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(width: 10),
                   Container(
                     decoration: BoxDecoration(
@@ -376,10 +407,7 @@ class LocationScreenState extends State<LocationScreen> {
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            const Icon(
-                              Icons.filter_alt_outlined,
-                              color: AppColors.greyColor,
-                            ),
+                            Image.asset(AssetImages.ic_map_filter, width: 24,height: 24,),
                             if (_selectedArea != null)
                               Positioned(
                                 right: -2,
