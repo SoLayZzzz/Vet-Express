@@ -1,7 +1,7 @@
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/network/network_data_source.dart';
+import 'package:express_vet/base/base_url.dart';
 import 'package:get/get.dart';
 
-import '../../../../../base/base_url.dart';
-import '../../../../../base/network_data_source.dart';
 import '../../data/network/ev_charger_network_request.dart';
 import '../../data/repositoryImpl/ev_charger_repository_impl.dart';
 import '../../domain/repository/ev_charger_repository.dart';

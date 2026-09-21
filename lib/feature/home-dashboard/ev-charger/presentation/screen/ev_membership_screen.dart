@@ -1,7 +1,5 @@
-import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charger_controller.dart';
-import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_wallet_list_response.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:vector_math/vector_math_64.dart' as math;
+import 'package:express_vet/routes/app_routes.dart';
 
 class EvMembershipScreen extends StatefulWidget {
   const EvMembershipScreen({super.key});
@@ -145,7 +144,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
       children: [
         _buildMemberOptions(
           onTap: () => Get.toNamed(AppRoutes.evMembershipBenefit),
-          iconPath: AssetImages.ic_membership,
+          iconPath: "assets/icons/membership.svg",
           title: 'membership_benefit'.tr,
         ),
         const Padding(
@@ -159,7 +158,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
               type: _apiTypeFromFilter(),
             );
           },
-          iconPath: AssetImages.ic_history_membership,
+          iconPath: "assets/icons/history_membership.svg",
           title: 'history'.tr,
         ),
       ],
@@ -759,7 +758,7 @@ class _EvMembershipScreenState extends State<EvMembershipScreen> {
                 child: Opacity(
                   opacity: 0.70,
                   child: SvgPicture.asset(
-                    AssetImages.ic_history_background,
+                    "assets/icons/history_background.svg",
                     width: 170,
                     height: 170,
                     fit: BoxFit.contain,

@@ -236,7 +236,7 @@ class EvWalletController extends GetxController {
       switch (filter) {
         case 'income':
           filteredGroupTransactions =
-              transactions.where((t) => t.type == 1).toList();
+              transactions.where((t) => t.type == 1 || t.type == 3).toList();
           break;
         case 'expense':
           filteredGroupTransactions =
@@ -320,17 +320,38 @@ class EvWalletController extends GetxController {
 
   // Get transaction type info
   Map<String, dynamic> getTransactionTypeInfo(Transaction transaction) {
-    final isIncome = transaction.type == 1;
+    final type = transaction.type;
 
-    return {
-      'text': isIncome ? 'Top-up' : 'Charging',
-      'prefix': isIncome ? '+' : '-',
-      'color': isIncome ? const Color(0xFF4CAF50) : const Color(0xFFF44336),
-      'icon':
-          isIncome
-              ? 'assets/icons/icon_ev_topUpOk.png'
-              : 'assets/icons/icon_ev_topUpNo.png',
-    };
+    switch (type) {
+      case 1: // Top Up
+        return {
+          'text': 'Top-up',
+          'prefix': '+',
+          'color': const Color(0xFF4CAF50),
+          'icon': 'assets/icons/icon_ev_topUpOk.png',
+        };
+      case 2: // Sales Order
+        return {
+          'text': 'Sales Order',
+          'prefix': '-',
+          'color': const Color(0xFFF44336),
+          'icon': 'assets/icons/icon_ev_topUpNo.png',
+        };
+      case 3: // Refund
+        return {
+          'text': 'Refund',
+          'prefix': '+',
+          'color': const Color(0xFF4CAF50),
+          'icon': 'assets/icons/icon_ev_topUpOk.png',
+        };
+      default:
+        return {
+          'text': 'Transaction',
+          'prefix': '',
+          'color': Colors.black54,
+          'icon': 'assets/icons/icon_ev_topUpNo.png',
+        };
+    }
   }
 
   // Get display amount

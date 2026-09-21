@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/input_text_field.dart';
 import 'package:express_vet/utils/platform_insets.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/button.dart';
@@ -12,7 +13,6 @@ import '../../../../../utils/alert_dialog.dart';
 import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/check_input.dart';
-import '../../../../../utils/style.dart';
 import 'booking_delivery_live_location_screen.dart';
 import '../../../../history-dashboard/other-history/presentation/binding/goods_transfer_action_binding.dart';
 import '../../../../history-dashboard/other-history/presentation/controller/goods_transfer_action_controller.dart';
@@ -53,7 +53,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
 
   @override
   Widget build(BuildContext context) {
-     final useSafeArea = PlatformInsets.useSafeArea;
+    final useSafeArea = PlatformInsets.useSafeArea;
     final iosBottomInset = PlatformInsets.iosBottomInset();
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'booking_delivery'.tr),
@@ -83,7 +83,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           TextSpan(
                             text: 'phone_number'.tr,
                             style: const TextStyle(
-                              color: Colors.grey,
+                              color: AppColors.mainTitle,
                               fontSize: 14,
                             ),
                             children: const <TextSpan>[
@@ -95,13 +95,12 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           ),
                         ),
                         const SizedBox(height: 5),
-                        TextFormField(
+                        InputTextField(
+                          hint: 'phone_number'.tr,
                           controller: phoneController,
-                          autofocus: false,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.phone,
                           inputFormatters: [PhoneNumberFormatter()],
-                          style: const TextStyle(fontSize: 14),
                           validator: (String? value) {
                             return CheckInput().checkLength(
                               (value ?? '').replaceAll(' ', ''),
@@ -110,14 +109,14 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                               'phone_in'.tr,
                             );
                           },
-                          decoration: Style.inputText('phone_number'.tr),
                         ),
                         const SizedBox(height: 20),
                         Text.rich(
                           TextSpan(
                             text: 'item_type'.tr,
                             style: const TextStyle(
-                              color: Colors.grey,
+                              // color: Colors.grey,
+                              color: AppColors.mainTitle,
                               fontSize: 14,
                             ),
                             children: const <TextSpan>[
@@ -129,19 +128,18 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           ),
                         ),
                         const SizedBox(height: 5),
-                        TextFormField(
+                        InputTextField(
+                          hint: '',
                           controller: itemTypeController,
-                          autofocus: false,
                           keyboardType: TextInputType.text,
-                          style: const TextStyle(fontSize: 14),
-                          decoration: Style.inputText(''),
                         ),
                         const SizedBox(height: 20),
                         Text.rich(
                           TextSpan(
                             text: 'item_size'.tr,
                             style: const TextStyle(
-                              color: Colors.grey,
+                              // color: Colors.grey,
+                              color: AppColors.mainTitle,
                               fontSize: 14,
                             ),
                             children: const <TextSpan>[
@@ -231,6 +229,7 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                                               style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
+                                                
                                               ),
                                             ),
                                             const SizedBox(height: 20),
@@ -388,12 +387,18 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                                 if (_image.value == null)
                                   Text(
                                     'take_photo'.tr,
-                                    style: const TextStyle(color: Colors.grey),
+                                    style: const TextStyle(
+                                      // color: Colors.grey
+                                      color: AppColors.mainTitle,
+                                      ),
                                   ),
                                 if (_image.value != null)
                                   Text(
                                     'change_photo'.tr,
-                                    style: const TextStyle(color: Colors.grey),
+                                    style: const TextStyle(
+                                      // color: Colors.grey
+                                      color: AppColors.mainTitle,
+                                      ),
                                   ),
                               ],
                             ),
@@ -404,7 +409,8 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           TextSpan(
                             text: 'delivery'.tr,
                             style: const TextStyle(
-                              color: Colors.grey,
+                              // color: Colors.grey,
+                              color: AppColors.mainTitle,
                               fontSize: 14,
                             ),
                             children: const <TextSpan>[
@@ -446,7 +452,8 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                           TextSpan(
                             text: 'pick_up_address'.tr,
                             style: const TextStyle(
-                              color: Colors.grey,
+                              // color: Colors.grey,
+                              color: AppColors.mainTitle,
                               fontSize: 14,
                             ),
                             children: const <TextSpan>[
@@ -494,43 +501,28 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                         Obx(
                           () =>
                               pickUpSelected.value == 2
-                                  ? TextFormField(
+                                  ? InputTextField(
+                                    hint: 'enter_address'.tr,
+                                    hintMaxLines: 6,
+                                    contentPadding: const EdgeInsets.fromLTRB(
+                                      10,
+                                      10,
+                                      10,
+                                      20,
+                                    ),
                                     controller: addressController,
-                                    autofocus: false,
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
                                     keyboardType: TextInputType.multiline,
                                     maxLines: null,
-                                    style: const TextStyle(fontSize: 14),
                                     validator: (String? value) {
                                       return CheckInput().checkLength(
-                                        value!,
+                                        value ?? '',
                                         1,
                                         'add_is_req'.tr,
                                         '',
                                       );
                                     },
-                                    decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                        10,
-                                        10,
-                                        10,
-                                        20,
-                                      ),
-                                      hintText: 'enter_address'.tr,
-                                      hintMaxLines: 6,
-                                      border: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: MaterialColor(
-                                            0xFF44459c,
-                                            <int, Color>{},
-                                          ),
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(5),
-                                        ),
-                                      ),
-                                    ),
                                   )
                                   : const SizedBox.shrink(),
                         ),
@@ -538,69 +530,66 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
-                    ),
-                    color: AppColors.whiteColor,
-                    width: double.infinity,
-                    child: globalButton(
-                      context: context,
-                      buttonText: 'booking'.tr,
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          if (itemTypeSelected.value == 0 ||
-                              deliverySelected.value == 0 ||
-                              pickUpSelected.value == 0) {
-                            alertDialogOneButton(
-                              title: 'info'.tr,
-                              description: 'plz_com_info'.tr,
-                              buttonText: 'yes'.tr,
-                            );
-                          } else {
-                            final senderAddr =
-                                pickUpSelected.value == 2
-                                    ? addressController.text.toString()
-                                    : BookingDeliveryScreen.address.toString();
-
-                            goodsTransferActionController.addGoodsTransfer(
-                              context: context,
-                              body: GoodsTransferAddRequestBody(
-                                filePath: _image.value?.path,
-                                itemName: itemTypeController.text,
-                                lats: BookingDeliveryScreen.lats,
-                                longs: BookingDeliveryScreen.longs,
-                                qtyType: itemTypeSelected.value.toString(),
-                                senderAddr: senderAddr,
-                                serviceType: deliverySelected.value.toString(),
-                                telephone: phoneController.text.replaceAll(
-                                  ' ',
-                                  '',
-                                ),
-                              ),
-                              onSuccess: () {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            const DashboardScreen(from: 0),
-                                  ),
-                                  (Route<dynamic> route) => false,
-                                );
-                              },
-                            );
-                          }
-                        }
-                      },
-                    ),
-                  ),
-                ),
               ],
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        top: useSafeArea,
+        bottom: useSafeArea,
+        left: useSafeArea,
+        right: useSafeArea,
+        child: Container(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10 + iosBottomInset),
+          color: AppColors.whiteColor,
+          width: double.infinity,
+          child: globalButton(
+            context: context,
+            buttonText: 'booking'.tr,
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                if (itemTypeSelected.value == 0 ||
+                    deliverySelected.value == 0 ||
+                    pickUpSelected.value == 0) {
+                  alertDialogOneButton(
+                    title: 'info'.tr,
+                    description: 'plz_com_info'.tr,
+                    buttonText: 'yes'.tr,
+                  );
+                } else {
+                  final senderAddr = pickUpSelected.value == 2
+                      ? addressController.text.toString()
+                      : BookingDeliveryScreen.address.toString();
+
+                  goodsTransferActionController.addGoodsTransfer(
+                    context: context,
+                    body: GoodsTransferAddRequestBody(
+                      filePath: _image.value?.path,
+                      itemName: itemTypeController.text,
+                      lats: BookingDeliveryScreen.lats,
+                      longs: BookingDeliveryScreen.longs,
+                      qtyType: itemTypeSelected.value.toString(),
+                      senderAddr: senderAddr,
+                      serviceType: deliverySelected.value.toString(),
+                      telephone: phoneController.text.replaceAll(
+                        ' ',
+                        '',
+                      ),
+                    ),
+                    onSuccess: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DashboardScreen(from: 0),
+                        ),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                  );
+                }
+              }
+            },
           ),
         ),
       ),

@@ -1,16 +1,15 @@
 import 'dart:convert';
 
-import 'package:express_vet/base/network_data_source.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_plug_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_sale_order_apptmp_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_voucher_apply_request.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/choosePayment_response.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/request_body.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/choosePayment_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_plug_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_point_list_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_pricePerWkh_response.dart';
@@ -20,6 +19,9 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/respons
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_search_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/membership_info_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/menbership_benefit_response.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/network/network_data_source.dart';
+import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/base/endpoint.dart';
 import 'package:flutter/material.dart';
 import '../model/response/ev_charger_response.dart';
 import '../model/response/ev_contact_response.dart';
@@ -29,6 +31,7 @@ import '../model/response/ev_policy_response.dart';
 import '../model/response/ev_province_response.dart';
 import '../model/response/ev_scan_qr_response.dart';
 import '../model/response/ev_slide_show_response.dart';
+import '../model/response/ev_station_detail_response.dart';
 import '../model/response/ev_station_list_response.dart';
 import '../model/response/ev_top_up_response.dart';
 import '../model/response/ev_wallet_amount_response.dart';
@@ -36,7 +39,7 @@ import '../model/response/ev_wallet_list_response.dart';
 import '../model/response/membership_transaction_detail_response.dart';
 import '../model/response/ev_charging_status_response.dart';
 import '../model/response/membership_transaction_list_response.dart';
-import '../../../../../base/endpoint.dart';
+
 import '../model/response/destination_ev.dart';
 import '../../../../../models/simple_response.dart';
 import '../../../../../utils/contains.dart';
@@ -44,6 +47,9 @@ import '../../../../../utils/contains.dart';
 class EvChargerNetworkRequest {
   final NetWorkDataSource ticketDataSource;
   final NetWorkDataSource evDataSource;
+  final NetWorkDataSource _evFrontendDataSource = NetWorkDataSource(
+    baseUrl: BaseUrl.BASE_URL_EV_FRONTEND,
+  );
 
   EvChargerNetworkRequest({
     required this.ticketDataSource,
@@ -208,22 +214,52 @@ class EvChargerNetworkRequest {
     required dynamic context,
     String? searchText,
     int? provinceId,
+    double? lats,
+    double? longs,
   }) async {
     try {
+      final request = EvStationListRequest(
+        page: 1,
+        rowsPerPage: 100,
+        searchText: searchText,
+        provinceId: provinceId,
+        lats: lats,
+        longs: longs,
+      );
+      debugPrint(
+        'fetchEvStationList request: ${Endpoint.evStationList} '
+        '${jsonEncode(request.toJson())}',
+      );
       final json = await evDataSource.postJson(
         Endpoint.evStationList,
-        body:
-            EvStationListRequest(
-              page: 1,
-              rowsPerPage: 100,
-              searchText: searchText,
-              provinceId: provinceId,
-            ).toJson(),
+        body: request.toJson(),
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
       debugPrint('fetchEvStationList response: ${jsonEncode(json)}');
       return EvStationListResponse.fromJson(json);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<EvStationDetailResponse> fetchEvStationDetail({
+    required dynamic context,
+    required int stationId,
+  }) async {
+    try {
+      debugPrint(
+        'fetchEvStationDetail request: '
+        '${BaseUrl.BASE_URL_EV_FRONTEND}'
+        '${Endpoint.evStationFind(stationId.toString())}',
+      );
+      final json = await _evFrontendDataSource.postJson(
+        Endpoint.evStationFind(stationId.toString()),
+        timeout: const Duration(seconds: Constrains.timeout30),
+        attachAuth: true,
+      );
+      debugPrint('fetchEvStationDetail response: ${jsonEncode(json)}');
+      return EvStationDetailResponse.fromJson(json);
     } catch (_) {
       rethrow;
     }

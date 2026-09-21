@@ -1,7 +1,5 @@
-import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
-import 'package:express_vet/feature/dash_board/presentation/screen/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -22,10 +20,7 @@ class _EvChargingPaymentFlowScreenState extends State<EvChargingPaymentFlowScree
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        Get.offAll(
-          () => const DashboardScreen(from: 0),
-          transition: Transition.leftToRight,
-        );
+        Get.offAllNamed(AppRoutes.home);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -47,7 +42,7 @@ class _EvChargingPaymentFlowScreenState extends State<EvChargingPaymentFlowScree
                     onPressed: () {
                       Get.offNamedUntil(
                         AppRoutes.evCharger,
-                        (route) => route.settings.name == AppRoutes.home,
+                        (route) => route.isFirst,
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -73,7 +68,7 @@ class _EvChargingPaymentFlowScreenState extends State<EvChargingPaymentFlowScree
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SvgPicture.asset(AssetImages.success, width: 80,height: 80,),
+        SvgPicture.asset("assets/icons/success.svg", width: 80,height: 80,),
        
         const SizedBox(height: 10),
         Text(

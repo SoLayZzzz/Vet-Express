@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'ev_wallet_controller.dart';
 
 import '../../data/model/response/choosePayment_response.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
-import '../../../../../routes/app_routes.dart';
+
 
 class EvTopUpController extends GetxController {
   final EvChargerUseCase useCase;
@@ -93,8 +94,6 @@ class EvTopUpController extends GetxController {
         'Please enter a valid amount',
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
       );
       return;
     }
@@ -105,8 +104,6 @@ class EvTopUpController extends GetxController {
         'Please select a payment method',
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
       );
       return;
     }
@@ -157,16 +154,17 @@ class EvTopUpController extends GetxController {
         if (((data?.deeplink ?? '').isNotEmpty) ||
             ((data?.checkoutQrUrl ?? '').isNotEmpty)) {
           // Navigate to payment screen with checkout URL and transaction ID
-          Get.toNamed(
-            AppRoutes.evPayment,
+       
 
-            arguments: {
-              'deepLink': data?.deeplink ?? '',
-              'checkoutQrUrl': data?.checkoutQrUrl ?? '',
-            },
-          );
+        Get.toNamed(
+          AppRoutes.evPayment,
+          arguments: {
+            'deepLink': data?.deeplink ?? '',
+            'checkoutQrUrl': data?.checkoutQrUrl ?? '',
+          },
+        );
 
-          debugPrint(
+        debugPrint(
             'EvTopUpController.performTopUp.navigate EvPayment '
             'deepLink=${data?.deeplink}, '
             'checkoutQrUrl=${data?.checkoutQrUrl}',
@@ -182,8 +180,6 @@ class EvTopUpController extends GetxController {
             backgroundColor: Colors.red,
             colorText: Colors.white,
             duration: const Duration(milliseconds: 2000),
-            snackPosition: SnackPosition.BOTTOM,
-            margin: const EdgeInsets.all(16),
           );
         }
       } else {
@@ -197,8 +193,6 @@ class EvTopUpController extends GetxController {
         'Request timed out',
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
       );
     } catch (e) {
       hasError.value = true;
@@ -208,8 +202,6 @@ class EvTopUpController extends GetxController {
         'Top-up failed: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
       );
     } finally {
       isLoading.value = false;
@@ -313,7 +305,8 @@ class EvTopUpController extends GetxController {
     currentTopUpAmount.value = 0.0;
     isCheckingPayment.value = false;
 
-    // Close all payment-related screens and go back to wallet
+    // Close all payment-related screens and go back to walletclear
+    
     _closeAllPaymentScreens();
   }
 

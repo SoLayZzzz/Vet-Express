@@ -12,6 +12,7 @@ import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/button.dart';
 import '../../../../../utils/check_input.dart';
+import 'package:express_vet/utils/platform_insets.dart';
 import '../../../../../utils/style.dart';
 import '../../data/model/request/car_rental_add_request_body.dart';
 import '../controller/car_rental_controller.dart';
@@ -28,6 +29,21 @@ class RentalCarInfoScreen extends StatefulWidget {
 
 class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  Widget _requiredLabel(String text, {TextStyle? style}) {
+    final baseStyle = style ?? const TextStyle(color: AppColors.mainTitle);
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(text: text, style: TextStyle(color: AppColors.mainTitle)),
+          TextSpan(
+            text: ' *',
+            style: baseStyle.copyWith(color: AppColors.redColor),
+          ),
+        ],
+      ),
+    );
+  }
 
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
@@ -59,6 +75,8 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'rental_information'.tr),
       body: SafeArea(
@@ -83,7 +101,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('booking_name'.tr),
+                          _requiredLabel('booking_name'.tr),
                           const Spacer(),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.6,
@@ -111,7 +129,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text('telephone_num'.tr),
+                          _requiredLabel('telephone_num'.tr),
                           const Spacer(),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.6,
@@ -186,7 +204,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Text(
+                      _requiredLabel(
                         'destination'.tr,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
@@ -269,7 +287,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      Text(
+                      _requiredLabel(
                         'date_rental'.tr,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
@@ -390,7 +408,7 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      Text(
+                      _requiredLabel(
                         'amount_of_car'.tr,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
@@ -453,64 +471,65 @@ class _RentalCarInfoScreenState extends State<RentalCarInfoScreen> {
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
-                  ),
-                  color: AppColors.whiteColor,
-                  width: double.infinity,
-                  child: globalButton(
-                    context: context,
-                    buttonText: 'save'.tr,
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        if (goDate != '' &&
-                            backDate != 'select_date'.tr &&
-                            ValueStatic.provinceRentalFromName != '' &&
-                            ValueStatic.provinceRentalToName != '') {
-                          final body = CarRentalAddRequestBody(
-                            busTypeId: RentalCarInfoScreen.busId,
-                            dateFrom: goDate,
-                            dateTo: backDate,
-                            name: nameController.text,
-                            numberBus: amountController.text,
-                            provinceFrom: ValueStatic.provinceRentalFromId,
-                            provinceTo: ValueStatic.provinceRentalToId,
-                            telephone: phoneController.text.replaceAll(' ', ''),
-                            travelType: selected.toString(),
-                            note: remarkController.text,
-                          );
 
-                          controller.saveRental(
-                            context: context,
-                            body: body,
-                            successDetails: [
-                              {'name'.tr: nameController.text},
-                              {'phone_number'.tr: phoneController.text},
-                              {'from'.tr: ValueStatic.provinceRentalFromName},
-                              {'to'.tr: ValueStatic.provinceRentalToName},
-                              {'departure_date'.tr: goDate},
-                              {'return_date'.tr: backDate},
-                              {'car_type'.tr: RentalCarInfoScreen.carType},
-                              {'amount_of_car'.tr: amountController.text},
-                            ],
-                          );
-                        } else {
-                          alertDialogOneButton(
-                            title: 'information'.tr,
-                            description: 'plz_fill'.tr,
-                            buttonText: 'yes'.tr,
-                          );
-                        }
-                      }
-                    },
-                  ),
-                ),
-              ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        top: useSafeArea,
+        bottom: useSafeArea,
+        left: useSafeArea,
+        right: useSafeArea,
+        child: Container(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10 + iosBottomInset),
+          color: AppColors.whiteColor,
+          width: double.infinity,
+          child: globalButton(
+            context: context,
+            buttonText: 'save'.tr,
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                if (goDate != '' &&
+                    backDate != 'select_date'.tr &&
+                    ValueStatic.provinceRentalFromName != '' &&
+                    ValueStatic.provinceRentalToName != '') {
+                  final body = CarRentalAddRequestBody(
+                    busTypeId: RentalCarInfoScreen.busId,
+                    dateFrom: goDate,
+                    dateTo: backDate,
+                    name: nameController.text,
+                    numberBus: amountController.text,
+                    provinceFrom: ValueStatic.provinceRentalFromId,
+                    provinceTo: ValueStatic.provinceRentalToId,
+                    telephone: phoneController.text.replaceAll(' ', ''),
+                    travelType: selected.toString(),
+                    note: remarkController.text,
+                  );
+
+                  controller.saveRental(
+                    context: context,
+                    body: body,
+                    successDetails: [
+                      {'name'.tr: nameController.text},
+                      {'phone_number'.tr: phoneController.text},
+                      {'from'.tr: ValueStatic.provinceRentalFromName},
+                      {'to'.tr: ValueStatic.provinceRentalToName},
+                      {'departure_date'.tr: goDate},
+                      {'return_date'.tr: backDate},
+                      {'car_type'.tr: RentalCarInfoScreen.carType},
+                      {'amount_of_car'.tr: amountController.text},
+                    ],
+                  );
+                } else {
+                  alertDialogOneButton(
+                    title: 'information'.tr,
+                    description: 'plz_fill'.tr,
+                    buttonText: 'yes'.tr,
+                  );
+                }
+              }
+            },
           ),
         ),
       ),

@@ -1,4 +1,3 @@
-import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charger_controller.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class MembershipBenefitScreen extends GetView<EvChargerController> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
         leading: IconButton(
-          icon: SvgPicture.asset(AssetImages.ic_back),
+          icon: SvgPicture.asset("assets/icons/button_back.svg"),
           onPressed: () => Get.back(),
         ),
         title: const Text(
@@ -137,7 +136,7 @@ class MembershipBenefitScreen extends GetView<EvChargerController> {
           top: -topOffset,
           right: -rightOffset,
           child: SvgPicture.asset(
-            AssetImages.isYouAreHere,
+            "assets/icons/you_are_here.svg",
             width: ribbonSize,
             height: ribbonSize,
           ),

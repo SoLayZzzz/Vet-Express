@@ -1,3 +1,4 @@
+import 'package:express_vet/components/input_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -70,7 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'name-signup'.tr),
+                TextSpan(text: 'name-signup'.tr, style: TextStyle(color: AppColors.mainTitle)),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -79,23 +80,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           const SizedBox(height: 5),
-          TextFormField(
+          InputTextField(
+            hint: 'full_name'.tr,
             controller: controller.uiState.value.signUpUsernameController,
-            autofocus: false,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            style: const TextStyle(fontSize: 14),
+            iconLeft: Ionicons.person_outline,
             validator: (String? value) {
               return CheckInput().checkLength(
-                value!,
+                value ?? '',
                 4,
                 'username_req'.tr,
                 'username_inco'.tr,
               );
             },
-            decoration: Style.inputText(
-              'full_name'.tr,
-              iconLeft: Ionicons.person_outline,
-            ),
           ),
         ],
       ),
@@ -111,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'phone_number'.tr),
+                TextSpan(text: 'phone_number'.tr, style: TextStyle(color: AppColors.mainTitle)),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -125,20 +122,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
             style: const TextStyle(color: AppColors.textColor),
           ),
           const SizedBox(height: 5),
-          TextFormField(
+          InputTextField(
+            hint: 'telephone_num'.tr,
             controller: controller.uiState.value.signUpPhoneController,
-            autofocus: false,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.phone,
-            style: const TextStyle(fontSize: 14),
             inputFormatters: [PhoneNumberFormatter()],
+            iconLeft: Ionicons.call_outline,
             validator: (String? value) {
               return CheckInput().validatePhoneRe(value);
             },
-            decoration: Style.inputText(
-              'telephone_num'.tr,
-              iconLeft: Ionicons.call_outline,
-            ),
           ),
         ],
       ),
@@ -151,14 +144,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("email".tr),
+          Text("email".tr,style: TextStyle(color: AppColors.mainTitle)),
           const SizedBox(height: 5),
-          TextFormField(
+          InputTextField(
+            hint: 'email'.tr,
             controller: controller.uiState.value.signUpEmailController,
-            autofocus: false,
             keyboardType: TextInputType.emailAddress,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            style: const TextStyle(fontSize: 14),
+            iconLeft: Ionicons.mail_unread_outline,
             validator: (String? value) {
               final baseError = CheckInput().validateEmailAddress(value);
               if (baseError != null) return baseError;
@@ -170,10 +163,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               }
               return null;
             },
-            decoration: Style.inputText(
-              'email'.tr,
-              iconLeft: Ionicons.mail_unread_outline,
-            ),
           ),
         ],
       ),
@@ -189,7 +178,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'pass'.tr),
+                TextSpan(text: 'pass'.tr,style: TextStyle(color: AppColors.mainTitle)),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -200,29 +189,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const SizedBox(height: 5),
           Obx(() {
             final ui = controller.uiState.value;
-            return TextFormField(
+            return InputTextField(
+              hint: 'pass'.tr,
               controller: controller.uiState.value.signUpPasswordController,
-              autofocus: false,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              style: const TextStyle(fontSize: 14),
+              obscureText: !ui.signUpPasswordVisible.value,
+              iconLeft: Ionicons.lock_closed_outline,
+              iconRight:
+                  ui.signUpPasswordVisible.value
+                      ? Ionicons.eye
+                      : Ionicons.eye_off_outline,
+              iconRightColor: AppColors.suffixIconColor,
+              onIconRightPressed: controller.toggleSignUpPasswordVisibility,
               validator: (String? value) {
                 return CheckInput().checkLength(
-                  value!,
+                  value ?? '',
                   4,
                   'pass_req'.tr,
                   'pass_inco'.tr,
                 );
               },
-              decoration: Style.inputText(
-                'pass'.tr,
-                iconLeft: Ionicons.lock_closed_outline,
-                iconRight:
-                    ui.signUpPasswordVisible.value
-                        ? Ionicons.eye
-                        : Ionicons.eye_off_outline,
-                onPressed: controller.toggleSignUpPasswordVisibility,
-              ),
-              obscureText: !ui.signUpPasswordVisible.value,
             );
           }),
         ],
@@ -239,7 +225,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'confirm_pass'.tr),
+                TextSpan(text: 'confirm_pass'.tr,style: TextStyle(color: AppColors.mainTitle)),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -250,28 +236,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const SizedBox(height: 5),
           Obx(() {
             final ui = controller.uiState.value;
-            return TextFormField(
+            return InputTextField(
+              hint: 'confirm_pass'.tr,
               controller: controller.uiState.value.signUpRePasswordController,
-              autofocus: false,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              style: const TextStyle(fontSize: 14),
+              obscureText: !ui.signUpRePasswordVisible.value,
+              iconLeft: Ionicons.lock_closed_outline,
+              iconRight:
+                  ui.signUpRePasswordVisible.value
+                      ? Ionicons.eye
+                      : Ionicons.eye_off_outline,
+              iconRightColor: AppColors.suffixIconColor,
+              onIconRightPressed: controller.toggleSignUpRePasswordVisibility,
               validator: (String? value) {
                 return CheckInput().checkMatch(
-                  value!,
+                  value ?? '',
                   controller.uiState.value.signUpPasswordController.text,
                   'pass_not_match'.tr,
                 );
               },
-              decoration: Style.inputText(
-                'confirm_pass'.tr,
-                iconRight:
-                    ui.signUpRePasswordVisible.value
-                        ? Ionicons.eye
-                        : Ionicons.eye_off_outline,
-                onPressed: controller.toggleSignUpRePasswordVisibility,
-                iconLeft: Ionicons.lock_closed_outline,
-              ),
-              obscureText: !ui.signUpRePasswordVisible.value,
             );
           }),
         ],
@@ -285,14 +268,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('gender'.tr),
+          Text('gender'.tr,style: TextStyle(color: AppColors.mainTitle)),
           const SizedBox(height: 5),
           InputDecorator(
             decoration: InputDecoration(
               isDense: true,
               prefixIcon: const Icon(
                 Ionicons.male_female_outline,
-                color: AppColors.borderColor,
+                color: AppColors.mainTitle,
               ),
               contentPadding: const EdgeInsets.fromLTRB(0, 1, 10, 1),
               enabledBorder: Style.outlineInputBorder(),
@@ -317,12 +300,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     children: [
                       Text(
                         'gender'.tr,
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14, color: AppColors.placeholderColor),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
-                  iconEnabledColor: AppColors.borderColor,
+                  iconEnabledColor: AppColors.suffixIconColor,
                   items:
                       SignUpScreen.genderItems
                           .map(
@@ -360,16 +343,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('nationality'.tr),
+          Text('nationality'.tr,style: TextStyle(color: AppColors.mainTitle)),
           const SizedBox(height: 5),
           Obx(() {
             final ui = controller.uiState.value;
             final selectedName = ui.signUpNationalityValue.value;
-            return TextFormField(
+            return InputTextField(
               key: ValueKey(selectedName),
+              hint: 'select_nation'.tr,
               initialValue: selectedName,
               readOnly: true,
+              showCursor: false,
               autovalidateMode: AutovalidateMode.onUserInteraction,
+              iconLeft: Ionicons.flag_outline,
+              iconRight: Ionicons.chevron_forward_outline,
+              iconRightColor: AppColors.suffixIconColor,
               onTap: () async {
                 final result = await Get.to<Map<String, dynamic>>(
                   () => const SelectNationalityScreen(),
@@ -383,12 +371,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   );
                 }
               },
-              style: const TextStyle(fontSize: 14),
-              decoration: Style.inputText(
-                'select_nation'.tr,
-                iconLeft: Ionicons.flag_outline,
-                iconRight: Ionicons.chevron_forward_outline,
-              ),
             );
           }),
         ],
@@ -447,7 +429,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Text.rich(
           TextSpan(
             text: 'agree_info'.tr,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            style: const TextStyle(color: AppColors.placeholderColor, fontSize: 12),
             children: <TextSpan>[
               TextSpan(
                 text: 'agree'.tr,

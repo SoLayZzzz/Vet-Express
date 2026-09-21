@@ -29,6 +29,7 @@ import '../../data/model/response/ev_policy_response.dart';
 import '../../data/model/response/ev_province_response.dart';
 import '../../data/model/response/ev_scan_qr_response.dart';
 import '../../data/model/response/ev_slide_show_response.dart';
+import '../../data/model/response/ev_station_detail_response.dart';
 import '../../data/model/response/ev_station_list_response.dart';
 import '../../data/model/response/ev_top_up_response.dart';
 import '../../data/model/response/ev_wallet_amount_response.dart';
@@ -86,6 +87,13 @@ abstract class EvChargerRepository {
     required dynamic context,
     String? searchText,
     int? provinceId,
+    double? lats,
+    double? longs,
+  });
+
+  Future<EvStationDetailResponse> fetchEvStationDetail({
+    required dynamic context,
+    required int stationId,
   });
 
   Future<SimpleResponse> addStationFavorite({

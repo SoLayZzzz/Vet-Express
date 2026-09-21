@@ -31,6 +31,7 @@ import '../feature/home-dashboard/ev-charger/presentation/binding/ev_charger_bin
 import '../feature/member-dashboard/presentation/screen/account_detail_screen.dart';
 import '../feature/member-dashboard/presentation/binding/member_ship_binding.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charging_screen.dart';
+import '../feature/home-dashboard/ev-charger/presentation/screen/ev_nearby_station.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_charger_wallet_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_faq_screen.dart';
 import '../feature/home-dashboard/ev-charger/presentation/screen/ev_fav_screen.dart';
@@ -189,6 +190,14 @@ class AppPages {
     GetPage(
       name: AppRoutes.evCharger,
       page: () => EvChargerScreen(),
+      binding: EvChargerBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: Constrains.duration),
+    ),
+
+    GetPage(
+      name: AppRoutes.evNearbyStations,
+      page: () => const EVNearbyStationsScreen(),
       binding: EvChargerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: Constrains.duration),

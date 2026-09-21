@@ -1,3 +1,4 @@
+import 'package:express_vet/components/input_text_field.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,7 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _addressController;
+  late final TextEditingController _branchController;
   final _formKey = GlobalKey<FormState>();
 
   void _clearControllerState() {
@@ -45,11 +47,27 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
   @override
   void initState() {
     super.initState();
-    _clearControllerState();
 
     _nameController = TextEditingController(text: controller.name.value);
     _phoneController = TextEditingController(text: controller.phone.value);
     _addressController = TextEditingController(text: controller.address.value);
+    _branchController = TextEditingController(
+      text: controller.isProvinceSelected || controller.isBranchSelected
+          ? _getBranchDisplayText()
+          : '',
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _clearControllerState();
+      _nameController.clear();
+      _phoneController.clear();
+      _addressController.clear();
+      _syncBranchControllerText();
+
+      if (!controller.hasProvinces && !controller.isLoading.value) {
+        controller.fetchInitialData();
+      }
+    });
   }
 
   @override
@@ -61,6 +79,7 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
+    _branchController.dispose();
     super.dispose();
   }
 
@@ -356,181 +375,73 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text.rich(
-          TextSpan(
-            text: label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: AppColors.titleColor,
-              fontSize: 16,
-            ),
-            children: const [
-              TextSpan(
-                text: ' *',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: validator,
-          onChanged: (value) {
-            onChanged(value);
-          },
-          decoration: InputDecoration(
-            hintText: hint,
-            filled: true,
-            hintStyle: TextStyle(
-              fontWeight: FontWeight.w400,
-              color: AppColors.textColor,
-              fontSize: 14,
-            ),
-            fillColor: Colors.grey[100],
-            contentPadding: const EdgeInsets.symmetric(vertical: 14),
-            prefix: const SizedBox(width: 14),
-            suffix: const SizedBox(width: 14),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: BorderSide(color: const Color(0xFFD35F27)),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: const BorderSide(color: AppColors.redColor),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: const BorderSide(color: AppColors.redColor),
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-          ),
-        ),
-      ],
+    return InputTextField(
+      label: label,
+      labelStyle: const TextStyle(
+        fontWeight: FontWeight.w500,
+        color: AppColors.mainTitle,
+        fontSize: 16,
+      ),
+      hint: hint,
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      maxLines: maxLines,
+      onChanged: onChanged,
+      validator: validator,
     );
   }
 
+  void _syncBranchControllerText() {
+    _branchController.text =
+        controller.isProvinceSelected || controller.isBranchSelected
+            ? _getBranchDisplayText()
+            : '';
+  }
+
   Widget _buildBranchField() {
+    Future<void> openSelection() async {
+      await Get.to(() => ProvinceSelectionScreen());
+      _syncBranchControllerText();
+      _formKey.currentState?.validate();
+    }
+
+    void clearSelection() {
+      controller.clearAllSelections();
+      _syncBranchControllerText();
+      _formKey.currentState?.validate();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text.rich(
-          TextSpan(
-            text: 'vet_branch_near_you'.tr,
-            style: const TextStyle(
+        Obx(() {
+          final isSelected = controller.isBranchSelected;
+          return InputTextField(
+            label: 'vet_branch_near_you'.tr,
+            labelStyle: const TextStyle(
               fontWeight: FontWeight.w500,
               color: AppColors.titleColor,
               fontSize: 16,
             ),
-            children: const [
-              TextSpan(
-                text: ' *',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        FormField<String>(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator:
-              (_) =>
-                  controller.selectedBranch.value == null
-                      ? 'vetbranch_required'.tr
-                      : null,
-          builder: (field) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () async {
-                    await Get.to(() => ProvinceSelectionScreen());
-                    field.didChange(controller.selectedBranch.value?.name);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: controller.isBranchSelected ? 2 : 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color:
-                            field.hasError
-                                ? AppColors.redColor
-                                : Colors.grey[300]!,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Obx(
-                            () => Text(
-                              _getBranchDisplayText(),
-                              style: TextStyle(
-                                color:
-                                    controller.isBranchSelected
-                                        ? Colors.black
-                                        : Colors.grey,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Obx(
-                          () =>
-                              controller.isBranchSelected
-                                  ? IconButton(
-                                    icon: const Icon(Icons.close, size: 20),
-                                    onPressed: () {
-                                      controller.clearAllSelections();
-                                      field.didChange(null);
-                                    },
-                                  )
-                                  : const Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: Colors.grey,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (field.hasError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      field.errorText!,
-                      style: const TextStyle(
-                        color: AppColors.redColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
-        ),
+            hint: 'vet_branch_near_you'.tr,
+            controller: _branchController,
+            readOnly: true,
+            showCursor: false,
+            iconRight:
+                isSelected ? Icons.close : Icons.keyboard_arrow_down,
+            iconRightSize: 20,
+            iconRightColor: isSelected ? AppColors.textColor : Colors.grey,
+            onTap: openSelection,
+            onIconRightPressed: isSelected ? clearSelection : openSelection,
+            validator: (_) {
+              return controller.selectedBranch.value == null
+                  ? 'vetbranch_required'.tr
+                  : null;
+            },
+          );
+        }),
         const SizedBox(height: 8),
         Obx(
           () =>

@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +9,9 @@ import 'package:get/get.dart';
 
 import 'package:vector_math/vector_math_64.dart' as math;
 import 'dart:math' as math;
-import 'package:express_vet/routes/app_routes.dart';
 import '../controller/ev_detail_charging_controller.dart';
 import '../controller/ev_charger_controller.dart';
+import 'package:express_vet/routes/app_routes.dart';
 
 class EvDetailCharging extends StatefulWidget {
   const EvDetailCharging({super.key});
@@ -31,11 +29,11 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
   bool _isRoutingBack = false;
 
   late final Future<Uint8List?> _stopChargBytes = _loadEmbeddedPngBytes(
-    AssetImages.stopCharg,
+    "assets/icons/stop_charg.svg",
   );
 
   late final Future<Uint8List?> _fullChargBytes = _loadEmbeddedPngBytes(
-    AssetImages.full_charg,
+    "assets/icons/full_charg.svg",
   );
 
   @override
@@ -175,7 +173,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                         title: 'Current',
                         value: controller.current.value,
                         icon: SvgPicture.asset(
-                          AssetImages.ammeter,
+                          "assets/icons/ammeter.svg",
                           width: 20,
                           height: 20,
                         ),
@@ -194,7 +192,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                         title: 'Voltage',
                         value: controller.voltage.value,
                         icon: SvgPicture.asset(
-                          AssetImages.volt,
+                          "assets/icons/volt.svg",
                           width: 20,
                           height: 20,
                         ),
@@ -208,7 +206,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                         title: 'Energy',
                         value: controller.energy.value,
                         icon: SvgPicture.asset(
-                          AssetImages.energy,
+                          "assets/icons/power.svg",
                           width: 20,
                           height: 20,
                         ),
@@ -222,7 +220,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                   title: 'Estimated Cost',
                   value: controller.estimatedCost.value,
                   icon: SvgPicture.asset(
-                    AssetImages.current,
+                    "assets/icons/currentCy.svg",
                     width: 20,
                     height: 20,
                   ),
@@ -296,7 +294,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                               height: 34,
                               width: 34,
                               child: SvgPicture.asset(
-                                AssetImages.buttonStop,
+                                "assets/icons/button_stop.svg",
                                 width: 20,
                                 height: 20,
                               ),
@@ -359,7 +357,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                   ),
                   Positioned.fill(
                     child: SvgPicture.asset(
-                      AssetImages.stopCharg,
+                      "assets/icons/stop_charg.svg",
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -368,7 +366,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
             },
           );
         }
-        return SvgPicture.asset(AssetImages.stopCharg, fit: BoxFit.contain);
+        return SvgPicture.asset("assets/icons/stop_charg.svg", fit: BoxFit.contain);
       },
     );
   }
@@ -381,7 +379,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
         if (bytes != null && bytes.isNotEmpty) {
           return Image.memory(bytes, fit: BoxFit.contain);
         }
-        return SvgPicture.asset(AssetImages.full_charg, fit: BoxFit.contain);
+        return SvgPicture.asset("assets/icons/full_charg.svg", fit: BoxFit.contain);
       },
     );
   }
@@ -429,7 +427,7 @@ class _EvDetailChargingState extends State<EvDetailCharging> {
                   height: 56,
                   width: 56,
                   alignment: Alignment.center,
-                  child: SvgPicture.asset(AssetImages.stop),
+                  child: SvgPicture.asset("assets/icons/stop.svg"),
                 ),
                 const SizedBox(height: 14),
                 Text(
@@ -641,7 +639,7 @@ class _BatteryGaugeState extends State<_BatteryGauge>
                             bottom: -60,
                             right: -35,
                             child: Image.asset(
-                              AssetImages.gifCharging,
+                              'assets/gif/charging_gift.gif',
                               height: 170,
                               width: 170,
                               fit: BoxFit.contain,

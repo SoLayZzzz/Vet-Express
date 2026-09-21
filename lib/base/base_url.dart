@@ -57,6 +57,10 @@ class BaseUrl {
       _flavor == 'prod'
           ? 'https://newpapi.utebi.com/vetEvChargerCustomerAPi/'
           : 'https://qacltom.udaya-tech.com/vetEvChargerCustomerAPi/';
+  static final String BASE_URL_EV_FRONTEND =
+      _flavor == 'prod'
+          ? 'https://newpapisystem.utebi.com/vetEvChargerFrontendAPi/'
+          : 'https://qacltom.udaya-tech.com/vetEvChargerFrontendAPi/';
   // : 'http://srouyapi.duckdns.org:8093/vetEvChargerCustomerAPi/';
   static final String BASE_URL_SLIDE_IMAGE =
       _flavor == 'prod'

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import '../../data/model/response/ev_station_detail_response.dart';
 import '../../data/model/response/ev_station_list_response.dart';
 import '../../data/model/response/ev_province_response.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
@@ -33,6 +35,11 @@ class EvStationController extends GetxController {
   var isLoading = false.obs;
   var hasError = false.obs;
   var errorMessage = ''.obs;
+
+  // Station detail variables
+  var stationDetail = Rxn<EvStationDetailDatum>();
+  var isLoadingStationDetail = false.obs;
+  var hasErrorStationDetail = false.obs;
 
   // Province related variables
   var evProvinceResponse = Rxn<EvProvinceResponse>();
@@ -198,6 +205,8 @@ class EvStationController extends GetxController {
         context: Get.context!,
         searchText: searchText,
         provinceId: provinceId,
+        lats: currentPosition.value?.latitude,
+        longs: currentPosition.value?.longitude,
       );
       evStationResponse.value = response;
     } catch (e) {
@@ -206,6 +215,28 @@ class EvStationController extends GetxController {
       _showErrorDialog(e);
     } finally {
       isLoading(false);
+    }
+  }
+
+  // Fetch station detail by id
+  Future<void> fetchStationDetail(int stationId) async {
+    try {
+      isLoadingStationDetail(true);
+      hasErrorStationDetail(false);
+
+      final response = await useCase.fetchEvStationDetail(
+        context: Get.context!,
+        stationId: stationId,
+      );
+
+      final data = response.body?.data;
+      stationDetail.value =
+          (data != null && data.isNotEmpty) ? data.first : null;
+    } catch (e) {
+      hasErrorStationDetail(true);
+      _showErrorDialog(e);
+    } finally {
+      isLoadingStationDetail(false);
     }
   }
 
@@ -369,7 +400,17 @@ class EvStationController extends GetxController {
 
       final loc = await location.getLocation();
       if (loc.latitude != null && loc.longitude != null) {
+        final hadPosition = currentPosition.value != null;
         currentPosition.value = LatLng(loc.latitude!, loc.longitude!);
+        if (!hadPosition) {
+          // Refetch so the station list request includes lats/longs
+          fetchEvStations(
+            searchText: searchController.text.trim().isEmpty
+                ? null
+                : searchController.text.trim(),
+            provinceId: selectedProvince.value?.id,
+          );
+        }
       }
     } catch (e) {
       debugPrint('Location error: $e');
@@ -388,11 +429,14 @@ class EvStationController extends GetxController {
         );
         markerIcon.value = icon;
       } else {
-        final icon = await BitmapDescriptor.fromAssetImage(
-          const ImageConfiguration(size: Size(10, 10)),
+        final data = await rootBundle.load(
           "assets/icons/icon_location_ev_ios.png",
         );
-        markerIcon.value = icon;
+        markerIcon.value = BitmapDescriptor.bytes(
+          data.buffer.asUint8List(),
+          width: 48,
+          height: 48,
+        );
       }
     } catch (e) {
       markerIcon.value = BitmapDescriptor.defaultMarker;

@@ -3,6 +3,7 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/amount_price_kwh_response.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart' show EvSaleOrderApptmpResponse;
 import 'package:express_vet/feature/home-dashboard/ev-charger/domain/uscase/ev_charger_usecase.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
@@ -13,7 +14,6 @@ import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/respons
     as point_resp;
 import '../../data/model/request/ev_voucher_apply_request.dart';
 import '../../data/model/request/ev_sale_order_apptmp_request.dart';
-import '../../../../../routes/app_routes.dart';
 import 'package:express_vet/utils/loading.dart';
 
 class EvChargingInformationController extends GetxController {
@@ -576,14 +576,14 @@ class EvChargingInformationController extends GetxController {
         didNavigate = true;
         Loading().loadingClose();
         await Future.delayed(const Duration(milliseconds: 100));
-      
-                Get.toNamed(
+        Get.toNamed(
           AppRoutes.evVerification,
           arguments: response,
         );
         return response;
       }
 
+      Loading().loadingClose();
       Get.snackbar(
         'error'.tr,
         response.body?.message ?? 'Failed to create sale order',
@@ -593,13 +593,14 @@ class EvChargingInformationController extends GetxController {
       );
       return null;
     } catch (e) {
-      // Get.snackbar(
-      //   'error'.tr,
-      //   e.toString(),
-      //   backgroundColor: Colors.white,
-      //   colorText: Colors.red,
-      //   snackPosition: SnackPosition.TOP,
-      // );
+      Loading().loadingClose();
+      Get.snackbar(
+        'error'.tr,
+        e.toString(),
+        backgroundColor: Colors.white,
+        colorText: Colors.red,
+        snackPosition: SnackPosition.TOP,
+      );
       return null;
     } finally {
       if (!didNavigate) {

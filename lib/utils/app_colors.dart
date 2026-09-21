@@ -4,7 +4,7 @@ class AppColors {
   static const primaryColor = Color(0xFFDE5D0A);
   static const secondaryColor = Color(0xFF312783);
   static const whiteColor = Color(0xFFFFFFFF);
-  static const redColor = Color(0xFFE03A3A);
+  static const redColor = Color(0xFFDC3545);
   static const luckyTicketColor = Color(0xFFE38F5A);
   static const airBusColor = Color(0xFF662d91);
   static const titleColor = Color(0xFF20292F);
@@ -27,5 +27,6 @@ class AppColors {
   static const informationColor = Color(0xFF3772B9);
   static const seatNumberColor = Color(0xFF2F80ED);
   static const subTitleColor = Color(0xFF545B6C);
-   static const detailColor = Color(0xFF6C7281);
+  static const detailColor = Color(0xFF6C7281);
+  static const suffixIconColor = Color(0xFF949494);
 }

@@ -126,6 +126,7 @@ class Endpoint {
   static const String evDropdownNewFeedList = 'dropdown/new-feed/list';
   static const String evDropdownProvinceList = 'dropdown/province/list';
   static const String evStationList = 'station/list';
+  static String evStationFind(String id) => 'station/find/$id';
   static String evStationAddFavorites(String id) => 'station/add-favorites/$id';
   static const String evSaleOrderWalletList = 'sale-order/wallet/list';
   static const String evSaleOrderWalletAmount = 'sale-order/wallet/amount';

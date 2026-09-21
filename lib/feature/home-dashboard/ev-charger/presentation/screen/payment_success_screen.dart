@@ -1,7 +1,8 @@
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../utils/app_colors.dart';
-import '../../../../../routes/app_routes.dart';
+
 import '../controller/ev_top_up_controller.dart';
 
 class PaymentSuccessScreen extends GetView<EvTopUpController> {
@@ -79,10 +80,14 @@ class PaymentSuccessScreen extends GetView<EvTopUpController> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.offNamedUntil(
-                    AppRoutes.evWallet,
-                    ModalRoute.withName(AppRoutes.evCharger),
-                  );
+                  // Go back to wallet screen
+                  // Get.off(() => const EvWalletScreen(), transition: Transition.rightToLeft, duration: const Duration(milliseconds: Constrains.duration));
+              Get.until((route) {
+                return route.settings.name == AppRoutes.evCharger || route.isFirst;
+              });
+
+              // Push Wallet screen on top of EvChargerScreen
+              Get.toNamed(AppRoutes.evWallet);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,

@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'dart:convert';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/components/skeleton.dart';
+import 'package:express_vet/routes/app_routes.dart';
+import 'package:express_vet/value_statics.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,13 +14,13 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:express_vet/base/base_url.dart';
-import 'package:express_vet/value_statics.dart';
-import '../../../../../base/endpoint.dart';
 import '../controller/ev_charger_controller.dart';
+import '../controller/ev_station_controller.dart';
 import '../controller/ev_wallet_controller.dart';
+import '../../data/model/response/ev_station_list_response.dart';
 import '../../../../../utils/app_colors.dart';
-import '../../../../../routes/app_routes.dart';
+
+import 'ev_detailStation_sheet.dart';
 import 'ev_new_feed_screen.dart';
 
 class EvChargerScreen extends GetView<EvChargerController> {
@@ -29,11 +33,22 @@ class EvChargerScreen extends GetView<EvChargerController> {
       ValueNotifier<double>(0.0);
 
   late final Future<Uint8List?> _carChargingBytes = _loadEmbeddedPngBytes(
-    AssetImages.ic_car_charging,
+    "assets/icons/car_charging.svg",
   );
+
+  Future<void> _openMap(String lat, String lng) async {
+    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      Get.snackbar('Error'.tr, 'Could not launch maps'.tr);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: _buildAppBar(),
       body: Obx(() {
@@ -100,7 +115,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
       elevation: 0.2,
       backgroundColor: AppColors.primaryColor,
       title: Text(
-        "ev_charger1".tr,
+        "ev_charger".tr,
         style: TextStyle(
           color: AppColors.whiteColor,
           fontSize: 18,
@@ -121,17 +136,17 @@ class EvChargerScreen extends GetView<EvChargerController> {
         // Faq
         _buildAppBarButton(
           () => Get.toNamed(AppRoutes.evFaq),
-          AssetImages.ic_ev_faq,
+          "assets/icons/faq.svg",
         ),
         // Support
         _buildAppBarButton(
           () => showContactBottomSheet(),
-          AssetImages.ic_ev_contact,
+          "assets/icons/headphone.svg",
         ),
         // Policy
         _buildAppBarButton(
           () => Get.toNamed(AppRoutes.evPolicy),
-          AssetImages.ic_ev_policy,
+          "assets/icons/Shield.svg",
         ),
       ],
     );
@@ -186,7 +201,41 @@ class EvChargerScreen extends GetView<EvChargerController> {
               child: _buildQuickActions(),
             ),
 
-            _buildImageCarousel(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Nearby Station".tr,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.evNearbyStations);
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        "view_all".tr,
+                        style: const TextStyle(color: AppColors.primaryColor),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 12,
+                        color: AppColors.primaryColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            _buildStationList(),
+
+            // _buildImageCarousel(),
 
             _buildNewsFeedSection(),
           ],
@@ -255,27 +304,6 @@ class EvChargerScreen extends GetView<EvChargerController> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // SizedBox(
-                    //   height: 40,
-                    //   width: 40,
-                    //   child: Stack(
-                    //     clipBehavior: Clip.none,
-                    //     children: [
-                    //       // Positioned(
-                    //       //   bottom: -60,
-                    //       //   right: -60,
-                    //       //   child: StreamBuilder<DateTime>(
-                    //       //     stream: _timeStream,
-                    //       //     initialData: DateTime.now(),
-                    //       //     builder: (context, snapshot) {
-                    //       //       final hour = snapshot.data?.hour ?? DateTime.now().hour;
-                    //       //       return _buildSectionIcon(hour);
-                    //       //     },
-                    //       //   ),
-                    //       // ),
-                    //     ],
-                    //   ),
-                    // ),
                     Row(
                       children: [
                         StreamBuilder<DateTime>(
@@ -366,7 +394,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
           return Image.memory(bytes, fit: BoxFit.contain);
         }
         return SvgPicture.asset(
-          AssetImages.ic_car_charging,
+          "assets/icons/car_charging.svg",
           fit: BoxFit.contain,
         );
       },
@@ -398,13 +426,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
       debugPrint('Error connecting to EV charging WebSocket: $e');
     }
 
-    Get.toNamed(
-      AppRoutes.evDetailCharging,
-      arguments: {
-        'transactionId': transactionId,
-        'chargerUsername': chargerUsername,
-      },
-    );
+    Get.toNamed(AppRoutes.evDetailCharging, arguments: {'transactionId': transactionId, 'chargerUsername': chargerUsername});
   }
 
   Future<Uint8List?> _loadEmbeddedPngBytes(String svgAssetPath) async {
@@ -419,6 +441,363 @@ class EvChargerScreen extends GetView<EvChargerController> {
       return null;
     }
   }
+
+  String? _resolveStationImageUrl(String? imageUrl) {
+    if (imageUrl == null || imageUrl.isEmpty) return null;
+    if (imageUrl.startsWith('http')) return imageUrl;
+    final clean = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
+    return '${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}${Uri.encodeFull(clean)}';
+  }
+
+  String _gunIconPath(String? name) {
+    final n = (name ?? '').toUpperCase();
+    if (n.contains('EU') ||
+        n.contains('CCS') ||
+        n.contains('DC') ||
+        n.contains('CH')) {
+      return AssetImages.ic_ev_dc;
+    }
+    return AssetImages.ic_ev_gb;
+  }
+
+  Widget _buildStationList() {
+    final stationController = Get.find<EvStationController>();
+
+    return Obx(() {
+      // Watch location so distances update once it is fetched
+      stationController.currentPosition.value;
+      stationController.isLocationLoading.value;
+
+      final stations = stationController.allStations;
+
+      if (stationController.isLoading.value && stations.isEmpty) {
+        return const SizedBox(
+          height: 120,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (stations.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return SizedBox(
+        height: Get.height / 6,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          itemCount: stations.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (context, index) {
+            return _buildStationCard(context, stations[index]);
+          },
+        ),
+      );
+    });
+  }
+
+  void _openEVDetailsModal(BuildContext context, EvStationListDatum station) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => EVStationDetailSheet(station: station),
+    );
+  }
+
+Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
+  final bool isOpen = (station.totalChargerAvailable ?? 0) > 0;
+  final stationImageUrl = _resolveStationImageUrl(station.imageUrl);
+  final guns = station.gunInform ?? [];
+  final distanceValue = double.tryParse(station.value ?? '');
+  final distanceText =
+      distanceValue != null
+          ? '${distanceValue.toStringAsFixed(1)} km'
+          : '-';
+
+  return GestureDetector(
+    onTap: () => _openEVDetailsModal(context, station),
+    child: Container(
+    width: 320,
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF5F5F7),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: Colors.grey[200]!),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withValues(alpha: 0.1),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // =========================
+        // IMAGE
+        // =========================
+        SizedBox(
+          width: 100,
+          child:
+              stationImageUrl == null
+                  ? Container(
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.ev_station,
+                      size: 32,
+                      color: Colors.grey,
+                    ),
+                  )
+                  : CachedNetworkImage(
+                    imageUrl: stationImageUrl,
+                    fit: BoxFit.cover,
+                    placeholder:
+                        (context, url) =>
+                            Container(color: Colors.grey.shade200),
+                    errorWidget:
+                        (context, url, error) => Container(
+                          color: Colors.grey.shade200,
+                          child: const Icon(
+                            Icons.ev_station,
+                            size: 32,
+                            color: Colors.grey,
+                          ),
+                        ),
+                  ),
+        ),
+
+        // =========================
+        // CONTENT
+        // =========================
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // =========================
+                // NAME + STATUS
+                // =========================
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        station.name ?? '-',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF25252A),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 6),
+
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isOpen
+                            ? const Color(0xFF009B55)
+                            : Colors.red,
+                      ),
+                    ),
+
+                    const SizedBox(width: 4),
+
+                    Text(
+                      isOpen ? 'Open' : 'Closed',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF4D5060),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // =========================
+                // PRICE
+                // =========================
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.attach_money,
+                      size: 15,
+                      color: Color(0xFF4D5060),
+                    ),
+
+                    const SizedBox(width: 4),
+
+                    const Text(
+                      'Start from ',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.placeholderColor,
+                      ),
+                    ),
+
+                    Expanded(
+                      child: Text(
+                        '${station.pricePerKwh?.toStringAsFixed(2) ?? '-'} KHR/kWh',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFFE65100),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // =========================
+                // DC
+                // =========================
+                Row(
+                  children: [
+                    // const Icon(
+                    //   // Icons.ev_station,
+                    //   AssetImages.ic_station,
+                    //   size: 15,
+                    //   color: AppColors.placeholderColor,
+                    // ),
+                    SvgPicture.asset(AssetImages.ic_station, width: 15, height: 15,colorFilter: ColorFilter.mode(AppColors.placeholderColor, BlendMode.srcIn)),
+                    const SizedBox(width: 4),
+
+                    Text.rich(
+                      TextSpan(
+                        text: 'DC ',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.placeholderColor,
+                        ),
+                        children: [
+                          TextSpan(
+                            text:
+                                '${station.totalChargerAvailable ?? '-'}/${station.totalCharger ?? '-'}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // =========================
+                // CONNECTOR TYPES
+                // =========================
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      if (guns.isEmpty)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              AssetImages.ic_ev_dc,
+                              width: 15,
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              '-',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF4D5060),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        for (var i = 0; i < guns.length; i++) ...[
+                          if (i > 0) const SizedBox(width: 14),
+                          Image.asset(
+                            _gunIconPath(guns[i].name),
+                            width: 15,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            guns[i].name ?? '-',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF4D5060),
+                            ),
+                          ),
+                        ],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // =========================
+                // GET DIRECTION
+                // =========================
+                InkWell(
+                  onTap: () {
+                    _openMap(station.lats ?? '', station.longs ?? '');
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.location_on_outlined,
+                        size: 15,
+                        color: Color(0xFF3445E5),
+                      ),
+
+                      const SizedBox(width: 4),
+
+                      const Text(
+                        'Get Direction',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF3445E5),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+
+                      const SizedBox(width: 6),
+
+                      Text(
+                        distanceText,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF707589),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+    ),
+  );
+}
 
   Widget _buildImageCarousel() {
     return Obx(() {
@@ -598,7 +977,7 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
 
   Widget _buildTotalBalance() {
     final wallet = Get.find<EvWalletController>();
-     debugPrint(
+    debugPrint(
       '====>> ****** [EvChargingScreen._buildTotalBalance] endpoint: ${Endpoint.evSaleOrderWalletAmount}, '
       'totalBalance: ${wallet.totalBalance.value}, '
       'formatted: ${wallet.formatAmount(wallet.totalBalance.value)} KHR',
@@ -632,7 +1011,7 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
               child: Opacity(
                 opacity: 0.99,
                 child: SvgPicture.asset(
-                  AssetImages.ic_money_backgroound_small,
+                  "assets/icons/money_background_small.svg",
                   width: 60,
                   height: 60,
                   fit: BoxFit.contain,
@@ -694,7 +1073,7 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
                         // minimumSize: const Size(50, 35),
                       ),
                       icon: Image.asset(
-                        AssetImages.ic_topUp,
+                        "assets/icons/icon_ev_topUp.png",
                         width: 20,
                         height: 20,
                       ),
@@ -721,13 +1100,7 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
     return InkWell(
       onTap: () {
         final point = controller.state.membershipInfoResponse?.body?.data;
-        Get.toNamed(
-            AppRoutes.evMembership,
-            arguments: <String, dynamic>{
-              'section': 'menu',
-              'membershipInfo': point,
-            },
-          );
+        Get.toNamed(AppRoutes.evMembership, arguments: {'section': 'menu', 'membershipInfo': point});
 
       },
       child: Container(
@@ -755,7 +1128,7 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
               child: Opacity(
                 opacity: 0.50,
                 child: SvgPicture.asset(
-                  AssetImages.ic_history_background_small,
+                  "assets/icons/history_background_small.svg",
                   width: 60,
                   height: 60,
                   fit: BoxFit.contain,
@@ -805,20 +1178,11 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
                       return ElevatedButton.icon(
                         onPressed: () {
                           if (isCharging) {
-                            Get.toNamed(
-                              AppRoutes.evRedeemPoint,
-                              arguments: <String, dynamic>{'points': point},
-                            );
+                            Get.toNamed(AppRoutes.evRedeemPoint, arguments: {'points': point});
                             return;
                           }
 
-                          Get.toNamed(
-                            AppRoutes.evMembership,
-                            arguments: <String, dynamic>{
-                              'section': 'history',
-                              'membershipInfo': point,
-                            },
-                          );
+                          Get.toNamed(AppRoutes.evMembership, arguments: {'section': 'history', 'membershipInfo': point});
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
@@ -832,7 +1196,7 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
                             isCharging
                                 ? const Icon(Icons.auto_awesome, size: 20)
                                 : SvgPicture.asset(
-                                  AssetImages.ic_history,
+                                  "assets/icons/history.svg",
                                   width: 20,
                                   height: 20,
                                 ),

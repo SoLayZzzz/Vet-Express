@@ -1120,6 +1120,7 @@ final Map<String, String> kmKH = {
   'apply_promotion_code': 'បញ្ចូលកូដបញ្ចុះតម្លៃ',
   'apply_point': 'ប្រើពិន្ទុ',
   'or_enter_preferred_amount': 'ឬបញ្ចូលតម្លៃដែលអ្នកចង់បាន',
+  'minimum_charge_is': 'តម្លៃអប្បបរមាគឺ',
   'total_price': 'តម្លៃសរុប',
   'choose_payment_method': 'ជ្រើសរើសវិធីទូទាត់',
   'e_wallet': 'គណនីយ EV របស់អ្នក',
@@ -1143,5 +1144,9 @@ final Map<String, String> kmKH = {
   'charging_will_begin_shortly': 'ដំណើរការសាកថ្មនឹងចាប់ផ្តើមឆាប់ៗ',
   'voucher': 'ប័ណ្ណទូទាត់',
   'enter_or_scan_voucher_code': 'បញ្ចូលឬស្កេនកូដប័ណ្ណទូទាត់',
-  'minimum_charge_is': 'តម្លៃអប្បបរមាគឺ',
+  'add_voucher': 'បន្ថែមប័ណ្ណទូទាត់',
+  'add_voucher_question': 'តើអ្នកចង់បន្ថែមប័ណ្ណទូទាត់នេះទេ?',
+  'voucher_is_empty': 'ប័ណ្ណទូទាត់គឺទទេ',
+  'camera_permission_error':
+      'ត្រូវការអនុញ្ញាតកាមេរ៉ា។ សូមអនុញ្ញាតការចូលប្រើកាមេរ៉ាដើម្បីបន្ត។',
 };

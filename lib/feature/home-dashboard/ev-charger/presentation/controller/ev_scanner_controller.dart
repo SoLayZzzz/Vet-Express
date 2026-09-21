@@ -1,17 +1,17 @@
 import 'dart:async';
-
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_scan_qr_response.dart'
-    as ev_scan;
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_plug_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_plug_response.dart' as ev_plug;
+import 'package:express_vet/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_scan_qr_response.dart'
+    as ev_scan;
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:location/location.dart' as loc_pkg;
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
 import 'ev_wallet_controller.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
-import '../../../../../routes/app_routes.dart';
+
 
 class EvScannerController extends GetxController {
   final EvChargerUseCase useCase;
@@ -434,7 +434,7 @@ class EvScannerController extends GetxController {
     resetScanner();
     Get.back();
     // If EvChargerScreen is not the first screen, navigate to it
-   Get.offNamed(AppRoutes.evWallet);
+    Get.offNamed(AppRoutes.evWallet);
   }
 
   // Helper methods

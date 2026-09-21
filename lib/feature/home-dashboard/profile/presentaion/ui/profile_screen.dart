@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -22,6 +23,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ProfileController controller = Get.put(ProfileController());
+     
 
     return Scaffold(
       bottomNavigationBar: _buildSaveButton(controller),
@@ -453,9 +455,20 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildSaveButton(ProfileController controller) {
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return SafeArea(
+       top: useSafeArea,
+        bottom: useSafeArea,
+        left: useSafeArea,
+        right: useSafeArea,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: EdgeInsets.fromLTRB(
+                      15,
+                      10,
+                      15,
+                      10 + iosBottomInset,
+                    ),
         color: AppColors.whiteColor,
         width: double.infinity,
         child: Obx(

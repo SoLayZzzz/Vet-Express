@@ -2,18 +2,31 @@ import 'dart:convert';
 
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/components/skeleton.dart';
+import 'package:express_vet/feature/home-dashboard/seat/domain/repository/seat_repository.dart';
+import 'package:express_vet/feature/home-dashboard/seat/domain/uscase/select_seat_usecase.dart';
 import 'package:express_vet/feature/home-dashboard/seat/presentation/controller/select_seat_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import '../../../../../utils/platform_insets.dart';
 import 'package:get/get.dart';
 import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
 import '../controller/seat_data.dart';
+import '../../data/model/response/seat_unavailable_response.dart';
 import '../../../../../utils/app_colors.dart';
 
 class SelectSeatScreen extends StatelessWidget {
-  const SelectSeatScreen({super.key});
+  final SelectSeatController? previewController;
+  final String? previewFlowId;
+  final bool? previewIsBack;
+
+  const SelectSeatScreen({
+    super.key,
+    this.previewController,
+    this.previewFlowId,
+    this.previewIsBack,
+  });
 
   double calculateImageSize(BuildContext context, int columns) {
     double availableWidth = MediaQuery.of(context).size.width - 30;
@@ -25,13 +38,64 @@ class SelectSeatScreen extends StatelessWidget {
     return size;
   }
 
+  @Preview()
+  static Widget preview() {
+    final controller = SelectSeatController(
+      SelectSeatUseCase(_SelectSeatPreviewRepository()),
+    );
+
+    const layout =
+        '[\n'
+        '  {"col":[\n'
+        '    {"label":"1","value":"1","attr":{"colspan":""}},\n'
+        '    {"label":"2","value":"2","attr":{"colspan":""}},\n'
+        '    {"label":null,"value":"","attr":{"colspan":""}},\n'
+        '    {"label":"3","value":"3","attr":{"colspan":""}}\n'
+        '  ]},\n'
+        '  {"col":[\n'
+        '    {"label":"4","value":"4","attr":{"colspan":""}},\n'
+        '    {"label":"5","value":"5","attr":{"colspan":""}},\n'
+        '    {"label":null,"value":"","attr":{"colspan":""}},\n'
+        '    {"label":"6","value":"6","attr":{"colspan":""}}\n'
+        '  ]},\n'
+        '  {"col":[\n'
+        '    {"label":"7","value":"7","attr":{"colspan":""}},\n'
+        '    {"label":"8","value":"8","attr":{"colspan":""}},\n'
+        '    {"label":null,"value":"","attr":{"colspan":""}},\n'
+        '    {"label":"9","value":"9","attr":{"colspan":""}}\n'
+        '  ]}\n'
+        ']';
+
+    controller.uiState.value = controller.state.copyWith(
+      title: 'Select Seat (Preview)',
+      futureSeatLayout: Future.value({
+        'body': [
+          {'seatType': 1, 'layout': layout},
+        ],
+      }),
+      unavailableSeat: const ['2', '6'],
+      unavailableSeatGender: const ['1', '2'],
+    );
+
+    return GetMaterialApp(
+      home: SelectSeatScreen(
+        previewController: controller,
+        previewFlowId: 'preview',
+        previewIsBack: false,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments as Map<dynamic, dynamic>?;
-    final flowId = (args?['flowId'] as String?) ?? '';
-    final isBack = (args?['isBack'] as bool?) ?? false;
+    final flowId = previewFlowId ?? (args?['flowId'] as String?) ?? '';
+    final isBack = previewIsBack ?? (args?['isBack'] as bool?) ?? false;
+
     final SelectSeatController controller;
-    if (flowId.isEmpty) {
+    if (previewController != null) {
+      controller = previewController!;
+    } else if (flowId.isEmpty) {
       controller = Get.find<SelectSeatController>();
     } else {
       final tag = '${flowId}_seat_${isBack ? 'back' : 'go'}';
@@ -85,9 +149,10 @@ class SelectSeatScreen extends StatelessWidget {
                       final body = data?['body'];
                       if (body is List && body.isNotEmpty) {
                         final first = body[0];
-                        seatType = (first['seatType'] is int)
-                            ? first['seatType'] as int
-                            : 1;
+                        seatType =
+                            (first['seatType'] is int)
+                                ? first['seatType'] as int
+                                : 1;
                       }
                     }
 
@@ -389,5 +454,29 @@ class SelectSeatScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _SelectSeatPreviewRepository implements SeatRepository {
+  @override
+  Future<Map<dynamic, dynamic>> getSeatLayout({
+    required context,
+    required String date,
+    required String journeyId,
+  }) async {
+    return <dynamic, dynamic>{
+      'body': [
+        {'seatType': 1, 'layout': '[]'},
+      ],
+    };
+  }
+
+  @override
+  Future<SeatUnavailableResponse> getUnavailable({
+    required context,
+    required String date,
+    required String journeyId,
+  }) async {
+    return SeatUnavailableResponse(body: <Body>[]);
   }
 }

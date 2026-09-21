@@ -346,7 +346,7 @@ final Map<String, String> zhCN = {
   "booking_bus": "公交车票",
   "booking_bus_new": "公交车票",
   // "booking_boat": "快艇（埔瓦西）",
-  "booking_boat": "VET高速船）",
+  "booking_boat": "VET高速船",
   
   "booking_boat_new": "快艇（埔瓦西）",
   "booking_travel_package": "旅游套餐",
@@ -1002,6 +1002,7 @@ final Map<String, String> zhCN = {
   'apply_promotion_code': '使用优惠码',
   'apply_point': '使用积分',
   'or_enter_preferred_amount': '或输入您想要的金额',
+  'minimum_charge_is': '最低充值金额为',
   'total_price': '总价',
   'choose_payment_method': '选择您的付款方式',
   'e_wallet': '电子钱包',
@@ -1025,5 +1026,8 @@ final Map<String, String> zhCN = {
   'charging_will_begin_shortly': '充电过程即将开始',
   'voucher': '凭证',
   'enter_or_scan_voucher_code': '输入或扫描凭证码',
-  'minimum_charge_is': '最低充值金额为',
+   "add_voucher": "添加凭证",
+  "add_voucher_question": "您要添加此凭证吗？",
+  "voucher_is_empty": "没有可用的凭证",
+  'camera_permission_error': '需要相机权限。请允许相机访问以继续。',
 };

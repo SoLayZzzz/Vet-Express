@@ -194,7 +194,7 @@ class _RentalCarListScreenState extends State<RentalCarListScreen> {
     );
   }
 
-  Column item(
+  Widget item(
     String id,
     String carType,
     String seat,
@@ -251,7 +251,7 @@ class _RentalCarListScreenState extends State<RentalCarListScreen> {
     );
   }
 
-  SizedBox placeHolder() {
+  Widget placeHolder() {
     return const SizedBox(
       height: 80.0,
       width: 140.0,

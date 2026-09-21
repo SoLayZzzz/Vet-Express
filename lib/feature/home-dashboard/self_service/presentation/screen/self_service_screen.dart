@@ -1,3 +1,4 @@
+import 'package:express_vet/components/input_text_field.dart';
 import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -8,7 +9,6 @@ import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/check_input.dart';
-import 'package:express_vet/utils/style.dart';
 import 'package:express_vet/routes/app_routes.dart';
 import '../controller/self_service_controller.dart';
 
@@ -16,17 +16,6 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
   SelfServiceScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
-
-  Widget _requiredLabel(String text, TextStyle style) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(text: text, style: style),
-          TextSpan(text: ' *', style: style.copyWith(color: Colors.red)),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +46,16 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                         color: AppColors.primaryColor,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    _requiredLabel(
-                      'sender_telephone'.tr,
-                      const TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 5),
-                    TextFormField(
+                    const SizedBox(height: 10),
+                    InputTextField(
+                      label: 'sender_telephone'.tr,
+                      
+                      hint: 'phone_number'.tr,
                       controller:
                           controller.uiState.value.phoneSenderController,
-                      autofocus: false,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [PhoneNumberFormatter()],
-                      style: const TextStyle(fontSize: 14),
+                      iconLeft: Ionicons.call_outline,
                       validator: (String? value) {
                         return CheckInput().checkLength(
                           (value ?? '').replaceAll(' ', ''),
@@ -79,25 +64,16 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                           'phone_number_is_incorrect'.tr,
                         );
                       },
-                      decoration: Style.inputText(
-                        'phone_number'.tr,
-                        iconLeft: Ionicons.call_outline,
-                      ),
                     ),
-                    const SizedBox(height: 10),
-                    _requiredLabel(
-                      'receiver_telephone'.tr,
-                      const TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 5),
-                    TextFormField(
+                    const SizedBox(height: 12),
+                    InputTextField(
+                      label: 'receiver_telephone'.tr,
+                      hint: 'phone_number'.tr,
                       controller:
                           controller.uiState.value.phoneReceivedController,
-                      autofocus: false,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [PhoneNumberFormatter()],
-                      style: const TextStyle(fontSize: 14),
+                      iconLeft: Ionicons.call_outline,
                       validator: (String? value) {
                         return CheckInput().checkLength(
                           (value ?? '').replaceAll(' ', ''),
@@ -106,10 +82,6 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                           'phone_number_is_incorrect'.tr,
                         );
                       },
-                      decoration: Style.inputText(
-                        'phone_number'.tr,
-                        iconLeft: Ionicons.call_outline,
-                      ),
                     ),
                     const SizedBox(height: 20),
                     Text(
@@ -120,20 +92,36 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                         color: AppColors.primaryColor,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    _requiredLabel(
-                      'name_of_the_location'.tr,
-                      const TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 5),
-                    SizedBox(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
+                    const SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
                         children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2.4,
-                            child: TextFormField(
+                          TextSpan(
+                            text: 'name_of_the_location'.tr,
+                            style: TextStyle(color: AppColors.mainTitle),
+                          ),
+                          const TextSpan(
+                            text: ' *',
+                            style: TextStyle(color: AppColors.redColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Expanded(
+       child: InputTextField(
+                              hint: '${'province_city'.tr} ',
+                              controller:
+                                  controller.uiState.value.provinceController,
+                              readOnly: true,
+                              showCursor: false,
+                              keyboardType: TextInputType.phone,
+                              iconRight: Ionicons.chevron_forward_outline,
+                              iconRightSize: 16,  
+                              iconRightColor: AppColors.placeholderColor,
                               onTap: () async {
                                 FocusScope.of(context).unfocus();
                                 await Get.toNamed(
@@ -143,15 +131,6 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                 controller.syncSelectionFieldsFromValueStatic();
                                 _formKey.currentState?.validate();
                               },
-                              controller:
-                                  controller.uiState.value.provinceController,
-                              autofocus: false,
-                              readOnly: true,
-                              showCursor: false,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              keyboardType: TextInputType.phone,
-                              style: const TextStyle(fontSize: 14),
                               validator: (String? value) {
                                 return CheckInput().checkLength(
                                   value!,
@@ -160,19 +139,25 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                   '',
                                 );
                               },
-                              decoration: Style.inputText(
-                                '${'province_city'.tr} ',
-                                iconRight: Ionicons.chevron_forward_outline,
-                              ),
                             ),
-                          ),
-                          const Spacer(),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2.4,
-                            child: TextFormField(
+    ),
+
+    const SizedBox(width: 15),
+
+    Expanded(
+      child: InputTextField(
+                              hint: '${'location'.tr} ',
+                              controller:
+                                  controller.uiState.value.locationController,
+                              readOnly: true,
+                              showCursor: false,
+                              keyboardType: TextInputType.phone,
+                              // iconRight: Ionicons.chevron_forward_outline,
+                               iconRight: Ionicons.chevron_forward_outline,
+                              iconRightSize: 16,  
+                              iconRightColor: AppColors.placeholderColor,
                               onTap: () async {
                                 FocusScope.of(context).unfocus();
-                                //print(ValueStatic.provinceName);
                                 if (ValueStatic.provinceName == "" ||
                                     ValueStatic.provinceName.isEmpty) {
                                   alertDialogOneButton(
@@ -191,15 +176,6 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                   _formKey.currentState?.validate();
                                 }
                               },
-                              controller:
-                                  controller.uiState.value.locationController,
-                              autofocus: false,
-                              readOnly: true,
-                              showCursor: false,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              keyboardType: TextInputType.phone,
-                              style: const TextStyle(fontSize: 14),
                               validator: (String? value) {
                                 return CheckInput().checkLength(
                                   value!,
@@ -208,15 +184,89 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                                   '',
                                 );
                               },
-                              decoration: Style.inputText(
-                                '${'location'.tr} ',
-                                iconRight: Ionicons.chevron_forward_outline,
-                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
+    ),
+  ],
+),
+                    // SizedBox(
+                    //   child: Row(
+                    //     // crossAxisAlignment: CrossAxisAlignment.start,
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       SizedBox(
+                    //         width: MediaQuery.of(context).size.width / 2.3,
+                    //         child: InputTextField(
+                    //           hint: '${'province_city'.tr} ',
+                    //           controller:
+                    //               controller.uiState.value.provinceController,
+                    //           readOnly: true,
+                    //           showCursor: false,
+                    //           keyboardType: TextInputType.phone,
+                    //           iconRight: Ionicons.chevron_forward_outline,
+                    //           iconRightColor: AppColors.placeholderColor,
+                    //           onTap: () async {
+                    //             FocusScope.of(context).unfocus();
+                    //             await Get.toNamed(
+                    //               AppRoutes.selfServiceSelect,
+                    //               arguments: {'selectType': 'province'},
+                    //             );
+                    //             controller.syncSelectionFieldsFromValueStatic();
+                    //             _formKey.currentState?.validate();
+                    //           },
+                    //           validator: (String? value) {
+                    //             return CheckInput().checkLength(
+                    //               value!,
+                    //               2,
+                    //               'province_is_required'.tr,
+                    //               '',
+                    //             );
+                    //           },
+                    //         ),
+                    //       ),
+                    //       // const Spacer(),
+                    //       SizedBox(
+                    //         width: MediaQuery.of(context).size.width / 2.3,
+                    //         child: InputTextField(
+                    //           hint: '${'location'.tr} ',
+                    //           controller:
+                    //               controller.uiState.value.locationController,
+                    //           readOnly: true,
+                    //           showCursor: false,
+                    //           keyboardType: TextInputType.phone,
+                    //           iconRight: Ionicons.chevron_forward_outline,
+                    //           onTap: () async {
+                    //             FocusScope.of(context).unfocus();
+                    //             if (ValueStatic.provinceName == "" ||
+                    //                 ValueStatic.provinceName.isEmpty) {
+                    //               alertDialogOneButton(
+                    //                 title: 'information'.tr,
+                    //                 description: 'please_select_province'.tr,
+                    //                 buttonText: 'yes'.tr,
+                    //               );
+                    //             } else {
+                    //               await Get.toNamed(
+                    //                 AppRoutes.selfServiceSelect,
+                    //                 arguments: {'selectType': 'location'},
+                    //               );
+
+                    //               controller
+                    //                   .syncSelectionFieldsFromValueStatic();
+                    //               _formKey.currentState?.validate();
+                    //             }
+                    //           },
+                    //           validator: (String? value) {
+                    //             return CheckInput().checkLength(
+                    //               value!,
+                    //               2,
+                    //               'location_is_required'.tr,
+                    //               '',
+                    //             );
+                    //           },
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     Text(
                       'items_information'.tr,
@@ -226,18 +276,12 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                         color: AppColors.primaryColor,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    _requiredLabel(
-                      'items_price'.tr,
-                      const TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 5),
-                    TextFormField(
+                    const SizedBox(height: 10),
+                    InputTextField(
+                      label: 'items_price'.tr,
                       controller: controller.uiState.value.itemPriceController,
-                      autofocus: false,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
-                      style: const TextStyle(fontSize: 14),
+                      suffixText: '\$',
                       validator: (String? value) {
                         return CheckInput().checkLength(
                           value!,
@@ -246,96 +290,130 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
                           'phone_number_is_incorrect'.tr,
                         );
                       },
-                      decoration: Style.inputText('', suffixText: '\$'),
                     ),
                     const SizedBox(height: 20),
-                    SizedBox(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2.4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _requiredLabel(
-                                  'amount'.tr,
-                                  const TextStyle(color: Colors.grey),
-                                ),
-                                const SizedBox(height: 5),
-                                TextFormField(
-                                  controller:
-                                      controller.uiState.value.amountController,
-                                  autofocus: false,
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                  keyboardType: TextInputType.phone,
-                                  style: const TextStyle(fontSize: 14),
-                                  validator: (String? value) {
-                                    return CheckInput().checkLength(
-                                      value!,
-                                      1,
-                                      'amount_is_required'.tr,
-                                      'phone_number_is_incorrect'.tr,
-                                    );
-                                  },
-                                  decoration: Style.inputText('amount'.tr),
-                                ),
-                              ],
+                    //
+                    Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Expanded(
+      child: InputTextField(
+                              label: 'amount'.tr,
+                              hint: 'amount'.tr,
+                              controller:
+                                  controller.uiState.value.amountController,
+                              keyboardType: TextInputType.phone,
+                              iconRight: Ionicons.chevron_forward_outline,
+                              iconRightColor: Colors.transparent,
+                              validator: (String? value) {
+                                return CheckInput().checkLength(
+                                  value!,
+                                  1,
+                                  'amount_is_required'.tr,
+                                  'phone_number_is_incorrect'.tr,
+                                );
+                              },
                             ),
-                          ),
-                          const Spacer(),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2.4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _requiredLabel(
-                                  'unit'.tr,
-                                  const TextStyle(color: Colors.grey),
-                                ),
-                                const SizedBox(height: 5),
-                                TextFormField(
-                                  onTap: () async {
-                                    FocusScope.of(context).unfocus();
-                                    await Get.toNamed(
-                                      AppRoutes.selfServiceSelect,
-                                      arguments: {'selectType': 'uom'},
-                                    );
+    ),
 
-                                    controller
-                                        .syncSelectionFieldsFromValueStatic();
-                                    _formKey.currentState?.validate();
-                                  },
-                                  controller:
-                                      controller.uiState.value.unitController,
-                                  autofocus: false,
-                                  readOnly: true,
-                                  showCursor: false,
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                  keyboardType: TextInputType.phone,
-                                  style: const TextStyle(fontSize: 14),
-                                  validator: (String? value) {
-                                    return CheckInput().checkLength(
-                                      value!,
-                                      1,
-                                      'unit_is_required'.tr,
-                                      '',
-                                    );
-                                  },
-                                  decoration: Style.inputText(
-                                    'unit'.tr,
-                                    iconRight: Ionicons.chevron_forward_outline,
-                                  ),
-                                ),
-                              ],
+    const SizedBox(width: 15),
+
+    Expanded(
+     child: InputTextField(
+                              label: 'unit'.tr,
+                              hint: 'unit'.tr,
+                              controller:
+                                  controller.uiState.value.unitController,
+                              readOnly: true,
+                              showCursor: false,
+                              keyboardType: TextInputType.phone,
+                              // iconRight: Ionicons.chevron_forward_outline,
+                               iconRight: Ionicons.chevron_forward_outline,
+                              iconRightSize: 16,  
+                              iconRightColor: AppColors.placeholderColor,
+                              onTap: () async {
+                                FocusScope.of(context).unfocus();
+                                await Get.toNamed(
+                                  AppRoutes.selfServiceSelect,
+                                  arguments: {'selectType': 'uom'},
+                                );
+
+                                controller
+                                    .syncSelectionFieldsFromValueStatic();
+                                _formKey.currentState?.validate();
+                              },
+                              validator: (String? value) {
+                                return CheckInput().checkLength(
+                                  value!,
+                                  1,
+                                  'unit_is_required'.tr,
+                                  '',
+                                );
+                              },
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
+    ),
+  ],
+),
+                    // SizedBox(
+                    //   child: Row(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       SizedBox(
+                    //         width: MediaQuery.of(context).size.width / 2.4,
+                    //         child: InputTextField(
+                    //           label: 'amount'.tr,
+                    //           hint: 'amount'.tr,
+                    //           controller:
+                    //               controller.uiState.value.amountController,
+                    //           keyboardType: TextInputType.phone,
+                    //           iconRight: Ionicons.chevron_forward_outline,
+                    //           iconRightColor: Colors.transparent,
+                    //           validator: (String? value) {
+                    //             return CheckInput().checkLength(
+                    //               value!,
+                    //               1,
+                    //               'amount_is_required'.tr,
+                    //               'phone_number_is_incorrect'.tr,
+                    //             );
+                    //           },
+                    //         ),
+                    //       ),
+                    //       const Spacer(),
+                    //       SizedBox(
+                    //         width: MediaQuery.of(context).size.width / 2.4,
+                    //         child: InputTextField(
+                    //           label: 'unit'.tr,
+                    //           hint: 'unit'.tr,
+                    //           controller:
+                    //               controller.uiState.value.unitController,
+                    //           readOnly: true,
+                    //           showCursor: false,
+                    //           keyboardType: TextInputType.phone,
+                    //           iconRight: Ionicons.chevron_forward_outline,
+                    //           onTap: () async {
+                    //             FocusScope.of(context).unfocus();
+                    //             await Get.toNamed(
+                    //               AppRoutes.selfServiceSelect,
+                    //               arguments: {'selectType': 'uom'},
+                    //             );
+
+                    //             controller
+                    //                 .syncSelectionFieldsFromValueStatic();
+                    //             _formKey.currentState?.validate();
+                    //           },
+                    //           validator: (String? value) {
+                    //             return CheckInput().checkLength(
+                    //               value!,
+                    //               1,
+                    //               'unit_is_required'.tr,
+                    //               '',
+                    //             );
+                    //           },
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -361,6 +439,8 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
           child: globalButton(
             context: context,
             buttonText: 'save'.tr,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 Get.toNamed(

@@ -39,6 +39,10 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
             return _buildLoading();
           }
 
+          if (controller.errorMessage.value.isNotEmpty) {
+            return _buildError(controller.errorMessage.value);
+          }
+
           if (!controller.hasCustomers) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Get.off(() => ChinaRegistrationScreen());
@@ -92,6 +96,33 @@ class WarehouseAddressScreen extends GetView<ChinaController> {
 
   Widget _buildLoading() {
     return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildError(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.wifi_off, size: 56, color: Colors.grey),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                controller.fetchCustomerList();
+              },
+              child: Text('retry'.tr),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildContent(CustomerChinaListData customer) {

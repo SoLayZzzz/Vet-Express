@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/components/input_text_field.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/button.dart';
 import 'package:express_vet/utils/check_input.dart';
 import 'package:express_vet/utils/contains.dart';
-import 'package:express_vet/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -27,23 +27,12 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   late final AuthController controller;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late final FocusNode _phoneFocusNode;
 
   @override
   void initState() {
     super.initState();
     controller = Get.find<AuthController>();
     controller.clearLoginInputs();
-    _phoneFocusNode = FocusNode();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _phoneFocusNode.requestFocus();
-    });
-  }
-
-  @override
-  void dispose() {
-    _phoneFocusNode.dispose();
-    super.dispose();
   }
 
   @override
@@ -97,7 +86,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             'new_here'.tr,
                             style: const TextStyle(
                               fontSize: 13,
-                              color: AppColors.textColor,
+                              color: AppColors.mainTitle,
                             ),
                           ),
                           const SizedBox(width: 5),
@@ -112,7 +101,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                   milliseconds: Constrains.duration,
                                 ),
                               );
-                              _phoneFocusNode.requestFocus();
                             },
                             child: Text(
                               'register'.tr,
@@ -135,7 +123,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                   milliseconds: Constrains.duration,
                                 ),
                               );
-                              _phoneFocusNode.requestFocus();
                             },
                             child: Text(
                               'forget_pass'.tr,
@@ -179,6 +166,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       buttonNoBackground(
                         context: context,
                         buttonText: 'scan_parcel'.tr,
+                        textColor: AppColors.mainTitle,
                         onPressed: () async {
                           controller.clearLoginInputs();
                           _formKey.currentState?.reset();
@@ -189,7 +177,6 @@ class _SignInScreenState extends State<SignInScreen> {
                               milliseconds: Constrains.duration,
                             ),
                           );
-                          _phoneFocusNode.requestFocus();
                         },
                       ),
                       const SizedBox(height: 20),
@@ -212,7 +199,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     color:
                                         ui.activeLanguage == 'km'
                                             ? AppColors.primaryColor
-                                            : Colors.grey,
+                                            : AppColors.mainTitle,
                                   ),
                                 ),
                               ),
@@ -234,7 +221,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     color:
                                         ui.activeLanguage == 'en'
                                             ? AppColors.primaryColor
-                                            : Colors.grey,
+                                            : AppColors.mainTitle,
                                   ),
                                 ),
                               ),
@@ -256,7 +243,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     color:
                                         ui.activeLanguage == 'zh'
                                             ? AppColors.primaryColor
-                                            : Colors.grey,
+                                            : AppColors.mainTitle,
                                   ),
                                 ),
                               ),
@@ -288,114 +275,70 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Widget _passwordField() {
     return Obx(() {
-                      final ui = controller.uiState.value;
-                      return TextFormField(
-                        controller:
-                            controller.uiState.value.signInPasswordController,
-                        autofocus: false,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textColor,
-                        ),
-                        validator: (String? value) {
-                          return CheckInput().checkLength(
-                            value!,
-                            0,
-                            'pass_req'.tr,
-                            'pass_inco'.tr,
-                          );
-                        },
-                        decoration: Style.inputText(
-                          'pass'.tr,
-                          iconRight:
-                              ui.signInPasswordVisible.value
-                                  ? Ionicons.eye
-                                  : Ionicons.eye_off_outline,
-                          onPressed:
-                              controller.toggleSignInPasswordVisibility,
-                        ),
-                        obscureText: !ui.signInPasswordVisible.value,
-                      );
-                    });
+      final ui = controller.uiState.value;
+      return InputTextField(
+        hint: 'pass'.tr,
+        controller: controller.uiState.value.signInPasswordController,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        obscureText: !ui.signInPasswordVisible.value,
+        iconRight:
+            ui.signInPasswordVisible.value ? Ionicons.eye : Ionicons.eye_off_outline,
+        iconRightColor: AppColors.suffixIconColor,
+        onIconRightPressed: controller.toggleSignInPasswordVisibility,
+        textInputAction: TextInputAction.done,
+        validator: (String? value) {
+          return CheckInput().checkLength(
+            value ?? '',
+            0,
+            'pass_req'.tr,
+            'pass_inco'.tr,
+          );
+        },
+      );
+    });
   }
 
   Widget _emailField() {
-    return TextFormField(
-                      focusNode: _phoneFocusNode,
-                      controller:
-                          controller.uiState.value.signInPhoneController,
-                      autofocus: true,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      keyboardType: TextInputType.emailAddress,
-                      // inputFormatters: [PhoneOrEmailFormatter()],
-                      inputFormatters: [
-                            TextInputFormatter.withFunction((oldValue, newValue) {
-                              final text = newValue.text;
-                              final isOnlyDigits = RegExp(r'^\d*$').hasMatch(text);
-                              if (isOnlyDigits && text.length > 10) {
-                                final trimmed = text.substring(0, 10);
-                                return TextEditingValue(
-                                  text: trimmed,
-                                  selection: TextSelection.collapsed(offset: trimmed.length),
-                                );
-                              }
-                              return newValue;
-                            }),
-                          ],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textColor,
-                      ),
-                      validator: (String? value) {
-                        final cleanValue = (value ?? '').trim();
-                        if (cleanValue.isEmpty) {
-                          return 'phone_req'.tr;
-                        }
-                        // Check if it is an email (contains '@')
-                        if (cleanValue.contains('@')) {
-                          final emailError = CheckInput()
-                              .validateEmailAddress(cleanValue);
-                          if (emailError != null) {
-                            return 'phone_inco'.tr;
-                          }
-                          return null;
-                        } else {
-                          // Check if phone number format is valid (at least 9 digits)
-                          final phoneClean = cleanValue.replaceAll(' ', '');
-                          final isNumeric = RegExp(
-                            r'^\+?[0-9]+$',
-                          ).hasMatch(phoneClean);
-                          if (!isNumeric || phoneClean.length < 9) {
-                            return 'phone_inco'.tr;
-                          }
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 16,
-                        ),
-                        hintText: 'phone_num'.tr,
-                        enabledBorder: Style.outlineInputBorder(),
-                        focusedBorder: Style.outlineInputBorder(),
-                        errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.redColor,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                        ),
-                        focusedErrorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.redColor,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                        ),
-                      ),
-                    );
+    return InputTextField(
+      hint: 'phone_num'.tr,
+      controller: controller.uiState.value.signInPhoneController,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      keyboardType: TextInputType.emailAddress,
+      inputFormatters: [
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          final text = newValue.text;
+          final isOnlyDigits = RegExp(r'^\d*$').hasMatch(text);
+          if (isOnlyDigits && text.length > 10) {
+            final trimmed = text.substring(0, 10);
+            return TextEditingValue(
+              text: trimmed,
+              selection: TextSelection.collapsed(offset: trimmed.length),
+            );
+          }
+          return newValue;
+        }),
+      ],
+      textInputAction: TextInputAction.next,
+      validator: (String? value) {
+        final cleanValue = (value ?? '').trim();
+        if (cleanValue.isEmpty) {
+          return 'phone_req'.tr;
+        }
+        if (cleanValue.contains('@')) {
+          final emailError = CheckInput().validateEmailAddress(cleanValue);
+          if (emailError != null) {
+            return 'phone_inco'.tr;
+          }
+          return null;
+        } else {
+          final phoneClean = cleanValue.replaceAll(' ', '');
+          final isNumeric = RegExp(r'^\+?[0-9]+$').hasMatch(phoneClean);
+          if (!isNumeric || phoneClean.length < 9) {
+            return 'phone_inco'.tr;
+          }
+          return null;
+        }
+      },
+    );
   }
 }

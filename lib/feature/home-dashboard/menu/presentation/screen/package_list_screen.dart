@@ -294,7 +294,8 @@ class _PackageListScreenState extends State<PackageListScreen> {
                                           borderRadius: BorderRadius.circular(
                                             50,
                                           ),
-                                          color: const Color(0xFFE38F5A),
+                                          // color: const Color(0xFFE38F5A),
+                                          color: AppColors.primaryColor,
                                         ),
                                         child: Center(
                                           child: Text(

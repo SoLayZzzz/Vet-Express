@@ -73,6 +73,10 @@ class EvStationListDatum {
   String? lats;
   String? longs;
   bool? isFavorite;
+  int? totalCharger;
+  int? totalChargerAvailable;
+  String? value;
+  List<EvStationGunInform>? gunInform;
 
   EvStationListDatum({
     this.id,
@@ -89,6 +93,10 @@ class EvStationListDatum {
     this.lats,
     this.longs,
     this.isFavorite,
+    this.totalCharger,
+    this.totalChargerAvailable,
+    this.value,
+    this.gunInform,
   });
 
   factory EvStationListDatum.fromJson(Map<String, dynamic> json) =>
@@ -107,6 +115,17 @@ class EvStationListDatum {
         lats: json["lats"],
         longs: json["longs"],
         isFavorite: json["isFavorite"],
+        totalCharger: json["totalCharger"],
+        totalChargerAvailable: json["totalChargerAvailable"],
+        value: json["value"],
+        gunInform:
+            json["gunInform"] == null
+                ? []
+                : List<EvStationGunInform>.from(
+                  json["gunInform"]!.map(
+                    (x) => EvStationGunInform.fromJson(x),
+                  ),
+                ),
       );
 
   Map<String, dynamic> toJson() => {
@@ -124,7 +143,26 @@ class EvStationListDatum {
     "lats": lats,
     "longs": longs,
     "isFavorite": isFavorite,
+    "totalCharger": totalCharger,
+    "totalChargerAvailable": totalChargerAvailable,
+    "value": value,
+    "gunInform":
+        gunInform == null
+            ? []
+            : List<dynamic>.from(gunInform!.map((x) => x.toJson())),
   };
+}
+
+class EvStationGunInform {
+  String? name;
+  int? amount;
+
+  EvStationGunInform({this.name, this.amount});
+
+  factory EvStationGunInform.fromJson(Map<String, dynamic> json) =>
+      EvStationGunInform(name: json["name"], amount: json["amount"]);
+
+  Map<String, dynamic> toJson() => {"name": name, "amount": amount};
 }
 
 class Header {

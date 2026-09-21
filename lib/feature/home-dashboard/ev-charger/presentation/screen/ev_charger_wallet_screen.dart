@@ -1,14 +1,14 @@
-import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/base/endpoint.dart';
 import 'package:express_vet/components/skeleton.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_wallet_list_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../controller/ev_wallet_controller.dart';
-import '../../../../../../base/endpoint.dart';
 import '../../../../../utils/app_colors.dart';
-import '../../../../../routes/app_routes.dart';
+
+import 'package:express_vet/routes/app_routes.dart';
 
 class EvWalletScreen extends GetView<EvWalletController> {
   const EvWalletScreen({super.key});
@@ -106,7 +106,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
                 child: Opacity(
                   opacity: 0.70,
                   child: SvgPicture.asset(
-                    AssetImages.ic_money_backgroound,
+                    "assets/icons/money_background.svg",
                     width: 170,
                     height: 170,
                     fit: BoxFit.contain,
@@ -172,7 +172,7 @@ class EvWalletScreen extends GetView<EvWalletController> {
                         ),
                         elevation: 0,
                       ),
-                      icon: Image.asset(AssetImages.ic_topUp, width: 20, height: 20),
+                      icon: Image.asset("assets/icons/icon_ev_topUp.png", width: 20, height: 20),
                       label: Text(
                         'top_up'.tr,
                         style: const TextStyle(

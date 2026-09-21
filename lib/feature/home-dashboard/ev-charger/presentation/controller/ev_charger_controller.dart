@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/base/state_controller.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
+import 'package:express_vet/routes/app_routes.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
-import '../../../../../base/base_url.dart';
-import '../../../../../base/state_controller.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
-import '../../../../../routes/app_routes.dart';
 import '../../data/model/response/ev_contact_response.dart';
 import '../../data/model/response/ev_news_feed_response.dart';
 import '../../data/model/response/ev_slide_show_response.dart';
@@ -14,13 +19,8 @@ import '../../data/model/response/destination_ev.dart';
 import '../../data/model/response/ev_wallet_list_response.dart';
 import '../../data/model/response/membership_transaction_list_response.dart';
 import '../../data/model/response/ev_charging_status_response.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_calculate_reponse.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_checkZone_reponse.dart';
 import '../uiState/ev_charger_ui_state.dart';
 import '../../../../../controller/connectivity_controller.dart';
-import 'ev_wallet_controller.dart';
 
 class EvChargerController extends StateController<EvChargerUiState> {
   final EvChargerUseCase useCase;
@@ -35,8 +35,6 @@ class EvChargerController extends StateController<EvChargerUiState> {
   Timer? _chargingStatusTimer;
   Timer? _timeTimer;
   StreamController<DateTime>? _timeController;
-
-  String _lastObservedRoute = '';
 
   Stream<DateTime> get timeStream {
     _timeController ??= StreamController<DateTime>.broadcast();
@@ -61,21 +59,8 @@ class EvChargerController extends StateController<EvChargerUiState> {
     });
     loadHomeData();
     _chargingStatusTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _refreshWalletBalanceIfReturnedToCharger();
       fetchChargingStatus();
     });
-  }
-
-  void _refreshWalletBalanceIfReturnedToCharger() {
-    final currentRoute = Get.currentRoute;
-    if (currentRoute == _lastObservedRoute) return;
-    _lastObservedRoute = currentRoute;
-
-    if (currentRoute == AppRoutes.evCharger) {
-      if (Get.isRegistered<EvWalletController>()) {
-        Get.find<EvWalletController>().fetchBalance();
-      }
-    }
   }
 
   @override
@@ -381,7 +366,7 @@ class EvChargerController extends StateController<EvChargerUiState> {
     if (relativeUrl.startsWith('http')) return relativeUrl;
     final cleanUrl =
         relativeUrl.startsWith('/') ? relativeUrl.substring(1) : relativeUrl;
-    // Use BASE_URL_SLIDE_IMAGE_EV which hosts static assets
+    // Use BASE_URL_EV_IMAGE which hosts static assets
     return "${BaseUrl.BASE_URL_SLIDE_IMAGE_EV}$cleanUrl";
   }
 
@@ -489,7 +474,7 @@ class EvChargerController extends StateController<EvChargerUiState> {
   List<EvNewsFeedDatum> get newsList =>
       state.newsFeedResponse?.body?.data ?? [];
 
- String getFullImageUrl(String? relativeUrl) {
+  String getFullImageUrl(String? relativeUrl) {
     if (relativeUrl == null || relativeUrl.isEmpty) return '';
     if (relativeUrl.startsWith('http')) return relativeUrl;
     final cleanUrl =

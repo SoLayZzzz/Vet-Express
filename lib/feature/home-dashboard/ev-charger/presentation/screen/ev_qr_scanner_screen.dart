@@ -1,5 +1,3 @@
-import 'package:express_vet/asset_image.dart';
-import 'package:express_vet/routes/app_routes.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -8,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../controller/ev_scanner_controller.dart';
 import '../binding/ev_charger_binding.dart';
+import 'package:express_vet/routes/app_routes.dart';
 
 class EvQrScannerScreen extends StatefulWidget {
   const EvQrScannerScreen({super.key, this.isVoucherMode = false});
@@ -41,8 +40,6 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Reset permission flags (in case user just returned from app settings)
-        // then start the camera if it was stopped.
         controller.onAppResumed();
         controller.startCamera();
       });
@@ -78,7 +75,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                   height: 56,
                   width: 56,
                   alignment: Alignment.center,
-                  child: SvgPicture.asset(AssetImages.stop),
+                  child: SvgPicture.asset("assets/icons/stop.svg"),
                 ),
               const SizedBox(height: 14),
               Text(
@@ -175,7 +172,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                 height: 56,
                 width: 56,
                 alignment: Alignment.center,
-                child: SvgPicture.asset(AssetImages.success),
+                child: SvgPicture.asset("assets/icons/success.svg"),
               ),
               const SizedBox(height: 14),
               Text(
@@ -271,15 +268,17 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                               final plugId = selectedPlugData.gunId ?? selectedPlugIndex + 1;
                               Get.back();
                               controller.resetScanner();
-                              Get.offNamed(
-                                AppRoutes.evChargingInformation,
-                                arguments: {
-                                  'chargerUsername': chargerUser,
-                                  'plugId': plugId,
-                                },
-                              );
+                              Get.offNamed(AppRoutes.evChargingInformation, arguments: {'chargerUsername': chargerUser, 'plugId': plugId});
                             }
                           : null,
+                      //  onPressed: () {
+                      //         final chargerUser = controller.scanResult.value ?? 'ev01';
+                      //         final selectedPlugData = controller.plugList[selectedPlugIndex];
+                      //         final plugId = selectedPlugData.gunId ?? selectedPlugIndex + 1;
+                      //         Get.back();
+                      //         controller.resetScanner();
+                      //         Get.off(() => const EvChargingInformationScreen(), transition: Transition.rightToLeft, duration: const Duration(milliseconds: Constrains.duration), arguments: {'chargerUsername': chargerUser, 'plugId': plugId});
+                      //       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                         disabledBackgroundColor: Colors.grey.shade400,
@@ -296,42 +295,6 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                       ),
                     ),
                   ),
-
-                  // Fake
-
-                  // SizedBox(
-                  //   width: double.infinity,
-                  //   height: 54,
-                  //   child: ElevatedButton(
-                  //     onPressed: () {
-                  //                final chargerUser = controller.scanResult.value ?? 'ev01';
-                  //             final selectedPlugData = controller.plugList[selectedPlugIndex];
-                  //             final plugId = selectedPlugData.gunId ?? selectedPlugIndex + 1;
-                  //                 Get.back();
-                  //             controller.resetScanner();
-                  //             Get.offNamed(
-                  //               AppRoutes.evChargingInformation,
-                  //               arguments: {
-                  //                 'chargerUsername': chargerUser,
-                  //                 'plugId': plugId,
-                  //               },
-                  //             );
-                  //     },
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: AppColors.primaryColor,
-                  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  //       elevation: 0,
-                  //     ),
-                  //     child: Text(
-                  //       'Fake'.tr,
-                  //       style: const TextStyle(
-                  //         color: Colors.white,
-                  //         fontSize: 18,
-                  //         fontWeight: FontWeight.w700,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -382,7 +345,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                   borderRadius: BorderRadius.circular(14),
                 ),
                 alignment: Alignment.center,
-                child: SvgPicture.asset(AssetImages.battery, width: 20, height: 20, colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn)),
+                child: SvgPicture.asset("assets/icons/battery.svg", width: 20, height: 20, colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn)),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -417,7 +380,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
               ),
               selected ?
               SvgPicture.asset(
-                AssetImages.select,
+                "assets/icons/select.svg",
                 width: 20,
                 height: 20,
               ) : const SizedBox.shrink(),
@@ -456,7 +419,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                     } catch (_) {}
                   }
 
-                   if (widget.isVoucherMode) {
+                  if (widget.isVoucherMode) {
                     controller.isScanning.value = false;
                     Get.back(result: qrData);
                     return;
@@ -568,6 +531,7 @@ class _EvQrScannerScreenState extends State<EvQrScannerScreen>
                 ),
 
 
+                // =====
                 // TextButton(onPressed: (){
                 //     _showScanSuccessDialogAndNavigate();
                 // }, 

@@ -9,6 +9,7 @@ import 'package:express_vet/utils/app_colors.dart';
 import 'package:express_vet/utils/app_pref.dart';
 import 'package:express_vet/utils/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -463,30 +464,43 @@ class LocationScreenState extends State<LocationScreen> {
     });
   }
 
+  Future<BitmapDescriptor> _loadMarkerIcon(
+    String assetPath, {
+    required double width,
+    required double height,
+  }) async {
+    final data = await rootBundle.load(assetPath);
+    return BitmapDescriptor.bytes(
+      data.buffer.asUint8List(),
+      width: width,
+      height: height,
+    );
+  }
+
   getIcons() async {
-    final branchIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
+    iconBranch.value = await _loadMarkerIcon(
       AssetImages.ic_map_branch,
+      width: 40,
+      height: 40,
     );
-    final agencyIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
+    iconAgency.value = await _loadMarkerIcon(
       AssetImages.ic_map_agency,
+      width: 40,
+      height: 40,
     );
-    iconBranch.value = branchIcon;
-    iconAgency.value = agencyIcon;
   }
 
   getIconsIOS() async {
-    final branchIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
+    iconBranch.value = await _loadMarkerIcon(
       AssetImages.ic_map_branch_ios,
+      width: 40,
+      height: 50,
     );
-    final agencyIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(10, 10)),
+    iconAgency.value = await _loadMarkerIcon(
       AssetImages.ic_map_agency_ios,
+      width: 40,
+      height: 50,
     );
-    iconBranch.value = branchIcon;
-    iconAgency.value = agencyIcon;
   }
 
   bool _matchesSelectedArea(Data data) {
@@ -586,6 +600,17 @@ class LocationScreenState extends State<LocationScreen> {
     }
   }
 
+  Future<void> _resetToInitialView() async {
+    if (!_controller.isCompleted) return;
+    final controller = await _controller.future;
+    await controller.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        _kGooglePlex.target,
+        _kGooglePlex.zoom - 0.5,
+      ),
+    );
+  }
+
   Future<void> _showAreaFilterSheet() async {
     final options = _getAreaOptionsCombined();
 
@@ -638,12 +663,13 @@ class LocationScreenState extends State<LocationScreen> {
                                       color: AppColors.primaryColor,
                                     )
                                     : null,
-                            onTap: () {
+                            onTap: () async {
                               setState(() {
                                 _selectedArea = null;
                                 _areaFilterMode = _AreaFilterMode.any;
                               });
                               Navigator.of(context).pop();
+                              await _resetToInitialView();
                             },
                           );
                         }

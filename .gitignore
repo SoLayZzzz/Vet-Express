@@ -29,3 +29,5 @@ macos/Flutter/GeneratedPluginRegistrant.*
 # Misc
 *.log
 .DS_Store
+# Widget Preview related
+.widget_preview/

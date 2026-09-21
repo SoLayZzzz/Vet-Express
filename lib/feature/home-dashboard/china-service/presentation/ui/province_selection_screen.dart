@@ -46,6 +46,14 @@ class ProvinceSelectionScreen extends StatelessWidget {
         ],
       ),
       body: Obx(() {
+        if (!controller.hasProvinces && !controller.state.isLoading) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!controller.state.isLoading && !controller.hasProvinces) {
+              controller.fetchInitialData();
+            }
+          });
+        }
+
         if (controller.state.isLoading && !controller.hasProvinces) {
           return const Center(child: CircularProgressIndicator());
         }

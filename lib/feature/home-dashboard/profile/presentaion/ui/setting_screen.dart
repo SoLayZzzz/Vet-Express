@@ -130,7 +130,10 @@ class SettingScreen extends StatelessWidget {
                     duration: const Duration(milliseconds: Constrains.duration),
                   );
                 }),
-                view(Ionicons.receipt_outline, "condition-buvaSea".tr, () {
+                view(
+                  Ionicons.receipt_outline, 
+                  "condition-buvaSea".tr, 
+                  () {
                   Get.to(
                     () => TermScreen(from: 3, title: 'condition-buvaSea'.tr),
                     transition: Transition.rightToLeft,
@@ -229,7 +232,7 @@ class SettingScreen extends StatelessWidget {
     ),
   );
 
-  Padding view(
+  Widget view(
     IconData icon,
     String title,
     VoidCallback onTap, {
@@ -251,15 +254,18 @@ class SettingScreen extends StatelessWidget {
             children: [
               Icon(icon, color: Colors.black38),
               const SizedBox(width: 15),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: color,
+              Expanded(
+                child: Text(
+                  title,
+                  softWrap: true,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                  ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 10),
               const Icon(
                 Ionicons.chevron_forward_outline,
                 color: AppColors.borderColor,

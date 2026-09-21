@@ -31,6 +31,7 @@ import '../model/response/ev_policy_response.dart';
 import '../model/response/ev_province_response.dart';
 import '../model/response/ev_scan_qr_response.dart';
 import '../model/response/ev_slide_show_response.dart';
+import '../model/response/ev_station_detail_response.dart';
 import '../model/response/ev_station_list_response.dart';
 import '../model/response/ev_top_up_response.dart';
 import '../model/response/ev_wallet_amount_response.dart';
@@ -145,11 +146,26 @@ class EvChargerRepositoryImpl implements EvChargerRepository {
     required dynamic context,
     String? searchText,
     int? provinceId,
+    double? lats,
+    double? longs,
   }) {
     return networkRequest.fetchEvStationList(
       context: context,
       searchText: searchText,
       provinceId: provinceId,
+      lats: lats,
+      longs: longs,
+    );
+  }
+
+  @override
+  Future<EvStationDetailResponse> fetchEvStationDetail({
+    required dynamic context,
+    required int stationId,
+  }) {
+    return networkRequest.fetchEvStationDetail(
+      context: context,
+      stationId: stationId,
     );
   }
 

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:express_vet/base/base_url.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:express_vet/base/base_url.dart';
 import '../../data/network/ev_charging_websocket.dart';
 import 'ev_charger_controller.dart';
 

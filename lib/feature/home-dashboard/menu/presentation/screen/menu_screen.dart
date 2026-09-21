@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:express_vet/asset_image.dart';
-import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/bindding/china_service_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
@@ -442,17 +441,12 @@ class MenuScreen extends GetView<menu.MenuController> {
     Get.toNamed(AppRoutes.selfService);
   }
 
-  void _navigateToAccessChina() async {
+  void _navigateToAccessChina() {
     ChinaServiceBinding().dependencies();
-    final ChinaController controller = Get.find<ChinaController>();
 
-    await controller.fetchCustomerList();
-
-    if (controller.hasCustomers) {
-      Get.toNamed(AppRoutes.warehouseAddress);
-    } else {
-      Get.toNamed(AppRoutes.chinaRegistration);
-    }
+    // Always navigate to Warehouse screen. It will load customer list and
+    // redirect to registration if the user has not registered yet.
+    Get.toNamed(AppRoutes.warehouseAddress);
   }
 
   void _navigateToNotifications() async {

@@ -1,6 +1,6 @@
+import 'package:express_vet/base/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../base/base_url.dart';
 import '../../data/model/response/ev_news_feed_response.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 

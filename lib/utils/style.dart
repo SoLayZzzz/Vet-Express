@@ -50,13 +50,14 @@ class Style {
   IconData? iconRight,
   double iconLeftSize = 24,
   double iconRightSize = 24,
+  Color iconRightColor = AppColors.borderColor,
   VoidCallback? onPressed,
 }) {
   return InputDecoration(
     isDense: true,
     contentPadding: const EdgeInsets.all(12),
     hintText: hint,
-    hintStyle: const TextStyle(color: AppColors.greyColor),
+    hintStyle: const TextStyle(color: AppColors.placeholderColor),
     suffixText: suffixText,
     border: outlineInputBorder(),
     enabledBorder: outlineInputBorder(),
@@ -91,7 +92,7 @@ class Style {
             onPressed: onPressed,
             icon: Icon(
               iconRight,
-              color: AppColors.borderColor,
+              color: iconRightColor,
               size: iconRightSize,
             ),
           )

@@ -1,9 +1,9 @@
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_contact_response.dart';
+import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/base/state_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../base/state_controller.dart';
-import '../../../../../base/base_url.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 import '../uiState/ev_contact_ui_state.dart';
 

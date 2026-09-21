@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_policy_response.dart';
+import 'package:express_vet/base/base_url.dart';
 import 'package:flutter/material.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_policy_response.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../../../../../base/base_url.dart';
 import '../../domain/uscase/ev_charger_usecase.dart';
 
 class EvPolicyController extends GetxController {

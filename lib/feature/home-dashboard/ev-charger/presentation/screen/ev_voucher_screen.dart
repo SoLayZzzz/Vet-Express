@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:express_vet/asset_image.dart';
-import 'package:express_vet/routes/app_routes.dart';
+import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import '../../../../../base/base_url.dart';
 import '../controller/ev_voucher_controller.dart';
+import 'package:express_vet/routes/app_routes.dart';
 import '../../data/model/response/ev_voucher_list_response.dart';
 
 class EvVoucherScreen extends GetView<EvVoucherController> {
@@ -117,19 +116,9 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: SvgPicture.asset(AssetImages.small_scan),
+                          child: SvgPicture.asset("assets/icons/scan.svg"),
                         ),
                       ),
-                      // Container(
-                      //   height: 44,
-                      //   width: 44,
-                      //   decoration: BoxDecoration(
-                      //     color: const Color(0xFF2D4CFF),
-                      //     borderRadius: BorderRadius.circular(8),
-                      //   ),
-                      //   alignment: Alignment.center,
-                      //   child: SvgPicture.asset(AssetImages.small_scan),
-                      // ),
                     ],
                   ),
                 ],
@@ -150,7 +139,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SvgPicture.asset(
-                            AssetImages.emptyVoucher,
+                            "assets/icons/empty_voucher.svg",
                             width: 70,
                             height: 70,
                           ),
@@ -192,7 +181,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
     );
   }
 
-   Future<void> _openQrScanner() async {
+  Future<void> _openQrScanner() async {
     final result = await Get.toNamed(
       AppRoutes.evQrScanner,
       arguments: {'isVoucherMode': true},
@@ -229,7 +218,7 @@ class EvVoucherScreen extends GetView<EvVoucherController> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset(AssetImages.voucher),
+                    child: SvgPicture.asset("assets/icons/voucher.svg"),
                   ),
                 ),
                 const SizedBox(height: 20),

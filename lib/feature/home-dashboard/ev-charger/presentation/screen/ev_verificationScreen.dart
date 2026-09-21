@@ -1,5 +1,4 @@
-import 'package:express_vet/asset_image.dart';
-import 'package:express_vet/routes/app_routes.dart';
+import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -8,9 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_sale_order_apptmp_res.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charging_information_controller.dart';
+import 'package:express_vet/routes/app_routes.dart';
 class EvVerificationScreen extends StatefulWidget {
   const EvVerificationScreen({super.key});
 
@@ -20,7 +19,7 @@ class EvVerificationScreen extends StatefulWidget {
 
 class _EvVerificationScreenState extends State<EvVerificationScreen> {
   late final Future<Uint8List?> _verificationBytes = _loadEmbeddedPngBytes(
-    AssetImages.verification,
+    "assets/icons/verification.svg",
   );
 
   // Verification Screen Data Variables
@@ -503,7 +502,7 @@ class _EvVerificationScreenState extends State<EvVerificationScreen> {
         if (bytes != null && bytes.isNotEmpty) {
           return Image.memory(bytes, fit: BoxFit.contain);
         }
-        return SvgPicture.asset(AssetImages.verification, fit: BoxFit.contain);
+        return SvgPicture.asset("assets/icons/verification.svg", fit: BoxFit.contain);
       },
     );
   }

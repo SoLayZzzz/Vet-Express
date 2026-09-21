@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:express_vet/components/input_text_field.dart';
 import 'package:express_vet/components/skeleton.dart';
 import 'package:express_vet/feature/home-dashboard/payment/presentaion/controller/payment_aba_package_controller.dart';
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -47,6 +49,8 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
   String? imageFile;
 
   bool _uploadSuccess = false;
+  final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
 
    String _benefitsKeyFromPackageText({
     required String? name,
@@ -249,8 +253,17 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
         ],
       ),
       bottomNavigationBar: SafeArea(
+         top: useSafeArea,
+        bottom: useSafeArea,
+        left: useSafeArea,
+        right: useSafeArea,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: EdgeInsets.fromLTRB(
+            15,
+            10,
+            15,
+            10 + iosBottomInset,
+          ),
           color: AppColors.whiteColor,
           width: double.infinity,
           child: globalButton(
@@ -817,37 +830,24 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
 
                   //* username
                   const SizedBox(height: 20),
-                  Text.rich(
-                    TextSpan(
-                      text: 'name_pro'.tr,
-                      style: const TextStyle(
-                        color: AppColors.greyColor,
-                        fontSize: 14,
-                      ),
-                      children: const <TextSpan>[
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(color: AppColors.primaryColor),
-                        ),
-                      ],
+                  InputTextField(
+                    label: 'name_pro'.tr,
+                    labelStyle: const TextStyle(
+                      color: AppColors.greyColor,
+                      fontSize: 14,
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  TextFormField(
+                    hint: 'name'.tr,
                     controller: nameController,
-                    autofocus: false,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.text,
-                    style: const TextStyle(fontSize: 14),
                     validator: (String? value) {
                       return CheckInput().checkLength(
-                        value!,
+                        value ?? '',
                         2,
                         'username_req'.tr,
                         'username_inco'.tr,
                       );
                     },
-                    decoration: Style.inputText('name'.tr),
                   ),
 
                   //* gender
@@ -1096,55 +1096,35 @@ class _PackageInfoScreenState extends State<PackageInfoScreen> {
 
                   //* phone number
                   const SizedBox(height: 20),
-                  Text.rich(
-                    TextSpan(
-                      text: 'phone_number'.tr,
-                      style: const TextStyle(
-                        color: AppColors.greyColor,
-                        fontSize: 14,
-                      ),
-                      children: const <TextSpan>[
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(color: AppColors.primaryColor),
-                        ),
-                      ],
+                  InputTextField(
+                    label: 'phone_number'.tr,
+                    labelStyle: const TextStyle(
+                      color: AppColors.greyColor,
+                      fontSize: 14,
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  TextFormField(
+                    hint: 'phone_number'.tr,
                     controller: phoneController,
-                    autofocus: false,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [PhoneNumberFormatter()],
-                    style: const TextStyle(fontSize: 14),
                     validator: (String? value) {
                       return CheckInput().validatePhone(value);
                     },
-                    decoration: Style.inputText('phone_number'.tr),
                   ),
 
                   //* email
                   const SizedBox(height: 20),
-                  Text.rich(
-                    TextSpan(
-                      text: 'email'.tr,
-                      style: const TextStyle(
-                        color: AppColors.greyColor,
-                        fontSize: 14,
-                      ),
+                  InputTextField(
+                    label: 'email'.tr,
+                    labelStyle: const TextStyle(
+                      color: AppColors.greyColor,
+                      fontSize: 14,
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  TextFormField(
+                    hint: 'email'.tr,
                     controller: emailController,
-                    autofocus: false,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(fontSize: 14),
                     validator: (String? value) => validateEmail(value),
-                    decoration: Style.inputText('email'.tr),
                   ),
                 ],
               ),

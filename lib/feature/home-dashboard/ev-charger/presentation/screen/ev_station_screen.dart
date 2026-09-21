@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_station_list_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -11,13 +10,17 @@ import 'package:url_launcher/url_launcher.dart';
 import '../controller/ev_station_controller.dart';
 
 import '../../../../../utils/app_colors.dart';
-import '../../../../../routes/app_routes.dart';
+import '../../../../../utils/contains.dart';
 
 class EvAllStationScreen extends GetView<EvStationController> {
   const EvAllStationScreen({super.key});
 
   void _openSearchScreen() {
-    Get.toNamed(AppRoutes.evSearchStations);
+    Get.to(
+      () => const EvStationSearchScreen(),
+      transition: Transition.rightToLeft,
+      duration: const Duration(milliseconds: Constrains.duration),
+    );
   }
 
   void _onStationSelected(EvStationListDatum station) {
@@ -40,7 +43,11 @@ class EvAllStationScreen extends GetView<EvStationController> {
 
   void _showProvinceFilterDialog() {
     controller.filteredProvinces.assignAll(controller.allProvinces);
-    Get.toNamed(AppRoutes.evSelectProvince);
+    Get.to(
+      () => const EvProvinceFilterScreen(),
+      transition: Transition.rightToLeft,
+      duration: const Duration(milliseconds: Constrains.duration),
+    );
   }
 
   @override
@@ -429,7 +436,8 @@ class EvAllStationScreen extends GetView<EvStationController> {
                 bottomLeft: Radius.circular(12),
               ),
               child: Image.network(
-                'https://newpapisystem.utebi.com/vetEvChargerFrontendAPi${station.imageUrl}',
+                "https://newpapisystem.utebi.com/vetEvChargerFrontendAPi" +
+                    station.imageUrl.toString(),
                 width: 90,
                 alignment: Alignment.centerLeft,
                 fit: BoxFit.contain,
@@ -1032,7 +1040,7 @@ class EvProvinceFilterScreen extends GetView<EvStationController> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Image.asset(
-                                  AssetImages.location,
+                                  'assets/icons/ic_location.png',
                                   color:
                                       isSelected
                                           ? AppColors.primaryColor

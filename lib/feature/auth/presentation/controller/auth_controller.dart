@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:express_vet/feature/auth/data/model/request/verification_request.dart';
@@ -120,10 +121,10 @@ class AuthController extends StateController<AuthUiState> {
       //   Get.context!,
       // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
       alertDialogOneButton(
-          title: 'information'.tr,
-          description: 'this_phone_number_have_been_registered'.tr,
-          buttonText: 'yes'.tr,
-        );
+        title: 'information'.tr,
+        description: 'this_phone_number_have_been_registered'.tr,
+        buttonText: 'yes'.tr,
+      );
     } catch (e) {
       Loading().loadingClose();
       uiState.value.errorMessage.value = e.toString();
@@ -259,10 +260,10 @@ class AuthController extends StateController<AuthUiState> {
       Loading().loadingClose();
       uiState.value.errorMessage.value = e.toString();
       alertDialogOneButton(
-          title: 'information'.tr,
-          description: 'sms_code_invalid'.tr,
-          buttonText: 'yes'.tr,
-        );
+        title: 'information'.tr,
+        description: 'sms_code_invalid'.tr,
+        buttonText: 'yes'.tr,
+      );
     }
   }
 
@@ -307,10 +308,16 @@ class AuthController extends StateController<AuthUiState> {
   }
 
   Future<void> _forgotPassword(BuildContext context, String phone) async {
+    if (uiState.value.isLoading.value) return;
+
+    uiState.value.isLoading.value = true;
     Loading().loadingShow();
+
     try {
-      final res = await authUseCase.resetPasswordSendSms(phone: phone);
-      Loading().loadingClose();
+      final res = await authUseCase
+          .resetPasswordSendSms(phone: phone)
+          .timeout(const Duration(seconds: Constrains.timeout30));
+
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final token = res.body?.message?.toString() ?? '';
@@ -328,15 +335,26 @@ class AuthController extends StateController<AuthUiState> {
         );
         return;
       }
-      // ScaffoldMessenger.of(
-      //   Get.context!,
-      // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
-       alertDialogOneButton(
-          title: 'information'.tr,
-          description: 'this_phone_number_not_registered'.tr,
-          buttonText: 'yes'.tr,
-        );
-    } catch (e) {
+
+      alertDialogOneButton(
+        title: 'information'.tr,
+        description: 'try_again'.tr,
+        buttonText: 'yes'.tr,
+      );
+    } on TimeoutException {
+      alertDialogOneButton(
+        title: 'information'.tr,
+        description: 'try_again'.tr,
+        buttonText: 'yes'.tr,
+      );
+    } catch (_) {
+      alertDialogOneButton(
+        title: 'information'.tr,
+        description: 'try_again'.tr,
+        buttonText: 'yes'.tr,
+      );
+    } finally {
+      uiState.value.isLoading.value = false;
       Loading().loadingClose();
     }
   }
@@ -592,7 +610,7 @@ class AuthController extends StateController<AuthUiState> {
         // ScaffoldMessenger.of(
         //   Get.context!,
         // ).showSnackBar(SnackBar(content: Text('try_again'.tr)));
-         alertDialogOneButton(
+        alertDialogOneButton(
           title: 'invalid'.tr,
           description: 'check_password'.tr,
           buttonText: 'yes'.tr,

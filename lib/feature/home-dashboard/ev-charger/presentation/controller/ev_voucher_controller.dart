@@ -103,7 +103,7 @@ class EvVoucherController extends GetxController {
 
   Future<void> searchVoucher(String code) async {
     if (code.trim().isEmpty) {
-       _lastSearchCode = '';
+      _lastSearchCode = '';
       _lastSearchAt = DateTime.now();
       fetchVouchers();
       return;

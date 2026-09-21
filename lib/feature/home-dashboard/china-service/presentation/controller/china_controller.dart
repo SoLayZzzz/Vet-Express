@@ -10,7 +10,6 @@ import 'package:get/get.dart';
 
 import '../../domain/uscase/china_service_usecase.dart';
 import '../uiState/china_ui_state.dart';
-import '../../../../../controller/connectivity_controller.dart';
 
 class ChinaController extends StateController<ChinaUiState> {
   final ChinaServiceUseCase useCase;
@@ -53,13 +52,7 @@ class ChinaController extends StateController<ChinaUiState> {
     });
     _syncLegacyState();
 
-    ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
-      if (connected) {
-        fetchInitialData();
-      }
-    });
-
-    fetchInitialData();
+    // NOTE: Don't auto-fetch on controller init. Screens will request data as needed.
   }
 
   void _syncLegacyState() {
@@ -127,10 +120,9 @@ class ChinaController extends StateController<ChinaUiState> {
         );
       }
 
-      await fetchCustomerList();
+      // NOTE: don't auto-fetch customer list here; fetch when needed by the UI.
     } on TimeoutException {
       uiState.value = state.copyWith(errorMessage: 'request_timed_out'.tr);
-      rethrow;
     } catch (e) {
       uiState.value = state.copyWith(errorMessage: 'Failed to load data: $e');
     } finally {
@@ -139,7 +131,7 @@ class ChinaController extends StateController<ChinaUiState> {
   }
 
   Future<void> fetchCustomerList() async {
-    uiState.value = state.copyWith(isLoading: true);
+    uiState.value = state.copyWith(isLoading: true, errorMessage: '');
 
     try {
       final response = await useCase.fetchCustomerList();
@@ -150,7 +142,15 @@ class ChinaController extends StateController<ChinaUiState> {
           selectedCustomer:
               state.selectedCustomer ?? (list.isNotEmpty ? list.last : null),
         );
+      } else {
+        uiState.value = state.copyWith(
+          errorMessage: response.body?.message ?? 'try_again'.tr,
+        );
       }
+    } on TimeoutException {
+      uiState.value = state.copyWith(errorMessage: 'request_timed_out'.tr);
+    } catch (e) {
+      uiState.value = state.copyWith(errorMessage: e.toString());
     } finally {
       uiState.value = state.copyWith(isLoading: false);
     }

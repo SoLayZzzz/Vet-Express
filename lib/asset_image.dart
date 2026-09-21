@@ -227,6 +227,9 @@ class AssetImages {
   static const String voucher = "assets/icons/voucher.svg";
   static const String emptyVoucher = "assets/icons/empty_voucher.svg";
   static const String isYouAreHere = "assets/icons/you_are_here.svg";
+  static const String ic_ev_gb = "assets/icons/ic_ev_gb.png";
+  static const String ic_ev_dc = "assets/icons/ic_ev_dc.png";
+
 
   // =========================
   // Rental Car screenr

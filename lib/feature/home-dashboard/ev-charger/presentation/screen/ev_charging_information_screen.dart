@@ -1,16 +1,15 @@
-import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/presentation/controller/ev_charger_controller.dart';
-import 'package:express_vet/routes/app_routes.dart';
+import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart'
+    as list_resp;
+import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../../../base/base_url.dart';
-import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/response/ev_voucher_list_response.dart'
-    as list_resp;
 import '../controller/ev_charging_information_controller.dart';
+import 'package:express_vet/routes/app_routes.dart';
 
 class EvChargingInformationScreen extends StatefulWidget {
   const EvChargingInformationScreen({super.key});
@@ -188,7 +187,7 @@ class _ChargingInformationScreenState
                     if (controller.canContinue) ...[
                       Obx(
                         () => _buildListTile(
-                          iconAsset: AssetImages.apply_code,
+                          iconAsset: "assets/icons/apply_code.svg",
                           title: 'apply_promotion_code'.tr,
                           valueOfff: _buildVoucherValue(),
                           iconSize: 15,
@@ -197,7 +196,7 @@ class _ChargingInformationScreenState
                       ),
                       Obx(
                         () => _buildListTile(
-                          iconAsset: AssetImages.star,
+                          iconAsset: "assets/icons/star.svg",
                           title: 'apply_point'.tr,
                           valueOfff: _buildPointValue(),
                           iconSize: 20,
@@ -321,7 +320,7 @@ class _ChargingInformationScreenState
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: SvgPicture.asset(
-                              AssetImages.wallet,
+                              "assets/icons/wallet.svg",
                               width: 24,
                               height: 24,
                             ),
@@ -784,7 +783,7 @@ Padding(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SvgPicture.asset(
-                        AssetImages.small_car,
+                        "assets/icons/car.svg",
                         width: 12,
                         height: 12,
                         colorFilter: ColorFilter.mode(
@@ -994,17 +993,7 @@ Padding(
                     ),
                   ),
                   const SizedBox(width: 10),
-                  // Container(
-                  //   height: 44,
-                  //   width: 44,
-                  //   decoration: BoxDecoration(
-                  //     color: const Color(0xFF2D4CFF),
-                  //     borderRadius: BorderRadius.circular(8),
-                  //   ),
-                  //   alignment: Alignment.center,
-                  //   child: SvgPicture.asset(AssetImages.small_scan),
-                  // ),
-                   GestureDetector(
+                  GestureDetector(
                     onTap: () { _scanVoucherCode(); },
                     child: Container(
                       height: 44,
@@ -1014,7 +1003,7 @@ Padding(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       alignment: Alignment.center,
-                      child: SvgPicture.asset(AssetImages.small_scan),
+                      child: SvgPicture.asset("assets/icons/scan.svg"),
                     ),
                   ),
                 ],
@@ -1038,7 +1027,7 @@ Padding(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SvgPicture.asset(
-                            AssetImages.emptyVoucher,
+                            "assets/icons/empty_voucher.svg",
                             width: 40,
                             height: 40,
                           ),
@@ -1070,13 +1059,7 @@ Padding(
                           voucher: voucher,
                           isSelected: isSelected,
                           onTap: () {
-                            // controller.selectedVoucherCode.value =
-                            //     voucher.voucherCode ?? '';
-                            // controller.promoCodeController.text =
-                            //     voucher.voucherCode ?? '';
-                            // controller.searchQuery.value =
-                            //     voucher.voucherCode ?? '';
-                             controller.selectedVoucherCode.value =
+                            controller.selectedVoucherCode.value =
                                 voucher.voucherCode ?? '';
                             controller.applySelectedVoucher(
                               voucher.voucherCode ?? '',

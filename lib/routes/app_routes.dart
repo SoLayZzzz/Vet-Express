@@ -32,6 +32,7 @@ class AppRoutes {
   static const evPolicy = '/ev-charger/policy';
   static const evNewsFeed = '/ev-charger/news-feed';
   static const evAllStations = '/ev-charger/stations';
+  static const evNearbyStations = '/ev-charger/nearby-stations';
   static const evFavorites = '/ev-charger/favorites';
   static const evSearchStations = '/ev-charger/search-stations';
   static const evSelectProvince = '/ev-charger/select-province';

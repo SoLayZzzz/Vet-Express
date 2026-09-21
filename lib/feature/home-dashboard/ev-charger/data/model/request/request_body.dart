@@ -39,12 +39,16 @@ class EvStationListRequest {
   final int rowsPerPage;
   final String? searchText;
   final int? provinceId;
+  final double? lats;
+  final double? longs;
 
   const EvStationListRequest({
     required this.page,
     required this.rowsPerPage,
     this.searchText,
     this.provinceId,
+    this.lats,
+    this.longs,
   });
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -52,6 +56,8 @@ class EvStationListRequest {
         'rowsPerPage': rowsPerPage,
         'searchText': searchText,
         'provinceId': provinceId,
+        'lats': lats,
+        'longs': longs,
       };
 }
 
