@@ -175,7 +175,7 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen> {
         final branch = controller.filteredBranches[index];
         final isSelected = controller.selectedBranch.value?.id == branch.id;
 
-        return Container(
+        return Material(
           color: isSelected ? Colors.orange[50] : Colors.white,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(
@@ -201,8 +201,7 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen> {
                     : null,
             onTap: () {
               controller.selectBranch(branch);
-              Get.back();
-              Get.back();
+              Get.back(result: branch);
             },
           ),
         );

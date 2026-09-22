@@ -3,6 +3,7 @@ import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/base/base_url.dart';
 import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -132,33 +133,62 @@ class StationCard extends StatelessWidget {
     return AssetImages.ic_ev_gb;
   }
 
+  double _calculateSimpleDistance(
+    double lat1,
+    double lng1,
+    double lat2,
+    double lng2,
+  ) {
+    final latDiff = (lat1 - lat2).abs();
+    final lngDiff = (lng1 - lng2).abs();
+    return (latDiff + lngDiff) * 111.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isOpen = (station.totalChargerAvailable ?? 0) > 0;
     final imageUrl = imageUrlResolver(station.imageUrl);
     final guns = station.gunInform ?? [];
-    final distanceValue = double.tryParse(station.value ?? '');
-    final distanceText =
-        distanceValue != null
-            ? '${distanceValue.toStringAsFixed(1)} km'
-            : '-';
+
+    String calculateDistance(String? lat, String? lng) {
+      if (lat == null || lng == null) return 'N/A km';
+
+      final stationLat = double.tryParse(lat.trim());
+      final stationLng = double.tryParse(lng.trim());
+      if (stationLat == null || stationLng == null) return 'N/A km';
+
+      final c = Get.find<EvStationController>();
+      final current = c.currentPosition.value;
+      if (current == null) return 'N/A km';
+
+      final distance = _calculateSimpleDistance(
+        current.latitude,
+        current.longitude,
+        stationLat,
+        stationLng,
+      );
+      return '${distance.toStringAsFixed(1)} km';
+    }
+
+    final distanceText = calculateDistance(station.lats, station.longs);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        height: 140,
+        constraints: const BoxConstraints(minHeight: 100),
         decoration: BoxDecoration(
           color: const Color(0xFFF7F7F9),
           borderRadius: BorderRadius.circular(12),
         ),
         clipBehavior: Clip.antiAlias,
-        child: Row(
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Station Image
             SizedBox(
-              width: 130,
-              height: double.infinity,
+              width: 100,
               child:
                   imageUrl == null
                       ? Container(
@@ -169,31 +199,34 @@ class StationCard extends StatelessWidget {
                           color: Colors.grey,
                         ),
                       )
-                      : CachedNetworkImage(
-                        imageUrl: imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder:
-                            (_, __) =>
-                                Container(color: Colors.grey.shade200),
-                        errorWidget:
-                            (_, __, ___) => Container(
-                              color: Colors.grey.shade200,
-                              child: const Icon(
-                                Icons.ev_station,
-                                size: 36,
-                                color: Colors.grey,
+                      : Container(
+                        color: Colors.white,
+                        child: CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          fit: BoxFit.contain,
+                          placeholder:
+                              (_, __) =>
+                                  Container(color: Colors.grey.shade200),
+                          errorWidget:
+                              (_, __, ___) => Container(
+                                color: Colors.grey.shade200,
+                                child: const Icon(
+                                  Icons.ev_station,
+                                  size: 36,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
+                        ),
                       ),
             ),
 
             // Station Content Details
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Title and Status
                     Row(
@@ -235,33 +268,10 @@ class StationCard extends StatelessWidget {
                       ],
                     ),
 
-                    // Power & Price Specs
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.ev_station,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(width: 2),
-                        const Text(
-                          'DC ',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '${station.totalChargerAvailable ?? '-'}/${station.totalCharger ?? '-'}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.deepOrange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Text(
+                    const SizedBox(height: 6),
+                    
+                    Row(children: [
+                      const Text(
                           '\$ ',
                           style: TextStyle(
                             fontSize: 12,
@@ -288,8 +298,68 @@ class StationCard extends StatelessWidget {
                             ),
                           ),
                         ),
+                    ],),
+
+                    const SizedBox(height: 6),
+
+                    // Power & Price Specs
+                    Row(
+                      children: [
+                        SvgPicture.asset(AssetImages.ic_station, width: 15, height: 15,colorFilter: ColorFilter.mode(AppColors.placeholderColor, BlendMode.srcIn)),
+                        // const Icon(
+                        //   Icons.ev_station,
+                        //   size: 16,
+                        //   color: Colors.grey,
+                        // ),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'DC ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          '${station.totalChargerAvailable ?? '-'}/${station.totalCharger ?? '-'}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // const Text(
+                        //   '\$ ',
+                        //   style: TextStyle(
+                        //     fontSize: 12,
+                        //     color: Colors.grey,
+                        //     fontWeight: FontWeight.bold,
+                        //   ),
+                        // ),
+                        // Text(
+                        //   'Start from ',
+                        //   style: TextStyle(
+                        //     fontSize: 12,
+                        //     color: Colors.grey[600],
+                        //   ),
+                        // ),
+                        // Expanded(
+                        //   child: Text(
+                        //     '${station.pricePerKwh?.toStringAsFixed(2) ?? '-'} KHR/kWh',
+                        //     maxLines: 1,
+                        //     overflow: TextOverflow.ellipsis,
+                        //     style: const TextStyle(
+                        //       fontSize: 12,
+                        //       color: Colors.deepOrange,
+                        //       fontWeight: FontWeight.bold,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
+
+                    const SizedBox(height: 6),
 
                     // Plug Types
                     Row(
@@ -333,25 +403,50 @@ class StationCard extends StatelessWidget {
                       ],
                     ),
 
+                    const SizedBox(height: 6),
                     // Get Direction Action
                     GestureDetector(
                       onTap: onDirection,
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.near_me_outlined,
-                            size: 16,
-                            color: Color(0xFF5C6BC0),
-                          ),
-                          const SizedBox(width: 4),
+                          // const Icon(
+                          //   Icons.near_me_outlined,
+                          //   size: 16,
+                          //   color: Color(0xFF5C6BC0),
+                          // ),
+                          // const SizedBox(width: 4),
                           Text(
-                            'Get Direction $distanceText',
-                            style: const TextStyle(
-                              color: Color(0xFF5C6BC0),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                                  'direction'.tr,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF3445E5),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                          Obx(() {
+                            final c = Get.find<EvStationController>();
+                            final isLoading = c.isLocationLoading.value;
+
+                            if (isLoading) {
+                              return Container(
+                                width: 60,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              );
+                            }
+
+                            return Text(
+                              distanceText,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF707589),
+                              ),
+                            );
+                          }),
                         ],
                       ),
                     ),
@@ -360,6 +455,7 @@ class StationCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

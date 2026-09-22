@@ -1,15 +1,14 @@
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/input_text_field.dart';
 import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:get/get.dart';
 
 import '../../../../utils/app_bar.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/button.dart';
 import '../../../../utils/check_input.dart';
-import '../../../../utils/style.dart';
 import '../controller/auth_controller.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -21,7 +20,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late final AuthController controller;
-  final FocusNode _phoneFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -30,25 +28,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     controller.clearForgotPasswordInputs();
   }
 
-  @override
-  void dispose() {
-    _phoneFocusNode.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'forgot_pass'.tr),
-      bottomNavigationBar: _buttonContinue(context),
-      body: KeyboardActions.done(
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Form(
-            key: controller.uiState.value.forgotPasswordFormKey,
-            child: SafeArea(
+      // bottomNavigationBar: _buttonContinue(context),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Form(
+          key: controller.uiState.value.forgotPasswordFormKey,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
@@ -68,18 +62,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         style: const TextStyle(color: Colors.black),
                       ),
                     ),
-                    TextFormField(
+                    InputTextField(
+                      hint: 'telephone_num'.tr,
                       controller:
-                          controller
-                              .uiState
-                              .value
-                              .forgotPasswordPhoneController,
-                      focusNode: _phoneFocusNode,
+                          controller.uiState.value.forgotPasswordPhoneController,
                       autofocus: false,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.done,
                       inputFormatters: [PhoneNumberFormatter()],
-                      style: const TextStyle(fontSize: 14),
+                      iconLeft: Ionicons.call_outline,
+                      onSubmitted: (_) {
+                        FocusScope.of(context).unfocus();
+                      },
                       validator: (String? value) {
                         return CheckInput().checkLength(
                           (value ?? '').replaceAll(' ', ''),
@@ -88,11 +83,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           'phone_in'.tr,
                         );
                       },
-                      decoration: Style.inputText(
-                        'telephone_num'.tr,
-                        iconLeft: Ionicons.call_outline,
-                      ),
                     ),
+
+                    SizedBox(height: 20),
+                    //
+                    _buttonContinue(context),
                   ],
                 ),
               ),
@@ -104,27 +99,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget _buttonContinue(BuildContext context) {
-    final useSafeArea = PlatformInsets.useSafeArea;
-    final iosBottomInset = PlatformInsets.iosBottomInset();
-    return SafeArea(
-      top: useSafeArea,
-      bottom: useSafeArea,
-      left: useSafeArea,
-      right: useSafeArea,
-      child: Container(
-        color: AppColors.whiteColor,
-        width: double.infinity,
-        child: Padding(
-          // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10 + iosBottomInset),
-          padding: EdgeInsets.fromLTRB(15, 10, 15, 10 + iosBottomInset),
-          child: globalButton(
-            context: context,
-            buttonText: 'continue'.tr,
-            onPressed: () {
-              controller.submitForgotPassword(context);
-            },
-          ),
-        ),
+
+    return Container(
+      color: AppColors.whiteColor,
+      width: double.infinity,
+      child: globalButton(
+        context: context,
+        buttonText: 'continue'.tr,
+        onPressed: () {
+          controller.submitForgotPassword(context);
+        },
       ),
     );
   }

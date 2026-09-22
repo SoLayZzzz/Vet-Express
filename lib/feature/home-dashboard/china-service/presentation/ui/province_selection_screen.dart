@@ -1,4 +1,5 @@
 import 'package:express_vet/feature/home-dashboard/china-service/presentation/controller/china_controller.dart';
+import 'package:express_vet/models/china/list_by_province.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -150,7 +151,7 @@ class ProvinceSelectionScreen extends StatelessWidget {
         final province = controller.filteredProvinces[index];
         final isSelected = controller.selectedProvince.value?.id == province.id;
 
-        return Container(
+        return Material(
           color: isSelected ? Colors.orange[50] : Colors.white,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(
@@ -173,11 +174,20 @@ class ProvinceSelectionScreen extends StatelessWidget {
                       size: 16,
                       color: Colors.grey,
                     ),
-            onTap: () {
+            onTap: () async {
               if (controller.selectedProvince.value?.id != province.id) {
                 controller.clearBranchData();
               }
-              Get.to(() => BranchSelectionScreen(province: province));
+
+              final selectedBranch =
+                  await Get.to<BranchByProvinceData?>(
+                    () => BranchSelectionScreen(province: province),
+                  );
+
+              if (selectedBranch != null) {
+                controller.selectBranch(selectedBranch);
+                Get.back(result: selectedBranch);
+              }
             },
           ),
         );

@@ -122,17 +122,15 @@ class MenuScreen extends GetView<menu.MenuController> {
                   () => _navigateToAirBusBooking(),
                 ),
                 _buildMenuView(
-                  AssetImages.booking_boat, 
+                  AssetImages.booking_boat,
                   // imageWidth: 800,
                   // imageHeight: MediaQuery.of(Get.context!).size.width / 4,
-                  'booking_boat'.tr, 
+                  'booking_boat'.tr,
                   () {
-                  _navigateToBoatBooking();
-                }),
-                _buildMenuView(
-                  AssetImages.ev_charger, 
-                  'ev_charger'.tr, 
-                  () {
+                    _navigateToBoatBooking();
+                  },
+                ),
+                _buildMenuView(AssetImages.ev_charger, 'ev_charger'.tr, () {
                   Get.toNamed(AppRoutes.evCharger);
                 }),
                 _buildMenuView(
@@ -331,8 +329,6 @@ class MenuScreen extends GetView<menu.MenuController> {
     });
   }
 
- 
-
   Widget _buildMenuView(String path, String title, VoidCallback onTap) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
@@ -405,7 +401,7 @@ class MenuScreen extends GetView<menu.MenuController> {
     ValueStatic.ticketType = "1";
     Get.toNamed(
       AppRoutes.ticketMenu,
-      arguments: {'type': 1, 'appBarTitle': 'booking_bus_new'.tr},
+      arguments: {'type': 1, 'appBarTitle': 'booking_bus'.tr},
     );
   }
 
@@ -415,7 +411,7 @@ class MenuScreen extends GetView<menu.MenuController> {
 
     var result = await Get.toNamed(
       AppRoutes.ticketMenu,
-      arguments: {'type': 3, 'appBarTitle': 'booking_air_bus1'.tr},
+      arguments: {'type': 3, 'appBarTitle': 'booking_air_bus'.tr},
     );
     if (result == null) {
       ValueStatic.ticketType = "0";
@@ -431,8 +427,8 @@ class MenuScreen extends GetView<menu.MenuController> {
       arguments: {
         'type': 2,
         // 'appBarTitle': 'booking_boat_new'.tr
-        'appBarTitle': 'booking_boat'.tr
-        },
+        'appBarTitle': 'booking_boat'.tr,
+      },
     );
   }
 
@@ -460,8 +456,10 @@ class MenuScreen extends GetView<menu.MenuController> {
   void _showLanguageBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
+      isScrollControlled: false,
       backgroundColor: Colors.transparent,
+      isDismissible: true,
+      enableDrag: false,
       builder: (BuildContext context) {
         return _buildLanguageSelectionSheet();
       },
@@ -469,91 +467,78 @@ class MenuScreen extends GetView<menu.MenuController> {
   }
 
   Widget _buildLanguageSelectionSheet() {
-    return Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            color: AppColors.whiteColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10),
-              topRight: Radius.circular(10),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 10),
-                _buildLanguageSheetHeader(),
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildLanguageOption(
-                          'km',
-                          AssetImages.cambodia,
-                          'ភាសាខ្មែរ',
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.whiteColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.center,
+                child: _buildLanguageSheetHeader(),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 8, 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'change_lang'.tr,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
                         ),
-                        const Divider(height: 1),
-                        _buildLanguageOption(
-                          'en',
-                          AssetImages.english,
-                          'English',
-                        ),
-                        const Divider(height: 1),
-                        _buildLanguageOption('zh', AssetImages.china, '中文'),
-                      ],
+                      ),
                     ),
-                  ),
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                        size: 28,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Column(
+                  children: [
+                    _buildLanguageOption('km', AssetImages.cambodia, 'ភាសាខ្មែរ'),
+                    const Divider(height: 1, color: AppColors.lineGray),
+                    _buildLanguageOption('en', AssetImages.english, 'English'),
+                    const Divider(height: 1, color: AppColors.lineGray),
+                    _buildLanguageOption('zh', AssetImages.china, '中文'),
+                    const Divider(height: 1, color: AppColors.lineGray),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        Positioned(
-          right: 1,
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: const Icon(Icons.close, color: Colors.grey, size: 28),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
   Widget _buildLanguageSheetHeader() {
-    return Align(
-      alignment: Alignment.center,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            height: 5,
-            width: MediaQuery.sizeOf(Get.context!).width * 0.25,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'change_lang'.tr,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+    return Container(
+      height: 3,
+      width: 42,
+      decoration: BoxDecoration(
+        color: AppColors.lineGray,
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }
@@ -569,20 +554,45 @@ class MenuScreen extends GetView<menu.MenuController> {
         await controller.updateLanguage(langCode);
       },
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
         child: Row(
           children: [
             Image.asset(flagAsset, width: 30, height: 30),
             const SizedBox(width: 20),
-            Text(
-              languageName,
-              style: const TextStyle(fontSize: 16, color: AppColors.textColor),
+            Expanded(
+              child: Text(
+                languageName,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textColor,
+                ),
+              ),
             ),
-            const Spacer(),
             Obx(() {
-              final language = controller.state.language;
-              if (language != langCode) return const SizedBox.shrink();
-              return Image.asset(AssetImages.check_mark, width: 30, height: 30);
+              final selected = controller.state.language == langCode;
+              final borderColor =
+                  selected ? AppColors.seatNumberColor : AppColors.lineGray;
+              final fillColor =
+                  selected ? AppColors.seatNumberColor : AppColors.borderColor;
+
+              return Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: borderColor, width: 1),
+                ),
+                child: Center(
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: fillColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              );
             }),
           ],
         ),
@@ -600,10 +610,7 @@ class MenuScreen extends GetView<menu.MenuController> {
     }
 
     await Get.to(
-      () => InAppWebViewScreen(
-        initialUrl: uri.toString(),
-        title: uri.host,
-      ),
+      () => InAppWebViewScreen(initialUrl: uri.toString(), title: uri.host),
     );
   }
 }
@@ -612,11 +619,7 @@ class InAppWebViewScreen extends StatefulWidget {
   final String initialUrl;
   final String? title;
 
-  const InAppWebViewScreen({
-    super.key,
-    required this.initialUrl,
-    this.title,
-  });
+  const InAppWebViewScreen({super.key, required this.initialUrl, this.title});
 
   @override
   State<InAppWebViewScreen> createState() => _InAppWebViewScreenState();
@@ -628,21 +631,22 @@ class _InAppWebViewScreenState extends State<InAppWebViewScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onNavigationRequest: (request) {
-            final uri = Uri.tryParse(request.url);
-            if (uri == null) return NavigationDecision.prevent;
-            if (uri.scheme != 'http' && uri.scheme != 'https') {
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.initialUrl));
+    _controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onNavigationRequest: (request) {
+                final uri = Uri.tryParse(request.url);
+                if (uri == null) return NavigationDecision.prevent;
+                if (uri.scheme != 'http' && uri.scheme != 'https') {
+                  return NavigationDecision.prevent;
+                }
+                return NavigationDecision.navigate;
+              },
+            ),
+          )
+          ..loadRequest(Uri.parse(widget.initialUrl));
   }
 
   Future<void> _handleSystemBack() async {
@@ -667,14 +671,14 @@ class _InAppWebViewScreenState extends State<InAppWebViewScreen> {
           foregroundColor: AppColors.whiteColor,
           centerTitle: true,
           leading: IconButton(
-          icon: const Icon(
-            Ionicons.chevron_back_outline,
-            color: AppColors.whiteColor,
+            icon: const Icon(
+              Ionicons.chevron_back_outline,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () {
+              Get.back();
+            },
           ),
-          onPressed: () {
-            Get.back();
-          },
-        ),
           title: Text('VPsar'),
         ),
         body: WebViewWidget(controller: _controller),
@@ -682,4 +686,3 @@ class _InAppWebViewScreenState extends State<InAppWebViewScreen> {
     );
   }
 }
-

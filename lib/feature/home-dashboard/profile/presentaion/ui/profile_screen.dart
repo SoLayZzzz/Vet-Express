@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/components/selection_bottom_sheet.dart';
 import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,12 +57,12 @@ class ProfileScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return _buildUserProfile(controller);
+        return _buildUserProfile(context, controller);
       }),
     );
   }
 
-  Widget _buildUserProfile(ProfileController controller) {
+  Widget _buildUserProfile(BuildContext context, ProfileController controller) {
     return SingleChildScrollView(
       controller: _scrollController,
       padding: const EdgeInsets.all(15.0),
@@ -90,12 +91,7 @@ class ProfileScreen extends StatelessWidget {
               CheckInput().validateEmailAddress,
               controller.isEmailReadOnly.value,
             ),
-            _buildDropdownField(
-              "gender",
-              'gender',
-              controller.gender,
-              controller.genderItems,
-            ),
+            _buildSelectGenderField(context, controller),
             _buildDropdownFieldNationality(
               'nationality'.tr,
               'nationality'.tr,
@@ -110,20 +106,15 @@ class ProfileScreen extends StatelessWidget {
                 controller.selectedNationalityId.value = selected.id;
               },
             ),
-            // const SizedBox(height: 40),
-            // _buildSaveButton(controller),
           ],
         ),
       ),
     );
   }
 
-  // Dropdown for gender
-  Widget _buildDropdownField(
-    String label,
-    String hintKey,
-    RxnString selectedValue,
-    List<String> items,
+  Widget _buildSelectGenderField(
+    BuildContext context,
+    ProfileController controller,
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, top: 20),
@@ -131,7 +122,7 @@ class ProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label.tr,
+            'gender'.tr,
             style: const TextStyle(
               color: AppColors.titleColor,
               fontWeight: FontWeight.w500,
@@ -139,40 +130,32 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          DropdownButtonHideUnderline(
-            child: DropdownButton2<String>(
-              isExpanded: true,
-              hint: Text(
-                hintKey.tr,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.greyColor,
-                ),
-              ),
-              value:
-                  selectedValue.value?.isNotEmpty == true &&
-                      items.contains(selectedValue.value)
-                  ? selectedValue.value
-                  : null,
-              items: items.map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textColor,
-                    ),
-                  ),
+          Obx(() {
+            final value = controller.gender.value;
+            final isEmpty = (value ?? '').trim().isEmpty;
+
+            return InkWell(
+              onTap: () async {
+                FocusScope.of(context).unfocus();
+
+                final result = await showSelectionBottomSheet<String>(
+                  context: context,
+                  title: 'choose_gender'.tr,
+                  items:
+                      controller.genderItems
+                          .map((e) => SelectionSheetItem(value: e, label: e))
+                          .toList(),
+                  isSelected: (v) => v == value,
                 );
-              }).toList(),
-              onChanged: (String? newValue) {
-                selectedValue.value = newValue;
+
+                if (result != null) {
+                  controller.gender.value = result;
+                }
               },
-              buttonStyleData: const ButtonStyleData(
+              child: Container(
                 height: 48,
-                padding: EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
+                width: double.infinity,
+                decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
                       color: AppColors.borderColor,
@@ -180,24 +163,32 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              iconStyleData: const IconStyleData(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 2),
-                  child: Icon(
-                    Icons.arrow_drop_down,
-                    color: AppColors.borderColor,
-                  ),
+                padding: const EdgeInsets.only(right: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        isEmpty ? 'gender'.tr : value!,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color:
+                              isEmpty
+                                  ? AppColors.greyColor
+                                  : AppColors.textColor,
+                        ),
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_drop_down,
+                      color: AppColors.suffixIconColor,
+                      size: 24,
+                    ),
+                  ],
                 ),
-                iconSize: 24,
               ),
-              dropdownStyleData: const DropdownStyleData(
-                width: double.infinity,
-                decoration: BoxDecoration(color: Colors.white),
-              ),
-              menuItemStyleData: const MenuItemStyleData(height: 40),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
@@ -271,7 +262,7 @@ class ProfileScreen extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 2),
                   child: Icon(
                     Icons.arrow_drop_down,
-                    color: AppColors.borderColor,
+                    color: AppColors.suffixIconColor,
                   ),
                 ),
                 iconSize: 24,
@@ -333,13 +324,6 @@ class ProfileScreen extends StatelessWidget {
           child: Container(
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.borderColor,
-                  spreadRadius: 0.5,
-                  blurRadius: 4.0,
-                ),
-              ],
             ),
             width: 130,
             height: 130,
@@ -401,7 +385,7 @@ class ProfileScreen extends StatelessWidget {
           Text(
             labelKey.tr,
             style: const TextStyle(
-              color: AppColors.titleColor,
+              color: AppColors.mainTitle,
               fontWeight: FontWeight.w500,
               fontSize: 16,
             ),
@@ -477,7 +461,7 @@ class ProfileScreen extends StatelessWidget {
             buttonText: 'save'.tr,
             buttonColor: controller.canSave.value
                 ? AppColors.primaryColor
-                : AppColors.greyColor,
+                : AppColors.lineGray,
             onPressed: controller.canSave.value
                 ? controller.updateProfile
                 : () {},

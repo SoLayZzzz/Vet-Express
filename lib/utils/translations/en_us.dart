@@ -890,6 +890,9 @@ final Map<String, String> enUS = {
   'select_item': 'Select item',
   'select_gender': "Select gender",
   'select_nation': "Select nationality",
+  //
+  // Bottom Sheet
+  'choose_gender': 'Choose Gender',
 
   //user detail
   "click": "By clicking on 'Process Payment', you agree to",

@@ -2,11 +2,11 @@ import 'package:express_vet/components/input_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
+import 'package:express_vet/components/selection_bottom_sheet.dart';
 import '../../../../utils/app_bar.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/button.dart';
 import '../../../../utils/check_input.dart';
-import '../../../../utils/style.dart';
 import '../../../../base/web_view_screen.dart';
 import '../controller/auth_controller.dart';
 import 'select_nationality_screen.dart';
@@ -35,30 +35,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBarVET().appBar(context, 'create_account'.tr),
-      body: SafeArea(
-        child: Form(
-          key: controller.uiState.value.signUpFormKey,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  _buildInputUserName(),
-                  _buildInputPhNumber(),
-                  _buildInputEmail(),
-                  _buildPassword(),
-                  _buildConfirmPassword(),
-                  _buildSelectGender(context),
-                  _buildSelectNationality(),
-                  _buildButtonRegister(context),
-                  _builConditional(),
-                ],
+      body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: SafeArea(
+            child: Form(
+              key: controller.uiState.value.signUpFormKey,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      _buildInputUserName(),
+                      _buildInputPhNumber(),
+                      _buildInputEmail(),
+                      _buildPassword(),
+                      _buildConfirmPassword(),
+                      _buildSelectGender(context),
+                      _buildSelectNationality(),
+                      _buildButtonRegister(context),
+                      _builConditional(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -71,7 +76,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'name-signup'.tr, style: TextStyle(color: AppColors.mainTitle)),
+                TextSpan(
+                  text: 'name-signup'.tr,
+                  style: TextStyle(color: AppColors.mainTitle),
+                ),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -84,6 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             hint: 'full_name'.tr,
             controller: controller.uiState.value.signUpUsernameController,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            textInputAction: TextInputAction.next,
             iconLeft: Ionicons.person_outline,
             validator: (String? value) {
               return CheckInput().checkLength(
@@ -108,7 +117,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'phone_number'.tr, style: TextStyle(color: AppColors.mainTitle)),
+                TextSpan(
+                  text: 'phone_number'.tr,
+                  style: TextStyle(color: AppColors.mainTitle),
+                ),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -127,6 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: controller.uiState.value.signUpPhoneController,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.next,
             inputFormatters: [PhoneNumberFormatter()],
             iconLeft: Ionicons.call_outline,
             validator: (String? value) {
@@ -144,13 +157,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("email".tr,style: TextStyle(color: AppColors.mainTitle)),
+          Text("email".tr, style: TextStyle(color: AppColors.mainTitle)),
           const SizedBox(height: 5),
           InputTextField(
             hint: 'email'.tr,
             controller: controller.uiState.value.signUpEmailController,
             keyboardType: TextInputType.emailAddress,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            textInputAction: TextInputAction.next,
             iconLeft: Ionicons.mail_unread_outline,
             validator: (String? value) {
               final baseError = CheckInput().validateEmailAddress(value);
@@ -178,7 +192,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'pass'.tr,style: TextStyle(color: AppColors.mainTitle)),
+                TextSpan(
+                  text: 'pass'.tr,
+                  style: TextStyle(color: AppColors.mainTitle),
+                ),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -194,12 +211,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: controller.uiState.value.signUpPasswordController,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               obscureText: !ui.signUpPasswordVisible.value,
+              textInputAction: TextInputAction.next,
               iconLeft: Ionicons.lock_closed_outline,
               iconRight:
                   ui.signUpPasswordVisible.value
                       ? Ionicons.eye
                       : Ionicons.eye_off_outline,
               iconRightColor: AppColors.suffixIconColor,
+              // iconRightPadding: const EdgeInsetsDirectional.only(
+              //   start: 0,
+              //   end: 10,
+              // ),
+              // iconRightConstraints: const BoxConstraints.tightFor(
+              //   width: 40,
+              //   height: 48,
+              // ),
               onIconRightPressed: controller.toggleSignUpPasswordVisibility,
               validator: (String? value) {
                 return CheckInput().checkLength(
@@ -225,7 +251,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text.rich(
             TextSpan(
               children: [
-                TextSpan(text: 'confirm_pass'.tr,style: TextStyle(color: AppColors.mainTitle)),
+                TextSpan(
+                  text: 'confirm_pass'.tr,
+                  style: TextStyle(color: AppColors.mainTitle),
+                ),
                 const TextSpan(
                   text: ' *',
                   style: TextStyle(color: AppColors.redColor),
@@ -241,12 +270,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: controller.uiState.value.signUpRePasswordController,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               obscureText: !ui.signUpRePasswordVisible.value,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) {
+                FocusScope.of(context).unfocus();
+              },
               iconLeft: Ionicons.lock_closed_outline,
               iconRight:
                   ui.signUpRePasswordVisible.value
                       ? Ionicons.eye
                       : Ionicons.eye_off_outline,
               iconRightColor: AppColors.suffixIconColor,
+              // iconRightPadding: const EdgeInsetsDirectional.only(
+              //   start: 0,
+              //   end: 10,
+              // ),
+              // iconRightConstraints: const BoxConstraints.tightFor(
+              //   width: 40,
+              //   height: 48,
+              // ),
               onIconRightPressed: controller.toggleSignUpRePasswordVisibility,
               validator: (String? value) {
                 return CheckInput().checkMatch(
@@ -262,76 +303,60 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  Future<void> _showGenderBottomSheet(BuildContext context) async {
+    final current = controller.uiState.value.signUpGender.value;
+
+    final result = await showSelectionBottomSheet<String>(
+      context: context,
+      title: 'choose_gender'.tr,
+      items: const [
+        SelectionSheetItem(value: 'male', label: 'male'),
+        SelectionSheetItem(value: 'female', label: 'female'),
+      ]
+          .map((e) => SelectionSheetItem(value: e.value, label: e.label.tr))
+          .toList(),
+      isSelected: (value) => current == value || current == value.tr,
+    );
+
+    if (result != null) {
+      controller.setSignUpGender(result);
+    }
+  }
+
   Widget _buildSelectGender(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('gender'.tr,style: TextStyle(color: AppColors.mainTitle)),
+          Text('gender'.tr, style: TextStyle(color: AppColors.mainTitle)),
           const SizedBox(height: 5),
-          InputDecorator(
-            decoration: InputDecoration(
-              isDense: true,
-              prefixIcon: const Icon(
-                Ionicons.male_female_outline,
-                color: AppColors.mainTitle,
+          Obx(() {
+            final value = controller.uiState.value.signUpGender.value;
+            final isEmpty = value.trim().isEmpty;
+            return InputTextField(
+              key: ValueKey(value),
+              hint: 'gender'.tr,
+              initialValue: isEmpty ? null : value.tr,
+              readOnly: true,
+              showCursor: false,
+              iconLeft: Ionicons.male_female_outline,
+              iconRight: Icons.keyboard_arrow_down,
+              iconRightColor: AppColors.suffixIconColor,
+              iconRightPadding: const EdgeInsetsDirectional.only(
+                start: 0,
+                end: 10,
               ),
-              contentPadding: const EdgeInsets.fromLTRB(0, 1, 10, 1),
-              enabledBorder: Style.outlineInputBorder(),
-              border: const OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.primaryColor),
-                borderRadius: BorderRadius.all(Radius.circular(5)),
+              iconRightConstraints: const BoxConstraints.tightFor(
+                width: 40,
+                height: 48,
               ),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: Obx(() {
-                final ui = controller.uiState.value;
-                final rawGender = ui.signUpGender.value;
-                final normalizedGender =
-                    rawGender == 'male'.tr
-                        ? 'male'
-                        : rawGender == 'female'.tr
-                        ? 'female'
-                        : rawGender;
-                return DropdownButton<String>(
-                  isExpanded: true,
-                  hint: Row(
-                    children: [
-                      Text(
-                        'gender'.tr,
-                        style: const TextStyle(fontSize: 14, color: AppColors.placeholderColor),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                  iconEnabledColor: AppColors.suffixIconColor,
-                  items:
-                      SignUpScreen.genderItems
-                          .map(
-                            (String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width / 1.5,
-                                child: Text(
-                                  item.tr,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  value:
-                      SignUpScreen.genderItems.contains(normalizedGender)
-                          ? normalizedGender
-                          : null,
-                  onChanged: (String? value) {
-                    controller.setSignUpGender(value);
-                  },
-                );
-              }),
-            ),
-          ),
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                _showGenderBottomSheet(context);
+              },
+            );
+          }),
         ],
       ),
     );
@@ -343,7 +368,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('nationality'.tr,style: TextStyle(color: AppColors.mainTitle)),
+          Text('nationality'.tr, style: TextStyle(color: AppColors.mainTitle)),
           const SizedBox(height: 5),
           Obx(() {
             final ui = controller.uiState.value;
@@ -356,8 +381,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               showCursor: false,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               iconLeft: Ionicons.flag_outline,
-              iconRight: Ionicons.chevron_forward_outline,
+              iconRight: Icons.keyboard_arrow_down,
               iconRightColor: AppColors.suffixIconColor,
+              // iconRightPadding: const EdgeInsetsDirectional.only(
+              //   start: 0,
+              //   end: 10,
+              // ),
+              // iconRightConstraints: const BoxConstraints.tightFor(
+              //   width: 40,
+              //   height: 48,
+              // ),
               onTap: () async {
                 final result = await Get.to<Map<String, dynamic>>(
                   () => const SelectNationalityScreen(),
@@ -429,7 +462,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Text.rich(
           TextSpan(
             text: 'agree_info'.tr,
-            style: const TextStyle(color: AppColors.placeholderColor, fontSize: 12),
+            style: const TextStyle(
+              color: AppColors.placeholderColor,
+              fontSize: 12,
+            ),
             children: <TextSpan>[
               TextSpan(
                 text: 'agree'.tr,

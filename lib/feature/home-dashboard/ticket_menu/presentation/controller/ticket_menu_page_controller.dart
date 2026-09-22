@@ -19,7 +19,12 @@ class TicketMenuPageController extends GetxController {
     super.onInit();
     final args = Get.arguments as Map<dynamic, dynamic>?;
     type = (args?['type'] as int?) ?? 1;
-    appBarTitle = (args?['appBarTitle'] as String?) ?? '';
+
+    final rawTitle = (args?['appBarTitle'] as String?) ?? '';
+    appBarTitle = rawTitle
+        .replaceAll('\n', ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
 
     formController.setNow();
   }

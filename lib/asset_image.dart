@@ -164,11 +164,11 @@ class AssetImages {
 
   static const String line = "assets/images/img_line.png";
   static const String coupon = "assets/icons/icon_coupon.png";
-  static const String ic_dropOff_locaiton = "assets/icons/dropOff_icon.png";
+  static const String ic_dropOff_locaiton = "assets/icons/dropOff_pin.png";
 
   // =========================
   // Payment screen
-  // =========================
+  // =========================s
 
   static const String ic_khqr = 'assets/images/ic_khqr.png';
   static const String ic_big_visa = 'assets/images/ic_big_visa.png';

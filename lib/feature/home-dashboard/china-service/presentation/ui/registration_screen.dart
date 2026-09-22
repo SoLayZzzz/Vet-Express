@@ -8,8 +8,10 @@ import 'package:get/get.dart';
 import '../../../../../utils/check_input.dart';
 
 import '../../../../../utils/app_colors.dart';
+import '../../../../../utils/button.dart';
 import '../../../../../value_statics.dart';
 import 'province_selection_screen.dart';
+import '../../../../../models/china/list_by_province.dart';
 import 'warehouse_address_screen.dart';
 
 class ChinaRegistrationScreen extends StatefulWidget {
@@ -25,7 +27,6 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _addressController;
-  late final TextEditingController _branchController;
   final _formKey = GlobalKey<FormState>();
 
   void _clearControllerState() {
@@ -51,18 +52,12 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
     _nameController = TextEditingController(text: controller.name.value);
     _phoneController = TextEditingController(text: controller.phone.value);
     _addressController = TextEditingController(text: controller.address.value);
-    _branchController = TextEditingController(
-      text: controller.isProvinceSelected || controller.isBranchSelected
-          ? _getBranchDisplayText()
-          : '',
-    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _clearControllerState();
       _nameController.clear();
       _phoneController.clear();
       _addressController.clear();
-      _syncBranchControllerText();
 
       if (!controller.hasProvinces && !controller.isLoading.value) {
         controller.fetchInitialData();
@@ -79,7 +74,6 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
-    _branchController.dispose();
     super.dispose();
   }
 
@@ -167,7 +161,6 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
               onChanged: (value) => controller.phone.value = value,
             ),
             const SizedBox(height: 16),
-
             _buildBranchField(),
             const SizedBox(height: 16),
 
@@ -194,51 +187,39 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
             const SizedBox(height: 20),
 
             // Register button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  
+            Obx(() {
+              return AbsorbPointer(
+                absorbing: controller.isLoading.value,
+                child: Opacity(
+                  opacity: controller.isLoading.value ? 0.7 : 1,
+                  child: globalButton(
+                    context: Get.context!,
+                    buttonText: 'register_china_address'.tr,
+                    onPressed: () async {
+                  // Clear any previous error message
+                  controller.errorMessage.value = '';
+
+                  // Validate form fields — shows inline red errors
+                  if (!(_formKey.currentState?.validate() ?? false)) {
+                    return;
+                  }
+
+                  // Attempt registration
+                  final success = await controller.registerCustomer();
+                  if (success) {
+                    // Navigate to warehouse screen
+                    Get.off(() => WarehouseAddressScreen());
+                  } else {
+                    // Show error dialog for registration failure
+                    if (controller.errorMessage.value.isNotEmpty) {
+                      _showErrorDialog(controller.errorMessage.value);
+                    }
+                  }
+                    },
+                  ),
                 ),
-                minimumSize: Size(double.infinity, 50)
-              ),
-              onPressed:
-                  controller.isLoading.value
-                      ? null
-                      : () async {
-                        // Clear any previous error message
-                        controller.errorMessage.value = '';
-
-                        // Validate form fields — shows inline red errors
-                        if (!(_formKey.currentState?.validate() ?? false)) {
-                          return;
-                        }
-
-                        // Attempt registration
-                        final success = await controller.registerCustomer();
-                        if (success) {
-                          // Navigate to warehouse screen
-                          Get.off(() => WarehouseAddressScreen());
-                        } else {
-                          // Show error dialog for registration failure
-                          if (controller.errorMessage.value.isNotEmpty) {
-                            _showErrorDialog(controller.errorMessage.value);
-                          }
-                        }
-                      },
-              child:
-                  controller.isLoading.value
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                        'register_china_address'.tr,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-            ),
+              );
+            }),
           ],
           ),
         ),
@@ -393,23 +374,20 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
     );
   }
 
-  void _syncBranchControllerText() {
-    _branchController.text =
-        controller.isProvinceSelected || controller.isBranchSelected
-            ? _getBranchDisplayText()
-            : '';
-  }
 
   Widget _buildBranchField() {
     Future<void> openSelection() async {
-      await Get.to(() => ProvinceSelectionScreen());
-      _syncBranchControllerText();
+      final selectedBranch =
+          await Get.to<BranchByProvinceData?>(() => ProvinceSelectionScreen());
+
+      if (selectedBranch != null) {
+        controller.selectBranch(selectedBranch);
+      }
       _formKey.currentState?.validate();
     }
 
     void clearSelection() {
       controller.clearAllSelections();
-      _syncBranchControllerText();
       _formKey.currentState?.validate();
     }
 
@@ -418,7 +396,13 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
       children: [
         Obx(() {
           final isSelected = controller.isBranchSelected;
+          final displayText =
+              controller.isProvinceSelected || controller.isBranchSelected
+                  ? _getBranchDisplayText()
+                  : '';
+
           return InputTextField(
+            key: ValueKey(displayText),
             label: 'vet_branch_near_you'.tr,
             labelStyle: const TextStyle(
               fontWeight: FontWeight.w500,
@@ -426,17 +410,16 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
               fontSize: 16,
             ),
             hint: 'vet_branch_near_you'.tr,
-            controller: _branchController,
+            initialValue: displayText.isEmpty ? null : displayText,
             readOnly: true,
             showCursor: false,
-            iconRight:
-                isSelected ? Icons.close : Icons.keyboard_arrow_down,
+            iconRight: isSelected ? Icons.close : Icons.keyboard_arrow_down,
             iconRightSize: 20,
             iconRightColor: isSelected ? AppColors.textColor : Colors.grey,
             onTap: openSelection,
             onIconRightPressed: isSelected ? clearSelection : openSelection,
             validator: (_) {
-              return controller.selectedBranch.value == null
+              return controller.state.selectedBranch == null
                   ? 'vetbranch_required'.tr
                   : null;
             },
@@ -459,11 +442,16 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
   }
 
   String _getBranchDisplayText() {
-    if (controller.isBranchSelected) {
-      return controller.selectedBranch.value!.name ?? '';
-    } else if (controller.isProvinceSelected) {
-      return controller.selectedProvince.value!.name ?? '';
+    final selectedBranch = controller.state.selectedBranch;
+    if (selectedBranch != null) {
+      return selectedBranch.name ?? '';
     }
+
+    final selectedProvince = controller.state.selectedProvince;
+    if (selectedProvince != null) {
+      return selectedProvince.name ?? '';
+    }
+
     return 'vet_branch_near_you'.tr;
   }
 }

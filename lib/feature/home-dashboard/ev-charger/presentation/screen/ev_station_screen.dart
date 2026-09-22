@@ -58,7 +58,13 @@ class EvAllStationScreen extends GetView<EvStationController> {
     final reservedTop = safeTop + (screenHeight * 0.02) + 80;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBarVET().appBar(context, "ev_charger".tr),
+      appBar: AppBarVET().appBar(
+        context,
+        "ev_charger".tr
+            .replaceAll('\n', ' ')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim(),
+      ),
       body: Stack(
         children: [
           Obx(() {
@@ -74,8 +80,8 @@ class EvAllStationScreen extends GetView<EvStationController> {
                   myLocationEnabled: true,
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
-                  onMapCreated: (controller) {
-                    this.controller.mapController.complete(controller);
+                  onMapCreated: (c) {
+                    controller.setMapController(c);
                   },
                 ),
 
@@ -408,7 +414,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      height: 96,
+      constraints: const BoxConstraints(minHeight: 96),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),

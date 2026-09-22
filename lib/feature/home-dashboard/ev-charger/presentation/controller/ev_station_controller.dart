@@ -52,6 +52,7 @@ class EvStationController extends GetxController {
   // Map related variables
   final Completer<GoogleMapController> mapController =
       Completer<GoogleMapController>();
+  GoogleMapController? _latestMapController;
   final Location location = Location();
   final Rx<BitmapDescriptor?> markerIcon = Rx<BitmapDescriptor?>(null);
   final Rx<LatLng?> currentPosition = Rx<LatLng?>(null);
@@ -107,6 +108,11 @@ class EvStationController extends GetxController {
     searchController.dispose();
     searchFocusNode.dispose();
     provinceSearchController.dispose();
+
+    try {
+      _latestMapController?.dispose();
+    } catch (_) {}
+
     mapController.future
         .then((controller) => controller.dispose())
         .catchError((_) {});
@@ -444,13 +450,20 @@ class EvStationController extends GetxController {
     }
   }
 
+  void setMapController(GoogleMapController controller) {
+    _latestMapController = controller;
+    if (!mapController.isCompleted) {
+      mapController.complete(controller);
+    }
+  }
+
   /// Go to current location
   Future<void> goToCurrentLocation() async {
     if (currentPosition.value == null) return;
 
     try {
-      final controller = await mapController.future;
-      await controller.animateCamera(
+      final c = _latestMapController ?? await mapController.future;
+      await c.animateCamera(
         CameraUpdate.newLatLngZoom(currentPosition.value!, 15),
       );
     } catch (e) {
@@ -461,8 +474,8 @@ class EvStationController extends GetxController {
   /// Move to specific station
   Future<void> moveToStation(LatLng position, {double zoom = 15}) async {
     try {
-      final controller = await mapController.future;
-      await controller.animateCamera(
+      final c = _latestMapController ?? await mapController.future;
+      await c.animateCamera(
         CameraUpdate.newLatLngZoom(position, zoom),
       );
     } catch (e) {
@@ -472,8 +485,8 @@ class EvStationController extends GetxController {
 
   Future<void> resetMapToDefaultView() async {
     try {
-      final controller = await mapController.future;
-      await controller.animateCamera(
+      final c = _latestMapController ?? await mapController.future;
+      await c.animateCamera(
         CameraUpdate.newLatLngZoom(_defaultMapCenter, _defaultMapZoom),
       );
     } catch (e) {

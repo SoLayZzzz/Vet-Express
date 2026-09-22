@@ -405,6 +405,9 @@ final Map<String, String> kmKH = {
   'select_gender': "ជ្រើសរើសភេទ",
   'select_nation': "ជ្រើសរើសសញ្ជាតិ",
 
+  // Bottom Sheet
+  'choose_gender' : "ជ្រើសរើសភេទ",
+
   // Menu Screen..................
   'home': 'ទំព័រដើម',
   'view_acc': "មើលគណនី",
@@ -418,7 +421,7 @@ final Map<String, String> kmKH = {
   'booking_bus': 'សំបុត្រឡាន\n វិរៈ ប៊ុនថាំ',
   'booking_bus_new': 'សំបុត្រឡាន វិរៈ ប៊ុនថាំ',
   // 'booking_boat': 'សំបុត្រទូក\nប៊ូវ៉ាស៊ី',
-  'booking_boat': 'សំបុត្រទូក\nស្ពីដហ្វែរី',
+  'booking_boat': 'សំបុត្រទូក\n ស្ពីដហ្វែរី',
   'booking_boat_new': 'សំបុត្រទូក ប៊ូវ៉ាស៊ី',
   'booking_travel_package': 'កញ្ចប់ធ្វើដំណើរ',
   'booking_travel_package2': 'កញ្ចប់ធ្វើដំណើរ',

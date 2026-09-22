@@ -24,11 +24,11 @@ class SelfServiceScreen extends GetView<SelfServiceController> {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'self_service'.tr),
       body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Form(
-          key: _formKey,
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Form(
+            key: _formKey,
           child: SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),

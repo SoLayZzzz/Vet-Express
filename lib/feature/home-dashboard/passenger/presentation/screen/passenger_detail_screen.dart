@@ -47,23 +47,24 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
 
     final useSafeArea = PlatformInsets.useSafeArea;
 
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBarVET().appBar(context, 'passenger'.tr),
-        body: SafeArea(
-          top: useSafeArea,
-          bottom: useSafeArea,
-          left: useSafeArea,
-          right: useSafeArea,
-          child:
-              enableDiscount
-                  ? _buildPassengerHaveDiscount()
-                  : _buildPassengerNoDiscount(),
+    return Scaffold(
+      appBar: AppBarVET().appBar(context, 'passenger'.tr),
+      bottomNavigationBar: _buildButtonToPaymentScreen(context),
+      body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: SafeArea(
+            top: useSafeArea,
+            bottom: useSafeArea,
+            left: useSafeArea,
+            right: useSafeArea,
+            child:
+                enableDiscount
+                    ? _buildPassengerHaveDiscount()
+                    : _buildPassengerNoDiscount(),
+          ),
         ),
-      ),
     );
   }
 
@@ -2134,7 +2135,6 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                     ],
                   ),
                 ),
-                _buildButtonToPaymentScreen(context),
               ],
             );
           },

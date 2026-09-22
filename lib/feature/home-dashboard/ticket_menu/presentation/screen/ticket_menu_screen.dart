@@ -7,7 +7,6 @@ import 'package:express_vet/value_statics.dart';
 import 'package:express_vet/utils/alert_dialog.dart';
 import 'package:express_vet/utils/button.dart';
 import '../../../../../controller/slide_controller.dart';
-import '../../../../../utils/app_bar.dart';
 import '../../../../../utils/app_colors.dart';
 import '../../../../../components/cache_image_widget.dart';
 import '../../../../../routes/app_routes.dart';

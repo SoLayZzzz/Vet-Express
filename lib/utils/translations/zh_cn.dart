@@ -804,6 +804,9 @@ final Map<String, String> zhCN = {
   'select_gender': "选择性别",
   'select_nation': "选择国籍",
 
+  //Bottom Sheet
+  'choose_gender' : "选择性别",
+
   //resort
   'accommodation': "住宿地址",
   'book_resort': '立即预订',

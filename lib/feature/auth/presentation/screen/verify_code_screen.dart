@@ -7,7 +7,6 @@ import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -117,8 +116,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'verify_code'.tr),
-      body: KeyboardActions.done(
-        child: GestureDetector(
+      body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
           },
@@ -314,7 +312,6 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
             ),
           ),
         ),
-      ),
     );
   }
 }

@@ -115,7 +115,9 @@ class EvChargerScreen extends GetView<EvChargerController> {
       elevation: 0.2,
       backgroundColor: AppColors.primaryColor,
       title: Text(
-        "ev_charger".tr,
+        "ev_charger".tr.replaceAll('\n', ' ')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim(),
         style: TextStyle(
           color: AppColors.whiteColor,
           fontSize: 18,
@@ -460,6 +462,37 @@ class EvChargerScreen extends GetView<EvChargerController> {
     return AssetImages.ic_ev_gb;
   }
 
+  String _calculateDistance(String? lat, String? lng) {
+    if (lat == null || lng == null) return 'N/A km';
+
+    final stationLat = double.tryParse(lat.trim());
+    final stationLng = double.tryParse(lng.trim());
+    if (stationLat == null || stationLng == null) return 'N/A km';
+
+    final stationController = Get.find<EvStationController>();
+    final current = stationController.currentPosition.value;
+    if (current == null) return 'N/A km';
+
+    final distance = _calculateSimpleDistance(
+      current.latitude,
+      current.longitude,
+      stationLat,
+      stationLng,
+    );
+    return '${distance.toStringAsFixed(1)} km';
+  }
+
+  double _calculateSimpleDistance(
+    double lat1,
+    double lng1,
+    double lat2,
+    double lng2,
+  ) {
+    final latDiff = (lat1 - lat2).abs();
+    final lngDiff = (lng1 - lng2).abs();
+    return (latDiff + lngDiff) * 111.0;
+  }
+
   Widget _buildStationList() {
     final stationController = Get.find<EvStationController>();
 
@@ -482,6 +515,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
       }
 
       return SizedBox(
+        // height: cardHeight,
         height: Get.height / 6,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
@@ -509,11 +543,9 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
   final bool isOpen = (station.totalChargerAvailable ?? 0) > 0;
   final stationImageUrl = _resolveStationImageUrl(station.imageUrl);
   final guns = station.gunInform ?? [];
-  final distanceValue = double.tryParse(station.value ?? '');
-  final distanceText =
-      distanceValue != null
-          ? '${distanceValue.toStringAsFixed(1)} km'
-          : '-';
+  final stationController = Get.find<EvStationController>();
+  final isLocationLoading = stationController.isLocationLoading.value;
+  final distanceText = _calculateDistance(station.lats, station.longs);
 
   return GestureDetector(
     onTap: () => _openEVDetailsModal(context, station),
@@ -574,7 +606,7 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
         // =========================
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -661,19 +693,13 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
                   ],
                 ),
 
-                const SizedBox(height: 8),
+               const SizedBox(height: 8),
 
                 // =========================
                 // DC
                 // =========================
                 Row(
                   children: [
-                    // const Icon(
-                    //   // Icons.ev_station,
-                    //   AssetImages.ic_station,
-                    //   size: 15,
-                    //   color: AppColors.placeholderColor,
-                    // ),
                     SvgPicture.asset(AssetImages.ic_station, width: 15, height: 15,colorFilter: ColorFilter.mode(AppColors.placeholderColor, BlendMode.srcIn)),
                     const SizedBox(width: 4),
 
@@ -768,8 +794,8 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
 
                       const SizedBox(width: 4),
 
-                      const Text(
-                        'Get Direction',
+                       Text(
+                        'direction'.tr,
                         style: TextStyle(
                           fontSize: 12,
                           color: Color(0xFF3445E5),
@@ -779,13 +805,23 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
 
                       const SizedBox(width: 6),
 
-                      Text(
-                        distanceText,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Color(0xFF707589),
+                      if (isLocationLoading)
+                        Container(
+                          width: 44,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        )
+                      else
+                        Text(
+                          distanceText,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Color(0xFF707589),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

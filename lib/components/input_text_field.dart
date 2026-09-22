@@ -17,6 +17,7 @@ class InputTextField extends StatefulWidget {
     this.validator,
     this.onTap,
     this.onChanged,
+    this.onSubmitted,
     this.keyboardType,
     this.inputFormatters,
     this.maxLines = 1,
@@ -27,6 +28,8 @@ class InputTextField extends StatefulWidget {
     this.iconRight,
     this.iconRightSize = 24,
     this.iconRightColor = AppColors.suffixIconColor,
+    this.iconRightPadding,
+    this.iconRightConstraints,
     this.onIconRightPressed,
     this.suffixText,
     this.readOnly = false,
@@ -46,6 +49,7 @@ class InputTextField extends StatefulWidget {
   final String? Function(String?)? validator;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLines;
@@ -56,6 +60,8 @@ class InputTextField extends StatefulWidget {
   final IconData? iconRight;
   final double iconRightSize;
   final Color iconRightColor;
+  final EdgeInsetsGeometry? iconRightPadding;
+  final BoxConstraints? iconRightConstraints;
   final VoidCallback? onIconRightPressed;
   final String? suffixText;
   final bool readOnly;
@@ -175,13 +181,15 @@ class _InputTextFieldState extends State<InputTextField> {
       suffixIcon: widget.iconRight == null
           ? null
           : Padding(
-              padding: const EdgeInsetsDirectional.only(
-                start: _kSidePadding,
-                end: _kSidePadding,
-              ),
+              padding:
+                  widget.iconRightPadding ??
+                  const EdgeInsetsDirectional.only(
+                    start: _kSidePadding,
+                    end: _kSidePadding,
+                  ),
               child: IconButton(
                 onPressed: widget.onIconRightPressed,
-                // padding: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
                 constraints: const BoxConstraints.tightFor(
                   width: _kIconBox,
                   height: _kIconBox,
@@ -201,7 +209,8 @@ class _InputTextFieldState extends State<InputTextField> {
             ),
       suffixIconConstraints: widget.iconRight == null
           ? null
-          : const BoxConstraints.tightFor(width: 48, height: 48),
+          : (widget.iconRightConstraints ??
+              const BoxConstraints.tightFor(width: 48, height: 48)),
     );
   }
 
@@ -261,6 +270,7 @@ class _InputTextFieldState extends State<InputTextField> {
                     field.didChange(value);
                     widget.onChanged?.call(value);
                   },
+                  onSubmitted: widget.onSubmitted,
                   onTap: widget.onTap,
                   readOnly: widget.readOnly,
                   showCursor: widget.showCursor,

@@ -38,7 +38,7 @@ Widget globalButton({
   required Function onPressed,
   Color buttonColor = AppColors.primaryColor,
   Color textColor = Colors.white,
-  FontWeight fontWeight = FontWeight.w400,
+  FontWeight fontWeight = FontWeight.w700,
   double fontSize = 16.0,
   BorderRadius borderRadius = const BorderRadius.all(
     Radius.circular(6),

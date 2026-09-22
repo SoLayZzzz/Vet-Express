@@ -58,11 +58,11 @@ class _BookingDeliveryScreenState extends State<BookingDeliveryScreen> {
     return Scaffold(
       appBar: AppBarVET().appBar(context, 'booking_delivery'.tr),
       body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Form(
-          key: _formKey,
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Form(
+            key: _formKey,
           child: SafeArea(
             child: Stack(
               children: [
