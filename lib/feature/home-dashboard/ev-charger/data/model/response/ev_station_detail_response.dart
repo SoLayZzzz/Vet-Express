@@ -271,6 +271,7 @@ class EvStationChargerGun {
   double? maxAmperage;
   double? pricePerKwh;
   int? qty;
+  int? qtyAvailable;
 
   EvStationChargerGun({
     this.chargerGunId,
@@ -278,15 +279,17 @@ class EvStationChargerGun {
     this.maxAmperage,
     this.pricePerKwh,
     this.qty,
+    this.qtyAvailable,
   });
 
   factory EvStationChargerGun.fromJson(Map<String, dynamic> json) =>
       EvStationChargerGun(
         chargerGunId: json["chargerGunId"],
         name: json["name"],
-        maxAmperage: json["maxAmperage"],
-        pricePerKwh: json["pricePerKwh"],
+        maxAmperage: (json["maxAmperage"] as num?)?.toDouble(),
+        pricePerKwh: (json["pricePerKwh"] as num?)?.toDouble(),
         qty: json["qty"],
+        qtyAvailable: json["qtyAvailable"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -295,6 +298,7 @@ class EvStationChargerGun {
     "maxAmperage": maxAmperage,
     "pricePerKwh": pricePerKwh,
     "qty": qty,
+    "qtyAvailable": qtyAvailable,
   };
 }
 

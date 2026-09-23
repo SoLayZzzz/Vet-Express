@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_calculate_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_checkZone_request.dart';
 import 'package:express_vet/feature/home-dashboard/ev-charger/data/model/request/ev_plug_request.dart';
@@ -47,14 +46,21 @@ import '../../../../../utils/contains.dart';
 class EvChargerNetworkRequest {
   final NetWorkDataSource ticketDataSource;
   final NetWorkDataSource evDataSource;
-  final NetWorkDataSource _evFrontendDataSource = NetWorkDataSource(
-    baseUrl: BaseUrl.BASE_URL_EV_FRONTEND,
-  );
 
   EvChargerNetworkRequest({
     required this.ticketDataSource,
     required this.evDataSource,
   });
+
+  void _logApiJson(String title, Object? json) {
+    final text = jsonEncode(json);
+    debugPrint(title);
+    const chunk = 800;
+    for (var i = 0; i < text.length; i += chunk) {
+      final end = (i + chunk < text.length) ? (i + chunk) : text.length;
+      debugPrint(text.substring(i, end));
+    }
+  }
 
   Future<EvChargerResponse> fetchTicketEvStationList({
     required dynamic context,
@@ -226,9 +232,9 @@ class EvChargerNetworkRequest {
         lats: lats,
         longs: longs,
       );
-      debugPrint(
-        'fetchEvStationList request: ${Endpoint.evStationList} '
-        '${jsonEncode(request.toJson())}',
+      _logApiJson(
+        '========== [API] POST ${Endpoint.evStationList} (request) ==========',
+        request.toJson(),
       );
       final json = await evDataSource.postJson(
         Endpoint.evStationList,
@@ -236,7 +242,10 @@ class EvChargerNetworkRequest {
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      debugPrint('fetchEvStationList response: ${jsonEncode(json)}');
+      _logApiJson(
+        '========== [API] POST ${Endpoint.evStationList} (response) ==========',
+        json,
+      );
       return EvStationListResponse.fromJson(json);
     } catch (_) {
       rethrow;
@@ -248,17 +257,18 @@ class EvChargerNetworkRequest {
     required int stationId,
   }) async {
     try {
-      debugPrint(
-        'fetchEvStationDetail request: '
-        '${BaseUrl.BASE_URL_EV_FRONTEND}'
-        '${Endpoint.evStationFind(stationId.toString())}',
-      );
-      final json = await _evFrontendDataSource.postJson(
-        Endpoint.evStationFind(stationId.toString()),
+      final path = Endpoint.evStationFind(stationId.toString());
+      debugPrint('========== [API] POST ${BaseUrl.BASE_URL_EV}$path ==========');
+      final json = await evDataSource.postJson(
+        path,
+        body: <String, dynamic>{},
         timeout: const Duration(seconds: Constrains.timeout30),
         attachAuth: true,
       );
-      debugPrint('fetchEvStationDetail response: ${jsonEncode(json)}');
+      _logApiJson(
+        '========== [API] POST ${BaseUrl.BASE_URL_EV}$path (response) ==========',
+        json,
+      );
       return EvStationDetailResponse.fromJson(json);
     } catch (_) {
       rethrow;

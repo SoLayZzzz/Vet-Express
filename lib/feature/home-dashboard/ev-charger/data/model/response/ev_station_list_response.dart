@@ -63,6 +63,8 @@ class EvStationListDatum {
   String? code;
   int? companyId;
   int? provinceId;
+  int? totalCharger;
+  int? totalChargerAvailable;
   String? name;
   double? pricePerKwh;
   String? phoneNumber;
@@ -72,10 +74,9 @@ class EvStationListDatum {
   String? imageName;
   String? lats;
   String? longs;
-  bool? isFavorite;
-  int? totalCharger;
-  int? totalChargerAvailable;
   String? value;
+  bool? isFavorite;
+  bool? isOpen;
   List<EvStationGunInform>? gunInform;
 
   EvStationListDatum({
@@ -83,6 +84,8 @@ class EvStationListDatum {
     this.code,
     this.companyId,
     this.provinceId,
+    this.totalCharger,
+    this.totalChargerAvailable,
     this.name,
     this.pricePerKwh,
     this.phoneNumber,
@@ -92,10 +95,9 @@ class EvStationListDatum {
     this.imageName,
     this.lats,
     this.longs,
-    this.isFavorite,
-    this.totalCharger,
-    this.totalChargerAvailable,
     this.value,
+    this.isFavorite,
+    this.isOpen,
     this.gunInform,
   });
 
@@ -105,19 +107,20 @@ class EvStationListDatum {
         code: json["code"],
         companyId: json["companyId"],
         provinceId: json["provinceId"],
+        totalCharger: json["totalCharger"],
+        totalChargerAvailable: json["totalChargerAvailable"],
         name: json["name"],
-        pricePerKwh: json["pricePerKwh"],
+        pricePerKwh: (json["pricePerKwh"] as num?)?.toDouble(),
         phoneNumber: json["phoneNumber"],
         description: json["description"],
         address: json["address"],
         imageUrl: json["imageUrl"],
         imageName: json["imageName"],
-        lats: json["lats"],
-        longs: json["longs"],
+        lats: json["lats"]?.toString(),
+        longs: json["longs"]?.toString(),
+        value: json["value"]?.toString(),
         isFavorite: json["isFavorite"],
-        totalCharger: json["totalCharger"],
-        totalChargerAvailable: json["totalChargerAvailable"],
-        value: json["value"],
+        isOpen: json["isOpen"],
         gunInform:
             json["gunInform"] == null
                 ? []
@@ -133,6 +136,8 @@ class EvStationListDatum {
     "code": code,
     "companyId": companyId,
     "provinceId": provinceId,
+    "totalCharger": totalCharger,
+    "totalChargerAvailable": totalChargerAvailable,
     "name": name,
     "pricePerKwh": pricePerKwh,
     "phoneNumber": phoneNumber,
@@ -142,10 +147,9 @@ class EvStationListDatum {
     "imageName": imageName,
     "lats": lats,
     "longs": longs,
-    "isFavorite": isFavorite,
-    "totalCharger": totalCharger,
-    "totalChargerAvailable": totalChargerAvailable,
     "value": value,
+    "isFavorite": isFavorite,
+    "isOpen": isOpen,
     "gunInform":
         gunInform == null
             ? []
@@ -155,14 +159,23 @@ class EvStationListDatum {
 
 class EvStationGunInform {
   String? name;
-  int? amount;
+  int? qty;
+  int? qtyAvailable;
 
-  EvStationGunInform({this.name, this.amount});
+  EvStationGunInform({this.name, this.qty, this.qtyAvailable});
 
   factory EvStationGunInform.fromJson(Map<String, dynamic> json) =>
-      EvStationGunInform(name: json["name"], amount: json["amount"]);
+      EvStationGunInform(
+        name: json["name"],
+        qty: json["qty"] ?? json["amount"],
+        qtyAvailable: json["qtyAvailable"],
+      );
 
-  Map<String, dynamic> toJson() => {"name": name, "amount": amount};
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "qty": qty,
+    "qtyAvailable": qtyAvailable,
+  };
 }
 
 class Header {

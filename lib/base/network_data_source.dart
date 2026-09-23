@@ -160,6 +160,59 @@ class NetWorkDataSource extends GetConnect {
     }
   }
 
+  Future<Map<String, dynamic>> getJson(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
+    Duration? timeout,
+    bool attachAuth = true,
+  }) async {
+    try {
+      final res = await get<dynamic>(
+        path,
+        headers: _buildHeaders(
+          headers: headers,
+          attachAuth: attachAuth,
+          isJson: true,
+        ),
+        query: queryParameters,
+      ).timeout(timeout ?? const Duration(seconds: Constrains.timeout30));
+
+      if (!res.isOk) {
+        final statusCode = res.statusCode;
+        final message = res.bodyString ?? res.statusText ?? '';
+        if (statusCode == null) {
+          final lower = message.toLowerCase();
+          if (lower.contains('timed out') || lower.contains('timeout')) {
+            throw TimeoutException(
+              message.isNotEmpty ? message : 'Request timed out',
+            );
+          }
+          if (lower.contains('socketexception')) {
+            throw SocketException(
+              message.isNotEmpty ? message : 'Network error',
+            );
+          }
+          throw HttpException('Request failed (network): $message');
+        }
+        throw HttpException('Request failed ($statusCode): $message');
+      }
+
+      dynamic decoded = res.body;
+      decoded ??= res.bodyString;
+      if (decoded is String) {
+        try {
+          decoded = jsonDecode(decoded);
+        } catch (_) {}
+      }
+      if (decoded is Map<String, dynamic>) return decoded;
+      return <String, dynamic>{'data': decoded};
+    } on TimeoutException {
+      _handleTimeoutUi();
+      rethrow;
+    }
+  }
+
   Future<Map<String, dynamic>> postMultipart(
     String path, {
     required Map<String, dynamic> fields,

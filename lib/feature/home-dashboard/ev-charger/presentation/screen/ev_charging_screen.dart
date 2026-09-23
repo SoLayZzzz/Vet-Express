@@ -453,13 +453,16 @@ class EvChargerScreen extends GetView<EvChargerController> {
 
   String _gunIconPath(String? name) {
     final n = (name ?? '').toUpperCase();
-    if (n.contains('EU') ||
-        n.contains('CCS') ||
-        n.contains('DC') ||
-        n.contains('CH')) {
+    if (n.contains('GB')) return AssetImages.ic_ev_gb;
+    if (n.contains('EU') || n.contains('CCS') || n.contains('DC') || n.contains('CH')) {
       return AssetImages.ic_ev_dc;
     }
     return AssetImages.ic_ev_gb;
+  }
+
+  String _gunLabel(String? name) {
+    final raw = name ?? '-';
+    return raw.trim().isEmpty ? '-' : raw.trim();
   }
 
   String _calculateDistance(String? lat, String? lng) {
@@ -515,8 +518,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
       }
 
       return SizedBox(
-        // height: cardHeight,
-        height: Get.height / 6,
+        height: Get.height / 6.5,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
@@ -540,42 +542,43 @@ class EvChargerScreen extends GetView<EvChargerController> {
   }
 
 Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
-  final bool isOpen = (station.totalChargerAvailable ?? 0) > 0;
+  final bool isOpen = station.isOpen ?? ((station.totalChargerAvailable ?? 0) > 0);
   final stationImageUrl = _resolveStationImageUrl(station.imageUrl);
   final guns = station.gunInform ?? [];
   final stationController = Get.find<EvStationController>();
   final isLocationLoading = stationController.isLocationLoading.value;
-  final distanceText = _calculateDistance(station.lats, station.longs);
+
+  final backendDistanceKm = double.tryParse((station.value ?? '').trim());
+  final backendDistanceText =
+      backendDistanceKm == null ? null : '${backendDistanceKm.toStringAsFixed(1)} km';
+  final computedDistanceText = _calculateDistance(station.lats, station.longs);
+  final distanceText = backendDistanceText ?? computedDistanceText;
 
   return GestureDetector(
     onTap: () => _openEVDetailsModal(context, station),
     child: Container(
-    width: 320,
-    margin: const EdgeInsets.symmetric(vertical: 4),
-    decoration: BoxDecoration(
-      color: const Color(0xFFF5F5F7),
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.grey[200]!),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withValues(alpha: 0.1),
-          blurRadius: 10,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    clipBehavior: Clip.antiAlias,
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // =========================
-        // IMAGE
-        // =========================
-        SizedBox(
-          width: 100,
-          child:
-              stationImageUrl == null
-                  ? Container(
+      width: 330,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            width: 100,
+            child: stationImageUrl == null
+                ? Container(
                     color: Colors.grey.shade200,
                     child: const Icon(
                       Icons.ev_station,
@@ -583,157 +586,162 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
                       color: Colors.grey,
                     ),
                   )
-                  : CachedNetworkImage(
+                : CachedNetworkImage(
                     imageUrl: stationImageUrl,
                     fit: BoxFit.cover,
-                    placeholder:
-                        (context, url) =>
-                            Container(color: Colors.grey.shade200),
-                    errorWidget:
-                        (context, url, error) => Container(
-                          color: Colors.grey.shade200,
-                          child: const Icon(
-                            Icons.ev_station,
-                            size: 32,
-                            color: Colors.grey,
+                    placeholder: (context, url) =>
+                        Container(color: Colors.grey.shade200),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey.shade200,
+                      child: const Icon(
+                        Icons.ev_station,
+                        size: 32,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          station.name ?? '-',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF25252A),
                           ),
                         ),
-                  ),
-        ),
-
-        // =========================
-        // CONTENT
-        // =========================
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // =========================
-                // NAME + STATUS
-                // =========================
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        station.name ?? '-',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF25252A),
+                      ),
+                      // if (station.isFavorite == true) ...[
+                      //   const SizedBox(width: 6),
+                      //   const Icon(
+                      //     Icons.favorite,
+                      //     size: 16,
+                      //     color: Colors.red,
+                      //   ),
+                      // ],
+                      // const SizedBox(width: 8),
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isOpen ? const Color(0xFF009B55) : Colors.red,
                         ),
                       ),
-                    ),
-
-                    const SizedBox(width: 6),
-
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isOpen
-                            ? const Color(0xFF009B55)
-                            : Colors.red,
+                      const SizedBox(width: 4),
+                      Text(
+                        isOpen ? 'Open' : 'Closed',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF4D5060),
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(width: 4),
-
-                    Text(
-                      isOpen ? 'Open' : 'Closed',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
+                    ],
+                  ),
+                  // const SizedBox(height: 6),
+                  // Row(
+                  //   children: [
+                  //     const Icon(
+                  //       Icons.location_on_outlined,
+                  //       size: 14,
+                  //       color: AppColors.placeholderColor,
+                  //     ),
+                  //     const SizedBox(width: 4),
+                  //     Expanded(
+                  //       child: Text(
+                  //         station.address ?? '-',
+                  //         maxLines: 1,
+                  //         overflow: TextOverflow.ellipsis,
+                  //         style: const TextStyle(
+                  //           fontSize: 12,
+                  //           color: AppColors.placeholderColor,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.attach_money,
+                        size: 15,
                         color: Color(0xFF4D5060),
                       ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                // =========================
-                // PRICE
-                // =========================
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.attach_money,
-                      size: 15,
-                      color: Color(0xFF4D5060),
-                    ),
-
-                    const SizedBox(width: 4),
-
-                    const Text(
-                      'Start from ',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.placeholderColor,
-                      ),
-                    ),
-
-                    Expanded(
-                      child: Text(
-                        '${station.pricePerKwh?.toStringAsFixed(2) ?? '-'} KHR/kWh',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFFE65100),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-               const SizedBox(height: 8),
-
-                // =========================
-                // DC
-                // =========================
-                Row(
-                  children: [
-                    SvgPicture.asset(AssetImages.ic_station, width: 15, height: 15,colorFilter: ColorFilter.mode(AppColors.placeholderColor, BlendMode.srcIn)),
-                    const SizedBox(width: 4),
-
-                    Text.rich(
-                      TextSpan(
-                        text: 'DC ',
-                        style: const TextStyle(
-                          fontSize: 12,
+                      const SizedBox(width: 4),
+                      const Text(
+                        'Start from ',
+                        style: TextStyle(
+                          fontSize: 11,
                           color: AppColors.placeholderColor,
                         ),
-                        children: [
-                          TextSpan(
-                            text:
-                                '${station.totalChargerAvailable ?? '-'}/${station.totalCharger ?? '-'}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                // =========================
-                // CONNECTOR TYPES
-                // =========================
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
+                      Expanded(
+                        child: Text(
+                          station.pricePerKwh == null
+                              ? '-'
+                              : '${station.pricePerKwh!.toStringAsFixed(0)} KHR/kWh',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFFE65100),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        AssetImages.ic_station,
+                        width: 15,
+                        height: 15,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.placeholderColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text.rich(
+                        TextSpan(
+                          text: 'DC ',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.placeholderColor,
+                          ),
+                          children: [
+                            TextSpan(
+                              text:
+                                  '${station.totalChargerAvailable ?? '-'}/${station.totalCharger ?? '-'}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // Plug Types (match EVNearbyStationsScreen style)
+                  Row(
                     children: [
                       if (guns.isEmpty)
                         Row(
@@ -741,96 +749,99 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
                           children: [
                             Image.asset(
                               AssetImages.ic_ev_dc,
-                              width: 15,
+                              width: 16,
+                              height: 16,
                             ),
                             const SizedBox(width: 4),
-                            const Text(
+                            Text(
                               '-',
                               style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0xFF4D5060),
+                                fontSize: 12,
+                                color: Colors.grey[700],
                               ),
                             ),
                           ],
                         )
                       else
-                        for (var i = 0; i < guns.length; i++) ...[
-                          if (i > 0) const SizedBox(width: 14),
-                          Image.asset(
-                            _gunIconPath(guns[i].name),
-                            width: 15,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            guns[i].name ?? '-',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF4D5060),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                for (var i = 0; i < guns.length; i++) ...[
+                                  if (i > 0) const SizedBox(width: 16),
+                                  Image.asset(
+                                    _gunIconPath(guns[i].name),
+                                    width: 16,
+                                    height: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${_gunLabel(guns[i].name)} '
+                                    '${guns[i].qtyAvailable ?? '-'}'
+                                    '/${guns[i].qty ?? '-'}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                     ],
                   ),
-                ),
-
-                const SizedBox(height: 8),
-
-                // =========================
-                // GET DIRECTION
-                // =========================
-                InkWell(
-                  onTap: () {
-                    _openMap(station.lats ?? '', station.longs ?? '');
-                  },
-                  borderRadius: BorderRadius.circular(8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.location_on_outlined,
-                        size: 15,
-                        color: Color(0xFF3445E5),
-                      ),
-
-                      const SizedBox(width: 4),
-
-                       Text(
-                        'direction'.tr,
-                        style: TextStyle(
-                          fontSize: 12,
+                  const Spacer(),
+                  InkWell(
+                    onTap: () {
+                      _openMap(station.lats ?? '', station.longs ?? '');
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 15,
                           color: Color(0xFF3445E5),
-                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-
-                      const SizedBox(width: 6),
-
-                      if (isLocationLoading)
-                        Container(
-                          width: 44,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        )
-                      else
+                        const SizedBox(width: 4),
                         Text(
-                          distanceText,
+                          'direction'.tr,
                           style: const TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF707589),
+                            fontSize: 12,
+                            color: Color(0xFF3445E5),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                    ],
+                        const SizedBox(width: 6),
+                        if (backendDistanceText == null && isLocationLoading)
+                          Container(
+                            width: 44,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          )
+                        else
+                          Text(
+                            distanceText,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF707589),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
     ),
   );
 }

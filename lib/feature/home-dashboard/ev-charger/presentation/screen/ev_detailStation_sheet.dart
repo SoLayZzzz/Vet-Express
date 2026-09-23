@@ -33,12 +33,20 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
   }
 
   String _gunIconPath(String? name) {
-  final n = (name ?? '').toUpperCase();
-  if (n.contains('EU') || n.contains('CCS') || n.contains('DC') || n.contains('CH')) {
-    return AssetImages.ic_ev_dc;
+    final n = (name ?? '').toUpperCase();
+    if (n.contains('GB')) return AssetImages.ic_ev_gb;
+    if (n.contains('EU') || n.contains('CCS') || n.contains('DC') || n.contains('CH')) {
+      return AssetImages.ic_ev_dc;
+    }
+    return AssetImages.ic_ev_gb;
   }
-  return AssetImages.ic_ev_gb;
-}
+
+  String _chargerGunIconPath(EvStationChargerGun gun) {
+    final id = gun.chargerGunId;
+    if (id == 1) return AssetImages.ic_ev_gb;
+    if (id == 2) return AssetImages.ic_ev_dc;
+    return _gunIconPath(gun.name);
+  }
 
 
   String? _resolveImageUrl(String? imageUrl) {
@@ -99,7 +107,6 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
     final contacts = detail?.contactUs ?? [];
     final amenities = detail?.amenities ?? [];
     final surroundings = detail?.surroundings ?? [];
-    final stationGuns = station.gunInform ?? [];
 
     final openStatus =
         detail?.is24Hours == 1 ? '24/7' : (detail?.openHour ?? '-');
@@ -309,114 +316,83 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
 
                     const SizedBox(height: 12),
 
-                    // Charger Options Block
-                    // Charger Options Block
-_buildInfoContainer(
-  child: Column(
-    children: [
-      // Display stationGuns if present, or fallback to default GB row
-      if (stationGuns.isNotEmpty)
-        for (var i = 0; i < stationGuns.length; i++) ...[
-          if (i > 0) const Divider(height: 24),
-          _buildChargerRow(
-            stationGuns[i].name ?? 'GB',
-            '-',
-            '៛${station.pricePerKwh?.toStringAsFixed(0) ?? '-'}/kWh',
-            'X${stationGuns[i].amount ?? '-'}',
-            _gunIconPath(stationGuns[i].name),
-          ),
-        ]
-      else
-        _buildChargerRow(
-          'GB',
-          '-',
-          '៛${station.pricePerKwh?.toStringAsFixed(0) ?? '-'}/kWh',
-          'X-',
-          AssetImages.ic_ev_gb,
-        ),
+                    if (chargerGuns.isNotEmpty) ...[
+                      _buildInfoContainer(
+                        child: Column(
+                          children: [
+                            for (var i = 0; i < chargerGuns.length; i++) ...[
+                              if (i > 0) const Divider(height: 24),
+                              _buildChargerRow(
+                                chargerGuns[i].name ?? '-',
+                                '${chargerGuns[i].maxAmperage?.toStringAsFixed(0) ?? '-'} kW',
+                                '៛${chargerGuns[i].pricePerKwh?.toStringAsFixed(0) ?? '-'}/kWh',
+                                'X${chargerGuns[i].qtyAvailable ?? '-'}/${chargerGuns[i].qty ?? '-'}',
+                                _chargerGunIconPath(chargerGuns[i]),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
-      const Divider(height: 24),
-
-      // Display chargerGuns if present, or fallback to default EU / DC row
-      if (chargerGuns.isNotEmpty)
-        for (var i = 0; i < chargerGuns.length; i++) ...[
-          if (i > 0) const Divider(height: 24),
-          _buildChargerRow(
-            chargerGuns[i].name ?? 'EU',
-            '${chargerGuns[i].maxAmperage?.toStringAsFixed(0) ?? '-'} kW',
-            '៛${chargerGuns[i].pricePerKwh?.toStringAsFixed(0) ?? '-'}/kWh',
-            'X${chargerGuns[i].qty ?? '-'}',
-            _gunIconPath(chargerGuns[i].name),
-          ),
-        ]
-      else
-        _buildChargerRow(
-          'EU',
-          '-',
-          '៛-/kWh',
-          'X-',
-          AssetImages.ic_ev_dc,
-        ),
-
-      const SizedBox(height: 16),
-      Row(
-        children: [
-          const CircleAvatar(
-            backgroundColor: Colors.deepOrange,
-            radius: 16,
-            child: Icon(
-              Icons.ev_station,
-              size: 16,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Operated by',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey,
-                  ),
-                ),
-                Text(
-                  detail?.companyName ?? '-',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () => _callPhone(
-              detail?.phoneNumber ?? station.phoneNumber,
-            ),
-            child: _buildSocialButton(
-              Icons.phone_outlined,
-              Colors.grey.shade200,
-              Colors.black,
-            ),
-          ),
-          for (final contact in contacts.take(2)) ...[
-            const SizedBox(width: 6),
-            GestureDetector(
-              onTap: () => _openLink(contact.link),
-              child: _buildSocialButton(
-                Icons.send,
-                Colors.blue,
-                Colors.white,
-              ),
-            ),
-          ],
-        ],
-      ),
-    ],
-  ),
-),
+                    _buildInfoContainer(
+                      child: Row(
+                        children: [
+                          const CircleAvatar(
+                            backgroundColor: Colors.deepOrange,
+                            radius: 16,
+                            child: Icon(
+                              Icons.ev_station,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Operated by',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  detail?.companyName ?? '-',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => _callPhone(
+                              detail?.phoneNumber ?? station.phoneNumber,
+                            ),
+                            child: _buildSocialButton(
+                              Icons.phone_outlined,
+                              Colors.grey.shade200,
+                              Colors.black,
+                            ),
+                          ),
+                          for (final contact in contacts.take(2)) ...[
+                            const SizedBox(width: 6),
+                            GestureDetector(
+                              onTap: () => _openLink(contact.link),
+                              child: _buildSocialButton(
+                                Icons.send,
+                                Colors.blue,
+                                Colors.white,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
 
                     const SizedBox(height: 16),
                     _buildSectionTitle('Amenities'),

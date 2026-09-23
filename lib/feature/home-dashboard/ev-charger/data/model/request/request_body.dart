@@ -54,7 +54,7 @@ class EvStationListRequest {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'page': page,
         'rowsPerPage': rowsPerPage,
-        'searchText': searchText,
+        'searchText': searchText ?? '',
         'provinceId': provinceId,
         'lats': lats,
         'longs': longs,
