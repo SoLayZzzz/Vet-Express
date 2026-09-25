@@ -414,6 +414,7 @@ class EvAllStationScreen extends GetView<EvStationController> {
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      height: 96,
       constraints: const BoxConstraints(minHeight: 96),
       decoration: BoxDecoration(
         color: Colors.white,

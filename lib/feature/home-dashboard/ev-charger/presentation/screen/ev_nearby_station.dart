@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/base/base_url.dart';
@@ -189,6 +191,7 @@ class StationCard extends StatelessWidget {
             // Station Image
             SizedBox(
               width: 100,
+              height: 50,
               child:
                   imageUrl == null
                       ? Container(
@@ -203,7 +206,8 @@ class StationCard extends StatelessWidget {
                         color: Colors.white,
                         child: CachedNetworkImage(
                           imageUrl: imageUrl,
-                          fit: BoxFit.contain,
+                          // fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           placeholder:
                               (_, __) =>
                                   Container(color: Colors.grey.shade200),

@@ -9,8 +9,14 @@ class TicketHistoryUseCase {
 
   TicketHistoryUseCase(this.ticketHistoryRepository);
 
-  Future<BookingListModel> fetchBookingList({required BuildContext context}) {
-    return ticketHistoryRepository.fetchBookingList(context: context);
+  Future<BookingListModel> fetchBookingList({
+    required BuildContext context,
+    required int ticketType,
+  }) {
+    return ticketHistoryRepository.fetchBookingList(
+      context: context,
+      ticketType: ticketType,
+    );
   }
 
   Future<TicketDetailScreenReponse> fetchTicketDetail({

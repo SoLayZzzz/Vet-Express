@@ -247,6 +247,22 @@ final Map<String, String> kmKH = {
   'dis_coupon': "សេចក្តីបញ្ចុះតម្លៃ (លេខកូដប្រូម៉ូសិន)",
   "your_pro1": "លេខកូដប្រូម៉ូសិនរបស់អ្នក ",
 
+  // Rate a Schedule
+  'review': 'វាយតម្លៃ',
+  'reviewer' : 'អ្នកវាយតម្លៃ',
+  'reate_a_schedule' : 'វាយតម្លៃកាលវិភាគ',
+  'based_on': 'ផ្អែកលើ',
+  'poor':'អន់',
+  'below_average': 'ក្រោមមធម្យម',
+  'average': 'មធ្យម',
+  'good': 'ល្អ',
+  'excellent': 'ល្អណាស់',
+  'rate_boat_schedule': 'វាយតម្លៃទូក',
+  'rate_bus_schedule': 'វាយតម្លៃឡាន',
+   'wite_a_review': 'ការវាយតម្លៃ',
+  'tell_other': 'បង្ហាញអំពីមតិរបស់អ្នក',
+  'post': 'បង្ហោះ',
+
   // select seat
   "DownStair": "ជាន់ក្រោម",
   "UpStair": "ជាន់លើ",
@@ -550,6 +566,7 @@ final Map<String, String> kmKH = {
   // 'payment': 'ទូទាត់',
   'ticket_price': 'តម្លៃសំបុត្រ',
   'sub_total': 'សរុប',
+  'sub_Total': 'សរុប',
   'sub_total_from': 'សរុបតម្លៃពី',
   'discount': 'បញ្ចុះតម្លៃ',
   'grand_total': 'តម្លៃបូកសរុប',
@@ -567,6 +584,8 @@ final Map<String, String> kmKH = {
   'bed': 'គ្រែ',
   'bed_no': 'លេខគ្រែ',
   'view_map': "មើលផែនទី",
+  'tab_coming': 'សំបុត្រថ្មី',
+  'tab_history': 'ប្រវត្តិសំបុត្រ',
 
   //payment_screen
   'choose_payment': 'ជ្រើសរើសការបង់ប្រាក់',

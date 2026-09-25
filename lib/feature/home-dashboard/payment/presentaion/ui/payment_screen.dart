@@ -857,12 +857,20 @@ class _PaymentScreenState extends State<PaymentScreen>
           context: context,
           buttonText:
               '${'pay_now'.tr} \$${totalPayableAll.toStringAsFixed(2)}',
+          textColor: isPaymentSelected ? AppColors.whiteColor : AppColors.mainTitle,
           buttonColor:
               isPaymentSelected
                   ? (ValueStatic.ticketType == '3'
                       ? AppColors.airBusColor
                       : AppColors.primaryColor)
-                  : AppColors.greyColor,
+                  // : AppColors.lineGray,
+                  : Colors.transparent,
+          borderColor:
+              isPaymentSelected
+                  ? null
+                  : (ValueStatic.ticketType == '3'
+                      ? AppColors.airBusColor
+                      : AppColors.primaryColor),
           onPressed: () async {
             if (!isPaymentSelected) return;
             if (uiState.paymentMethodSelected == 5) {

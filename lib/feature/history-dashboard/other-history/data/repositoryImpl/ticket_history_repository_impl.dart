@@ -11,8 +11,14 @@ class TicketHistoryRepositoryImpl implements TicketHistoryRepository {
   TicketHistoryRepositoryImpl(this.ticketHistoryNetworkRequest);
 
   @override
-  Future<BookingListModel> fetchBookingList({required BuildContext context}) {
-    return ticketHistoryNetworkRequest.fetchBookingList(context: context);
+  Future<BookingListModel> fetchBookingList({
+    required BuildContext context,
+    required int ticketType,
+  }) {
+    return ticketHistoryNetworkRequest.fetchBookingList(
+      context: context,
+      ticketType: ticketType,
+    );
   }
 
   @override

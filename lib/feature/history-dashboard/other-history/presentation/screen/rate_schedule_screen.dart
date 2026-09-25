@@ -1,8 +1,8 @@
-import 'dart:developer';
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/models/schedule/total_by_journey_response.dart';
 import 'package:express_vet/utils/app_bar.dart';
 import 'package:express_vet/utils/button.dart';
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,7 +43,7 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBarVET().appBar(context, 'Rate a schedule'),
+        appBar: AppBarVET().appBar(context, 'reate_a_schedule'.tr),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(15.0),
@@ -106,7 +106,7 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Based on ${dataReview.data?.body?[0].totalView ?? 0} reviews',
+                                        '${'based_on'.tr} ${dataReview.data?.body?[0].totalView ?? 0} ${'review'.tr}',
                                         style: const TextStyle(
                                           color: Colors.grey,
                                           fontSize: 16,
@@ -117,31 +117,31 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
                                 ),
                                 const SizedBox(height: 16),
                                 _buildRatingBar(
-                                  'Excellent',
+                                  'excellent'.tr,
                                   (dataReview.data?.body?[0].rateFive ?? 0.0)
                                       .toDouble(),
                                   Colors.green,
                                 ),
                                 _buildRatingBar(
-                                  'Good',
+                                  'good'.tr,
                                   (dataReview.data?.body?[0].rateFour ?? 0.0)
                                       .toDouble(),
                                   Colors.lightGreen,
                                 ),
                                 _buildRatingBar(
-                                  'Average',
+                                  'average'.tr,
                                   (dataReview.data?.body?[0].rateThree ?? 0.0)
                                       .toDouble(),
                                   Colors.yellow,
                                 ),
                                 _buildRatingBar(
-                                  'Below Average',
+                                  'below_average'.tr,
                                   (dataReview.data?.body?[0].rateTwo ?? 0.0)
                                       .toDouble(),
                                   Colors.orange,
                                 ),
                                 _buildRatingBar(
-                                  'Poor',
+                                  'poor'.tr,
                                   (dataReview.data?.body?[0].rateOne ?? 0.0)
                                       .toDouble(),
                                   Colors.red,
@@ -181,13 +181,13 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
                 }),
 
                 const SizedBox(height: 30),
-                const Text(
-                  'Rate a schedule',
+                 Text(
+                  'reate_a_schedule'.tr,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  'Tell others what you think',
+                 Text(
+                  'tell_other'.tr,
                   style: TextStyle(fontSize: 12),
                 ),
                 const SizedBox(height: 10),
@@ -219,7 +219,7 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
                   autofocus: false,
                   keyboardType: TextInputType.multiline,
                   maxLines: 4,
-                  decoration: Style.inputText('Write a review'),
+                  decoration: Style.inputText('wite_a_review'.tr),
                 ),
               ],
             ),
@@ -229,18 +229,26 @@ class RateScheduleScreen extends GetView<RateScheduleController> {
           if (controller.state.selectedRating <= 0) {
             return const SizedBox.shrink();
           }
+          final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
 
-          return Container(
-            color: AppColors.whiteColor,
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: globalButton(
-                context: context,
-                buttonText: 'Post',
-                onPressed: () {
-                  controller.post(context: context);
-                },
+          return SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            bottom: useSafeArea,
+            child: Container(
+              color: AppColors.whiteColor,
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(15, 10, 15, iosBottomInset),
+                child: globalButton(
+                  context: context,
+                  buttonText: 'post'.tr,
+                  onPressed: () {
+                    controller.post(context: context);
+                  },
+                ),
               ),
             ),
           );

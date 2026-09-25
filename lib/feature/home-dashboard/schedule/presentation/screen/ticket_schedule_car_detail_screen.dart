@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:express_vet/asset_image.dart';
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';
@@ -47,6 +48,8 @@ class _TicketScheduleCarDetailScreenState
 
   @override
   Widget build(BuildContext context) {
+     final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return GetBuilder<ScheduleCarDetailController>(
       builder: (controller) {
         return Scaffold(
@@ -341,10 +344,15 @@ class _TicketScheduleCarDetailScreenState
             ),
           ),
           bottomNavigationBar: SafeArea(
+            top: useSafeArea,
+            bottom: useSafeArea,
+            left: useSafeArea,
+            right: useSafeArea,
             child: Container(
               width: double.infinity,
               color: AppColors.whiteColor,
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              // padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              padding: EdgeInsets.fromLTRB(15, 10, 15, iosBottomInset),
               child:
                   controller.status == 1
                       ? globalButton(

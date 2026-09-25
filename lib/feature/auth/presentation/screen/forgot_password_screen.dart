@@ -1,6 +1,5 @@
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/components/input_text_field.dart';
-import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:get/get.dart';

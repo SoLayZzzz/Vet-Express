@@ -11,10 +11,17 @@ class TicketHistoryNetworkRequest {
 
   TicketHistoryNetworkRequest(this.netWorkDataSource);
 
-  Future<BookingListModel> fetchBookingList({required dynamic context}) async {
+  Future<BookingListModel> fetchBookingList({
+    required dynamic context,
+    required int ticketType,
+  }) async {
     final json = await netWorkDataSource.postJson(
       Endpoint.ticketBookingList,
-      body: <String, dynamic>{'page': 1, 'rowsPerPage': 100},
+      body: <String, dynamic>{
+        'page': 1,
+        'rowsPerPage': 100,
+        'ticketType': ticketType,
+      },
       timeout: const Duration(seconds: Constrains.timeout30),
       attachAuth: true,
     );

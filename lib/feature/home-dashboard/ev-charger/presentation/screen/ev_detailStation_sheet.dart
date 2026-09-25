@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/base/base_url.dart';
@@ -150,15 +152,31 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                   Positioned(
                     top: 12,
                     left: 16,
-                    child: Text(
-                      detail?.name ?? station.name ?? '-',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(color: Colors.black54, blurRadius: 4),
-                        ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: Container(
+                          constraints: BoxConstraints(
+                            maxWidth:
+                                MediaQuery.of(context).size.width * 0.55,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          color: Colors.black.withValues(alpha: 0.35),
+                          child: Text(
+                            detail?.name ?? station.name ?? '-',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),

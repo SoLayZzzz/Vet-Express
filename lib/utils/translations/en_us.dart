@@ -281,6 +281,23 @@ final Map<String, String> enUS = {
   'dis_coupon': "Discount (Promo code)",
    "your_pro1": "Your promotion code ",
 
+  // Rate a Schedule
+  'review': 'Review',
+  'reviewer' : 'Reviewer',
+  'reate_a_schedule' : 'Rate a schedule',
+  'based_on': 'Base on',
+  'poor':'Poor',
+  'below_average': 'Below average',
+  'average': 'Average',
+  'good': 'Good',
+  'excellent': 'Excellent',
+  'rate_boat_schedule': 'Rate boat schedule',
+  'rate_bus_schedule': 'Rate bus schedule',
+  'wite_a_review': 'Write a review',
+  'tell_other': 'Tell others what you think',
+  'post': 'Post',
+
+
   // Membership
   'ticket1': "1. Buy 10 tickets you will become VIP Customer.",
   'ticket2': "2. You will get 1 ticket for free on every 11th ticket.",
@@ -533,6 +550,7 @@ final Map<String, String> enUS = {
   // 'payment': 'Payment type',
   'ticket_price': 'Ticket Price',
   'sub_total': 'Grand total',
+  'sub_Total': 'Grand Total',
   'sub_total_from': 'Sub Total Of',
   'discount': 'Discount',
   'grand_total': 'Grand total',
@@ -542,6 +560,9 @@ final Map<String, String> enUS = {
   'search_ticket': "Search",
   'ticket_history_remove_after_12_months':
       'The tickets will be removed from your ticket history after 12 months',
+  'tab_coming': 'Upcoming',
+  'tab_history': 'History',
+
 
   //payment_screen
   'choose_payment': 'Choose payment',
@@ -1147,7 +1168,7 @@ final Map<String, String> enUS = {
   'or_enter_preferred_amount': 'Or enter your preferred amount',
   'minimum_charge_is': 'Minimum charge is',
   'total_price': 'Total Price',
-  'choose_payment_method': 'Choose your payment methods',
+  // 'choose_payment_method': 'Choose your payment methods',
   'e_wallet': 'E-Wallet',
   'scan_to_pay_ewallet': 'Scan to pay with your E-Wallet',
   'full_charge': 'Full Charge',

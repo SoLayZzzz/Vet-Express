@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:express_vet/utils/platform_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -54,8 +55,10 @@ class _ReviewRateScreenState extends State<ReviewRateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final useSafeArea = PlatformInsets.useSafeArea;
+    final iosBottomInset = PlatformInsets.iosBottomInset();
     return Scaffold(
-      appBar: AppBarVET().appBar(context, "Review"),
+      appBar: AppBarVET().appBar(context, "review".tr),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
         physics: const BouncingScrollPhysics(),
@@ -103,7 +106,7 @@ class _ReviewRateScreenState extends State<ReviewRateScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Based on ${dataReview.data?.body?[0].totalView ?? 0} reviews',
+                                  '${'based_on'.tr} ${dataReview.data?.body?[0].totalView ?? 0} ${'review'.tr}',
                                   style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 16,
@@ -114,31 +117,31 @@ class _ReviewRateScreenState extends State<ReviewRateScreen> {
                           ),
                           const SizedBox(height: 16),
                           _buildRatingBar(
-                            'Excellent',
+                            'excellent'.tr,
                             (dataReview.data?.body?[0].rateFive ?? 0.0)
                                 .toDouble(),
                             Colors.green,
                           ),
                           _buildRatingBar(
-                            'Good',
+                            'good'.tr,
                             (dataReview.data?.body?[0].rateFour ?? 0.0)
                                 .toDouble(),
                             Colors.lightGreen,
                           ),
                           _buildRatingBar(
-                            'Average',
+                            'average'.tr,
                             (dataReview.data?.body?[0].rateThree ?? 0.0)
                                 .toDouble(),
                             Colors.yellow,
                           ),
                           _buildRatingBar(
-                            'Below Average',
+                            'below_average'.tr,
                             (dataReview.data?.body?[0].rateTwo ?? 0.0)
                                 .toDouble(),
                             Colors.orange,
                           ),
                           _buildRatingBar(
-                            'Poor',
+                            'poor'.tr,
                             (dataReview.data?.body?[0].rateOne ?? 0.0)
                                 .toDouble(),
                             Colors.red,
@@ -215,10 +218,14 @@ class _ReviewRateScreenState extends State<ReviewRateScreen> {
         ),
       ),
       bottomNavigationBar: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        bottom: useSafeArea,
         child: Container(
           width: double.infinity,
           color: AppColors.whiteColor,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: EdgeInsets.fromLTRB(15, 10, 15, iosBottomInset),
           child:
               widget.status == 1
                   ? globalButton(

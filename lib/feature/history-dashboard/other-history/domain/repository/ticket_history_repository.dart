@@ -4,7 +4,10 @@ import '../../../../home-dashboard/passenger/data/model/response/booking_list_mo
 import '../../data/model/response/ticket_detail_response.dart';
 
 abstract class TicketHistoryRepository {
-  Future<BookingListModel> fetchBookingList({required BuildContext context});
+  Future<BookingListModel> fetchBookingList({
+    required BuildContext context,
+    required int ticketType,
+  });
   Future<TicketDetailScreenReponse> fetchTicketDetail({
     required BuildContext context,
     required int id,

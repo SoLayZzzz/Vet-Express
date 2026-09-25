@@ -318,6 +318,7 @@ class AuthController extends StateController<AuthUiState> {
           .resetPasswordSendSms(phone: phone)
           .timeout(const Duration(seconds: Constrains.timeout30));
 
+      Loading().loadingClose();
       if (res.header?.result == true && res.header?.statusCode == 200) {
         if (res.body?.status == true) {
           final token = res.body?.message?.toString() ?? '';
@@ -342,12 +343,14 @@ class AuthController extends StateController<AuthUiState> {
         buttonText: 'yes'.tr,
       );
     } on TimeoutException {
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'information'.tr,
         description: 'try_again'.tr,
         buttonText: 'yes'.tr,
       );
     } catch (_) {
+      Loading().loadingClose();
       alertDialogOneButton(
         title: 'information'.tr,
         description: 'try_again'.tr,
@@ -355,7 +358,6 @@ class AuthController extends StateController<AuthUiState> {
       );
     } finally {
       uiState.value.isLoading.value = false;
-      Loading().loadingClose();
     }
   }
 

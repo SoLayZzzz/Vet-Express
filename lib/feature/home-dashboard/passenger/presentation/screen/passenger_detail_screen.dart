@@ -513,7 +513,7 @@ class PassengerDetailScreen extends GetView<PassengerDetailController> {
                           ),
                           TextSpan(
                             text: (selectedSeats[index]).toString(),
-                            style: const TextStyle(color: AppColors.seatNumberColor, fontWeight: FontWeight.w400),
+                            style: const TextStyle(color: AppColors.seatNumberColor, fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),

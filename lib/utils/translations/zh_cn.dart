@@ -436,6 +436,7 @@ final Map<String, String> zhCN = {
   "payment": "支付",
   "ticket_price": "票价",
   "sub_total": "小计",
+  'sub_Total': '小计',
   "discount": "优惠",
   'discount_platform': "平台折扣",
   "grand_total": "总计",
@@ -692,6 +693,8 @@ final Map<String, String> zhCN = {
   'search_ticket': "查询",
   'ticket_history_remove_after_12_months':
       '这些票券将在 12 个月后从您的票券历史记录中删除',
+  'tab_coming': '即将使用',
+  'tab_history': '历史记录',
   'trip_info': "旅行明细",
   'seat': "座位",
   'seats': "座位",
@@ -730,6 +733,22 @@ final Map<String, String> zhCN = {
   'dob': "出生日期",
   'passport': "护照号码",
   'passport_number': '护照号码',
+
+  // Rate a Schedule
+  'review': '评价',
+  'reviewer' : '评价人',
+  'reate_a_schedule' : '对时间表进行评分',
+  'based_on': '根据',
+  'poor':'很差',
+  'below_average': '差',
+  'average': '一班',
+  'good': '好',
+  'excellent': '很好',
+  'rate_boat_schedule': '始发船评价',
+  'rate_bus_schedule': '始发车评价',
+   'wite_a_review': '写下您的评价',
+  'tell_other': '告诉其他人您的想法',
+  'post': '发布',
 
   //travel package
   "issue_date": "签发日期",

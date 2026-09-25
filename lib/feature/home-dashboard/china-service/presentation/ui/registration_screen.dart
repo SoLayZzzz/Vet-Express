@@ -359,9 +359,10 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
     return InputTextField(
       label: label,
       labelStyle: const TextStyle(
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w400,
         color: AppColors.mainTitle,
-        fontSize: 16,
+        // fontSize: 16,
+        fontSize: 14,
       ),
       hint: hint,
       controller: controller,
@@ -405,9 +406,10 @@ class _ChinaRegistrationScreenState extends State<ChinaRegistrationScreen> {
             key: ValueKey(displayText),
             label: 'vet_branch_near_you'.tr,
             labelStyle: const TextStyle(
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               color: AppColors.titleColor,
-              fontSize: 16,
+              // fontSize: 16,
+              fontSize: 14,
             ),
             hint: 'vet_branch_near_you'.tr,
             initialValue: displayText.isEmpty ? null : displayText,

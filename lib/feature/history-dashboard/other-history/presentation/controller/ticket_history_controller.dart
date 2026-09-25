@@ -14,6 +14,8 @@ class TicketHistoryController extends StateController<TicketHistoryUiState>
 
   late final TabController tabController;
 
+  int _currentTicketType = 1;
+
   @override
   TicketHistoryUiState onInitUiState() => const TicketHistoryUiState();
 
@@ -21,14 +23,26 @@ class TicketHistoryController extends StateController<TicketHistoryUiState>
   void onInit() {
     super.onInit();
     tabController = TabController(length: 2, vsync: this);
+    tabController.addListener(_onTabChanged);
     ever(Get.find<ConnectivityController>().isConnected, (bool connected) {
       if (connected) {
         final ctx = Get.context;
         if (ctx != null) {
-          loadBookingList(context: ctx);
+          loadBookingList(context: ctx, ticketType: _currentTicketType);
         }
       }
     });
+  }
+
+  void _onTabChanged() {
+    if (tabController.indexIsChanging) return;
+    final ticketType = tabController.index + 1;
+    if (ticketType == _currentTicketType) return;
+
+    final ctx = Get.context;
+    if (ctx != null) {
+      loadBookingList(context: ctx, ticketType: ticketType);
+    }
   }
 
   @override
@@ -40,10 +54,12 @@ class TicketHistoryController extends StateController<TicketHistoryUiState>
     }
   }
 
-  void loadBookingList({required BuildContext context}) {
+  void loadBookingList({required BuildContext context, int ticketType = 1}) {
+    _currentTicketType = ticketType;
     uiState.value = state.copyWith(
       futureListBooking: ticketHistoryUseCase.fetchBookingList(
         context: context,
+        ticketType: ticketType,
       ),
     );
   }
@@ -51,7 +67,7 @@ class TicketHistoryController extends StateController<TicketHistoryUiState>
   void reloadBookingList() {
     final ctx = Get.context;
     if (ctx != null) {
-      loadBookingList(context: ctx);
+      loadBookingList(context: ctx, ticketType: _currentTicketType);
     }
   }
 

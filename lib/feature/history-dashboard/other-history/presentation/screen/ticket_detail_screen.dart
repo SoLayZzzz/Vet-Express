@@ -583,6 +583,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             child: Column(
               children: [
                 _listPrice(
+                  // label: "sub_Total".tr,
                   label: "sub_total".tr,
                   value: (bookingData.data?.body?.data?[0].subTotal).toString(),
                 ),
@@ -766,10 +767,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label,
+          label.split(' ').map((e) => e.capitalize).join(' '),
           style: const TextStyle(
             color: AppColors.titleColor,
             fontWeight: FontWeight.bold,
+            
           ),
         ),
         Text(

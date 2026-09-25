@@ -29,8 +29,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
 
-  final ValueNotifier<double> _currentCarouselPage =
-      ValueNotifier<double>(0.0);
+  final ValueNotifier<double> _currentCarouselPage = ValueNotifier<double>(0.0);
 
   late final Future<Uint8List?> _carChargingBytes = _loadEmbeddedPngBytes(
     "assets/icons/car_charging.svg",
@@ -45,10 +44,8 @@ class EvChargerScreen extends GetView<EvChargerController> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: _buildAppBar(),
       body: Obx(() {
@@ -115,7 +112,8 @@ class EvChargerScreen extends GetView<EvChargerController> {
       elevation: 0.2,
       backgroundColor: AppColors.primaryColor,
       title: Text(
-        "ev_charger".tr.replaceAll('\n', ' ')
+        "ev_charger".tr
+            .replaceAll('\n', ' ')
             .replaceAll(RegExp(r'\s+'), ' ')
             .trim(),
         style: TextStyle(
@@ -236,9 +234,10 @@ class EvChargerScreen extends GetView<EvChargerController> {
             ),
 
             _buildStationList(),
+            
+            const SizedBox(height: 20),
 
             // _buildImageCarousel(),
-
             _buildNewsFeedSection(),
           ],
         ),
@@ -248,23 +247,11 @@ class EvChargerScreen extends GetView<EvChargerController> {
 
   Widget _buildSectionIcon(int hour) {
     if (hour >= 0 && hour < 12) {
-      return const Icon(
-        Icons.wb_sunny,
-        size: 30,
-        color: Colors.orange,
-      );
+      return const Icon(Icons.wb_sunny, size: 30, color: Colors.orange);
     } else if (hour >= 12 && hour < 17) {
-      return const Icon(
-        Icons.wb_cloudy,
-        size: 30,
-        color: Colors.amber,
-      );
+      return const Icon(Icons.wb_cloudy, size: 30, color: Colors.amber);
     } else {
-      return const Icon(
-        Icons.nights_stay,
-        size: 30,
-        color: Colors.indigo,
-      );
+      return const Icon(Icons.nights_stay, size: 30, color: Colors.indigo);
     }
   }
 
@@ -309,14 +296,15 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     Row(
                       children: [
                         StreamBuilder<DateTime>(
-                              stream: controller.timeStream,
-                              initialData: DateTime.now(),
-                              builder: (context, snapshot) {
-                                final hour = snapshot.data?.hour ?? DateTime.now().hour;
-                                return _buildSectionIcon(hour);
-                              },
-                            ),
-                            SizedBox(width: 10,),
+                          stream: controller.timeStream,
+                          initialData: DateTime.now(),
+                          builder: (context, snapshot) {
+                            final hour =
+                                snapshot.data?.hour ?? DateTime.now().hour;
+                            return _buildSectionIcon(hour);
+                          },
+                        ),
+                        SizedBox(width: 10),
                         //
                         Text(
                           _getGreetingWithUserName(),
@@ -326,7 +314,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
                     ),
                   ],
                 ),
-              
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -372,9 +360,7 @@ class EvChargerScreen extends GetView<EvChargerController> {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       // icon: const Icon(Icons.arrow_forward, color: AppColors.whiteColor),
       label: Text(
@@ -428,7 +414,13 @@ class EvChargerScreen extends GetView<EvChargerController> {
       debugPrint('Error connecting to EV charging WebSocket: $e');
     }
 
-    Get.toNamed(AppRoutes.evDetailCharging, arguments: {'transactionId': transactionId, 'chargerUsername': chargerUsername});
+    Get.toNamed(
+      AppRoutes.evDetailCharging,
+      arguments: {
+        'transactionId': transactionId,
+        'chargerUsername': chargerUsername,
+      },
+    );
   }
 
   Future<Uint8List?> _loadEmbeddedPngBytes(String svgAssetPath) async {
@@ -454,7 +446,10 @@ class EvChargerScreen extends GetView<EvChargerController> {
   String _gunIconPath(String? name) {
     final n = (name ?? '').toUpperCase();
     if (n.contains('GB')) return AssetImages.ic_ev_gb;
-    if (n.contains('EU') || n.contains('CCS') || n.contains('DC') || n.contains('CH')) {
+    if (n.contains('EU') ||
+        n.contains('CCS') ||
+        n.contains('DC') ||
+        n.contains('CH')) {
       return AssetImages.ic_ev_dc;
     }
     return AssetImages.ic_ev_gb;
@@ -524,9 +519,8 @@ class EvChargerScreen extends GetView<EvChargerController> {
           physics: const BouncingScrollPhysics(),
           itemCount: stations.length,
           separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
-            return _buildStationCard(context, stations[index]);
-          },
+          itemBuilder:
+              (context, index) => _buildStationCard(context, stations[index]),
         ),
       );
     });
@@ -541,310 +535,324 @@ class EvChargerScreen extends GetView<EvChargerController> {
     );
   }
 
-Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
-  final bool isOpen = station.isOpen ?? ((station.totalChargerAvailable ?? 0) > 0);
-  final stationImageUrl = _resolveStationImageUrl(station.imageUrl);
-  final guns = station.gunInform ?? [];
-  final stationController = Get.find<EvStationController>();
-  final isLocationLoading = stationController.isLocationLoading.value;
+  Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
+    final bool isOpen =
+        station.isOpen ?? ((station.totalChargerAvailable ?? 0) > 0);
+    final stationImageUrl = _resolveStationImageUrl(station.imageUrl);
+    final guns = station.gunInform ?? [];
+    final stationController = Get.find<EvStationController>();
+    final isLocationLoading = stationController.isLocationLoading.value;
 
-  final backendDistanceKm = double.tryParse((station.value ?? '').trim());
-  final backendDistanceText =
-      backendDistanceKm == null ? null : '${backendDistanceKm.toStringAsFixed(1)} km';
-  final computedDistanceText = _calculateDistance(station.lats, station.longs);
-  final distanceText = backendDistanceText ?? computedDistanceText;
+    final backendDistanceKm = double.tryParse((station.value ?? '').trim());
+    final backendDistanceText =
+        backendDistanceKm == null
+            ? null
+            : '${backendDistanceKm.toStringAsFixed(1)} km';
+    final computedDistanceText = _calculateDistance(
+      station.lats,
+      station.longs,
+    );
+    final distanceText = backendDistanceText ?? computedDistanceText;
 
-  return GestureDetector(
-    onTap: () => _openEVDetailsModal(context, station),
-    child: Container(
-      width: 330,
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(
-            width: 100,
-            child: stationImageUrl == null
-                ? Container(
-                    color: Colors.grey.shade200,
-                    child: const Icon(
-                      Icons.ev_station,
-                      size: 32,
-                      color: Colors.grey,
-                    ),
-                  )
-                : CachedNetworkImage(
-                    imageUrl: stationImageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        Container(color: Colors.grey.shade200),
-                    errorWidget: (context, url, error) => Container(
-                      color: Colors.grey.shade200,
-                      child: const Icon(
-                        Icons.ev_station,
-                        size: 32,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          station.name ?? '-',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF25252A),
+    return GestureDetector(
+      onTap: () => _openEVDetailsModal(context, station),
+      child: Container(
+        width: 330,
+        margin: const EdgeInsets.only(top: 4),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F5F7),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[200]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: 100,
+                child:
+                    stationImageUrl == null
+                        ? Container(
+                          color: Colors.grey.shade200,
+                          child: const Icon(
+                            Icons.ev_station,
+                            size: 32,
+                            color: Colors.grey,
                           ),
+                        )
+                        : CachedNetworkImage(
+                          imageUrl: stationImageUrl,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (context, url) =>
+                                  Container(color: Colors.grey.shade200),
+                          errorWidget:
+                              (context, url, error) => Container(
+                                color: Colors.grey.shade200,
+                                child: const Icon(
+                                  Icons.ev_station,
+                                  size: 32,
+                                  color: Colors.grey,
+                                ),
+                              ),
                         ),
-                      ),
-                      // if (station.isFavorite == true) ...[
-                      //   const SizedBox(width: 6),
-                      //   const Icon(
-                      //     Icons.favorite,
-                      //     size: 16,
-                      //     color: Colors.red,
-                      //   ),
-                      // ],
-                      // const SizedBox(width: 8),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isOpen ? const Color(0xFF009B55) : Colors.red,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        isOpen ? 'Open' : 'Closed',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF4D5060),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // const SizedBox(height: 6),
-                  // Row(
-                  //   children: [
-                  //     const Icon(
-                  //       Icons.location_on_outlined,
-                  //       size: 14,
-                  //       color: AppColors.placeholderColor,
-                  //     ),
-                  //     const SizedBox(width: 4),
-                  //     Expanded(
-                  //       child: Text(
-                  //         station.address ?? '-',
-                  //         maxLines: 1,
-                  //         overflow: TextOverflow.ellipsis,
-                  //         style: const TextStyle(
-                  //           fontSize: 12,
-                  //           color: AppColors.placeholderColor,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  const SizedBox(height: 6),
-                  Row(
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.attach_money,
-                        size: 15,
-                        color: Color(0xFF4D5060),
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'Start from ',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: AppColors.placeholderColor,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          station.pricePerKwh == null
-                              ? '-'
-                              : '${station.pricePerKwh!.toStringAsFixed(0)} KHR/kWh',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFFE65100),
-                            fontWeight: FontWeight.w600,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              station.name ?? '-',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF25252A),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        AssetImages.ic_station,
-                        width: 15,
-                        height: 15,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.placeholderColor,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text.rich(
-                        TextSpan(
-                          text: 'DC ',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.placeholderColor,
+                          // if (station.isFavorite == true) ...[
+                          //   const SizedBox(width: 6),
+                          //   const Icon(
+                          //     Icons.favorite,
+                          //     size: 16,
+                          //     color: Colors.red,
+                          //   ),
+                          // ],
+                          // const SizedBox(width: 8),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color:
+                                  isOpen ? const Color(0xFF009B55) : Colors.red,
+                            ),
                           ),
-                          children: [
-                            TextSpan(
-                              text:
-                                  '${station.totalChargerAvailable ?? '-'}/${station.totalCharger ?? '-'}',
+                          const SizedBox(width: 4),
+                          Text(
+                            isOpen ? 'Open' : 'Closed',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF4D5060),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // const SizedBox(height: 6),
+                      // Row(
+                      //   children: [
+                      //     const Icon(
+                      //       Icons.location_on_outlined,
+                      //       size: 14,
+                      //       color: AppColors.placeholderColor,
+                      //     ),
+                      //     const SizedBox(width: 4),
+                      //     Expanded(
+                      //       child: Text(
+                      //         station.address ?? '-',
+                      //         maxLines: 1,
+                      //         overflow: TextOverflow.ellipsis,
+                      //         style: const TextStyle(
+                      //           fontSize: 12,
+                      //           color: AppColors.placeholderColor,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.attach_money,
+                            size: 15,
+                            color: Color(0xFF4D5060),
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Start from ',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: AppColors.placeholderColor,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              station.pricePerKwh == null
+                                  ? '-'
+                                  : '${station.pricePerKwh!.toStringAsFixed(0)} KHR/kWh',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFE65100),
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  // Plug Types (match EVNearbyStationsScreen style)
-                  Row(
-                    children: [
-                      if (guns.isEmpty)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              AssetImages.ic_ev_dc,
-                              width: 16,
-                              height: 16,
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            AssetImages.ic_station,
+                            width: 15,
+                            height: 15,
+                            colorFilter: const ColorFilter.mode(
+                              AppColors.placeholderColor,
+                              BlendMode.srcIn,
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '-',
-                              style: TextStyle(
+                          ),
+                          const SizedBox(width: 4),
+                          Text.rich(
+                            TextSpan(
+                              text: 'DC ',
+                              style: const TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey[700],
+                                color: AppColors.placeholderColor,
                               ),
-                            ),
-                          ],
-                        )
-                      else
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
                               children: [
-                                for (var i = 0; i < guns.length; i++) ...[
-                                  if (i > 0) const SizedBox(width: 16),
-                                  Image.asset(
-                                    _gunIconPath(guns[i].name),
-                                    width: 16,
-                                    height: 16,
+                                TextSpan(
+                                  text:
+                                      '${station.totalChargerAvailable ?? '-'}/${station.totalCharger ?? '-'}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${_gunLabel(guns[i].name)} '
-                                    '${guns[i].qtyAvailable ?? '-'}'
-                                    '/${guns[i].qty ?? '-'}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ],
                             ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      // Plug Types (match EVNearbyStationsScreen style)
+                      Row(
+                        children: [
+                          if (guns.isEmpty)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  AssetImages.ic_ev_dc,
+                                  width: 16,
+                                  height: 16,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '-',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ],
+                            )
+                          else
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    for (var i = 0; i < guns.length; i++) ...[
+                                      if (i > 0) const SizedBox(width: 16),
+                                      Image.asset(
+                                        _gunIconPath(guns[i].name),
+                                        width: 16,
+                                        height: 16,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '${_gunLabel(guns[i].name)} '
+                                        '${guns[i].qtyAvailable ?? '-'}'
+                                        '/${guns[i].qty ?? '-'}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      // const Spacer(),
+                      SizedBox(height: 6),
+                      InkWell(
+                        onTap: () {
+                          _openMap(station.lats ?? '', station.longs ?? '');
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              size: 15,
+                              color: Color(0xFF3445E5),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'direction'.tr,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF3445E5),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            if (backendDistanceText == null &&
+                                isLocationLoading)
+                              Container(
+                                width: 44,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              )
+                            else
+                              Text(
+                                distanceText,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF707589),
+                                ),
+                              ),
+                          ],
                         ),
+                      ),
                     ],
                   ),
-                  const Spacer(),
-                  InkWell(
-                    onTap: () {
-                      _openMap(station.lats ?? '', station.longs ?? '');
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.location_on_outlined,
-                          size: 15,
-                          color: Color(0xFF3445E5),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'direction'.tr,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF3445E5),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        if (backendDistanceText == null && isLocationLoading)
-                          Container(
-                            width: 44,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          )
-                        else
-                          Text(
-                            distanceText,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF707589),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildImageCarousel() {
     return Obx(() {
@@ -918,74 +926,76 @@ Widget _buildStationCard(BuildContext context, EvStationListDatum station) {
     );
   }
 
-Widget _buildDynamicCarousel(List<String> imageUrls) {
-  return Column(
-    children: [
-      SizedBox(
-        width: double.infinity,
-        child: NotificationListener<ScrollNotification>(
-          onNotification: (notification) {
-            if (notification is ScrollUpdateNotification) {
-              final metrics = notification.metrics;
-              if (metrics.viewportDimension > 0) {
-                _currentCarouselPage.value =
-                    metrics.pixels / metrics.viewportDimension;
+  Widget _buildDynamicCarousel(List<String> imageUrls) {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is ScrollUpdateNotification) {
+                final metrics = notification.metrics;
+                if (metrics.viewportDimension > 0) {
+                  _currentCarouselPage.value =
+                      metrics.pixels / metrics.viewportDimension;
+                }
               }
-            }
-            return false;
-          },
-          child: CarouselSlider(
-            items: imageUrls.map((url) => _buildCarouselImage(url)).toList(),
-            carouselController: _carouselController,
-            options: CarouselOptions(
-              aspectRatio: 16 / 7, 
-              viewportFraction: 1.0,
-              enableInfiniteScroll: true,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 3),
-              onPageChanged: (index, reason) {
-                controller.updateCurrentSlideIndex(index);
-                _currentCarouselPage.value = index.toDouble();
-              },
+              return false;
+            },
+            child: CarouselSlider(
+              items: imageUrls.map((url) => _buildCarouselImage(url)).toList(),
+              carouselController: _carouselController,
+              options: CarouselOptions(
+                aspectRatio: 16 / 7,
+                viewportFraction: 1.0,
+                enableInfiniteScroll: true,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 3),
+                onPageChanged: (index, reason) {
+                  controller.updateCurrentSlideIndex(index);
+                  _currentCarouselPage.value = index.toDouble();
+                },
+              ),
             ),
           ),
         ),
-      ),
-      const SizedBox(height: 8),
-      ValueListenableBuilder<double>(
-        valueListenable: _currentCarouselPage,
-        builder: (context, currentPage, child) {
-          return _buildCarouselIndicators(imageUrls.length, currentPage);
-        },
-      ),
-      const SizedBox(height: 20),
-    ],
-  );
-}
+        const SizedBox(height: 8),
+        ValueListenableBuilder<double>(
+          valueListenable: _currentCarouselPage,
+          builder: (context, currentPage, child) {
+            return _buildCarouselIndicators(imageUrls.length, currentPage);
+          },
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
 
   Widget _buildCarouselImage(String url) {
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(12),
-    child: Container(
-      color: Colors.black, // Dark background to frame the full image nicely
-      child: CachedNetworkImage(
-        imageUrl: url,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => Container(
-          color: Colors.grey[200],
-          child: const SizedBox.shrink(),
-        ),
-        errorWidget: (context, url, error) => Container(
-          color: Colors.grey[200],
-          child: const Center(
-            child: Icon(Icons.image, size: 50, color: Colors.grey),
-          ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        color: Colors.black, // Dark background to frame the full image nicely
+        child: CachedNetworkImage(
+          imageUrl: url,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          placeholder:
+              (context, url) => Container(
+                color: Colors.grey[200],
+                child: const SizedBox.shrink(),
+              ),
+          errorWidget:
+              (context, url, error) => Container(
+                color: Colors.grey[200],
+                child: const Center(
+                  child: Icon(Icons.image, size: 50, color: Colors.grey),
+                ),
+              ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildCarouselIndicators(int count, double currentPage) {
     final int activeIndex = currentPage.round() % count;
@@ -1147,8 +1157,10 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
     return InkWell(
       onTap: () {
         final point = controller.state.membershipInfoResponse?.body?.data;
-        Get.toNamed(AppRoutes.evMembership, arguments: {'section': 'menu', 'membershipInfo': point});
-
+        Get.toNamed(
+          AppRoutes.evMembership,
+          arguments: {'section': 'menu', 'membershipInfo': point},
+        );
       },
       child: Container(
         width: double.infinity,
@@ -1225,11 +1237,20 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
                       return ElevatedButton.icon(
                         onPressed: () {
                           if (isCharging) {
-                            Get.toNamed(AppRoutes.evRedeemPoint, arguments: {'points': point});
+                            Get.toNamed(
+                              AppRoutes.evRedeemPoint,
+                              arguments: {'points': point},
+                            );
                             return;
                           }
 
-                          Get.toNamed(AppRoutes.evMembership, arguments: {'section': 'history', 'membershipInfo': point});
+                          Get.toNamed(
+                            AppRoutes.evMembership,
+                            arguments: {
+                              'section': 'history',
+                              'membershipInfo': point,
+                            },
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
@@ -1343,7 +1364,10 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -1366,6 +1390,11 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
               onPressed: () {
                 Get.toNamed(AppRoutes.evNewsFeed);
               },
@@ -1386,7 +1415,7 @@ Widget _buildDynamicCarousel(List<String> imageUrls) {
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 15),
 
         // News List (Show only first 3 public news)
         Obx(() {

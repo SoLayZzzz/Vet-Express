@@ -37,6 +37,7 @@ Widget globalButton({
   required String buttonText,
   required Function onPressed,
   Color buttonColor = AppColors.primaryColor,
+  Color? borderColor,
   Color textColor = Colors.white,
   FontWeight fontWeight = FontWeight.w700,
   double fontSize = 16.0,
@@ -53,7 +54,7 @@ Widget globalButton({
       decoration: BoxDecoration(
         borderRadius: borderRadius,
         color: buttonColor,
-        
+        border: borderColor != null ? Border.all(color: borderColor) : null,
       ),
       child: Center(
         child: Text(
@@ -88,12 +89,15 @@ Widget buttonNoBackground({
         borderRadius: borderRadius,
         border: Border.all(color: AppColors.borderColor),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14.0),
+      child: Center(
         child: Text(
           buttonText,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: fontSize, color: textColor,fontWeight: fontWeight,),
+          style: TextStyle(
+            fontSize: fontSize,
+            color: textColor,
+            fontWeight: fontWeight,
+          ),
         ),
       ),
     ),

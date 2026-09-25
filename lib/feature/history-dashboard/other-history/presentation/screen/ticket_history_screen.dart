@@ -121,33 +121,14 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                   }
 
                   final all = bookingData.data?.body?.data ?? <BookingListDataItem>[];
-                  final now = DateTime.now();
-
-                  final upcoming = all.where((e) {
-                    final arriveDateTime = _parseTripEndDateTime(
-                      travelDate: e.travelDate,
-                      departure: e.departure,
-                      arrival: e.arrival,
-                    );
-                    return arriveDateTime.isAfter(now);
-                  }).toList();
-
-                  final history = all.where((e) {
-                    final arriveDateTime = _parseTripEndDateTime(
-                      travelDate: e.travelDate,
-                      departure: e.departure,
-                      arrival: e.arrival,
-                    );
-                    return !arriveDateTime.isAfter(now);
-                  }).toList();
 
                   return TabBarView(
                     controller: controller.tabController,
                     children: [
-                      upcoming.isEmpty
+                      all.isEmpty
                           ? _buildEmptyState()
-                          : _buildTicketList(items: upcoming, context: context),
-                      _buildHistoryTab(items: history, context: context),
+                          : _buildTicketList(items: all, context: context),
+                      _buildHistoryTab(items: all, context: context),
                     ],
                   );
                 },
@@ -211,9 +192,9 @@ class TicketHistoryScreen extends GetView<TicketHistoryController> {
                     ),
                   ],
                 ),
-                tabs: const [
-                  Tab(text: 'Upcoming'),
-                  Tab(text: 'History'),
+                tabs:  [
+                  Tab(text: 'tab_coming'.tr),
+                  Tab(text: 'tab_history'.tr),
                 ],
               ),
             ),
@@ -676,7 +657,7 @@ Widget _buldBusAndTime(BookingListDataItem item) {
                       controller.reloadBookingList();
                     }
                   },
-                  child: const Row(
+                  child:  Row(
                     children: [
                       Icon(
                         Ionicons.chatbubble_ellipses_outline,
@@ -685,7 +666,7 @@ Widget _buldBusAndTime(BookingListDataItem item) {
                       ),
                       SizedBox(width: 6),
                       Text(
-                        'Rate a schedule',
+                        'reate_a_schedule'.tr,
                         style: TextStyle(
                           color: AppColors.primaryColor,
                           fontSize: 14,
