@@ -3,14 +3,15 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:express_vet/asset_image.dart';
 import 'package:express_vet/base/base_url.dart';
+import 'package:express_vet/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/model/response/ev_station_detail_response.dart';
 import '../../data/model/response/ev_station_list_response.dart';
 import '../controller/ev_station_controller.dart';
-
 
 class EVStationDetailSheet extends StatefulWidget {
   final EvStationListDatum station;
@@ -37,7 +38,10 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
   String _gunIconPath(String? name) {
     final n = (name ?? '').toUpperCase();
     if (n.contains('GB')) return AssetImages.ic_ev_gb;
-    if (n.contains('EU') || n.contains('CCS') || n.contains('DC') || n.contains('CH')) {
+    if (n.contains('EU') ||
+        n.contains('CCS') ||
+        n.contains('DC') ||
+        n.contains('CH')) {
       return AssetImages.ic_ev_dc;
     }
     return AssetImages.ic_ev_gb;
@@ -49,7 +53,6 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
     if (id == 2) return AssetImages.ic_ev_dc;
     return _gunIconPath(gun.name);
   }
-
 
   String? _resolveImageUrl(String? imageUrl) {
     if (imageUrl == null || imageUrl.isEmpty) return null;
@@ -125,29 +128,32 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                   SizedBox(
                     height: 180,
                     width: double.infinity,
-                    child: imageUrl == null
-                        ? Container(
-                            color: Colors.grey.shade200,
-                            child: const Icon(
-                              Icons.ev_station,
-                              size: 48,
-                              color: Colors.grey,
-                            ),
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) =>
-                                Container(color: Colors.grey.shade200),
-                            errorWidget: (_, __, ___) => Container(
+                    child:
+                        imageUrl == null
+                            ? Container(
                               color: Colors.grey.shade200,
                               child: const Icon(
                                 Icons.ev_station,
                                 size: 48,
                                 color: Colors.grey,
                               ),
+                            )
+                            : CachedNetworkImage(
+                              imageUrl: imageUrl,
+                              fit: BoxFit.cover,
+                              placeholder:
+                                  (_, __) =>
+                                      Container(color: Colors.grey.shade200),
+                              errorWidget:
+                                  (_, __, ___) => Container(
+                                    color: Colors.grey.shade200,
+                                    child: const Icon(
+                                      Icons.ev_station,
+                                      size: 48,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                             ),
-                          ),
                   ),
                   Positioned(
                     top: 12,
@@ -158,21 +164,20 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                         child: Container(
                           constraints: BoxConstraints(
-                            maxWidth:
-                                MediaQuery.of(context).size.width * 0.55,
+                            maxWidth: MediaQuery.of(context).size.width * 0.55,
                           ),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 4,
                           ),
-                          color: Colors.black.withValues(alpha: 0.35),
+                          color: Colors.black.withValues(alpha: 0.4),
                           child: Text(
                             detail?.name ?? station.name ?? '-',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -185,16 +190,25 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                     right: 16,
                     child: Row(
                       children: [
-                        _buildCircleIconButton(
-                          Icons.favorite_border,
-                          onTap: () {
-                            final id = station.id;
-                            if (id != null) {
-                              controller.toggleFavorite(
-                                id,
-                                detail?.name ?? station.name ?? '',
-                              );
-                            }
+                        GetBuilder<EvStationController>(
+                          builder: (_) {
+                            final isFavorite = station.isFavorite ?? false;
+                            return _buildCircleIconButton(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              iconColor:
+                                  isFavorite ? Colors.red : Colors.white,
+                              onTap: () {
+                                final id = station.id;
+                                if (id != null) {
+                                  controller.toggleFavorite(
+                                    id,
+                                    detail?.name ?? station.name ?? '',
+                                  );
+                                }
+                              },
+                            );
                           },
                         ),
                         const SizedBox(width: 8),
@@ -205,27 +219,115 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                       ],
                     ),
                   ),
+                  // Positioned(
+                  //   bottom: 12,
+                  //   right: 16,
+                  //   child: Container(
+                  //     padding: const EdgeInsets.symmetric(
+                  //       horizontal: 10,
+                  //       vertical: 4,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.black.withValues(alpha: 0.4),
+                  //       borderRadius: BorderRadius.circular(16),
+                  //     ),
+                  //     child: Text(
+                  //       '${detail?.isHasCharger ?? '-'} 🔌  ${station.value ?? '-'} km',
+                  //       style: const TextStyle(
+                  //         color: Colors.white,
+                  //         fontSize: 12,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Positioned(
-                    bottom: 12,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        '${detail?.isHasCharger ?? '-'} 🔌  ${station.value ?? '-'} km',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
+  bottom: 12,
+  right: 16,
+  child: Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 12,
+      vertical: 6,
+    ),
+    decoration: BoxDecoration(
+       color: Colors.black.withValues(alpha: 0.4),
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      // crossAxisAlignment: CrossAlignment.center,
+      children: [
+        // 1. Charging Station Icon & Value
+        // const Icon(
+        //   Icons.ev_station_rounded,
+        //   color: Colors.white,
+        //   size: 16,
+        // ),
+         SvgPicture.asset(AssetImages.ic_station, width: 15, height: 15),
+        const SizedBox(width: 4),
+        Text(
+          '${detail?.isHasCharger ?? 6}', 
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+
+        // Separator Dot
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text(
+            '•',
+            style: TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ),
+
+        // 2. Power Plug Icon & Value
+        // const Icon(
+        //   Icons.power_rounded,
+        //   color: Colors.white,
+        //   size: 16,
+        // ),
+        Image.asset(AssetImages.ic_duy_power, width: 15, height: 15),
+        const SizedBox(width: 4),
+        Text(
+          '${detail?.isHasCharger ?? '-'}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+
+        // Separator Dot
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text(
+            '•',
+            style: TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ),
+
+        // 3. Route / Distance Icon & Value
+        // const Icon(
+        //   Icons.alt_route_rounded,
+        //   color: Colors.white,
+        //   size: 16,
+        // ),
+        Image.asset(AssetImages.ic_km, width: 15, height: 15),
+        const SizedBox(width: 4),
+        Text(
+          '${station.value ?? '-'} Km',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    ),
+  ),
+)
                 ],
               ),
 
@@ -241,15 +343,17 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                         CircleAvatar(
                           backgroundColor: Colors.deepOrange,
                           radius: 20,
-                          backgroundImage: profileUrl != null
-                              ? CachedNetworkImageProvider(profileUrl)
-                              : null,
-                          child: profileUrl == null
-                              ? const Icon(
-                                  Icons.ev_station,
-                                  color: Colors.white,
-                                )
-                              : null,
+                          backgroundImage:
+                              profileUrl != null
+                                  ? CachedNetworkImageProvider(profileUrl)
+                                  : null,
+                          child:
+                              profileUrl == null
+                                  ? const Icon(
+                                    Icons.ev_station,
+                                    color: Colors.white,
+                                  )
+                                  : null,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -268,6 +372,7 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              const SizedBox(height: 5),
                               Text(
                                 detail?.companyName ?? 'EV Station',
                                 style: const TextStyle(
@@ -287,10 +392,7 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                     _buildInfoContainer(
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.location_on_outlined,
-                            color: Colors.black54,
-                          ),
+                          const Icon(Icons.arrow_upward, color: Colors.black54),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -304,6 +406,7 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                         ],
                       ),
                     ),
+                
 
                     const SizedBox(height: 16),
                     _buildSectionTitle('Charge Point Info'),
@@ -324,9 +427,7 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                           ),
                           Text(
                             openStatus,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -334,6 +435,7 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
 
                     const SizedBox(height: 12),
 
+                    // Charger Info and Oerated by
                     if (chargerGuns.isNotEmpty) ...[
                       _buildInfoContainer(
                         child: Column(
@@ -344,82 +446,97 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                                 chargerGuns[i].name ?? '-',
                                 '${chargerGuns[i].maxAmperage?.toStringAsFixed(0) ?? '-'} kW',
                                 '៛${chargerGuns[i].pricePerKwh?.toStringAsFixed(0) ?? '-'}/kWh',
-                                'X${chargerGuns[i].qtyAvailable ?? '-'}/${chargerGuns[i].qty ?? '-'}',
+                                '${chargerGuns[i].qtyAvailable ?? '-'}/${chargerGuns[i].qty ?? '-'}',
                                 _chargerGunIconPath(chargerGuns[i]),
                               ),
                             ],
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    _buildInfoContainer(
-                      child: Row(
-                        children: [
-                          const CircleAvatar(
-                            backgroundColor: Colors.deepOrange,
-                            radius: 16,
-                            child: Icon(
-                              Icons.ev_station,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Operated by',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey,
+                            //
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.deepOrange,
+                                    radius: 20,
+                                    backgroundImage:
+                                        profileUrl != null
+                                            ? CachedNetworkImageProvider(
+                                              profileUrl,
+                                            )
+                                            : null,
+                                    child:
+                                        profileUrl == null
+                                            ? const Icon(
+                                              Icons.ev_station,
+                                              color: Colors.white,
+                                            )
+                                            : null,
                                   ),
-                                ),
-                                Text(
-                                  detail?.companyName ?? '-',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Operated by',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          detail?.companyName ?? '-',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => _callPhone(
-                              detail?.phoneNumber ?? station.phoneNumber,
-                            ),
-                            child: _buildSocialButton(
-                              Icons.phone_outlined,
-                              Colors.grey.shade200,
-                              Colors.black,
-                            ),
-                          ),
-                          for (final contact in contacts.take(2)) ...[
-                            const SizedBox(width: 6),
-                            GestureDetector(
-                              onTap: () => _openLink(contact.link),
-                              child: _buildSocialButton(
-                                Icons.send,
-                                Colors.blue,
-                                Colors.white,
+                                  GestureDetector(
+                                    onTap:
+                                        () => _callPhone(
+                                          detail?.phoneNumber ??
+                                              station.phoneNumber,
+                                        ),
+                                    child: _buildSocialButton(
+                                      Icons.phone_outlined,
+                                      Colors.grey.shade200,
+                                      Colors.black,
+                                    ),
+                                  ),
+                                  for (final contact in contacts.take(2)) ...[
+                                    const SizedBox(width: 6),
+                                    GestureDetector(
+                                      onTap: () => _openLink(contact.link),
+                                      child: _buildSocialButton(
+                                        Icons.send,
+                                        Colors.blue,
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                             ),
                           ],
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
 
                     const SizedBox(height: 16),
                     _buildSectionTitle('Amenities'),
                     const SizedBox(height: 8),
                     _buildInfoContainer(
                       child: GridView.count(
+                        padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         crossAxisCount: 2,
-                        childAspectRatio: 4,
+                        childAspectRatio: 6,
                         physics: const NeverScrollableScrollPhysics(),
                         children: [
                           if (amenities.isEmpty)
@@ -441,7 +558,10 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
                             const _AmenityItem(text: '-')
                           else
                             for (final item in surroundings)
-                              _AmenityItem(text: item.name ?? '-'),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: _AmenityItem(text: item.name ?? '-'),
+                              ),
                         ],
                       ),
                     ),
@@ -458,13 +578,14 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
           bottom: 24,
           right: 24,
           child: FloatingActionButton(
-            onPressed: () => _openMap(
-              detail?.lats ?? station.lats,
-              detail?.longs ?? station.longs,
-            ),
-            backgroundColor: Colors.grey.shade300,
+            onPressed:
+                () => _openMap(
+                  detail?.lats ?? station.lats,
+                  detail?.longs ?? station.longs,
+                ),
+            backgroundColor: AppColors.lineGray,
             elevation: 2,
-            child: const Icon(Icons.turn_right, color: Colors.black54),
+            child: _buildDirectionsIcon(),
           ),
         ),
       ],
@@ -490,72 +611,127 @@ class _EVStationDetailSheetState extends State<EVStationDetailSheet> {
     );
   }
 
-  Widget _buildCircleIconButton(IconData icon, {VoidCallback? onTap}) {
+  Widget _buildDirectionsIcon() {
+  return Container(
+    width: 32,
+    height: 32,
+    decoration:  BoxDecoration(
+      color: Color(0xFFD9D9D9), // Outer grey circle background
+      shape: BoxShape.circle,
+    ),
+    child: Center(
+      child: Transform.rotate(
+        angle: 45 * 3.1415926535897932 / 180, // Rotate 45 degrees to make a diamond
+        child: Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            
+          ),
+          child: Center(
+            child: Transform.rotate(
+              angle: -45 * 3.1415926535897932 / 180, // Rotate arrow back upright
+              child: const Icon(
+                Icons.turn_right_rounded,
+                size: 25,
+                color: Colors.black87,
+              ),
+              // child: Image.asset(AssetImages.ic_turn_right, width: 0, height: 0),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+  Widget _buildCircleIconButton(
+    IconData icon, {
+    VoidCallback? onTap,
+    Color iconColor = Colors.white,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: CircleAvatar(
         radius: 16,
-        backgroundColor: Colors.black.withValues(alpha: 0.3),
-        child: Icon(icon, size: 18, color: Colors.white),
+        backgroundColor: Colors.black.withValues(alpha: 0.4),
+        child: Icon(icon, size: 18, color: iconColor),
       ),
     );
   }
 
   Widget _buildSocialButton(IconData icon, Color bg, Color iconColor) {
     return CircleAvatar(
-      radius: 16,
-      backgroundColor: bg,
-      child: Icon(icon, size: 16, color: iconColor),
+      radius: 18,
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: CircleAvatar(
+          radius: 14,
+          backgroundColor: bg,
+          child: Icon(icon, size: 14),
+        ),
+      ),
     );
   }
 
   Widget _buildChargerRow(
-  String title,
-  String power,
-  String price,
-  String count,
-  String iconPath,
-) {
-  return Row(
-    children: [
-      Image.asset(iconPath, width: 36, height: 36),
-      const SizedBox(width: 12),
-      Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-      ),
-      const Spacer(),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.flash_on, size: 14, color: Colors.grey),
-              Text(
-                power,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            ],
+    String title,
+    String power,
+    String price,
+    String count,
+    String iconPath,
+  ) {
+    return Row(
+      children: [
+        Image.asset(iconPath, width: 36, height: 36),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        const Spacer(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // const Icon(Icons.flash_on, size: 14, color: Colors.grey),
+                Image.asset(AssetImages.ic_flash, width: 14, height: 14),
+                SizedBox(width: 5),
+                Text(
+                  power,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                // const Icon(Icons.flash_on, size: 14, color: Colors.grey),
+                Image.asset(AssetImages.ic_flash, width: 14, height: 14),
+                SizedBox(width: 5),
+                Text(
+                  price,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(width: 20),
+        Text(
+          count,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: AppColors.primaryColor,
           ),
-          Row(
-            children: [
-              const Icon(Icons.flash_on, size: 14, color: Colors.grey),
-              Text(
-                price,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            ],
-          ),
-        ],
-      ),
-      const SizedBox(width: 20),
-      Text(
-        count,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-      ),
-    ],
-  );
-}
+        ),
+      ],
+    );
+  }
 }
 
 class _AmenityItem extends StatelessWidget {

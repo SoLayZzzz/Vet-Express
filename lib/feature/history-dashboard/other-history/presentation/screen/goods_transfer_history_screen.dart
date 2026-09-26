@@ -54,8 +54,8 @@ class GoodsTransferHistoryScreen
         Container(
           color: Colors.white,
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            height: 54, // Fixed height for a consistent "pill" look
+            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+            height: 54,
             decoration: BoxDecoration(
               color: const Color(0XFFE6E8EA), // Light gray background
               borderRadius: BorderRadius.circular(12),
@@ -727,71 +727,52 @@ class _TransferItemCardState extends State<TransferItemCard> {
               //     ],
               //   ),
               // ),
-              //
-               Padding(
-                 padding: const EdgeInsets.symmetric(vertical: 15),
-                 child: Container(
-                              height: 1,
-                              width: double.infinity,
-                              color: AppColors.lineGray
-                            ),
-               ),
-               // Prince of COD
-                Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                               Row(
-                                 children: [
-                                   Text(
-                                    "COD: ",
-                                    style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        fontFamily: "Inter"
-                      )),
-                                  Text(
-                                    "\$33.00",
-                                     style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        fontFamily: "Inter"
-                      )
-                                  ),
-                                 ],
-                               ),
-                              Text(
-                                'Pending',
-                                 style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        fontFamily: "Inter",
-                        color: AppColors.redColor
-                      )
-                              ),
-                            ],
-                          ),
+              // ====================
+              // ==== COD Price ====
+              // ====================
+              //  Padding(
+              //    padding: const EdgeInsets.symmetric(vertical: 15),
+              //    child: Container(
+              //                 height: 1,
+              //                 width: double.infinity,
+              //                 color: AppColors.lineGray
+              //               ),
+              //  ),
+              //  // Prince of COD
+              //   Row(
+              //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //               children: [
+              //                  Row(
+              //                    children: [
+              //                      Text(
+              //                       "COD: ",
+              //                       style: const TextStyle(
+              //           fontWeight: FontWeight.w600,
+              //           fontSize: 14,
+              //           fontFamily: "Inter"
+              //         )),
+              //                     Text(
+              //                       "\$33.00",
+              //                        style: const TextStyle(
+              //           fontWeight: FontWeight.w600,
+              //           fontSize: 14,
+              //           fontFamily: "Inter"
+              //         )
+              //                     ),
+              //                    ],
+              //                  ),
+              //                 Text(
+              //                   'Pending',
+              //                    style: const TextStyle(
+              //           fontWeight: FontWeight.w600,
+              //           fontSize: 14,
+              //           fontFamily: "Inter",
+              //           color: AppColors.redColor
+              //         )
+              //                 ),
+              //               ],
+              //             ),
 
-                  //         child: Text(
-                  //     // widget.item.code ?? "",
-                  //     widget.item?.date ?? "",
-                  //     maxLines: 1,
-                  //     overflow: TextOverflow.ellipsis,
-                  //     style: const TextStyle(
-                  //       fontWeight: FontWeight.w600,
-                  //       fontSize: 14,
-                  //       fontFamily: "Inter"
-                  //     ),
-                  //   ),
-                  // ),
-                  // const SizedBox(width: 8),
-                  // Text(
-                  //   _returnStatus(widget.item.status),
-                  //   style: TextStyle(
-                  //     fontFamily: "Inter",
-                  //     color: AppColors.primaryColor,
-                  //     fontWeight: FontWeight.w600,
-                  //   ),
-                  // ),
                          
             ],
           ),

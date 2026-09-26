@@ -205,6 +205,11 @@ class AssetImages {
   static const String ic_back = "assets/icons/button_back.svg";
   static const String ic_car_charging = "assets/icons/car_charging.svg";
   static const String gifCharging = 'assets/gif/charging_gift.gif';
+  static const String ic_flash = "assets/icons/flash.png";
+  static const String ic_turn_right = "assets/icons/turn_right.png";
+  static const String ic_duy_power = "assets/icons/duy_power.png";
+  static const String ic_km = "assets/icons/km_ic.png";
+
   // Charging
   static const String ammeter = "assets/icons/ammeter.svg";
   static const String volt = "assets/icons/volt.svg";
